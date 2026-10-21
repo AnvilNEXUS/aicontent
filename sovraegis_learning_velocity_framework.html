@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovraegis Learning Velocity Framework (SLVF v0.1)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        slate: {
+                            850: '#151b28',
+                            900: '#0b0f17',
+                            950: '#05070a',
+                        },
+                        cyan: {
+                            400: '#22d3ee',
+                            500: '#06b6d4',
+                        },
+                        gold: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f17; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-cyan-500 selection:text-slate-950">
+
+    <!-- Top Navigation / Header -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-cyan-500 via-gold-500 to-emerald-500 flex items-center justify-center shadow-lg shadow-cyan-500/10">
+                    <i data-lucide="shield-check" class="w-6 h-6 text-slate-950"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide bg-gradient-to-r from-cyan-400 via-gold-400 to-emerald-400 bg-clip-text text-transparent">SOVRAEGIS SLVF v0.1</h1>
+                    <p class="text-xs text-slate-400 mono">Learning Velocity & Capability Architecture</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <span class="hidden sm:inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-cyan-950/80 text-cyan-400 border border-cyan-800/50">
+                    <span class="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse mr-1.5"></span>
+                    Live Specification
+                </span>
+                <button onclick="openModal('exportModal')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium flex items-center space-x-1.5 transition border border-slate-700">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                    <span>Export Manifest</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Tab Bar -->
+        <div class="flex space-x-1 sm:space-x-2 border-b border-slate-800 pb-4 overflow-x-auto">
+            <button onclick="switchTab('executive')" id="btn-executive" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition whitespace-nowrap bg-cyan-500 text-slate-950 shadow-lg shadow-cyan-500/20">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+                <span>1. Executive & Macro-Taxonomy</span>
+            </button>
+            <button onclick="switchTab('subsystems')" id="btn-subsystems" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition whitespace-nowrap bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800">
+                <i data-lucide="cpu" class="w-4 h-4"></i>
+                <span>2. The 8 Subsystems</span>
+            </button>
+            <button onclick="switchTab('roadmap')" id="btn-roadmap" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition whitespace-nowrap bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800">
+                <i data-lucide="git-merge" class="w-4 h-4"></i>
+                <span>3. Roadmap & Pilot Protocol</span>
+            </button>
+            <button onclick="switchTab('standards')" id="btn-standards" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition whitespace-nowrap bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800">
+                <i data-lucide="layers" class="w-4 h-4"></i>
+                <span>4. Interoperability Mapping</span>
+            </button>
+            <button onclick="switchTab('simulator')" id="btn-simulator" class="tab-btn px-4 py-2.5 rounded-xl text-sm font-semibold flex items-center space-x-2 transition whitespace-nowrap bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800">
+                <i data-lucide="sliders" class="w-4 h-4"></i>
+                <span>5. Interactive Simulator & Matrix</span>
+            </button>
+        </div>
+
+        <!-- TAB 1: EXECUTIVE & MACRO-TAXONOMY -->
+        <div id="tab-executive" class="tab-content mt-8 space-y-8 animate-fadeIn">
+            
+            <!-- Hero banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-850 p-8 sm:p-10 border border-slate-800 shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute right-1/3 -top-10 w-80 h-80 bg-gold-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10 max-w-3xl">
+                    <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-gold-950/80 text-gold-400 text-xs font-semibold border border-gold-800/50 mb-6">
+                        <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                        <span>Macro Tier: Sovraegis | Instructional Tier: CODE+V</span>
+                    </div>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white mb-4">
+                        Comprehensive Learning Engineering & Capability Framework
+                    </h2>
+                    <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">
+                        The Sovraegis Learning Velocity Framework is a comprehensive learning engineering and operational architecture that embeds CODE+V as its pedagogical engine to produce tangible, verifiable evidence of sovereign skill (<span class="text-gold-400 font-semibold">SYNCTESS</span>).
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800">
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-cyan-950 text-cyan-400 mt-0.5"><i data-lucide="zap" class="w-4 h-4"></i></div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-white">Socio-Technical Architecture</h3>
+                                <p class="text-xs text-slate-400">Human cognition paired with verifiable telemetry infrastructure.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-gold-950 text-gold-400 mt-0.5"><i data-lucide="cpu" class="w-4 h-4"></i></div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-white">Sovereign L-OS</h3>
+                                <p class="text-xs text-slate-400">Autonomy, ownership & end-to-end operational pipelines.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <div class="p-2 rounded-lg bg-emerald-950 text-emerald-400 mt-0.5"><i data-lucide="check-circle-2" class="w-4 h-4"></i></div>
+                            <div>
+                                <h3 class="text-sm font-semibold text-white">Verifiable SYNCTESS</h3>
+                                <p class="text-xs text-slate-400">Tangible evidence of skill anchored via W3C VCs.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Ecosystem & Architecture Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <!-- Ecosystem Mapping -->
+                <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
+                                <i data-lucide="network" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">Ecosystem Integration</h3>
+                                <p class="text-xs text-slate-400 mono">SYNCZ / SYNCZINE / SYNCTESS / SYNTHCRED</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            The ecosystem establishes a complete continuous loop connecting learner intent, component orchestration, human/AI mentorship, and cryptographic credentialing.
+                        </p>
+                        
+                        <div class="space-y-3">
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-8 h-8 rounded-lg bg-cyan-950 text-cyan-400 flex items-center justify-center font-bold text-xs">01</span>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white">SYNCZ / SRLO</h4>
+                                        <p class="text-xs text-slate-400">Granular learning objects & modular telemetry.</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono text-cyan-400 bg-cyan-950/60 px-2 py-1 rounded">Object Layer</span>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-8 h-8 rounded-lg bg-gold-950 text-gold-400 flex items-center justify-center font-bold text-xs">02</span>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white">SYNCZINE</h4>
+                                        <p class="text-xs text-slate-400">Curated path orchestration & sequencing.</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono text-gold-400 bg-gold-950/60 px-2 py-1 rounded">Path Layer</span>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-8 h-8 rounded-lg bg-emerald-950 text-emerald-400 flex items-center justify-center font-bold text-xs">03</span>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white">SYNCTESS</h4>
+                                        <p class="text-xs text-slate-400">Tangible evidence of sovereign skill via CODE+V.</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono text-emerald-400 bg-emerald-950/60 px-2 py-1 rounded">Evidence Layer</span>
+                            </div>
+
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <span class="w-8 h-8 rounded-lg bg-purple-950 text-purple-400 flex items-center justify-center font-bold text-xs">04</span>
+                                    <div>
+                                        <h4 class="text-sm font-semibold text-white">SYNTHCRED</h4>
+                                        <p class="text-xs text-slate-400">W3C Verifiable Credentials attesting achieved mastery.</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-mono text-purple-400 bg-purple-950/60 px-2 py-1 rounded">Credential Layer</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core Pedagogical Engine: CODE+V -->
+                <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-6">
+                            <div class="p-2.5 rounded-xl bg-gold-500/10 text-gold-400">
+                                <i data-lucide="book-open" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white">The CODE+V Pedagogical Engine</h3>
+                                <p class="text-xs text-slate-400 mono">Curate • Organize • Distill • Express • Verify</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-300 text-sm leading-relaxed mb-6">
+                            Grounded in knowledge management evolution and upgraded with verification loops, CODE+V powers the generation of authentic SYNCTESS artifacts.
+                        </p>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                                <div class="text-cyan-400 font-bold mono text-sm mb-1">C — CURATE</div>
+                                <p class="text-xs text-slate-300">Evaluating and selecting relevant high-signal knowledge sources.</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                                <div class="text-gold-400 font-bold mono text-sm mb-1">O — ORGANIZE</div>
+                                <p class="text-xs text-slate-300">Structuring understanding and planning learning paths via PARA/MOCs.</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                                <div class="text-emerald-400 font-bold mono text-sm mb-1">D — DISTILL</div>
+                                <p class="text-xs text-slate-300">Progressive summarization, conceptual synthesis and atomic note-making.</p>
+                            </div>
+                            <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                                <div class="text-purple-400 font-bold mono text-sm mb-1">E — EXPRESS</div>
+                                <p class="text-xs text-slate-300">Assembling intermediate packets into demonstrated application and artifacts.</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-3.5 rounded-xl bg-slate-950 border border-emerald-900/50">
+                            <div class="text-emerald-400 font-bold mono text-sm mb-1 flex items-center justify-between">
+                                <span>+V — VERIFY & VALIDATE</span>
+                                <span class="text-xs bg-emerald-950 text-emerald-300 px-2 py-0.5 rounded">Sovereign Gate</span>
+                            </div>
+                            <p class="text-xs text-slate-300">Feedback, critique, corroboration, assessment interactions, and independent proof.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TAB 2: THE 8 SUBSYSTEMS -->
+        <div id="tab-subsystems" class="tab-content hidden mt-8 space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">The 8 Subsystems of the SLVF Specification</h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    The framework is modularized into eight rigorous operational sub-specifications covering measurement models, standards, evaluation, observability, and contributor economics.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- SLVF -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">SLVF</span>
+                            <i data-lucide="layers" class="w-5 h-5 text-cyan-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Sovraeg Learning Velocity Framework</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            The overarching scientific, pedagogical, and governance framework defining durable progression and intervention effectiveness.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Umbrella Architecture</div>
+                </div>
+
+                <!-- SLVM -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">SLVM</span>
+                            <i data-lucide="calculator" class="w-5 h-5 text-cyan-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Measurement Model</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Quantifies durable learning progression using mathematical formulations like Durable Learning Velocity ($LV_D$) and Vector Effectiveness ($LVE$).
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Mathematical Engine</div>
+                </div>
+
+                <!-- SLVS -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-gold-950 text-gold-400 border border-gold-800">SLVS</span>
+                            <i data-lucide="file-text" class="w-5 h-5 text-gold-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Measurement Standards</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Defines comparable metrics, Learning Vector Effectiveness Profiles (LVEP), and reference class constraints for fair evaluation.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Interoperability Standards</div>
+                </div>
+
+                <!-- SLVP -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-cyan-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-gold-950 text-gold-400 border border-gold-800">SLVP</span>
+                            <i data-lucide="share-2" class="w-5 h-5 text-gold-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Evidence Protocol</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Exchanges intervention exposure, telemetry, and Learning Vector Contribution Records (LVCR) across decentralized nodes.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Telemetry Protocol</div>
+                </div>
+
+                <!-- SLVE -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-emerald-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">SLVE</span>
+                            <i data-lucide="search-check" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Evaluation Methodology</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Tests effectiveness and causal contribution across 3 evidence tiers (observed, comparative, and causally supported uplift).
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Causal Testing</div>
+                </div>
+
+                <!-- SLVO -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-emerald-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800">SLVO</span>
+                            <i data-lucide="eye" class="w-5 h-5 text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Learning Velocity Observatory</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Visualizes learning trajectories, vector synergy matrices, and observatory dashboards for learners, designers, and agencies.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Analytics & Dashboards</div>
+                </div>
+
+                <!-- SLVR -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-purple-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-purple-950 text-purple-400 border border-purple-800">SLVR / SLCR</span>
+                            <i data-lucide="coins" class="w-5 h-5 text-purple-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Reward & Contribution Model</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Allocates value to creators, designers, SOVRAEGES, and SOVRAEGENTS via royalties, service fees, impact incentives, and stewardship pools.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Contributor Economy</div>
+                </div>
+
+                <!-- SMIA -->
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 hover:border-purple-500/50 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-mono font-bold px-2.5 py-1 rounded bg-purple-950 text-purple-400 border border-purple-800">SMIA</span>
+                            <i data-lucide="git-branch" class="w-5 h-5 text-purple-400"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-white mb-2">Mastery Interoperability Architecture</h3>
+                        <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                            Accommodates legacy institutions via dual-layer credentialing, mastery-to-grade translation engines, and standards-compatible exports.
+                        </p>
+                    </div>
+                    <div class="pt-4 border-t border-slate-800 text-[11px] text-slate-400 font-mono">Institutional Bridge</div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- TAB 3: ROADMAP & PILOT PROTOCOL -->
+        <div id="tab-roadmap" class="tab-content hidden mt-8 space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">6-Stage Engineering Roadmap & Pilot Protocol</h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    A phased implementation sequence designed to transition from ontological definitions to robust causal evaluation and scalable ecosystem governance.
+                </p>
+            </div>
+
+            <!-- Roadmap Steps -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">01</div>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-950/80 px-2 py-1 rounded inline-block mb-3">Stage 1</span>
+                    <h3 class="text-base font-bold text-white mb-2">Define</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Formal ontology and glossary of Learning Velocity, Vectors, Mastery States, and outcome taxonomies.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">02</div>
+                    <span class="text-xs font-mono text-cyan-400 bg-cyan-950/80 px-2 py-1 rounded inline-block mb-3">Stage 2</span>
+                    <h3 class="text-base font-bold text-white mb-2">Instrument</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Assessment rubrics, intervention profiles, telemetry events, and evidence schemas deployed across SYNCZ.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">03</div>
+                    <span class="text-xs font-mono text-gold-400 bg-gold-950/80 px-2 py-1 rounded inline-block mb-3">Stage 3</span>
+                    <h3 class="text-base font-bold text-white mb-2">Pilot</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Initial SYNCZINE comparison (e.g., Heian Shodan Kata) with immediate and delayed assessments.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">04</div>
+                    <span class="text-xs font-mono text-gold-400 bg-gold-950/80 px-2 py-1 rounded inline-block mb-3">Stage 4</span>
+                    <h3 class="text-base font-bold text-white mb-2">Validate</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Assessment reliability, measurement comparability, retention, transfer, and causal attribution methods.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">05</div>
+                    <span class="text-xs font-mono text-emerald-400 bg-emerald-950/80 px-2 py-1 rounded inline-block mb-3">Stage 5</span>
+                    <h3 class="text-base font-bold text-white mb-2">Operationalize</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Observatory dashboards, feedback workflows, and authoring integrations in SYNCFORGE.
+                    </p>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl p-6 border border-slate-800 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 font-mono font-bold text-2xl text-slate-800">06</div>
+                    <span class="text-xs font-mono text-emerald-400 bg-emerald-950/80 px-2 py-1 rounded inline-block mb-3">Stage 6</span>
+                    <h3 class="text-base font-bold text-white mb-2">Scale</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Evidence-based recommendations, vector synergy analysis, and decentralized ecosystem governance.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- Pilot Protocol Detail Box -->
+            <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl">
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="p-2.5 rounded-xl bg-gold-500/10 text-gold-400">
+                        <i data-lucide="clipboard-list" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Learning Velocity Pilot Protocol (Reference Case: Heian Shodan Kata)</h3>
+                        <p class="text-xs text-slate-400 mono">Protocol execution steps for physical & cognitive skill demonstration</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                        <span class="text-xs font-mono text-cyan-400 font-bold">Step 01</span>
+                        <h4 class="text-sm font-semibold text-white mt-1 mb-2">Establish Baseline</h4>
+                        <p class="text-xs text-slate-300">Assess relevant techniques, sequencing knowledge, and current performance using a standardized rubric.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                        <span class="text-xs font-mono text-cyan-400 font-bold">Step 02</span>
+                        <h4 class="text-sm font-semibold text-white mt-1 mb-2">Compare Configurations</h4>
+                        <p class="text-xs text-slate-300">Config A: Video demo + solo practice. Config B: Interactive SYNCZ, spaced repetition, mentor feedback.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                        <span class="text-xs font-mono text-gold-400 font-bold">Step 03</span>
+                        <h4 class="text-sm font-semibold text-white mt-1 mb-2">Record Exposure & Delay</h4>
+                        <p class="text-xs text-slate-300">Measure active practice time, support utilized, and re-assess independently after a 30-day delay interval.</p>
+                    </div>
+                    <div class="p-4 rounded-2xl bg-slate-950 border border-slate-800">
+                        <span class="text-xs font-mono text-emerald-400 font-bold">Step 04</span>
+                        <h4 class="text-sm font-semibold text-white mt-1 mb-2">Evaluate & Mint</h4>
+                        <p class="text-xs text-slate-300">Examine durable gain, transfer performance, and resource efficiency. Issue SYNTHCRED for qualifying learners.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 4: INTEROPERABILITY STANDARDS MAPPING -->
+        <div id="tab-standards" class="tab-content hidden mt-8 space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Interoperability Standards Mapping</h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    SLVF builds upon established educational and credentialing standards, separating telemetry, competency evidence, effectiveness analysis, and verified attainment.
+                </p>
+            </div>
+
+            <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden shadow-xl">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 bg-slate-950/80 text-xs font-mono text-slate-400 uppercase">
+                                <th class="p-4 sm:p-5">Architectural Layer</th>
+                                <th class="p-4 sm:p-5">Standard / Protocol</th>
+                                <th class="p-4 sm:p-5">Sovraegis Application</th>
+                                <th class="p-4 sm:p-5">Compliance Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 text-sm">
+                            <tr class="hover:bg-slate-850/50 transition">
+                                <td class="p-4 sm:p-5 font-semibold text-white">1. Experience Telemetry</td>
+                                <td class="p-4 sm:p-5"><span class="px-2 py-1 rounded bg-cyan-950 text-cyan-400 mono text-xs">ISO/IEC/IEEE 39274-1 / xAPI & Caliper</span></td>
+                                <td class="p-4 sm:p-5 text-slate-300 text-xs">Exchanging learning experience records with Learning Record Stores. Recording intervention exposure.</td>
+                                <td class="p-4 sm:p-5"><span class="inline-flex items-center text-xs text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Supported</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-850/50 transition">
+                                <td class="p-4 sm:p-5 font-semibold text-white">2. Competency Evidence</td>
+                                <td class="p-4 sm:p-5"><span class="px-2 py-1 rounded bg-gold-950 text-gold-400 mono text-xs">1EdTech CASE & QTI</span></td>
+                                <td class="p-4 sm:p-5 text-slate-300 text-xs">Mapping competencies to institutional standards and structuring assessment items and results.</td>
+                                <td class="p-4 sm:p-5"><span class="inline-flex items-center text-xs text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Integrated</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-850/50 transition">
+                                <td class="p-4 sm:p-5 font-semibold text-white">3. Learning Effectiveness Analysis</td>
+                                <td class="p-4 sm:p-5"><span class="px-2 py-1 rounded bg-purple-950 text-purple-400 mono text-xs">SLVP (Sovraeg Protocol)</span></td>
+                                <td class="p-4 sm:p-5 text-slate-300 text-xs">Exchanging intervention profiles, comparative evaluations, and Learning Vector Contribution Records (LVCR).</td>
+                                <td class="p-4 sm:p-5"><span class="inline-flex items-center text-xs text-cyan-400"><span class="w-1.5 h-1.5 rounded-full bg-cyan-400 mr-1.5"></span>Proprietary / Open</span></td>
+                            </tr>
+                            <tr class="hover:bg-slate-850/50 transition">
+                                <td class="p-4 sm:p-5 font-semibold text-white">4. Verified Attainment</td>
+                                <td class="p-4 sm:p-5"><span class="px-2 py-1 rounded bg-emerald-950 text-emerald-400 mono text-xs">W3C Verifiable Credentials v2.0 & CLR 2.0</span></td>
+                                <td class="p-4 sm:p-5 text-slate-300 text-xs">Communicating validated outcomes, SYNTHCREDS, and comprehensive learner records securely and portably.</td>
+                                <td class="p-4 sm:p-5"><span class="inline-flex items-center text-xs text-emerald-400"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5"></span>Native Recommendation</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TAB 5: INTERACTIVE SIMULATOR & MATRIX VIEWER -->
+        <div id="tab-simulator" class="tab-content hidden mt-8 space-y-8 animate-fadeIn">
+            
+            <div class="max-w-3xl">
+                <h2 class="text-2xl sm:text-3xl font-bold text-white mb-3">Interactive Learning Velocity & Contributor Simulator</h2>
+                <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+                    Experiment with the mathematical models of Learning Velocity ($LV_D$), Vector Effectiveness ($LVE$), and Contributor Reward Allocation ($SLCR$) in real time.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Controls Column -->
+                <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl space-y-6">
+                    <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+                        <i data-lucide="sliders" class="w-5 h-5 text-cyan-400"></i>
+                        <span>Simulation Parameters</span>
+                    </h3>
+
+                    <div>
+                        <label class="block text-xs font-mono text-slate-300 mb-2">Initial Competency ($M_0$): <span id="val-m0" class="text-cyan-400 font-bold">20</span></label>
+                        <input type="range" id="range-m0" min="0" max="60" value="20" class="w-full accent-cyan-400 bg-slate-950" oninput="runSimulation()">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-slate-300 mb-2">Delayed Assessment Mastery ($M_D$): <span id="val-md" class="text-gold-400 font-bold">80</span></label>
+                        <input type="range" id="range-md" min="40" max="100" value="80" class="w-full accent-gold-400 bg-slate-950" oninput="runSimulation()">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-slate-300 mb-2">Active Learning Effort in Hours ($H$): <span id="val-h" class="text-emerald-400 font-bold">8</span></label>
+                        <input type="range" id="range-h" min="2" max="24" value="8" class="w-full accent-emerald-400 bg-slate-950" oninput="runSimulation()">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-mono text-slate-300 mb-2">Contributor Reward Pool ($P_{\text{impact}}$): $<span id="val-pool" class="text-purple-400 font-bold">10,000</span></label>
+                        <input type="range" id="range-pool" min="2000" max="50000" step="1000" value="10000" class="w-full accent-purple-400 bg-slate-950" oninput="runSimulation()">
+                    </div>
+
+                    <div class="pt-4 border-t border-slate-800">
+                        <button onclick="resetSimulation()" class="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono font-semibold transition border border-slate-700">
+                            Reset Default Parameters
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results & Visualizer Column -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Metrics Card -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-mono text-slate-400">Durable Learning Velocity ($LV_D$)</span>
+                                <div id="res-lvd" class="text-3xl font-extrabold text-cyan-400 mono mt-2">7.50</div>
+                                <p class="text-[11px] text-slate-400 mt-1">Proficiency points gained per active learning hour.</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+                                <span>Formula: $(M_D - M_0) / H$</span>
+                                <span class="text-cyan-400 font-semibold">Verified Gain</span>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-900 rounded-3xl p-6 border border-slate-800 shadow-xl flex flex-col justify-between">
+                            <div>
+                                <span class="text-xs font-mono text-slate-400">Estimated Vector Synergy ($S_{AB}$)</span>
+                                <div id="res-synergy" class="text-3xl font-extrabold text-gold-400 mono mt-2">+12.4</div>
+                                <p class="text-[11px] text-slate-400 mt-1">Synergistic boost from combined interventions.</p>
+                            </div>
+                            <div class="mt-4 pt-3 border-t border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+                                <span>Interaction Effect</span>
+                                <span class="text-gold-400 font-semibold">Positive Coupling</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contributor Reward Breakdown -->
+                    <div class="bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-800 shadow-xl">
+                        <h3 class="text-base font-bold text-white mb-4 flex items-center justify-between">
+                            <span>SLCR Contributor Reward Allocation ($R_i$)</span>
+                            <span class="text-xs font-mono text-purple-400 bg-purple-950 px-2.5 py-1 rounded border border-purple-800">Dynamic Distribution</span>
+                        </h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-300">SYNCZ Content Designer (30%)</span>
+                                    <span id="alloc-1" class="text-cyan-400 font-bold">$3,000</span>
+                                </div>
+                                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden">
+                                    <div id="bar-1" class="bg-cyan-400 h-2.5 rounded-full transition-all duration-300" style="width: 30%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-300">SYNCZINE Architect (25%)</span>
+                                    <span id="alloc-2" class="text-gold-400 font-bold">$2,500</span>
+                                </div>
+                                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden">
+                                    <div id="bar-2" class="bg-gold-400 h-2.5 rounded-full transition-all duration-300" style="width: 25%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-300">SOVRAEGE Coach / Mentor (30%)</span>
+                                    <span id="alloc-3" class="text-emerald-400 font-bold">$3,000</span>
+                                </div>
+                                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden">
+                                    <div id="bar-3" class="bg-emerald-400 h-2.5 rounded-full transition-all duration-300" style="width: 30%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-mono mb-1">
+                                    <span class="text-slate-300">SOVRAEGENT AI Operator (15%)</span>
+                                    <span id="alloc-4" class="text-purple-400 font-bold">$1,500</span>
+                                </div>
+                                <div class="w-full bg-slate-950 rounded-full h-2.5 overflow-hidden">
+                                    <div id="bar-4" class="bg-purple-400 h-2.5 rounded-full transition-all duration-300" style="width: 15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Export Modal -->
+    <div id="exportModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/80 backdrop-blur-sm p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-fadeIn">
+            <button onclick="closeModal('exportModal')" class="absolute top-6 right-6 text-slate-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center space-x-3 mb-4">
+                <div class="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400">
+                    <i data-lucide="file-code" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-white">SLVF v0.1 Specification Manifest</h3>
+                    <p class="text-xs text-slate-400 mono">JSON Operational Metadata Export</p>
+                </div>
+            </div>
+            <pre class="bg-slate-950 p-4 rounded-xl text-xs text-cyan-300 mono overflow-x-auto max-h-64 border border-slate-800 mb-6">{
+  "framework": "Sovraegis Learning Velocity Framework",
+  "version": "0.1",
+  "macro_tier": "Sovraegis",
+  "instructional_tier": "CODE+V",
+  "core_metric": "Durable Learning Velocity (LV_D)",
+  "subsystems": ["SLVF", "SLVM", "SLVS", "SLVP", "SLVE", "SLVO", "SLVR", "SMIA"],
+  "compliance": ["xAPI", "CASE", "QTI", "W3C VC v2.0"]
+}</pre>
+            <div class="flex justify-end space-x-3">
+                <button onclick="closeModal('exportModal')" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold transition">Close</button>
+                <button onclick="alert('Specification manifest downloaded successfully.'); closeModal('exportModal');" class="px-4 py-2 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 text-xs font-semibold transition">Download JSON</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-cyan-500', 'text-slate-950', 'shadow-lg', 'shadow-cyan-500/20');
+                el.classList.add('bg-slate-900', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800', 'border', 'border-slate-800');
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.remove('bg-slate-900', 'text-slate-400', 'hover:text-slate-200', 'hover:bg-slate-800', 'border', 'border-slate-800');
+            activeBtn.classList.add('bg-cyan-500', 'text-slate-950', 'shadow-lg', 'shadow-cyan-500/20');
+            
+            // Refresh icons if needed
+            lucide.createIcons();
+        }
+
+        // Modal Logic
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.getElementById(modalId).classList.add('flex');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('flex');
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Simulation / Calculator Logic
+        function runSimulation() {
+            const m0 = parseFloat(document.getElementById('range-m0').value);
+            const md = parseFloat(document.getElementById('range-md').value);
+            const h = parseFloat(document.getElementById('range-h').value);
+            const pool = parseFloat(document.getElementById('range-pool').value);
+
+            document.getElementById('val-m0').innerText = m0;
+            document.getElementById('val-md').innerText = md;
+            document.getElementById('val-h').innerText = h;
+            document.getElementById('val-pool').innerText = pool.toLocaleString();
+
+            // Calculate LV_D = (M_D - M_0) / H
+            const lvd = (md - m0) / h;
+            document.getElementById('res-lvd').innerText = lvd.toFixed(2);
+
+            // Synergy calculation simulation
+            const synergy = ((md - m0) * 0.155).toFixed(1);
+            document.getElementById('res-synergy').innerText = (synergy > 0 ? '+' : '') + synergy;
+
+            // Contributor allocations (weights: 30%, 25%, 30%, 15%)
+            const a1 = pool * 0.30;
+            const a2 = pool * 0.25;
+            const a3 = pool * 0.30;
+            const a4 = pool * 0.15;
+
+            document.getElementById('alloc-1').innerText = '$' + Math.round(a1).toLocaleString();
+            document.getElementById('alloc-2').innerText = '$' + Math.round(a2).toLocaleString();
+            document.getElementById('alloc-3').innerText = '$' + Math.round(a3).toLocaleString();
+            document.getElementById('alloc-4').innerText = '$' + Math.round(a4).toLocaleString();
+
+            document.getElementById('bar-1').style.width = '30%';
+            document.getElementById('bar-2').style.width = '25%';
+            document.getElementById('bar-3').style.width = '30%';
+            document.getElementById('bar-4').style.width = '15%';
+        }
+
+        function resetSimulation() {
+            document.getElementById('range-m0').value = 20;
+            document.getElementById('range-md').value = 80;
+            document.getElementById('range-h').value = 8;
+            document.getElementById('range-pool').value = 10000;
+            runSimulation();
+        }
+
+        // Initial run
+        runSimulation();
+    </script>
+</body>
+</html>
