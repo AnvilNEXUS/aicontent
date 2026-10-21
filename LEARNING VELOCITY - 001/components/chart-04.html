@@ -1,0 +1,29 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hypothetical contributor reward allocation</title><style>body{font:16px/1.6 system-ui,sans-serif;background:#111;color:#ededed;max-width:1000px;margin:40px auto;padding:0 24px}a{color:#77d9ca}h1,h2,h3{line-height:1.25}h2{margin-top:2em}table{border-collapse:collapse;width:100%}td,th{padding:10px;border-bottom:1px solid #555;text-align:left}svg{max-width:100%;height:auto}img{max-width:100%}button,select{font:inherit;padding:8px;background:#252525;color:#eee;border:1px solid #666;border-radius:6px}input[type=range]{width:100%;accent-color:#59bfb1}label{display:block;margin:18px 0}.panel{border:1px solid #444;padding:24px;border-radius:12px;margin:24px 0}small,.note{color:#bdbdbd}.value{font-size:28px;font-weight:600}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}progress{width:100%;accent-color:#59bfb1}pre{white-space:pre-wrap}blockquote{border-left:3px solid #59bfb1;padding-left:18px}</style><body><h1>Hypothetical contributor reward allocation</h1><p>An illustrative allocation across four reward pools, not an automatically prescribed split.</p><svg class="recharts-surface" cx="50%" cy="50%" height="348" role="application" style="background:#111;color:#ededed;--color-text:#ededed;--color-text-secondary:#bbb;--color-border-subtle:#444;--color-text-prose:#ededed;overflow:visible;font-family:system-ui,sans-serif" tabindex="0" viewBox="0 0 579 348" width="579" xmlns="http://www.w3.org/2000/svg"><title></title><desc></desc><defs><clipPath id="recharts4-clip"><rect height="268" width="569" x="5" y="5"></rect></clipPath></defs><g class="recharts-layer recharts-pie" tabindex="0"><g class="recharts-layer"><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path class="recharts-sector" cx="289.5" cy="139" d="M 289.5,34.480000000000004
+    A 104.52,104.52,0,
+    0,1,
+    389.23719913652127,170.25574360660616
+  L 340.64728160847244,155.02858646492624
+            A 53.6,53.6,0,
+            0,0,
+            289.5,85.4 Z" data-recharts-item-data-key="amount" data-recharts-item-index="0" fill="#1f4e94" name="Creation royalties" stroke="var(--color-surface)" stroke-width="2" tabindex="-1"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path class="recharts-sector" cx="289.5" cy="139" d="M 388.9606470934789,171.12491369243583
+    A 104.52,104.52,0,
+    0,1,
+    205.8075571084384,201.60994651684905
+  L 246.58079851714788,171.1076648804354
+            A 53.6,53.6,0,
+            0,0,
+            340.5054600479379,155.47431471406964 Z" data-recharts-item-data-key="amount" data-recharts-item-index="1" fill="#3a843f" name="Service payments" stroke="var(--color-surface)" stroke-width="2" tabindex="-1"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path class="recharts-sector" cx="289.5" cy="139" d="M 205.26437593938516,200.87721744809443
+    A 104.52,104.52,0,
+    0,1,
+    226.89005348315095,55.30755710843839
+  L 257.39233511956456,96.08079851714788
+            A 53.6,53.6,0,
+            0,0,
+            246.30224407147955,170.73190638363818 Z" data-recharts-item-data-key="amount" data-recharts-item-index="2" fill="#ac4f23" name="Impact incentives" stroke="var(--color-surface)" stroke-width="2" tabindex="-1"></path></g><g class="recharts-layer recharts-pie-sector" tabindex="-1"><path class="recharts-sector" cx="289.5" cy="139" d="M 227.62278255190557,54.76437593938512
+    A 104.52,104.52,0,
+    0,1,
+    288.58790250971,34.48397980133282
+  L 289.03225769728715,85.40204092376041
+            A 53.6,53.6,0,
+            0,0,
+            257.76809361636185,95.80224407147955 Z" data-recharts-item-data-key="amount" data-recharts-item-index="3" fill="#d9a337" name="Stewardship" stroke="var(--color-surface)" stroke-width="2" tabindex="-1"></path></g></g></g></svg><div class="panel"><label>Inspect data point <select id="point"><option value="0">Creation royalties</option><option value="1">Service payments</option><option value="2">Impact incentives</option><option value="3">Stewardship</option></select></label><div id="readout"></div></div><details><summary>All chart data</summary><ul><li>Creation royalties: $3K</li><li>Service payments: $3.5K</li><li>Impact incentives: $2.5K</li><li>Stewardship: $1K</li></ul></details><script>const data={"USD": [3000, 3500, 2500, 1000]};function update(){let i=+document.getElementById('point').value;document.getElementById('readout').innerHTML=Object.entries(data).map(([name,v])=>`<p>${name}: <strong>${v[i].toLocaleString('en-US')}</strong></p>`).join('')}document.getElementById('point').onchange=update;update();</script></body></html>

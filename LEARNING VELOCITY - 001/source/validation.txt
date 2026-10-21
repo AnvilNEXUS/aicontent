@@ -1,0 +1,5 @@
+PASS: 887 source paragraphs/headings/captions checked for unchanged wording.
+PASS: 41 TeX expressions preserved.
+PASS: four complete prompt callouts, four matching TOC links, local embeds exist, header filename under 40 characters.
+PASS: no unresolved content markers or truncation placeholders.
+Browser checks: mastery starts B / 86.8 / Developing / 3 of 4; threshold 75 changes to 4 of 4; allocation starts $694/$531/$449/$327, slider and Reset work; SOVRAEGENT profile matches all six source values; chart inspector displays A=65/B=80 at 30-day delay.

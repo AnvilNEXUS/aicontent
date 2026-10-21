@@ -1,0 +1,5 @@
+PASS: seven embedded PNGs decode and validate.
+PASS: four prompt callouts and seven matching index targets.
+PASS: no local or remote image dependencies in the Markdown body.
+PASS: eight self-contained component HTML sources included.
+The remote media reference links remain references, not archived thumbnails.

@@ -1,0 +1,69 @@
+[
+  {
+    "name": "chart-01",
+    "title": "Immediate performance versus durable learning",
+    "caption": "Illustrative proficiency scores on a common assessment scale. Baseline is 20 for both methods.",
+    "points": [
+      "Baseline: Method A 20, Method B 20",
+      "Immediate: Method A 90, Method B 85",
+      "30-day delay: Method A 65, Method B 80",
+      "Transfer: Method A 50, Method B 75"
+    ],
+    "response": 1
+  },
+  {
+    "name": "chart-02",
+    "title": "Learning trajectory by intervention configuration",
+    "caption": "Illustrative proficiency scores, measured on common 0–100 competency scales. The later observations include delayed assessments.",
+    "points": [
+      "Day 0: Conventional pathway 20, Optimized SYNCZINE 20",
+      "Day 3: Conventional pathway 39, Optimized SYNCZINE 44",
+      "Day 7: Conventional pathway 65, Optimized SYNCZINE 72",
+      "Day 14: Conventional pathway 83, Optimized SYNCZINE 87",
+      "Day 30: Conventional pathway 68, Optimized SYNCZINE 85",
+      "Day 60: Conventional pathway 59, Optimized SYNCZINE 80"
+    ],
+    "response": 2
+  },
+  {
+    "name": "chart-03",
+    "title": "Illustrative incremental effects of learning interventions",
+    "caption": "Hypothetical causal estimates of 30-day durable proficiency gain compared with a defined alternative. Common scale and reference learner population.",
+    "points": [
+      "Human feedback: Incremental proficiency points 14",
+      "Adaptive practice: Incremental proficiency points 11",
+      "Spaced retrieval: Incremental proficiency points 9",
+      "AI tutoring: Incremental proficiency points 7",
+      "Interactive video: Incremental proficiency points 4",
+      "Static reference: Incremental proficiency points 2"
+    ],
+    "response": 2
+  },
+  {
+    "name": "chart-04",
+    "title": "Hypothetical contributor reward allocation",
+    "caption": "An illustrative allocation across four reward pools, not an automatically prescribed split.",
+    "points": [
+      "Creation royalties: $3K",
+      "Service payments: $3.5K",
+      "Impact incentives: $2.5K",
+      "Stewardship: $1K"
+    ],
+    "response": 2
+  },
+  {
+    "name": "chart-05",
+    "title": "Illustrative learning trajectories",
+    "caption": "Hypothetical proficiency profiles under two learning arrangements. The mastery threshold of 80 is illustrative, not a universal standard.",
+    "points": [
+      "0: Fixed-schedule pathway 20, Mastery-adaptive pathway 20",
+      "1: Fixed-schedule pathway 36, Mastery-adaptive pathway 37",
+      "2: Fixed-schedule pathway 48, Mastery-adaptive pathway 57",
+      "3: Fixed-schedule pathway 59, Mastery-adaptive pathway 74",
+      "4: Fixed-schedule pathway 65, Mastery-adaptive pathway 84",
+      "5: Fixed-schedule pathway 68, Mastery-adaptive pathway 89",
+      "6: Fixed-schedule pathway 69, Mastery-adaptive pathway 91"
+    ],
+    "response": 3
+  }
+]
