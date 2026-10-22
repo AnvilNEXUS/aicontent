@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovraegis Learning Velocity Framework (SLVF) — Subsystem Stack & Contributor Economy</title>
+  <style>
+    /* ==========================================================================
+       THEME TOKENS: ALCHEMICAL OBSIDIAN & TECHNICAL NEON PALETTE
+       ========================================================================== */
+    :root {
+      --bg-base: #060911;
+      --bg-surface: #0c1220;
+      --bg-card: #121a2d;
+      --bg-card-hover: #18233c;
+      --bg-accent: #1e2942;
+      --border-subtle: #1e293b;
+      --border-active: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      /* Alchemical-Technical Accents */
+      --cyan-bright: #06b6d4;
+      --cyan-glow: rgba(6, 182, 212, 0.18);
+      --emerald-verify: #10b981;
+      --emerald-glow: rgba(16, 185, 129, 0.18);
+      --amber-crucible: #f59e0b;
+      --amber-glow: rgba(245, 158, 11, 0.18);
+      --violet-alchemy: #8b5cf6;
+      --violet-glow: rgba(139, 92, 246, 0.2);
+      --gold-mint: #eab308;
+      --rose-drag: #f43f5e;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+      --shadow-glow: 0 0 25px rgba(6, 182, 212, 0.15);
+      --transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Reset & Base Setup */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.55;
+      font-size: 14.5px;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* Layout Skeleton */
+    .app-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 24px 24px 80px 24px;
+    }
+
+    /* Typography Utilities */
+    h1, h2, h3, h4 { font-weight: 700; color: #fff; letter-spacing: -0.02em; }
+    p { color: var(--text-muted); }
+    code, .mono { font-family: var(--font-mono); }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .badge-cyan { background: var(--cyan-glow); color: var(--cyan-bright); border: 1px solid rgba(6,182,212,0.3); }
+    .badge-emerald { background: var(--emerald-glow); color: var(--emerald-verify); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-amber { background: var(--amber-glow); color: var(--amber-crucible); border: 1px solid rgba(245,158,11,0.3); }
+    .badge-violet { background: var(--violet-glow); color: var(--violet-alchemy); border: 1px solid rgba(139,92,246,0.3); }
+
+    /* Header & Top Bar */
+    .header-panel {
+      background: linear-gradient(135deg, rgba(18,26,45,0.85) 0%, rgba(12,18,32,0.95) 100%);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-md);
+    }
+    .header-panel::before {
+      content: "";
+      position: absolute;
+      top: -40px;
+      right: -40px;
+      width: 280px;
+      height: 280px;
+      background: radial-gradient(circle, var(--cyan-glow) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .header-title {
+      font-size: 26px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #ffffff 0%, #cbd5e1 50%, var(--cyan-bright) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-subtitle {
+      font-size: 14.5px;
+      max-width: 950px;
+      line-height: 1.5;
+    }
+
+    /* System Stats Strip */
+    .stats-ribbon {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      position: relative;
+      transition: var(--transition);
+    }
+    .stat-card:hover {
+      border-color: rgba(6,182,212,0.4);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow);
+    }
+    .stat-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+    .stat-sub {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Navigation Tabs */
+    .tab-bar {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 6px;
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      flex: 1;
+      min-width: 170px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: #fff;
+      background: var(--bg-card);
+    }
+    .tab-btn.active {
+      color: #fff;
+      background: var(--bg-card-hover);
+      border-bottom: 2px solid var(--cyan-bright);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .tab-btn .tab-num {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .tab-btn.active .tab-num {
+      background: var(--cyan-bright);
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* Tab Panes */
+    .tab-pane {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out forwards;
+    }
+    .tab-pane.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ==========================================================================
+       TAB 1: 7-TIER ARCHITECTURAL STACK EXPLORER
+       ========================================================================== */
+    .stack-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 1024px) {
+      .stack-layout { grid-template-columns: 1fr; }
+    }
+    .tier-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .tier-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .tier-item:hover {
+      background: var(--bg-card);
+      border-color: rgba(148, 163, 184, 0.4);
+    }
+    .tier-item.active {
+      background: var(--bg-card-hover);
+      border-color: var(--active-accent, var(--cyan-bright));
+      box-shadow: 0 4px 18px rgba(0,0,0,0.4), inset 3px 0 0 var(--active-accent, var(--cyan-bright));
+    }
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .tier-code {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--active-accent, var(--cyan-bright));
+    }
+    .tier-name {
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .tier-desc-short {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* Stack Detail Card (Right Side) */
+    .stack-detail-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      min-height: 560px;
+      box-shadow: var(--shadow-sm);
+    }
+    .detail-formula-box {
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-left: 3px solid var(--cyan-bright);
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+      margin: 16px 0;
+      font-family: var(--font-mono);
+      color: #38bdf8;
+      font-size: 13.5px;
+      overflow-x: auto;
+    }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .detail-subcard {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 16px;
+    }
+    .detail-subcard h4 {
+      font-size: 13px;
+      color: #e2e8f0;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Interactive Parameter Sandbox inside Tab 1 */
+    .sandbox-box {
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .sandbox-sliders {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .slider-group label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .slider-group input[type="range"] {
+      width: 100%;
+      height: 5px;
+      border-radius: 5px;
+      background: #2a354d;
+      accent-color: var(--cyan-bright);
+      cursor: pointer;
+    }
+    .velocity-output-display {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(6,182,212,0.08);
+      border: 1px dashed rgba(6,182,212,0.3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* ==========================================================================
+       TAB 2: CAUSAL ATTRIBUTION & TELEMETRY PIPELINE
+       ========================================================================== */
+    .pipeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .pipeline-diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .pipeline-svg-wrapper {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .causal-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .causal-grid { grid-template-columns: 1fr; }
+    }
+    .causal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 12.5px;
+    }
+    .matrix-table th, .matrix-table td {
+      border: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      text-align: center;
+    }
+    .matrix-table th { background: var(--bg-card); color: var(--text-muted); font-weight: 600; }
+    .matrix-table td:first-child { text-align: left; font-weight: 600; color: #fff; }
+    .synergy-pos { color: var(--emerald-verify); font-weight: 700; }
+    .synergy-neg { color: var(--rose-drag); font-weight: 700; }
+
+    /* ==========================================================================
+       TAB 3: LIVE CONTRIBUTOR REWARD SIMULATOR (SLVR/SLCR)
+       ========================================================================== */
+    .simulator-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 1080px) {
+      .simulator-layout { grid-template-columns: 1fr; }
+    }
+
+    .sim-controls-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .sim-group {
+      margin-bottom: 22px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .sim-group-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sim-results-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* Payout Cards Grid */
+    .payout-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .payout-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .payout-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--role-color, var(--cyan-bright));
+    }
+    .payout-card-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .payout-amount {
+      font-size: 26px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+      margin: 8px 0;
+    }
+    .payout-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 8px;
+      margin-top: 6px;
+    }
+    .payout-breakdown span { display: flex; justify-content: space-between; }
+
+    /* Visual Charts Section */
+    .charts-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    @media (max-width: 900px) {
+      .charts-row { grid-template-columns: 1fr; }
+    }
+    .chart-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    /* ==========================================================================
+       TAB 4: ROLE MATRIX & GOVERNANCE PRINCIPLES
+       ========================================================================== */
+    .roles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+    .role-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+    .role-card:hover {
+      border-color: rgba(6,182,212,0.4);
+      transform: translateY(-2px);
+    }
+    .role-header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .role-card h3 { font-size: 16px; margin-bottom: 6px; }
+    .role-card p { font-size: 12.5px; line-height: 1.5; margin-bottom: 14px; }
+    .role-specs {
+      background: rgba(0,0,0,0.3);
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 11.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .governance-rules-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 24px;
+    }
+    .rules-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+    .rule-item {
+      background: var(--bg-card);
+      border-left: 3px solid var(--emerald-verify);
+      padding: 14px;
+      border-radius: var(--radius-sm);
+    }
+    .rule-item h5 { font-size: 13.5px; color: #fff; margin-bottom: 4px; }
+    .rule-item p { font-size: 12px; color: var(--text-muted); }
+
+    /* Footer Colophon */
+    .footer-colophon {
+      margin-top: 50px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Custom Tooltip */
+    .tooltip-icon {
+      cursor: help;
+      opacity: 0.6;
+      font-size: 12px;
+    }
+    .tooltip-icon:hover { opacity: 1; color: var(--cyan-bright); }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Executive Header -->
+    <header class="header-panel">
+      <div class="header-meta">
+        <span class="badge badge-cyan">Architecture Specification</span>
+        <span class="badge badge-violet">SLVF v0.2.6</span>
+        <span class="badge badge-emerald">W3C VC 2.0 & ZKP Layer</span>
+        <span class="badge badge-amber">Education 6.0 Operating Model</span>
+      </div>
+      <h1 class="header-title">The SLVF Subsystem Stack Connects Causal Vector Attribution to Contributor Rewards</h1>
+      <p class="header-subtitle">
+        A unified socio-technical operating architecture orchestrating the transition from raw cognitive telemetry to verified sovereign credentials (<span class="mono" style="color:var(--emerald-verify)">SYNCTESS / SYNTHCRED</span>) and fair contributor value attribution (<span class="mono" style="color:var(--gold-mint)">SLVR / SLCR</span>).
+      </p>
+    </header>
+
+    <!-- Top Statistical Ribbon -->
+    <div class="stats-ribbon">
+      <div class="stat-card">
+        <div class="stat-label">Subsystem Tiers</div>
+        <div class="stat-value" style="color: var(--cyan-bright);">7 Layers</div>
+        <div class="stat-sub">SLVF Governance down to SLVR</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Attribution Standard</div>
+        <div class="stat-value" style="color: var(--emerald-verify);">do-Calculus</div>
+        <div class="stat-sub">Causal lift vs counterfactual</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Privacy Guarantee</div>
+        <div class="stat-value" style="color: var(--violet-alchemy);">ZKP Prism</div>
+        <div class="stat-sub">Zero telemetry leaks outside Temenos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Active Simulation Pool</div>
+        <div class="stat-value" id="top-pool-display" style="color: var(--gold-mint);">$10,000</div>
+        <div class="stat-sub">Balanced 4-part contribution formula</div>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-stack">
+        <span class="tab-num">1</span> 7-Tier Subsystem Stack
+      </button>
+      <button class="tab-btn" data-tab="tab-pipeline">
+        <span class="tab-num">2</span> Causal Attribution & Pipeline
+      </button>
+      <button class="tab-btn" data-tab="tab-simulator">
+        <span class="tab-num">3</span> Contributor Reward Simulator
+      </button>
+      <button class="tab-btn" data-tab="tab-roles">
+        <span class="tab-num">4</span> Role Matrix & Governance
+      </button>
+    </nav>
+
+    <!-- =========================================================================
+         TAB 1: 7-TIER ARCHITECTURAL STACK EXPLORER
+         ========================================================================= -->
+    <section id="tab-stack" class="tab-pane active">
+      <div class="stack-layout">
+
+        <!-- Tier List Selection -->
+        <div class="tier-list" id="tier-list-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+
+        <!-- Tier Detail Inspector -->
+        <div class="stack-detail-panel" id="stack-detail-container">
+          <!-- Populated dynamically based on selected tier -->
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 2: CAUSAL ATTRIBUTION & TELEMETRY PIPELINE
+         ========================================================================= -->
+    <section id="tab-pipeline" class="tab-pane">
+      <div class="pipeline-container">
+
+        <!-- Telemetry Ascent SVG Diagram -->
+        <div class="pipeline-diagram-card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <div>
+              <h3>Alchemical Data Ascent & Cryptographic Privacy Prism</h3>
+              <p style="font-size: 13px;">From Local-First Raw Cognition in the Temenos to Guild-Assayed SynthCred Verifiable Credentials</p>
+            </div>
+            <span class="badge badge-emerald">ZKP Refractor Protocol</span>
+          </div>
+
+          <div class="pipeline-svg-wrapper">
+            <svg viewBox="0 0 1000 320" style="width: 100%; min-width: 850px; height: 320px; font-family: var(--font-sans);">
+              <defs>
+                <linearGradient id="flowGrad1" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#06b6d4"/>
+                  <stop offset="100%" stop-color="#8b5cf6"/>
+                </linearGradient>
+                <linearGradient id="flowGrad2" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#8b5cf6"/>
+                  <stop offset="100%" stop-color="#10b981"/>
+                </linearGradient>
+                <linearGradient id="flowGrad3" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stop-color="#10b981"/>
+                  <stop offset="100%" stop-color="#eab308"/>
+                </linearGradient>
+                <filter id="glowFilter">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feMerge>
+                    <feMergeNode in="blur"/>
+                    <feMergeNode in="SourceGraphic"/>
+                  </feMerge>
+                </filter>
+              </defs>
+
+              <!-- Node 1: Temenos -->
+              <g transform="translate(40, 40)">
+                <rect width="200" height="230" rx="12" fill="#0f172a" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4 2"/>
+                <rect width="180" height="28" x="10" y="10" rx="6" fill="rgba(6,182,212,0.15)"/>
+                <text x="100" y="28" fill="#38bdf8" font-size="12" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">1. TEMENOS (Vault)</text>
+                
+                <text x="20" y="65" fill="#e2e8f0" font-size="13" font-weight="600">Local Sanctuary</text>
+                <text x="20" y="85" fill="#94a3b8" font-size="11.5">• Ingestion of raw ore</text>
+                <text x="20" y="105" fill="#94a3b8" font-size="11.5">• Zero surveillance</text>
+                <text x="20" y="125" fill="#94a3b8" font-size="11.5">• Strict user encryption</text>
+
+                <rect width="160" height="42" x="20" y="150" rx="8" fill="#1e293b" stroke="#334155"/>
+                <text x="100" y="168" fill="#38bdf8" font-size="11" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">INPUT ARTIFACT</text>
+                <text x="100" y="184" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">Atomic mTess</text>
+              </g>
+
+              <!-- Connection 1 -> 2 -->
+              <path d="M 240 155 L 290 155" stroke="url(#flowGrad1)" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+              <text x="265" y="145" fill="#94a3b8" font-size="10" text-anchor="middle">Curate/Org</text>
+
+              <!-- Node 2: Athanor -->
+              <g transform="translate(290, 40)">
+                <rect width="200" height="230" rx="12" fill="#0f172a" stroke="#8b5cf6" stroke-width="2"/>
+                <rect width="180" height="28" x="10" y="10" rx="6" fill="rgba(139,92,246,0.15)"/>
+                <text x="100" y="28" fill="#c084fc" font-size="12" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">2. ATHANOR (Forge)</text>
+                
+                <text x="20" y="65" fill="#e2e8f0" font-size="13" font-weight="600">Pedagogical Furnace</text>
+                <text x="20" y="85" fill="#94a3b8" font-size="11.5">• Distill & Express phases</text>
+                <text x="20" y="105" fill="#94a3b8" font-size="11.5">• Productive friction</text>
+                <text x="20" y="125" fill="#94a3b8" font-size="11.5">• Sovraege / AI Catalyst</text>
+
+                <rect width="160" height="42" x="20" y="150" rx="8" fill="#1e293b" stroke="#334155"/>
+                <text x="100" y="168" fill="#c084fc" font-size="11" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">COMPILED UNIT</text>
+                <text x="100" y="184" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">Refined Tessera</text>
+              </g>
+
+              <!-- Connection 2 -> 3 -->
+              <path d="M 490 155 L 540 155" stroke="url(#flowGrad2)" stroke-width="3" fill="none"/>
+              <text x="515" y="145" fill="#94a3b8" font-size="10" text-anchor="middle">Refine</text>
+
+              <!-- Node 3: Refractor (Prism) -->
+              <g transform="translate(540, 40)">
+                <rect width="200" height="230" rx="12" fill="#0f172a" stroke="#10b981" stroke-width="2.5" filter="url(#glowFilter)"/>
+                <rect width="180" height="28" x="10" y="10" rx="6" fill="rgba(16,185,129,0.15)"/>
+                <text x="100" y="28" fill="#34d399" font-size="12" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">3. REFRACTOR (Prism)</text>
+                
+                <text x="20" y="65" fill="#e2e8f0" font-size="13" font-weight="600">ZKP Disclosure Layer</text>
+                <text x="20" y="85" fill="#94a3b8" font-size="11.5">• Zero-Knowledge Proofs</text>
+                <text x="20" y="105" fill="#94a3b8" font-size="11.5">• Hides private notes</text>
+                <text x="20" y="125" fill="#94a3b8" font-size="11.5">• Mathematical certainty</text>
+
+                <rect width="160" height="42" x="20" y="150" rx="8" fill="#1e293b" stroke="#334155"/>
+                <text x="100" y="168" fill="#34d399" font-size="11" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">CRYPTOGRAPHIC PROOF</text>
+                <text x="100" y="184" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">SYNCTESS Evidence</text>
+              </g>
+
+              <!-- Connection 3 -> 4 -->
+              <path d="M 740 155 L 790 155" stroke="url(#flowGrad3)" stroke-width="3" fill="none"/>
+              <text x="765" y="145" fill="#94a3b8" font-size="10" text-anchor="middle">Assay Seal</text>
+
+              <!-- Node 4: Guild Hallmark -->
+              <g transform="translate(790, 40)">
+                <rect width="180" height="230" rx="12" fill="#0f172a" stroke="#eab308" stroke-width="2"/>
+                <rect width="160" height="28" x="10" y="10" rx="6" fill="rgba(234,179,8,0.15)"/>
+                <text x="90" y="28" fill="#fde047" font-size="12" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">4. GUILD ASSAY</text>
+                
+                <text x="16" y="65" fill="#e2e8f0" font-size="13" font-weight="600">Verification & Mint</text>
+                <text x="16" y="85" fill="#94a3b8" font-size="11.5">• Touchstone test</text>
+                <text x="16" y="105" fill="#94a3b8" font-size="11.5">• Cryptographic stamp</text>
+                <text x="16" y="125" fill="#94a3b8" font-size="11.5">• Portable sovereign VC</text>
+
+                <rect width="144" height="42" x="18" y="150" rx="8" fill="#1e293b" stroke="#334155"/>
+                <text x="90" y="168" fill="#fde047" font-size="11" font-weight="700" text-anchor="middle" font-family="var(--font-mono)">MINTED CREDENTIAL</text>
+                <text x="90" y="184" fill="#f8fafc" font-size="12" font-weight="600" text-anchor="middle">SYNTHCRED (VC)</text>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <!-- Causal Lift vs Speed & Synergy Matrix -->
+        <div class="causal-grid">
+          
+          <!-- Causal Lift Box -->
+          <div class="causal-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <h4>Causal Vector Lift ($LVE_i$) vs. Raw Consumption Speed</h4>
+              <span class="badge badge-cyan">Pearl do-Calculus</span>
+            </div>
+            <p style="font-size: 13px; margin-bottom: 14px;">
+              Traditional LMS measures <strong>Speed</strong> ($\Delta \text{Content} / \Delta t$). SLVF calculates <strong>Causal Lift</strong>: the net increase in durable, transferable capability under intervention $do(V_i=1)$ versus the counterfactual reference $do(V_i=0)$.
+            </p>
+            <div class="detail-formula-box" style="margin: 0 0 14px 0; font-size: 12px;">
+              LVE_i = [ E[G | do(V_i=1)] - E[G | do(V_i=0)] ] / H*
+            </div>
+            <div style="background: var(--bg-card); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); font-size: 12px;">
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span>Observed Correlation (Level 1):</span>
+                <span style="color:var(--text-muted);">High risk of confounding (learner prior ability)</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span>Comparative Matched (Level 2):</span>
+                <span style="color:var(--cyan-bright);">Controlled covariate baseline calibration</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span>Causal Counterfactual (Level 3):</span>
+                <span style="color:var(--emerald-verify); font-weight:700;">Quasi-experimental diff-in-diff uplift</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Synergy Matrix Box -->
+          <div class="causal-box">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 12px;">
+              <h4>Pairwise Learning Vector Synergy ($S_{AB}$)</h4>
+              <span class="badge badge-violet">Interactive Topology</span>
+            </div>
+            <p style="font-size: 13px; margin-bottom: 8px;">
+              Quantifies whether paired interventions produce super-additive, independent, or antagonistic cognitive interference.
+            </p>
+            <div class="detail-formula-box" style="margin: 0 0 10px 0; font-size: 11.5px;">
+              S_AB = G_AB - G_A - G_B + G_0
+            </div>
+
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Vector</th>
+                  <th>SYNCZ (Lab)</th>
+                  <th>Sovraege (Mentor)</th>
+                  <th>Sovraegent (AI)</th>
+                  <th>Spaced Retrieval</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>SYNCZ Lab</td>
+                  <td style="color:var(--text-dim);">-</td>
+                  <td class="synergy-pos">+5.2 (Synergy)</td>
+                  <td class="synergy-pos">+2.1 (Additive)</td>
+                  <td class="synergy-pos">+4.4 (Super-add)</td>
+                </tr>
+                <tr>
+                  <td>Sovraege Mentor</td>
+                  <td class="synergy-pos">+5.2</td>
+                  <td style="color:var(--text-dim);">-</td>
+                  <td class="synergy-pos">+3.0 (Assisted)</td>
+                  <td class="synergy-pos">+1.2</td>
+                </tr>
+                <tr>
+                  <td>Sovraegent AI</td>
+                  <td class="synergy-pos">+2.1</td>
+                  <td class="synergy-pos">+3.0</td>
+                  <td style="color:var(--text-dim);">-</td>
+                  <td class="synergy-neg">-1.4 (Interference)</td>
+                </tr>
+                <tr>
+                  <td>Spaced Retrieval</td>
+                  <td class="synergy-pos">+4.4</td>
+                  <td class="synergy-pos">+1.2</td>
+                  <td class="synergy-neg">-1.4</td>
+                  <td style="color:var(--text-dim);">-</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 3: LIVE CONTRIBUTOR REWARD SIMULATOR (SLVR/SLCR)
+         ========================================================================= -->
+    <section id="tab-simulator" class="tab-pane">
+      <div class="simulator-layout">
+
+        <!-- Controls Sidebar -->
+        <div class="sim-controls-panel">
+          <h3 style="font-size: 18px; margin-bottom: 16px; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+            Reward Parameters
+          </h3>
+
+          <!-- Global Pool Configuration -->
+          <div class="sim-group">
+            <div class="sim-group-title">
+              <span>Total Available Pool</span>
+              <span id="pool-val-label" class="mono" style="color: var(--gold-mint); font-size: 15px;">$10,000</span>
+            </div>
+            <input type="range" id="input-total-pool" min="2000" max="50000" step="1000" value="10000" style="width:100%;">
+          </div>
+
+          <!-- Pool Allocation Breakdown -->
+          <div class="sim-group">
+            <div class="sim-group-title">
+              <span>Pool Splits</span>
+              <span class="mono" style="font-size:11px; color:var(--text-dim);">Must Sum to 100%</span>
+            </div>
+            
+            <div class="slider-group" style="margin-bottom: 10px;">
+              <label><span>Base Royalties (B%)</span> <span id="lbl-split-b" class="mono">30%</span></label>
+              <input type="range" id="split-b" min="10" max="50" step="5" value="30">
+            </div>
+
+            <div class="slider-group" style="margin-bottom: 10px;">
+              <label><span>Service Compensation (S%)</span> <span id="lbl-split-s" class="mono">35%</span></label>
+              <input type="range" id="split-s" min="10" max="50" step="5" value="35">
+            </div>
+
+            <div class="slider-group" style="margin-bottom: 10px;">
+              <label><span>Validated Impact (I%)</span> <span id="lbl-split-i" class="mono">25%</span></label>
+              <input type="range" id="split-i" min="10" max="50" step="5" value="25">
+            </div>
+
+            <div class="slider-group">
+              <label><span>Stewardship / Commons (W%)</span> <span id="lbl-split-w" class="mono">10%</span></label>
+              <input type="range" id="split-w" min="5" max="30" step="5" value="10">
+            </div>
+          </div>
+
+          <!-- Role Presets -->
+          <div style="margin-top: 20px;">
+            <div style="font-size: 11px; font-weight:700; color:var(--text-dim); text-transform:uppercase; margin-bottom:8px;">Load Operational Scenarios</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <button id="btn-preset-balanced" style="padding:8px 12px; background:var(--bg-card); border:1px solid var(--border-subtle); color:#fff; border-radius:6px; cursor:pointer; text-align:left; font-size:12px;">
+                ⚖️ <strong>Baseline Balanced:</strong> Equal ecosystem maturity
+              </button>
+              <button id="btn-preset-ai-boost" style="padding:8px 12px; background:var(--bg-card); border:1px solid var(--border-subtle); color:#fff; border-radius:6px; cursor:pointer; text-align:left; font-size:12px;">
+                🤖 <strong>Autonomous Agent Scale:</strong> High AI lift, human mentor focus
+              </button>
+              <button id="btn-preset-rigorous" style="padding:8px 12px; background:var(--bg-card); border:1px solid var(--border-subtle); color:#fff; border-radius:6px; cursor:pointer; text-align:left; font-size:12px;">
+                🛡️ <strong>Rigorous Crucible:</strong> High human stewardship & calibration
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Simulator Results & Live Visualizations -->
+        <div class="sim-results-panel">
+
+          <!-- Formula Callout -->
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px 20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <span style="font-size:11px; font-weight:700; color:var(--text-dim); text-transform:uppercase;">SLVR Formula Implemented:</span>
+              <div class="mono" style="font-size:13.5px; color:#fff; margin-top:2px;">
+                R_i = B_i + S_i + [ P_impact · (a_i · q_i) / Σ(a_j · q_j) ] + W_i
+              </div>
+            </div>
+            <span class="badge badge-amber" id="badge-total-pool-allocated">100% Pool Allocated</span>
+          </div>
+
+          <!-- Payout Cards Grid (4 Contributor Roles) -->
+          <div class="payout-cards-grid" id="payout-cards-container">
+            <!-- Rendered dynamically -->
+          </div>
+
+          <!-- Charts Row: Stacked Payout Distribution & Radar Profile -->
+          <div class="charts-row">
+            
+            <!-- Stacked Bar Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div>
+                  <h4 style="font-size:14px;">Total Payout Composition by Contributor</h4>
+                  <p style="font-size:11px;">Breakdown across Base (B), Service (S), Impact (I), Stewardship (W)</p>
+                </div>
+              </div>
+              <div id="stacked-bar-chart-container" style="height: 240px; width:100%;">
+                <!-- SVG Chart rendered by JS -->
+              </div>
+            </div>
+
+            <!-- Radar Dimension Chart -->
+            <div class="chart-card">
+              <div class="chart-header">
+                <div>
+                  <h4 style="font-size:14px;">Vector Efficacy Radar Profile</h4>
+                  <p style="font-size:11px;">Comparing 6 Capability Dimensions</p>
+                </div>
+                <select id="radar-role-select" style="background:var(--bg-card); color:#fff; border:1px solid var(--border-subtle); font-size:11.5px; padding:4px 8px; border-radius:4px;">
+                  <option value="0">SYNCZ Component Designer</option>
+                  <option value="1">SYNCZINE Pathway Architect</option>
+                  <option value="2" selected>Sovraege Mentor (Human)</option>
+                  <option value="3">Sovraegent (AI Agent)</option>
+                </select>
+              </div>
+              <div id="radar-chart-container" style="height: 240px; display:flex; justify-content:center; align-items:center;">
+                <!-- SVG Radar rendered by JS -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Individual Contributor Sliders & Attribution Factors -->
+          <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 20px;">
+            <h4 style="font-size:15px; margin-bottom: 14px;">Contributor Vector Efficacy & Attribution Tuning</h4>
+            <div id="contributor-sliders-container" style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;">
+              <!-- Generated dynamically -->
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         TAB 4: ROLE MATRIX & GOVERNANCE PRINCIPLES
+         ========================================================================= -->
+    <section id="tab-roles" class="tab-pane">
+      
+      <!-- 4 Roles Matrix Cards -->
+      <div class="roles-grid">
+        
+        <!-- Role 1 -->
+        <div class="role-card" style="border-top: 3px solid var(--cyan-bright);">
+          <div>
+            <div class="role-header-icon" style="background: rgba(6,182,212,0.15); color: var(--cyan-bright);">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            </div>
+            <h3>SYNCZ Component Designer</h3>
+            <p>Authors atomic, interactive learning objects (interactive sandboxes, simulations, micro-crucibles, code playgrounds).</p>
+          </div>
+          <div class="role-specs">
+            <div><span style="color:var(--text-dim);">Primary Metric:</span> <span style="color:#fff;">Durable Gain Delta ($\Delta \mathcal{M}^*$)</span></div>
+            <div><span style="color:var(--text-dim);">Reward Channel:</span> Base Royalties ($B_i$) + Validated Lift ($I_i$)</div>
+            <div><span style="color:var(--text-dim);">Evidence Proof:</span> Atomic mTess interaction telemetry</div>
+          </div>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="role-card" style="border-top: 3px solid var(--violet-alchemy);">
+          <div>
+            <div class="role-header-icon" style="background: rgba(139,92,246,0.15); color: var(--violet-alchemy);">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            </div>
+            <h3>SYNCZINE Pathway Orchestrator</h3>
+            <p>Architects curriculum graphs, sequence dependencies, remediation loops, and cross-vector synergies ($S_{AB}$).</p>
+          </div>
+          <div class="role-specs">
+            <div><span style="color:var(--text-dim);">Primary Metric:</span> <span style="color:#fff;">Pathway Synergy ($S_{AB}$) & Retention ($\mathcal{R}$)</span></div>
+            <div><span style="color:var(--text-dim);">Reward Channel:</span> Graph Curation Pool ($B_i$) + Synergy Bonus ($I_i$)</div>
+            <div><span style="color:var(--text-dim);">Evidence Proof:</span> DAG completion & retention resilience</div>
+          </div>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="role-card" style="border-top: 3px solid var(--amber-crucible);">
+          <div>
+            <div class="role-header-icon" style="background: rgba(245,158,11,0.15); color: var(--amber-crucible);">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </div>
+            <h3>Sovraege Mentor & Scribe</h3>
+            <p>Delivers high-stakes Socratic coaching, human meso-crucible reviews, and calibration against metacognitive drift.</p>
+          </div>
+          <div class="role-specs">
+            <div><span style="color:var(--text-dim);">Primary Metric:</span> <span style="color:#fff;">Far-Transfer ($\mathcal{T}$) & Autonomy Growth</span></div>
+            <div><span style="color:var(--text-dim);">Reward Channel:</span> Direct Service Fee ($S_i$) + Stewardship ($W_i$)</div>
+            <div><span style="color:var(--text-dim);">Evidence Proof:</span> Cryptographic co-signature on Tessera</div>
+          </div>
+        </div>
+
+        <!-- Role 4 -->
+        <div class="role-card" style="border-top: 3px solid var(--emerald-verify);">
+          <div>
+            <div class="role-header-icon" style="background: rgba(16,185,129,0.15); color: var(--emerald-verify);">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <h3>Sovraegent Autonomous AI</h3>
+            <p>Adaptive Socratic agent offering dynamic remediation, cognitive load optimization, and real-time friction reduction.</p>
+          </div>
+          <div class="role-specs">
+            <div><span style="color:var(--text-dim);">Primary Metric:</span> <span style="color:#fff;">Assisted vs Unassisted Independence Gap</span></div>
+            <div><span style="color:var(--text-dim);">Reward Channel:</span> Compute Infrastructure Fee + Uplift Dividend</div>
+            <div><span style="color:var(--text-dim);">Evidence Proof:</span> Verified prompt-response telemetry hashes</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Governance and Anti-Gaming Guardrails -->
+      <div class="governance-rules-card">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h3>SLVF Sovereign Governance & Anti-Gaming Protocols</h3>
+            <p style="font-size:13px;">Mathematical and legal constraints preventing systemic metric exploitation</p>
+          </div>
+          <span class="badge badge-emerald">Audited Consensus</span>
+        </div>
+
+        <div class="rules-list">
+          
+          <div class="rule-item">
+            <h5>1. Elimination of Seat-Time & Throughput</h5>
+            <p>Linear speed ($\Delta \text{Modules}/\Delta t$) is disqualified from impact rewards. Payouts require independently assayed retention ($\mathcal{R}(t)$) at 30-day delays.</p>
+          </div>
+
+          <div class="rule-item">
+            <h5>2. Anti-AI Dependence Penalty</h5>
+            <p>If a learner demonstrates high performance under AI scaffolding but fails the unassisted Meso-Crucible ($M_D^{\text{unassisted}} < 0.65$), the Sovraegent impact pool receives a zero-multiplier.</p>
+          </div>
+
+          <div class="rule-item">
+            <h5>3. Privacy-Integrity Paradox Solution</h5>
+            <p>Temenos raw data is never exposed. Telemetry passes solely through the ZKP Refractor, ensuring Guilds verify mathematical purity without commercial profiling.</p>
+          </div>
+
+          <div class="rule-item">
+            <h5>4. Non-Negotiable Sovereignty Bounds</h5>
+            <p>Interventions that accelerate factual recall while diminishing user self-regulation, privacy, or agency ($\Omega_{\text{intent}} < 0.6$) are algorithmically demoted from reference classes.</p>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Footer Colophon -->
+    <footer class="footer-colophon">
+      <div>
+        <strong>Sovraegis Learning Velocity Framework (SLVF)</strong> — Anvilocity Labs & Sovereign Learning Commons.
+      </div>
+      <div class="mono">
+        Status: Functional Single-File Artifact • CC BY-SA 4.0 Methodological Engine
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =========================================================================
+       APPLICATION JAVASCRIPT LOGIC
+       ========================================================================= -->
+  <script>
+    /* =========================================================================
+       1. DATA STRUCTURES & 7-TIER ARCHITECTURE SPECIFICATION
+       ========================================================================= */
+    const SLVF_STACK_TIERS = [
+      {
+        id: "tier-1",
+        code: "LAYER 1",
+        name: "Macro Governance & Philosophy",
+        subsystem: "SLVF",
+        color: "#06b6d4",
+        desc: "Foundational sovereign learner ethos, Education 6.0 principles, non-negotiable agency constraints, and epistemological ownership.",
+        formula: "Agency Constraint: ∀ intervention I, ∂(Autonomy)/∂t ≥ 0. Velocity ≢ Throughput.",
+        details: {
+          coreMission: "Establishes learner sovereignty as the absolute anchor. Unlike industrial LMS systems that treat humans as throughput units, SLVF enforces that learners own their telemetry, encryption keys, and credentials.",
+          keyArtifacts: "Sovereign Learner Bill of Rights, Purpose Limitation Declarations, Epistemic Autonomy Audits.",
+          protocolHook: "Provides non-negotiable ethical bounding constraints to all downstream mathematical and reward engines."
+        }
+      },
+      {
+        id: "tier-2",
+        code: "LAYER 2",
+        name: "Mathematical Measurement Engine",
+        subsystem: "SLVM",
+        color: "#38bdf8",
+        desc: "Dynamic quantification of multi-dimensional capability trajectories and instant velocity vectors across cognitive states.",
+        formula: "V_L = [ (ΔM* · R(t) · T) / Δt_eff ] · Ω_intent",
+        details: {
+          coreMission: "Formulates learning as movement through an 8-dimensional competency vector space K(t) [Conceptual, Procedural, Reasoning, Transfer, Metacognitive, etc.]. Evaluates durable change rather than scalar speed.",
+          keyArtifacts: "Normalized Mastery Delta (ΔM*), Power-Law Retention Function R(t), Contextual Transfer Multiplier T, Effective Cognitive Hours (Δt_eff).",
+          protocolHook: "Supplies continuous velocity differentials (dK/dt) to the Learning Velocity Observatory."
+        }
+      },
+      {
+        id: "tier-3",
+        code: "LAYER 3",
+        name: "Measurement Standards & Reference Classes",
+        subsystem: "SLVS",
+        color: "#818cf8",
+        desc: "Webb's Depth of Knowledge (DoK 1-4) tier weighting, standardized assessment rubrics, and comparable learning reference classes.",
+        formula: "M = Σ (w_k · S_k) | w_1=0.10, w_2=0.25, w_3=0.35, w_4=0.30",
+        details: {
+          coreMission: "Guarantees fair comparisons by categorizing skills into strictly calibrated reference classes. Prevents comparing an algebra video against hands-on martial arts kata coaching.",
+          keyArtifacts: "DoK Levels 1 to 4 Rubrics, Distance Metrics (d_surface, d_structural), Cognitive Friction Coefficients (φ_friction).",
+          protocolHook: "Sets standardized competency thresholds required by the Alchemical Evidence Protocol."
+        }
+      },
+      {
+        id: "tier-4",
+        code: "LAYER 4",
+        name: "Alchemical Evidence Protocol",
+        subsystem: "SLVP",
+        color: "#8b5cf6",
+        desc: "Cryptographic state transitions bridging private local-first cognition to public W3C Verifiable Credentials via Zero-Knowledge Proofs.",
+        formula: "State Transition: [Raw Ore] ➔ (Curate) ➔ mTess ➔ (Athanor) ➔ Tessera ➔ (Refractor) ➔ SYNCTESS ➔ SYNTHCRED",
+        details: {
+          coreMission: "Solves the Privacy-Integrity Paradox using the Temenos (private vault), Athanor (computational furnace), and Refractor (ZKP prism). Learners prove mastery without exposing private notes.",
+          keyArtifacts: "mTess (Atomic fragment), Tessera (Refined packet), SYNCTESS (ZKP Proof), SYNTHCRED (Guild-hallmarked VC).",
+          protocolHook: "Delivers tamper-proof evidentiary inputs to the Causal Evaluation Methodology."
+        }
+      },
+      {
+        id: "tier-5",
+        code: "LAYER 5",
+        name: "Causal Evaluation Methodology",
+        subsystem: "SLVE",
+        color: "#10b981",
+        desc: "Counterfactual impact evaluation utilizing Pearl's do-calculus, quasi-experimental controls, and pairwise vector synergy matrices.",
+        formula: "LVE_i = [ E[G | do(V_i=1)] - E[G | do(V_i=0)] ] / H*  |  S_AB = G_AB - G_A - G_B + G_0",
+        details: {
+          coreMission: "Isolates the causal contribution of each learning vector from confounding variables (prior knowledge, self-selection bias). Calculates whether paired interventions create positive synergy or negative interference.",
+          keyArtifacts: "Level 1-3 Evidence Ladders, Causal DAGs, Difference-in-Differences estimators, Vector Synergy Matrix.",
+          protocolHook: "Calculates the attribution weights (a_i) and evidence confidence (q_i) for the Reward Engine."
+        }
+      },
+      {
+        id: "tier-6",
+        code: "LAYER 6",
+        name: "Learning Velocity Observatory",
+        subsystem: "SLVO",
+        color: "#f59e0b",
+        desc: "Real-time cybernetic feedback loop displaying telemetry, acceleration, friction alerts, and automated path-optimization recommendations.",
+        formula: "Diagnostics: Learning Friction φ, Recovery Half-Life, Autonomy Growth d(Independence)/dt",
+        details: {
+          coreMission: "Presents 3 specialized lenses: Learner Observatory (agency & gap detection), Design Observatory (authoring telemetry), and Ecosystem Observatory (macro stewardship and accreditation).",
+          keyArtifacts: "Radar Vector Profiles, Velocity Trajectories, Early Friction Detectors, Path Re-routing Engine.",
+          protocolHook: "Feeds verified performance ledgers into the Contributor Reward Engine."
+        }
+      },
+      {
+        id: "tier-7",
+        code: "LAYER 7",
+        name: "Contributor Rewards Model",
+        subsystem: "SLVR / SLCR",
+        color: "#eab308",
+        desc: "Four-channel economic allocation engine compensating creation, services, causal impact, and open-source commons stewardship.",
+        formula: "R_i = B_i + S_i + I_i + W_i  where  I_i = P_impact · [ (a_i · q_i) / Σ (a_j · q_j) ]",
+        details: {
+          coreMission: "Incentivizes durable learning excellence across 4 distinct contributor classes. Combines base creation royalties, direct service fees, validated impact dividends, and commons stewardship.",
+          keyArtifacts: "Learning Vector Contribution Records (LVCR), Learning Contribution Ledger (LCL), Automated Settlement Smart Contracts.",
+          protocolHook: "Closes the cybernetic loop by rewarding creators whose interventions demonstrably enhance human capability."
+        }
+      }
+    ];
+
+    /* =========================================================================
+       2. REWARD SIMULATOR DEFAULT STATE
+       ========================================================================= */
+    const SIMULATOR_STATE = {
+      totalPool: 10000,
+      splits: {
+        b: 30, // Base Royalties %
+        s: 35, // Service Compensation %
+        i: 25, // Validated Impact %
+        w: 10  // Stewardship %
+      },
+      contributors: [
+        {
+          id: "syncz",
+          name: "SYNCZ Designer",
+          role: "Component Designer (Labs)",
+          color: "#06b6d4",
+          baseShare: 40,   // % of base pool
+          serviceShare: 0, // % of service pool
+          attribWeight: 85,// a_i
+          evidenceConf: 0.90, // q_i
+          stewardshipShare: 20, // % of stewardship pool
+          radar: [82, 76, 68, 88, 72, 81] // [Durable, Mastery, Transfer, Efficiency, Autonomy, Quality]
+        },
+        {
+          id: "synczine",
+          name: "SYNCZINE Architect",
+          role: "Curriculum Orchestrator",
+          color: "#8b5cf6",
+          baseShare: 60,
+          serviceShare: 10,
+          attribWeight: 65,
+          evidenceConf: 0.85,
+          stewardshipShare: 35,
+          radar: [86, 84, 75, 82, 80, 88]
+        },
+        {
+          id: "sovraege",
+          name: "Sovraege Mentor",
+          role: "Human Coach & Scribe",
+          color: "#f59e0b",
+          baseShare: 0,
+          serviceShare: 75,
+          attribWeight: 55,
+          evidenceConf: 0.95,
+          stewardshipShare: 35,
+          radar: [78, 92, 85, 74, 96, 86]
+        },
+        {
+          id: "sovraegent",
+          name: "Sovraegent (AI)",
+          role: "Agentic Socratic AI",
+          color: "#10b981",
+          baseShare: 0,
+          serviceShare: 15,
+          attribWeight: 40,
+          evidenceConf: 0.80,
+          stewardshipShare: 10,
+          radar: [72, 79, 64, 94, 70, 77]
+        }
+      ]
+    };
+
+    /* =========================================================================
+       3. DOM INITIALIZATION & TAB SWITCHING
+       ========================================================================= */
+    document.addEventListener("DOMContentLoaded", () => {
+      initTabs();
+      initStackInspector();
+      initSimulator();
+    });
+
+    function initTabs() {
+      const tabs = document.querySelectorAll(".tab-btn");
+      tabs.forEach(btn => {
+        btn.addEventListener("click", () => {
+          tabs.forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(".tab-pane").forEach(p => p.classList.remove("active"));
+          btn.classList.add("active");
+          const targetId = btn.getAttribute("data-tab");
+          document.getElementById(targetId).classList.add("active");
+          if (targetId === "tab-simulator") {
+            renderSimulatorAll();
+          }
+        });
+      });
+    }
+
+    /* =========================================================================
+       4. TAB 1: 7-TIER ARCHITECTURAL STACK INSPECTOR
+       ========================================================================= */
+    let currentSelectedTierIndex = 1; // Default to Layer 2 (SLVM)
+
+    function initStackInspector() {
+      const listContainer = document.getElementById("tier-list-container");
+      listContainer.innerHTML = "";
+
+      SLVF_STACK_TIERS.forEach((tier, index) => {
+        const item = document.createElement("div");
+        item.className = `tier-item ${index === currentSelectedTierIndex ? "active" : ""}`;
+        item.style.setProperty("--active-accent", tier.color);
+        item.innerHTML = `
+          <div class="tier-header">
+            <span class="tier-code" style="color: ${tier.color};">${tier.code} // ${tier.subsystem}</span>
+            <span class="badge" style="background: rgba(255,255,255,0.06); font-size:10px;">${tier.subsystem}</span>
+          </div>
+          <div class="tier-name">${tier.name}</div>
+          <div class="tier-desc-short">${tier.desc.substring(0, 78)}...</div>
+        `;
+        item.addEventListener("click", () => {
+          document.querySelectorAll(".tier-item").forEach(i => i.classList.remove("active"));
+          item.classList.add("active");
+          currentSelectedTierIndex = index;
+          renderTierDetail(index);
+        });
+        listContainer.appendChild(item);
+      });
+
+      renderTierDetail(currentSelectedTierIndex);
+    }
+
+    function renderTierDetail(index) {
+      const tier = SLVF_STACK_TIERS[index];
+      const detailContainer = document.getElementById("stack-detail-container");
+
+      let extraContent = "";
+      // If Tier 2 (SLVM) is selected, show interactive parameter calculator
+      if (tier.subsystem === "SLVM") {
+        extraContent = `
+          <div class="sandbox-box">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4 style="font-size:14px; color:#fff;">Interactive Velocity Formula Calculator</h4>
+              <span class="badge badge-cyan">Real-Time Model</span>
+            </div>
+            <div class="sandbox-sliders">
+              <div class="slider-group">
+                <label><span>Mastery Gain (ΔM*)</span> <span id="val-dm" class="mono">0.75</span></label>
+                <input type="range" id="sl-dm" min="0.1" max="1.0" step="0.05" value="0.75">
+              </div>
+              <div class="slider-group">
+                <label><span>Retention R(t=14d)</span> <span id="val-rt" class="mono">0.92</span></label>
+                <input type="range" id="sl-rt" min="0.2" max="1.0" step="0.02" value="0.92">
+              </div>
+              <div class="slider-group">
+                <label><span>Far Transfer (T)</span> <span id="val-tr" class="mono">1.35</span></label>
+                <input type="range" id="sl-tr" min="0.5" max="2.0" step="0.05" value="1.35">
+              </div>
+              <div class="slider-group">
+                <label><span>Effort Hours (Δt)</span> <span id="val-te" class="mono">3.8</span></label>
+                <input type="range" id="sl-te" min="1.0" max="12.0" step="0.2" value="3.8">
+              </div>
+              <div class="slider-group">
+                <label><span>Intent Match (Ω)</span> <span id="val-om" class="mono">0.95</span></label>
+                <input type="range" id="sl-om" min="0.2" max="1.0" step="0.05" value="0.95">
+              </div>
+            </div>
+            <div class="velocity-output-display">
+              <div>
+                <span style="font-size:11px; text-transform:uppercase; color:var(--text-muted);">Calculated Instantaneous Velocity (V_L):</span>
+                <div id="display-vl-result" style="font-size:22px; font-weight:700; color:var(--cyan-bright); font-family:var(--font-mono);">
+                  0.233 MU/c-hr
+                </div>
+              </div>
+              <span class="badge badge-emerald" id="display-vl-rating">High-Velocity Vector</span>
+            </div>
+          </div>
+        `;
+      }
+
+      detailContainer.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px;">
+          <div>
+            <span class="badge badge-cyan" style="color: ${tier.color}; border-color: ${tier.color}; margin-bottom:6px;">${tier.code} : ${tier.subsystem}</span>
+            <h2 style="font-size: 22px;">${tier.name}</h2>
+          </div>
+          <span style="font-size: 32px; font-weight: 800; color: rgba(255,255,255,0.06); font-family:var(--font-mono);">${tier.code.split(" ")[1]}</span>
+        </div>
+
+        <p style="font-size: 13.5px; line-height: 1.6; color: var(--text-main); margin-bottom: 16px;">
+          ${tier.desc}
+        </p>
+
+        <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-dim); margin-bottom: 4px;">Governing Formal Specification / Equation:</div>
+        <div class="detail-formula-box">
+          ${tier.formula}
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-subcard">
+            <h4><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> Core Mission & Scope</h4>
+            <p style="font-size: 12px; line-height: 1.5; color: var(--text-muted);">${tier.details.coreMission}</p>
+          </div>
+          <div class="detail-subcard">
+            <h4><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Key Systemic Artifacts</h4>
+            <p style="font-size: 12px; line-height: 1.5; color: var(--text-muted);">${tier.details.keyArtifacts}</p>
+          </div>
+          <div class="detail-subcard" style="grid-column: 1 / -1;">
+            <h4><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Ecosystem & Protocol Integration</h4>
+            <p style="font-size: 12px; line-height: 1.5; color: var(--text-muted);">${tier.details.protocolHook}</p>
+          </div>
+        </div>
+
+        ${extraContent}
+      `;
+
+      if (tier.subsystem === "SLVM") {
+        bindVelocitySandbox();
+      }
+    }
+
+    function bindVelocitySandbox() {
+      const slDm = document.getElementById("sl-dm");
+      const slRt = document.getElementById("sl-rt");
+      const slTr = document.getElementById("sl-tr");
+      const slTe = document.getElementById("sl-te");
+      const slOm = document.getElementById("sl-om");
+
+      function updateCalc() {
+        const dm = parseFloat(slDm.value);
+        const rt = parseFloat(slRt.value);
+        const tr = parseFloat(slTr.value);
+        const te = parseFloat(slTe.value);
+        const om = parseFloat(slOm.value);
+
+        document.getElementById("val-dm").innerText = dm.toFixed(2);
+        document.getElementById("val-rt").innerText = rt.toFixed(2);
+        document.getElementById("val-tr").innerText = tr.toFixed(2);
+        document.getElementById("val-te").innerText = te.toFixed(1);
+        document.getElementById("val-om").innerText = om.toFixed(2);
+
+        const vl = ((dm * rt * tr) / te) * om;
+        const resEl = document.getElementById("display-vl-result");
+        const ratingEl = document.getElementById("display-vl-rating");
+
+        resEl.innerText = `${vl.toFixed(3)} MU/c-hr`;
+
+        if (vl > 0.20) {
+          ratingEl.innerText = "High-Velocity Vector";
+          ratingEl.className = "badge badge-emerald";
+        } else if (vl >= 0.10) {
+          ratingEl.innerText = "Nominal Learning Pace";
+          ratingEl.className = "badge badge-cyan";
+        } else {
+          ratingEl.innerText = "Cognitive Friction Stall";
+          ratingEl.className = "badge badge-amber";
+        }
+      }
+
+      [slDm, slRt, slTr, slTe, slOm].forEach(sl => sl.addEventListener("input", updateCalc));
+    }
+
+    /* =========================================================================
+       5. TAB 3: CONTRIBUTOR REWARD SIMULATOR LOGIC & SVG VISUALS
+       ========================================================================= */
+    function initSimulator() {
+      // Bind master pool input
+      const poolInput = document.getElementById("input-total-pool");
+      poolInput.addEventListener("input", (e) => {
+        SIMULATOR_STATE.totalPool = parseInt(e.target.value);
+        document.getElementById("pool-val-label").innerText = `$${SIMULATOR_STATE.totalPool.toLocaleString()}`;
+        document.getElementById("top-pool-display").innerText = `$${SIMULATOR_STATE.totalPool.toLocaleString()}`;
+        renderSimulatorAll();
+      });
+
+      // Bind splits
+      ['b', 's', 'i', 'w'].forEach(k => {
+        const input = document.getElementById(`split-${k}`);
+        input.addEventListener("input", (e) => {
+          SIMULATOR_STATE.splits[k] = parseInt(e.target.value);
+          document.getElementById(`lbl-split-${k}`).innerText = `${SIMULATOR_STATE.splits[k]}%`;
+          normalizeSplits(k);
+          renderSimulatorAll();
+        });
+      });
+
+      // Presets
+      document.getElementById("btn-preset-balanced").addEventListener("click", () => {
+        SIMULATOR_STATE.totalPool = 10000;
+        SIMULATOR_STATE.splits = { b: 30, s: 35, i: 25, w: 10 };
+        SIMULATOR_STATE.contributors[0].attribWeight = 85;
+        SIMULATOR_STATE.contributors[1].attribWeight = 65;
+        SIMULATOR_STATE.contributors[2].attribWeight = 55;
+        SIMULATOR_STATE.contributors[3].attribWeight = 40;
+        syncPresetUI();
+      });
+
+      document.getElementById("btn-preset-ai-boost").addEventListener("click", () => {
+        SIMULATOR_STATE.totalPool = 15000;
+        SIMULATOR_STATE.splits = { b: 25, s: 25, i: 40, w: 10 };
+        SIMULATOR_STATE.contributors[0].attribWeight = 70;
+        SIMULATOR_STATE.contributors[1].attribWeight = 60;
+        SIMULATOR_STATE.contributors[2].attribWeight = 45;
+        SIMULATOR_STATE.contributors[3].attribWeight = 95; // AI surge
+        syncPresetUI();
+      });
+
+      document.getElementById("btn-preset-rigorous").addEventListener("click", () => {
+        SIMULATOR_STATE.totalPool = 12000;
+        SIMULATOR_STATE.splits = { b: 20, s: 40, i: 20, w: 20 };
+        SIMULATOR_STATE.contributors[0].attribWeight = 50;
+        SIMULATOR_STATE.contributors[1].attribWeight = 50;
+        SIMULATOR_STATE.contributors[2].attribWeight = 95; // Mentor surge
+        SIMULATOR_STATE.contributors[3].attribWeight = 30;
+        syncPresetUI();
+      });
+
+      document.getElementById("radar-role-select").addEventListener("change", () => {
+        renderRadarChart();
+      });
+
+      renderSimulatorAll();
+    }
+
+    function syncPresetUI() {
+      document.getElementById("input-total-pool").value = SIMULATOR_STATE.totalPool;
+      document.getElementById("pool-val-label").innerText = `$${SIMULATOR_STATE.totalPool.toLocaleString()}`;
+      document.getElementById("top-pool-display").innerText = `$${SIMULATOR_STATE.totalPool.toLocaleString()}`;
+
+      ['b', 's', 'i', 'w'].forEach(k => {
+        document.getElementById(`split-${k}`).value = SIMULATOR_STATE.splits[k];
+        document.getElementById(`lbl-split-${k}`).innerText = `${SIMULATOR_STATE.splits[k]}%`;
+      });
+
+      renderSimulatorAll();
+    }
+
+    function normalizeSplits(changedKey) {
+      // Visual feedback on sum
+      const sum = SIMULATOR_STATE.splits.b + SIMULATOR_STATE.splits.s + SIMULATOR_STATE.splits.i + SIMULATOR_STATE.splits.w;
+      const badge = document.getElementById("badge-total-pool-allocated");
+      badge.innerText = `Allocated Splits: ${sum}%`;
+      if (sum === 100) {
+        badge.className = "badge badge-emerald";
+      } else {
+        badge.className = "badge badge-amber";
+      }
+    }
+
+    function computePayouts() {
+      const P = SIMULATOR_STATE.totalPool;
+      const P_base = P * (SIMULATOR_STATE.splits.b / 100);
+      const P_serv = P * (SIMULATOR_STATE.splits.s / 100);
+      const P_imp  = P * (SIMULATOR_STATE.splits.i / 100);
+      const P_stew = P * (SIMULATOR_STATE.splits.w / 100);
+
+      // Compute denominator for impact pool: Σ(a_j * q_j)
+      let sumNumerator = 0;
+      SIMULATOR_STATE.contributors.forEach(c => {
+        sumNumerator += (c.attribWeight * c.evidenceConf);
+      });
+
+      return SIMULATOR_STATE.contributors.map(c => {
+        const bi = P_base * (c.baseShare / 100);
+        const si = P_serv * (c.serviceShare / 100);
+        const num = c.attribWeight * c.evidenceConf;
+        const ii = sumNumerator > 0 ? P_imp * (num / sumNumerator) : 0;
+        const wi = P_stew * (c.stewardshipShare / 100);
+        const total = bi + si + ii + wi;
+
+        return {
+          ...c,
+          bi,
+          si,
+          ii,
+          wi,
+          total
+        };
+      });
+    }
+
+    function renderSimulatorAll() {
+      const results = computePayouts();
+      renderPayoutCards(results);
+      renderStackedBarChart(results);
+      renderRadarChart();
+      renderContributorSliders();
+    }
+
+    function renderPayoutCards(results) {
+      const container = document.getElementById("payout-cards-container");
+      container.innerHTML = "";
+
+      results.forEach(res => {
+        const card = document.createElement("div");
+        card.className = "payout-card";
+        card.style.setProperty("--role-color", res.color);
+        card.innerHTML = `
+          <div class="payout-card-title">${res.name}</div>
+          <div style="font-size:11.5px; color:${res.color}; font-weight:600;">${res.role}</div>
+          <div class="payout-amount">$${Math.round(res.total).toLocaleString()}</div>
+          <div class="payout-breakdown">
+            <span><span>Base Royalties (B):</span> <strong class="mono">$${Math.round(res.bi).toLocaleString()}</strong></span>
+            <span><span>Service Fee (S):</span> <strong class="mono">$${Math.round(res.si).toLocaleString()}</strong></span>
+            <span><span>Causal Lift (I):</span> <strong class="mono" style="color:var(--emerald-verify);">$${Math.round(res.ii).toLocaleString()}</strong></span>
+            <span><span>Stewardship (W):</span> <strong class="mono">$${Math.round(res.wi).toLocaleString()}</strong></span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function renderStackedBarChart(results) {
+      const container = document.getElementById("stacked-bar-chart-container");
+      const totalPool = SIMULATOR_STATE.totalPool;
+
+      let svgBars = "";
+      const barHeight = 32;
+      const gap = 24;
+
+      results.forEach((res, i) => {
+        const y = i * (barHeight + gap) + 15;
+        const maxW = 420;
+
+        const wB = (res.bi / totalPool) * maxW;
+        const wS = (res.si / totalPool) * maxW;
+        const wI = (res.ii / totalPool) * maxW;
+        const wW = (res.wi / totalPool) * maxW;
+
+        let curX = 140;
+
+        svgBars += `
+          <text x="130" y="${y + 20}" fill="#cbd5e1" font-size="12" text-anchor="end" font-weight="600">${res.name}</text>
+          <!-- Base -->
+          <rect x="${curX}" y="${y}" width="${wB}" height="${barHeight}" fill="#3b82f6" rx="2"/>
+          <!-- Service -->
+          <rect x="${curX + wB}" y="${y}" width="${wS}" height="${barHeight}" fill="#8b5cf6" rx="2"/>
+          <!-- Impact -->
+          <rect x="${curX + wB + wS}" y="${y}" width="${wI}" height="${barHeight}" fill="#10b981" rx="2"/>
+          <!-- Stewardship -->
+          <rect x="${curX + wB + wS + wI}" y="${y}" width="${wW}" height="${barHeight}" fill="#eab308" rx="2"/>
+          
+          <text x="${curX + wB + wS + wI + wW + 10}" y="${y + 20}" fill="#fff" font-size="12" font-weight="700" font-family="var(--font-mono)">
+            $${Math.round(res.total).toLocaleString()}
+          </text>
+        `;
+      });
+
+      container.innerHTML = `
+        <svg viewBox="0 0 650 240" style="width:100%; height:100%; font-family:var(--font-sans);">
+          <!-- Legend -->
+          <g transform="translate(140, 0)">
+            <rect x="0" y="0" width="10" height="10" fill="#3b82f6" rx="2"/>
+            <text x="14" y="9" fill="#94a3b8" font-size="11">Base (B)</text>
+            <rect x="80" y="0" width="10" height="10" fill="#8b5cf6" rx="2"/>
+            <text x="94" y="9" fill="#94a3b8" font-size="11">Service (S)</text>
+            <rect x="175" y="0" width="10" height="10" fill="#10b981" rx="2"/>
+            <text x="189" y="9" fill="#94a3b8" font-size="11">Causal Impact (I)</text>
+            <rect x="300" y="0" width="10" height="10" fill="#eab308" rx="2"/>
+            <text x="314" y="9" fill="#94a3b8" font-size="11">Stewardship (W)</text>
+          </g>
+          ${svgBars}
+        </svg>
+      `;
+    }
+
+    function renderRadarChart() {
+      const container = document.getElementById("radar-chart-container");
+      const selectedIndex = parseInt(document.getElementById("radar-role-select").value);
+      const contributor = SIMULATOR_STATE.contributors[selectedIndex];
+
+      const dimensions = [
+        "Durable Impact",
+        "Mastery Support",
+        "Transfer Depth",
+        "Cost Efficiency",
+        "Autonomy Growth",
+        "Evidence Quality"
+      ];
+      const scores = contributor.radar;
+
+      const size = 240;
+      const center = size / 2;
+      const radius = 80;
+      const numPoints = dimensions.length;
+
+      // Web rings
+      let rings = "";
+      [0.25, 0.5, 0.75, 1.0].forEach(r => {
+        let pts = [];
+        for (let i = 0; i < numPoints; i++) {
+          const angle = (Math.PI * 2 / numPoints) * i - Math.PI / 2;
+          const x = center + Math.cos(angle) * (radius * r);
+          const y = center + Math.sin(angle) * (radius * r);
+          pts.push(`${x},${y}`);
+        }
+        rings += `<polygon points="${pts.join(" ")}" fill="none" stroke="#25314d" stroke-width="1"/>`;
+      });
+
+      // Axis lines & labels
+      let axes = "";
+      let dataPoints = [];
+      for (let i = 0; i < numPoints; i++) {
+        const angle = (Math.PI * 2 / numPoints) * i - Math.PI / 2;
+        const xEdge = center + Math.cos(angle) * radius;
+        const yEdge = center + Math.sin(angle) * radius;
+        axes += `<line x1="${center}" y1="${center}" x2="${xEdge}" y2="${yEdge}" stroke="#25314d" stroke-width="1"/>`;
+
+        // Label position slightly outside
+        const xLab = center + Math.cos(angle) * (radius + 22);
+        const yLab = center + Math.sin(angle) * (radius + 16);
+        axes += `<text x="${xLab}" y="${yLab}" fill="#94a3b8" font-size="9" text-anchor="middle" font-weight="600">${dimensions[i]}</text>`;
+
+        // Data point
+        const valRatio = scores[i] / 100;
+        const xVal = center + Math.cos(angle) * (radius * valRatio);
+        const yVal = center + Math.sin(angle) * (radius * valRatio);
+        dataPoints.push(`${xVal},${yVal}`);
+      }
+
+      container.innerHTML = `
+        <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+          ${rings}
+          ${axes}
+          <!-- Filled Polygon -->
+          <polygon points="${dataPoints.join(" ")}" fill="${contributor.color}" fill-opacity="0.25" stroke="${contributor.color}" stroke-width="2"/>
+          ${dataPoints.map(pt => {
+            const [px, py] = pt.split(",");
+            return `<circle cx="${px}" cy="${py}" r="3" fill="#fff" stroke="${contributor.color}" stroke-width="1.5"/>`;
+          }).join("")}
+        </svg>
+      `;
+    }
+
+    function renderContributorSliders() {
+      const container = document.getElementById("contributor-sliders-container");
+      container.innerHTML = "";
+
+      SIMULATOR_STATE.contributors.forEach((c, idx) => {
+        const block = document.createElement("div");
+        block.style.cssText = "background:var(--bg-card); border:1px solid var(--border-subtle); padding:14px; border-radius:var(--radius-sm);";
+        block.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <strong style="color:#fff; font-size:13px;">${c.name}</strong>
+            <span class="mono" style="font-size:11px; color:${c.color}; font-weight:700;">Score: ${(c.attribWeight * c.evidenceConf).toFixed(1)}</span>
+          </div>
+
+          <div class="slider-group" style="margin-bottom:8px;">
+            <label><span>Causal Lift Weight (a_i)</span> <span id="lbl-c-w-${idx}" class="mono">${c.attribWeight}</span></label>
+            <input type="range" id="sl-c-w-${idx}" min="10" max="100" value="${c.attribWeight}">
+          </div>
+
+          <div class="slider-group">
+            <label><span>Evidence Confidence (q_i)</span> <span id="lbl-c-q-${idx}" class="mono">${c.evidenceConf.toFixed(2)}</span></label>
+            <input type="range" id="sl-c-q-${idx}" min="0.4" max="1.0" step="0.05" value="${c.evidenceConf}">
+          </div>
+        `;
+
+        container.appendChild(block);
+
+        // Bind events
+        block.querySelector(`#sl-c-w-${idx}`).addEventListener("input", (e) => {
+          c.attribWeight = parseInt(e.target.value);
+          block.querySelector(`#lbl-c-w-${idx}`).innerText = c.attribWeight;
+          renderSimulatorAll();
+        });
+
+        block.querySelector(`#sl-c-q-${idx}`).addEventListener("input", (e) => {
+          c.evidenceConf = parseFloat(e.target.value);
+          block.querySelector(`#lbl-c-q-${idx}`).innerText = c.evidenceConf.toFixed(2);
+          renderSimulatorAll();
+        });
+      });
+    }
+  </script>
+</body>
+</html>
