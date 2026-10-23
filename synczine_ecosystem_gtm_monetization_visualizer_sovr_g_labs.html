@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNCZINE Ecosystem & GTM Monetization Visualizer — SOVRÆG LABS</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            sovraeg: {
+              bg: '#0B0F19',
+              card: '#111827',
+              border: '#1E293B',
+              amber: '#F59E0B',
+              emerald: '#10B981',
+              cyan: '#06B6D4',
+              violet: '#8B5CF6',
+              rose: '#F43F5E'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #0B0F19;
+      color: #F8FAFC;
+      font-family: 'Inter', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .node-pulse {
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .node-pulse:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.25);
+    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B0F19; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+  </style>
+</head>
+<body class="min-h-screen antialiased selection:bg-violet-500 selection:text-white">
+
+  <!-- Top Navigation Header -->
+  <header class="sticky top-0 z-40 glass-panel border-b border-slate-800 px-4 py-3 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500 via-violet-600 to-emerald-500 flex items-center justify-center shadow-lg shadow-violet-500/20 font-extrabold text-white text-lg">
+          SÆ
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-white">SYNCZINE Business &amp; Platform Architecture</h1>
+            <span class="hidden sm:inline-block px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wider rounded-full bg-violet-500/20 text-violet-300 border border-violet-500/30">SOVRÆG LABS Ecosystem</span>
+          </div>
+          <p class="text-xs text-slate-400">Synthesized from the Business Opportunities Atlas (120 Offers), Vendorzines, Use Cases (150), &amp; Strategic Models A–D</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="flex flex-wrap items-center gap-1.5" aria-label="Main Views">
+        <button id="tab-btn-topology" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-violet-600 text-white shadow-sm" data-target="view-topology">
+          1. Ecosystem Topology
+        </button>
+        <button id="tab-btn-gtm" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" data-target="view-gtm">
+          2. 12 GTM Strategies
+        </button>
+        <button id="tab-btn-ateliers" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" data-target="view-ateliers">
+          3. Atelier &amp; Foundry Matrix
+        </button>
+        <button id="tab-btn-economics" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700" data-target="view-economics">
+          4. Scenarios &amp; Unit Economics
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 space-y-8">
+
+    <!-- ========================================== -->
+    <!-- VIEW 1: ECOSYSTEM TOPOLOGY & ARCHITECTURE  -->
+    <!-- ========================================== -->
+    <section id="view-topology" class="view-section space-y-6">
+      <!-- Intro Banner -->
+      <div class="glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800 bg-gradient-to-r from-slate-900 via-slate-900 to-indigo-950/40">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+          <div class="lg:col-span-2 space-y-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-amber-500/10 text-amber-300 border border-amber-500/20">
+              Dual-Engine Platform Thesis
+            </span>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">How SOVRÆG LABS Bridges Bespoke Ateliers &amp; the Open Learning Commons</h2>
+            <p class="text-sm text-slate-300 leading-relaxed">
+              Across your 7 strategic documents, <strong>SYNCZINE</strong> emerges as a unified, edge-computed, local-first container format (`SQLite/OPFS + Automerge/Yjs CRDT + Wasm + W3C VCs`) that powers <strong>two distinct yet mutually reinforcing platform models</strong>: high-touch client service delivery via <strong>SOVRÆGENCY ATELIERS</strong> and zero-content-cost educational publishing via the <strong>ALCHEMOSAIC OPEN LEARNING COMMONS</strong>. Click any architectural pillar below to inspect its technical stack, value flow, and monetization alignment.
+            </p>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <div class="text-2xl font-extrabold text-amber-400">12</div>
+              <div class="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Core GTM Strategies</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <div class="text-2xl font-extrabold text-emerald-400">6</div>
+              <div class="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Atelier Archetypes</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <div class="text-2xl font-extrabold text-cyan-400">85–92%</div>
+              <div class="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Target Software Margin</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-800/60 border border-slate-700/60">
+              <div class="text-2xl font-extrabold text-violet-400">120+150</div>
+              <div class="text-[11px] text-slate-400 uppercase tracking-wider mt-0.5">Mapped Offers &amp; Cases</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Topology Map + Inspector -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 7 Cols: Interactive Visual Architecture Diagram -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-5 border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-400">Interactive Ecosystem Blueprint (Click Node to Inspect)</h3>
+            <span class="text-xs text-violet-400 font-medium">5 Interconnected Layers</span>
+          </div>
+
+          <!-- Layer 1: SOVRAEG LABS & FOUNDRY MATRIX -->
+          <div id="node-foundry" class="arch-node cursor-pointer node-pulse rounded-xl p-4 border-2 border-violet-500 bg-violet-950/30 transition-all" data-node="foundry">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-xs font-bold uppercase tracking-wider text-violet-300">Layer 1 • Industrial Backbone &amp; Protocol Engine</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-violet-500/30 text-violet-200 font-semibold">SOVRÆG LABS</span>
+            </div>
+            <div class="text-base font-bold text-white">SOVRÆG FOUNDRY MATRIX &amp; SOVRÆLEX RUNTIME</div>
+            <p class="text-xs text-slate-300 mt-1">Supplies reusable SYNCZ modules, vertical blueprints, SQLite/OPFS + CRDT sync engines, W3C DID/BBS+ cryptography, and QA packaging pipelines.</p>
+            <div class="mt-2.5 flex flex-wrap gap-1.5">
+              <span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-300 border border-slate-700">SQLite OPFS / Wasm</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-300 border border-slate-700">Automerge &amp; Yjs CRDTs</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-300 border border-slate-700">LearnCard SDK / BBS+</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-slate-800 text-slate-300 border border-slate-700">BlockSuite / Paged.js</span>
+            </div>
+          </div>
+
+          <!-- Flow Connectors -->
+          <div class="grid grid-cols-2 gap-4 text-center py-1">
+            <div class="flex flex-col items-center">
+              <div class="h-4 w-0.5 bg-amber-500/60"></div>
+              <span class="text-[11px] font-semibold text-amber-400 bg-amber-950/60 px-2.5 py-0.5 rounded-full border border-amber-500/30">Supplies B2B Studio Tooling ▼</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="h-4 w-0.5 bg-emerald-500/60"></div>
+              <span class="text-[11px] font-semibold text-emerald-400 bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-500/30">Powers Open CODE+V Registry ▼</span>
+            </div>
+          </div>
+
+          <!-- Layer 2: Dual Pillar Split (Ateliers vs Alchemosaic Commons) -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Left Pillar: SOVRAEGENCY ATELIERS -->
+            <div id="node-atelier" class="arch-node cursor-pointer node-pulse rounded-xl p-4 border border-amber-500/50 bg-amber-950/15 transition-all" data-node="atelier">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-400">Model Track A • Agency Craft</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">Bespoke + IP</span>
+              </div>
+              <div class="text-sm font-bold text-white">SOVRÆGENCY ATELIERS</div>
+              <p class="text-xs text-slate-300 mt-1">Client-facing micro-studios (1–5 principals) turning domain expertise &amp; complex projects into portable <strong>VENDORZINES</strong> &amp; decision playbooks.</p>
+              <ul class="mt-2.5 space-y-1 text-[11px] text-amber-200/90">
+                <li>• Project Onboarding, Scoping &amp; Handovers</li>
+                <li>• Zero-Knowledge Milestone Escrow Sign-off</li>
+                <li>• White-Label Bureau &amp; Archive Stewardship</li>
+              </ul>
+            </div>
+
+            <!-- Right Pillar: ALCHEMOSAIC COMMONS -->
+            <div id="node-commons" class="arch-node cursor-pointer node-pulse rounded-xl p-4 border border-emerald-500/50 bg-emerald-950/15 transition-all" data-node="commons">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400">Model Track B • Open Registry</span>
+                <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Zero-IP Arbitrage</span>
+              </div>
+              <div class="text-sm font-bold text-white">ALCHEMOSAIC LEARNING COMMONS</div>
+              <p class="text-xs text-slate-300 mt-1">Decentralized topic graph &amp; <strong>CODE+V</strong> pedagogical wrappers deep-linked to public/academic libraries (Libby, OverDrive, OpenURL).</p>
+              <ul class="mt-2.5 space-y-1 text-[11px] text-emerald-200/90">
+                <li>• Zero Copyright Payload (Server Test Safe)</li>
+                <li>• Library "Active Patron" Discovery &amp; ROI</li>
+                <li>• Creator Studio Marketplace &amp; Remixing</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Flow Connectors to Layer 3 -->
+          <div class="grid grid-cols-2 gap-4 text-center py-1">
+            <div class="flex flex-col items-center">
+              <div class="h-4 w-0.5 bg-amber-500/60"></div>
+              <span class="text-[11px] font-semibold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-full border border-slate-700">Deploys Sovereign Assets ▼</span>
+            </div>
+            <div class="flex flex-col items-center">
+              <div class="h-4 w-0.5 bg-emerald-500/60"></div>
+              <span class="text-[11px] font-semibold text-slate-300 bg-slate-800 px-2.5 py-0.5 rounded-full border border-slate-700">Generates Tesserae &amp; Pods ▼</span>
+            </div>
+          </div>
+
+          <!-- Layer 3: SOVRAEZONES & TACTILE/DIGITAL DUAL-STATE -->
+          <div id="node-sovraezones" class="arch-node cursor-pointer node-pulse rounded-xl p-4 border border-cyan-500/50 bg-cyan-950/15 transition-all" data-node="sovraezones">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold uppercase tracking-wider text-cyan-300">Layer 3 • Community &amp; Enterprise Execution Layer</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-cyan-500/20 text-cyan-200 font-semibold">SOVRÆZONES &amp; DUAL-STATE</span>
+            </div>
+            <div class="text-base font-bold text-white">SOVRÆZONE STUDY PODS, EXECUTIVE SALONS &amp; HEPTAHEXUAL ZINES</div>
+            <p class="text-xs text-slate-300 mt-1">Autonomous local-first learning guilds, corporate trade-journal salons, and 7-fold tactile print-on-demand zines bridged by dynamic QR matrices.</p>
+          </div>
+
+          <!-- Layer 4: SYNTHCREDS & TALENT BRIDGE -->
+          <div id="node-synthcreds" class="arch-node cursor-pointer node-pulse rounded-xl p-4 border border-rose-500/50 bg-rose-950/15 transition-all" data-node="synthcreds">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold uppercase tracking-wider text-rose-300">Layer 4 • Verification &amp; Economic Flywheel</span>
+              <span class="px-2 py-0.5 text-[10px] rounded bg-rose-500/20 text-rose-200 font-semibold">SYNTHCREDS &amp; GUILDS</span>
+            </div>
+            <div class="text-base font-bold text-white">PORTABLE CREDENTIALS, EVIDENCE PORTFOLIOS &amp; TALENT FLYWHEEL</div>
+            <p class="text-xs text-slate-300 mt-1">Reviewed <strong>Tesserae</strong> become W3C Verifiable Credentials (BBS+ / zk-SNARKs), powering employer verification APIs and graduating Sovereign Learners into new <strong>Sovraepreneurs &amp; Ateliers</strong>.</p>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Dynamic Node Inspector Panel -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800 flex flex-col justify-between space-y-5">
+          <div id="inspector-content" class="space-y-4">
+            <!-- Dynamically populated by JS -->
+          </div>
+
+          <!-- Symbiotic Flywheel Callout -->
+          <div class="p-4 rounded-xl bg-slate-900/90 border border-slate-700/80 space-y-2">
+            <div class="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-violet-400">
+              <span>↻ The Ecosystem Flywheel</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>1. Commons Pull:</strong> Free library deep-links &amp; CODE+V wrappers attract lifelong learners into <strong>Sovræzones</strong>.<br>
+              <strong>2. Evidence Generation:</strong> Learners produce verified <strong>Tesserae</strong> and earn <strong>SYNTHCREDS</strong>.<br>
+              <strong>3. Talent Graduation:</strong> Proven practitioners launch specialized <strong>SOVRÆGENCY ATELIERS</strong>.<br>
+              <strong>4. Foundry Compounding:</strong> Paid client deliveries extract reusable <strong>SYNCZ</strong> components back into the <strong>Foundry Matrix</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 2: 12 GTM MONETIZATION STRATEGIES     -->
+    <!-- ========================================== -->
+    <section id="view-gtm" class="view-section hidden space-y-6">
+      <!-- Filter & Search Bar -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-white">12 Suitable GTM Monetization Strategies</h2>
+          <p class="text-xs text-slate-400">Synthesizing the 6 Platform Pillars (Models A–D) and the 16 Atelier/Foundry Revenue Mechanisms (Opportunity Atlas &amp; Vendorzines)</p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button class="gtm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-violet-600 text-white" data-filter="all">All 12 Strategies</button>
+          <button class="gtm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-amber-300 hover:bg-slate-700 border border-amber-500/30" data-filter="Atelier">Atelier &amp; Service Led</button>
+          <button class="gtm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-300 hover:bg-slate-700 border border-emerald-500/30" data-filter="Commons">Commons &amp; Platform Led</button>
+          <button class="gtm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-violet-300 hover:bg-slate-700 border border-violet-500/30" data-filter="Foundry">Foundry &amp; Guild B2B</button>
+          <button class="gtm-filter-btn px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-cyan-300 hover:bg-slate-700 border border-cyan-500/30" data-filter="Phase 1">Phase 1 Launch (Days 1–90)</button>
+        </div>
+      </div>
+
+      <!-- Strategy Cards Grid -->
+      <div id="gtm-cards-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Populated via JS -->
+      </div>
+
+      <!-- Master Alignment Matrix Table -->
+      <div class="glass-panel rounded-2xl p-5 border border-slate-800 overflow-x-auto space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300">Master Ecosystem Alignment &amp; Unit Economics Comparison Table</h3>
+          <span class="text-xs text-slate-400">Click any strategy card above for deep-dive implementation specs</span>
+        </div>
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400 uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-3">GTM Strategy</th>
+              <th class="py-3 px-3">Primary Payer</th>
+              <th class="py-3 px-3">Pricing &amp; Unit Metric</th>
+              <th class="py-3 px-3">Gross Margin</th>
+              <th class="py-3 px-3">SOVRÆG LABS / Atelier Role</th>
+              <th class="py-3 px-3">Alchemosaic Commons Alignment</th>
+            </tr>
+          </thead>
+          <tbody id="gtm-comparison-tbody" class="divide-y divide-slate-800/80 text-slate-200">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 3: ATELIER & FOUNDRY MATRIX           -->
+    <!-- ========================================== -->
+    <section id="view-ateliers" class="view-section hidden space-y-6">
+      <div class="glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800">
+        <div class="max-w-3xl space-y-2">
+          <span class="px-2.5 py-1 rounded text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">Micro-Enterprise Architecture (1–5 Collaborators)</span>
+          <h2 class="text-xl font-bold text-white">Six Coherent SOVRÆGENCY ATELIER Configurations &amp; The 8-Layer Foundry Matrix</h2>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            As detailed in the <em>Business Opportunity Atlas</em>, the strongest recommendation is to <strong>build an Atelier around one concrete client outcome, then derive reusable products from paid delivery</strong>. This creates three complementary income streams: <strong>bespoke services, reusable intellectual property, and continuing stewardship</strong>. Select any Atelier configuration below to inspect its value chain and 90-day validation path.
+          </p>
+        </div>
+
+        <!-- 6 Atelier Selector Buttons -->
+        <div id="atelier-selector" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 mt-5">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Selected Atelier Detail + 8-Layer Foundry Matrix -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 6 Cols: Selected Atelier Blueprint -->
+        <div id="atelier-detail-card" class="lg:col-span-6 glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800 space-y-5">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Right 6 Cols: 8-Layer Foundry Matrix & 90-Day Validation -->
+        <div class="lg:col-span-6 space-y-6">
+          <div class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-violet-300">The 8-Layer Practical Foundry Matrix</h3>
+              <span class="text-[11px] text-slate-400">Shared Production Backbone</span>
+            </div>
+            <p class="text-xs text-slate-400">Standardizes what repeats across Ateliers while leaving client judgment, domain authority, and creative direction with the studio.</p>
+            <div class="space-y-2 max-h-80 overflow-y-auto pr-1" id="foundry-layers-list">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+
+          <!-- 90-Day Validation Sequence -->
+          <div class="glass-panel rounded-2xl p-5 border border-slate-800 space-y-3">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-emerald-300">90-Day Validation Sequence &amp; Decision Gates</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="font-bold text-amber-400">Days 1–15: Problem &amp; Buyer</div>
+                <p class="text-slate-300 mt-1">Interview reachable budget holders. Pick a workflow where structured interaction + offline ownership beats a static PDF or folder.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="font-bold text-cyan-400">Days 16–30: Bounded Pilot</div>
+                <p class="text-slate-300 mt-1">Sell 1 pilot using owned/permissioned material. Cap source volume, supported devices, and revision rounds using standard commerce.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="font-bold text-violet-400">Days 31–60: Deliver &amp; Measure</div>
+                <p class="text-slate-300 mt-1">Verify client task completion, export independence, and offline recovery. Track exact hours spent on cleanup, assembly, and support.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+                <div class="font-bold text-emerald-400">Days 61–90: Extract &amp; Repeat</div>
+                <p class="text-slate-300 mt-1">Sell to 2nd/3rd buyer. Extract genuinely repeated SYNCZ modules into the Foundry; attach optional stewardship retainers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- VIEW 4: SCENARIOS & UNIT ECONOMICS         -->
+    <!-- ========================================== -->
+    <section id="view-economics" class="view-section hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left 7 Cols: Strategic Models A-D Comparison Chart -->
+        <div class="lg:col-span-7 glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-base sm:text-lg font-bold text-white">3-Year Platform Revenue Scenarios (Strategic Analyses A–D)</h2>
+              <p class="text-xs text-slate-400">Comparing financial trajectories across the 4 strategic architecture blueprints</p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button class="model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-violet-600 text-white" data-model="all">Compare All 4</button>
+              <button class="model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-model="A">Doc A (Web3/L2)</button>
+              <button class="model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-model="B">Doc B (OpenURL)</button>
+              <button class="model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-model="C">Doc C (Conservative)</button>
+              <button class="model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700" data-model="D">Doc D (BBS+/LTI)</button>
+            </div>
+          </div>
+
+          <!-- Chart Container -->
+          <div class="relative h-72 w-full">
+            <canvas id="scenariosChart"></canvas>
+          </div>
+
+          <!-- Scenario Cards Summary -->
+          <div id="scenario-summary-cards" class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-amber-500/30">
+              <div class="text-[11px] font-bold text-amber-400 uppercase">Doc A • L2 zk-SNARK</div>
+              <div class="text-sm font-bold text-white mt-0.5">$850K → $18.5M</div>
+              <div class="text-[11px] text-slate-400">Break-even Mo 16 • $1.5M Seed</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-cyan-500/30">
+              <div class="text-[11px] font-bold text-cyan-400 uppercase">Doc B • Library OpenURL</div>
+              <div class="text-sm font-bold text-white mt-0.5">$199K → $13.26M</div>
+              <div class="text-[11px] text-slate-400">Break-even Mo 14 • $500K Grant</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-emerald-500/30">
+              <div class="text-[11px] font-bold text-emerald-400 uppercase">Doc C • Conservative</div>
+              <div class="text-sm font-bold text-white mt-0.5">$106K → $5.67M</div>
+              <div class="text-[11px] text-slate-400">Break-even Mo 20 • $1.8M Cap</div>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-900/90 border border-violet-500/30">
+              <div class="text-[11px] font-bold text-violet-400 uppercase">Doc D • BBS+ &amp; Corp L&amp;D</div>
+              <div class="text-sm font-bold text-white mt-0.5">$520K → $15.1M</div>
+              <div class="text-[11px] text-slate-400">Break-even Mo 16 • $1.5M Seed</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Interactive Micro-Enterprise Atelier Calculator -->
+        <div class="lg:col-span-5 glass-panel rounded-2xl p-5 sm:p-6 border border-slate-800 space-y-4">
+          <div>
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold uppercase bg-amber-500/20 text-amber-300">Opportunity Atlas §8 Simulator</span>
+            <h3 class="text-base sm:text-lg font-bold text-white mt-1">Interactive SOVRÆGENCY ATELIER Unit Economics</h3>
+            <p class="text-xs text-slate-400">Simulate monthly studio contribution combining Bespoke Containers, Stewardship Retainers, and Blueprint Licensing.</p>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div>
+              <div class="flex justify-between mb-1">
+                <label for="calc-projects" class="font-medium text-slate-300">Bespoke Client Containers / Month</label>
+                <span id="val-projects" class="font-bold text-amber-400">4 projects</span>
+              </div>
+              <input id="calc-projects" type="range" min="1" max="15" value="4" class="w-full accent-amber-500 cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1">
+                <label for="calc-price" class="font-medium text-slate-300">Average Container Price (USD)</label>
+                <span id="val-price" class="font-bold text-amber-400">$1,200</span>
+              </div>
+              <input id="calc-price" type="range" min="500" max="5000" step="100" value="1200" class="w-full accent-amber-500 cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1">
+                <label for="calc-hours" class="font-medium text-slate-300">Direct Production + Admin Hours / Project</label>
+                <span id="val-hours" class="font-bold text-cyan-400">12 hrs (@ $35/hr)</span>
+              </div>
+              <input id="calc-hours" type="range" min="4" max="30" step="1" value="12" class="w-full accent-cyan-500 cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1">
+                <label for="calc-retainers" class="font-medium text-slate-300">Active Stewardship Retainer Clients ($200/mo)</label>
+                <span id="val-retainers" class="font-bold text-emerald-400">6 clients</span>
+              </div>
+              <input id="calc-retainers" type="range" min="0" max="40" step="1" value="6" class="w-full accent-emerald-500 cursor-pointer">
+            </div>
+
+            <div>
+              <div class="flex justify-between mb-1">
+                <label for="calc-licenses" class="font-medium text-slate-300">Monthly Blueprint / Companion Sales ($75 net)</label>
+                <span id="val-licenses" class="font-bold text-violet-400">10 units</span>
+              </div>
+              <input id="calc-licenses" type="range" min="0" max="100" step="5" value="10" class="w-full accent-violet-500 cursor-pointer">
+            </div>
+          </div>
+
+          <!-- Output Metrics Box -->
+          <div class="p-4 rounded-xl bg-slate-900 border border-slate-700 space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <div class="text-[11px] text-slate-400">Gross Monthly Revenue</div>
+                <div id="out-gross" class="text-lg font-extrabold text-white">$6,750</div>
+              </div>
+              <div>
+                <div class="text-[11px] text-slate-400">Net Contribution (After Direct Labor/Fees)</div>
+                <div id="out-contribution" class="text-lg font-extrabold text-emerald-400">$4,350</div>
+              </div>
+            </div>
+            <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-xs">
+              <span class="text-slate-400">Direct Delivery &amp; Retainer Hours:</span>
+              <span id="out-total-hours" class="font-semibold text-slate-200">60 hrs / mo</span>
+            </div>
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400">Recurring + IP Revenue Share:</span>
+              <span id="out-recurring-share" class="font-semibold text-violet-300">28.9% of Gross</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Strategy Deep-Dive Modal -->
+  <div id="strategy-modal" class="fixed inset-0 z-50 hidden bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="glass-panel rounded-2xl max-w-2xl w-full p-6 border border-slate-700 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <span id="modal-badge" class="px-2.5 py-0.5 rounded text-xs font-semibold bg-violet-500/20 text-violet-300">Strategy</span>
+          <h3 id="modal-title" class="text-xl font-bold text-white mt-1">Strategy Title</h3>
+        </div>
+        <button id="modal-close-btn" class="p-1.5 rounded-lg bg-slate-800 text-slate-400 hover:text-white">✕</button>
+      </div>
+      <p id="modal-desc" class="text-sm text-slate-300 leading-relaxed"></p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <div class="font-bold text-amber-400 uppercase tracking-wider text-[11px]">SOVRÆG LABS &amp; Atelier Alignment</div>
+          <p id="modal-atelier-align" class="text-slate-300 leading-relaxed"></p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-slate-900 border border-slate-800 space-y-1">
+          <div class="font-bold text-emerald-400 uppercase tracking-wider text-[11px]">Alchemosaic Commons Alignment</div>
+          <p id="modal-commons-align" class="text-slate-300 leading-relaxed"></p>
+        </div>
+      </div>
+      <div class="p-3.5 rounded-xl bg-slate-900/70 border border-slate-800 grid grid-cols-3 gap-2 text-xs">
+        <div>
+          <span class="text-slate-400 block text-[10px] uppercase">Who Pays</span>
+          <span id="modal-payer" class="font-semibold text-white"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[10px] uppercase">Pricing Model</span>
+          <span id="modal-pricing" class="font-semibold text-amber-300"></span>
+        </div>
+        <div>
+          <span class="text-slate-400 block text-[10px] uppercase">Margin &amp; LTV/CAC</span>
+          <span id="modal-metrics" class="font-semibold text-emerald-300"></span>
+        </div>
+      </div>
+      <div class="p-3.5 rounded-xl bg-violet-950/20 border border-violet-500/30 text-xs space-y-1">
+        <div class="font-bold text-violet-300 uppercase tracking-wider text-[11px]">Smallest Paid Pilot &amp; Catalogue Anchor</div>
+        <p id="modal-pilot" class="text-slate-300"></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // DATA: ECOSYSTEM TOPOLOGY NODES
+    // ==========================================
+    const topologyNodes = {
+      foundry: {
+        badge: 'Layer 1 • Industrial Backbone',
+        title: 'SOVRÆG LABS & The Foundry Matrix',
+        subtitle: 'Open-Source Bootstrapping + Proprietary Packaging & Verification',
+        description: 'Rather than building cryptography or storage from scratch, SOVRÆG LABS achieves asymmetric leverage by combining battle-tested local-first primitives underneath proprietary Atelier schemas and the SOVRÆLEX reader.',
+        bullets: [
+          'Persistence & Storage: SQLite via browser Origin Private File System (OPFS) + WebAssembly & TinyBase reactive store.',
+          'Conflict-Free Sync: Automerge (Rust/Wasm) for structured contract/milestone state + Yjs for rich-text collaboration.',
+          'Identity & Zero-Knowledge Trust: LearnCard SDK (W3C DIDs/VCs) + Mattr BBS+ selective disclosure or Groth16 zk-SNARKs.',
+          'Workspace & Print Compilation: BlockSuite / React Flow interactive canvas + Paged.js / PrinceXML for Heptahexual print zines.',
+          'Monetization Role: Earns B2B licensing, Shared Foundry cooperative memberships, and per-release packaging/QA fees.'
+        ],
+        metrics: '8 Reusable Asset Layers • Powers both Vendorzines & Alchemosaic Study Wrappers'
+      },
+      atelier: {
+        badge: 'Model Track A • High-Touch Digital Craftsmanship',
+        title: 'SOVRÆGENCY ATELIERS (Bespoke Client & Advisory Studios)',
+        subtitle: '“We turn your knowledge or project into an interactive asset your customer can use, retain, and take elsewhere.”',
+        description: 'A SOVRÆGENCY ATELIER is a client-facing micro-enterprise (1–5 collaborators) that replaces fragmented SaaS links ("rented clouds") with permanent, self-verifying VENDORZINES, operational playbooks, and provenance dossiers.',
+        bullets: [
+          'Phase 1 Concierge Proof: Sell observable client outcomes first (project handovers, client onboarding, bespoke owner manuals).',
+          'Phase 2 Foundry Extraction: Distill repeatable SYNCZ calculators, checklists, and workflows from paid client work into blueprints.',
+          'Phase 3 Lifecycle Stewardship: Earn recurring retainers for content freshness, archive recovery rehearsals, and milestone updates.',
+          'Sovereignty Guarantee: Clients always retain usable offline exports even if they cancel ongoing stewardship.'
+        ],
+        metrics: '$500–$5,000 per container • $75–$400/mo Stewardship • 120 Catalogue Offers'
+      },
+      commons: {
+        badge: 'Model Track B • Zero-Licensing Educational Arbitrage',
+        title: 'ALCHEMOSAIC OPEN LEARNING COMMONS',
+        subtitle: 'Decoupling Pedagogical Scaffolding (CODE+V) from Copyrighted Full-Text Hosting',
+        description: 'Traditional EdTech spends 30–50% of revenue licensing content. The Alchemosaic Commons stores 0% copyrighted full text—hosting only open metadata graphs (BIBFRAME/MARC21/DOI) and CODE+V study wrappers that resolve through authenticated public and university library sessions.',
+        bullets: [
+          '5-Tier Dynamic Deep-Link Engine: Tier 1 Libby Universal Links → Tier 2 OverDrive API → Tier 3 OpenURL (Z39.88) → Tier 4 Unpaywall OA → Tier 5 ISO 18626 ILL.',
+          'Legal Isolation: Complies with US Server Test (Perfect 10 v. Amazon), Warhol Factor 1 non-substitution, and EU CJEU Svensson/GS Media doctrines.',
+          'Public Infrastructure Leverage: Turns hundreds of millions of public library cards into global authentication tokens.',
+          'Creator Studio Pipeline: Independent curators monetize analytical overlays without copyright liability.'
+        ],
+        metrics: '85–92% Gross Margin • $0 Content Acquisition Cost • 35–60% Library Circulation Lift'
+      },
+      sovraezones: {
+        badge: 'Layer 3 • Community & Corporate Execution',
+        title: 'SOVRÆZONES & Dual-State (Digital + Tactile) Experience',
+        subtitle: 'Autonomous Local-First Learning Pods, Executive Salons & Heptahexual Print Zines',
+        description: 'Where learning and collaboration happen. Sovræzones operate as peer-to-peer study guilds or private corporate salons using encrypted WebRTC/NATS CRDT sync, paired with single-sheet 7-fold Heptahexual physical zines.',
+        bullets: [
+          'Sovræzone Community Guilds: Peer-synced study circles ($12–$89/mo) with zero central PII telemetry (GDPR Art. 17 & 25 by design).',
+          'Corporate Executive Salons: Facilitated B2B cohorts synthesizing live trade journals (EBSCO/ProQuest/PressReader) for enterprise L&D.',
+          'Heptahexual Tactile Zines: Vector PDFs folded into physical booklets with dynamic QR triggers linking back to local digital state.'
+        ],
+        metrics: '9.0x–24.3x LTV/CAC on Guild Pods • 48–66% Margin on Print-on-Demand Zines'
+      },
+      synthcreds: {
+        badge: 'Layer 4 • Verification & Ecosystem Flywheel',
+        title: 'SYNTHCREDS, Tesserae & The Talent Graduation Bridge',
+        subtitle: 'From Sovereign Learner → Verified Talent → Sovraepreneur → Sovraegency Atelier',
+        description: 'Completing the CODE+V cycle (Curate, Organize, Distill, Express, Verify, Validate) produces atomic evidence artifacts (Tesserae) anchored into W3C Verifiable Credentials (SYNTHCREDS) via BBS+ selective disclosure or zk-SNARKs.',
+        bullets: [
+          'Cryptographic Proof of Work: Proves competency to employers without exposing library card numbers or private reading logs.',
+          'Separated Integrity: Evidence preparation, independent peer review (Guild assessors), and credential issuance are kept transparent and distinct.',
+          'Ecosystem Self-Replication: Learners who master skills in the Alchemosaic Commons use their Evidence Portfolios to launch new SOVRÆGENCY ATELIERS.'
+        ],
+        metrics: '94–98% Margin on Verification API ($0.15–$5.00/query) • 150 Sovereign Use Cases'
+      }
+    };
+
+    // ==========================================
+    // DATA: 12 GTM MONETIZATION STRATEGIES
+    // ==========================================
+    const gtmStrategies = [
+      {
+        id: 1,
+        name: '1. Bespoke VENDORZINE Client Delivery & Handover Studio',
+        category: 'Atelier',
+        phase: 'Phase 1',
+        payer: 'Agencies, Consultancies, Architects, Law & Advisory Firms',
+        pricing: '$500–$5,000 fixed project fee (Onboarding, Scoping, or Handover)',
+        margin: '~52–65% net contribution after labor',
+        shortDesc: 'Sell concrete, self-contained client engagement containers (onboarding, interactive scoping, milestone sign-offs, and searchable closeout handovers) before selling software.',
+        atelierAlign: 'The #1 recommended entry point in the Business Opportunity Atlas (Offers 25–31) and Vendorzines Phase 1 ("Operational Concierge"). Replaces fragmented SaaS links with a "Digital Briefcase" the client owns offline forever.',
+        commonsAlign: 'Establishes the battle-tested local-first container UX (SQLite/OPFS + Automerge CRDT) in high-value client engagements, funding early Foundry tooling that is shared with Commons creators.',
+        pilot: 'Convert one recently completed agency project into a searchable Project Closeout & Handover VENDORZINE ($1,200 pilot; 12 hrs delivery).'
+      },
+      {
+        id: 2,
+        name: '2. Lifecycle Stewardship, Continuity & Freshness Retainers',
+        category: 'Atelier',
+        phase: 'Phase 1',
+        payer: 'Past Atelier Clients, Property/Asset Owners, SMBs, Publishers',
+        pricing: '$75–$400 / month retainer (or annual audit fee)',
+        margin: '75–85% recurring service margin',
+        shortDesc: 'Earn ethical recurring revenue by keeping delivered containers fresh, running backup/recovery rehearsals, updating dependencies, and maintaining living provenance records.',
+        atelierAlign: 'Embodies the core Sovereignty Principle (Atlas Offers 32, 48, 105–110): clients never pay rent just to open their past files; they pay retainers for ongoing curation, regulatory updates, and recovery drills.',
+        commonsAlign: 'Maintains broken external links, updates citation graphs, and refreshes dynamic library deep-link mappings across long-lived educational and research collections.',
+        pilot: 'Attach an optional $150/month quarterly update & backup rehearsal retainer to every completed VENDORZINE or Operations Playbook.'
+      },
+      {
+        id: 3,
+        name: '3. Wraparound Expert Publishing & Author Companion Studio',
+        category: 'Atelier',
+        phase: 'Phase 1',
+        payer: 'Non-Fiction Authors, Video Creators, Podcasters, Readers',
+        pricing: '$1,500–$5,000 production fee + $25–$150 D2C companion sale / royalty share',
+        margin: '80%+ digital companion margin (50 sales break-even)',
+        shortDesc: 'Transform static books, podcasts, and video courses into interactive SYNCZINE application companions with calculators, chapter exercises, and learner-held records.',
+        atelierAlign: 'Core focus of the Knowledge Publishing Atelier (Atlas Offers 01–08). The Atelier earns a minimum production fee from the rights-holding expert plus a net revenue share on audience sales.',
+        commonsAlign: 'Bridges commercial creator publishing with the Alchemosaic Commons: open-knowledge editions (Offer 08) and author companions populate the CODE+V curriculum ecosystem.',
+        pilot: 'Transform 1 chapter of a rights-holding author’s book or 1 podcast series into an interactive companion workbook with 3 decision tools.'
+      },
+      {
+        id: 4,
+        name: '4. Vertical Blueprint & SYNCZ Component Licensing',
+        category: 'Foundry',
+        phase: 'Phase 1',
+        payer: 'Other SOVRÆGENCY Ateliers, Freelancers, Boutique Agencies',
+        pricing: '$150–$1,000 commercial-use blueprint licence; $25–$150 per SYNCZ module',
+        margin: '90%+ IP licensing margin',
+        shortDesc: 'Extract repeatable templates (e.g., Luxury Travel Kit, Renovation Handover, Pricing Calculator) from paid client work and license them to other practitioners.',
+        atelierAlign: 'Turns service labor into owned intellectual property (Atlas Offers 97–100). Enables a solo practitioner to scale income beyond billable hours by supplying other Ateliers.',
+        commonsAlign: 'Standardizes accessible (WCAG 2.2) interaction components (quizzes, simulations, rubrics) inside the Foundry Matrix so Commons educators can assemble rich SYNCZINES without coding.',
+        pilot: 'After delivering 3 paid handover containers in one vertical, strip client-specific branding and license the clean blueprint to 5 peer agencies.'
+      },
+      {
+        id: 5,
+        name: '5. SOVRÆZONE Guild & Study Salon Subscriptions',
+        category: 'Commons',
+        phase: 'Phase 1',
+        payer: 'Lifelong Learners, Study Pods, Independent Facilitators & Guilds',
+        pricing: '$12–$25/mo Individual; $29–$89/mo Pod/Guild Master tier',
+        margin: '88–92% gross margin • 9.0x to 24.3x LTV/CAC',
+        shortDesc: 'Recurring SaaS/P2P subscriptions for autonomous local study pods and reading salons featuring encrypted multi-peer CRDT canvas sync and cohort facilitation tools.',
+        atelierAlign: 'Learning and Talent Ateliers (Offers 09–16) run facilitated cohorts, coding katas, and occupational language micro-schools inside Sovræzone guild environments.',
+        commonsAlign: 'Pillar 1 of the Alchemosaic Commons financial engine (Docs A–D). Local-first storage keeps central cloud costs under $3.20/pod/mo while building sticky community learning circles.',
+        pilot: 'Launch 15–20 pilot Sovræzone study pods across high-density university and tech hubs (STEM, AI, bio-tech, philosophy) using free library deep-links.'
+      },
+      {
+        id: 6,
+        name: '6. Library & Institutional "Active Patron" SaaS Licensing',
+        category: 'Commons',
+        phase: 'Phase 2',
+        payer: 'Public Library Systems, University Libraries, Regional Consortia',
+        pricing: '$2,500–$18,000 / year per library system ($45K for statewide consortia)',
+        margin: '85–95% gross margin • 26.0x–31.6x LTV/CAC • >94% retention',
+        shortDesc: 'B2G/B2B annual software licensing that overlays existing Libby, OverDrive, and OpenURL catalogs to turn passive periodical borrowing into measurable active learning.',
+        atelierAlign: 'Local Ateliers can partner with municipal libraries, museums, and heritage organizations (Offers 68, 73–76) to curate localized civic and community knowledge editions.',
+        commonsAlign: 'Pillar 2 of the Commons (Docs A–D). Delivers a 35–60% boost in digital collection circulation ROI for pre-funded library databases while preserving 100% patron privacy.',
+        pilot: 'Run a 6-month circulation-lift pilot with 3–5 regional library systems using zero-API-friction Libby Universal Links and OpenURL resolvers.'
+      },
+      {
+        id: 7,
+        name: '7. Creator Studio Curation Marketplace & Remix Royalties',
+        category: 'Commons',
+        phase: 'Phase 2',
+        payer: 'Learners & Professionals buying curated CODE+V study wrappers',
+        pricing: '15–30% platform take-rate (incl. 5% protocol remix royalty on adaptations)',
+        margin: '80–90% net platform margin on take-rate',
+        shortDesc: 'A zero-copyright-liability marketplace where independent scholars and domain experts publish and monetize custom CODE+V analytical wrappers over commercial publications.',
+        atelierAlign: 'Gives solo Sovraepreneurs (Use Cases 101–137) an instant distribution and monetization rail to sell specialized study tracks, interactive diagnostics, and kata workbooks.',
+        commonsAlign: 'Pillar 5 of the Alchemosaic Commons (Docs A–D). Every published wrapper expands the shared open BIBFRAME/DOI topic graph without incurring content licensing costs.',
+        pilot: 'Seed the marketplace with 50 flagship CODE+V wrappers and onboard 100 independent curators with automated 70/30 or 80/20 royalty clearing.'
+      },
+      {
+        id: 8,
+        name: '8. Tactile Heptahexual Print-on-Demand (POD) & Special Editions',
+        category: 'Commons',
+        phase: 'Phase 1',
+        payer: 'Tactile Learners, Conference Organizers, Collectors, Exhibition Sponsors',
+        pricing: '$8.00–$35.00 per single-sheet folded Heptahexual zine pack or special edition',
+        margin: '48–66% gross margin • 14.7x–23.2x LTV/CAC',
+        shortDesc: 'Compile digital SYNCZINES via Paged.js/PrinceXML into geometric 7-fold printable booklets embedded with high-density QR triggers that sync back to local digital state.',
+        atelierAlign: 'Aligns with Craft & Cultural Ateliers (Offer 06 Conference Synthesis, Offer 67 Exhibition Editions, Offer 72 Digital-to-Physical Special Editions) for high-touch physical keepsakes.',
+        commonsAlign: 'Pillar 4 of the Commons (Docs A–D). Combats screen fatigue and acts as a viral physical acquisition channel at conferences and libraries ($6.20–$6.50 CAC).',
+        pilot: 'Distribute 5,000 physical Heptahexual zines at academic/tech conferences and offer one-click D2C print fulfillment inside the SYNCZINE reader.'
+      },
+      {
+        id: 9,
+        name: '9. SYNTHCREDS Verification APIs & Independent Evidence Review Desks',
+        category: 'Commons',
+        phase: 'Phase 2',
+        payer: 'Corporate HR/Recruiters, Verifiers ($0.15–$5.00/call) & Assessment Sponsors',
+        pricing: '$0.15–$5.00 per API verification query (or $500/mo bulk) + human rubric review fees',
+        margin: '94–98% API gross margin (<$0.02 compute cost)',
+        shortDesc: 'Monetize two distinct layers of trust: automated zero-knowledge cryptographic verification of SYNTHCREDS (BBS+ / zk-SNARKs) and human-led Independent Evidence Review Desks.',
+        atelierAlign: 'Directly operationalizes Atlas Offers 17–24 (Evidence Portfolio Atelier, Assessment Rubric Bureau, Independent Review Desk, Work-Sample Hiring) with strict separation of review from payment.',
+        commonsAlign: 'Pillar 3 of the Commons (Docs A–D). Converts informal library reading and CODE+V Tesserae into employer-verifiable credentials without exposing learner PII.',
+        pilot: 'Start with a hands-on Evidence Portfolio & Work-Sample Hiring Atelier (Offer 17 & 22) before scaling automated BBS+ verification APIs to enterprise ATS platforms.'
+      },
+      {
+        id: 10,
+        name: '10. Corporate Intelligence Trade Wrappers & Executive Salons',
+        category: 'Commons',
+        phase: 'Phase 3',
+        payer: 'Enterprise L&D Departments, Consultancies, Trade Associations, VCs/PEs',
+        pricing: '$45–$120/seat/mo (or $120–$350/seat/yr, $6K–$22.5K min ACV) + $5K–$15K Executive Salons',
+        margin: '78–91% gross margin • 15.1x–32.0x LTV/CAC',
+        shortDesc: 'Turn underutilized corporate trade journal subscriptions and regulatory feeds into active CODE+V executive study salons with LTI 1.3 LMS integration and verified upskilling.',
+        atelierAlign: 'Sovereign Operations & Advisory Ateliers (Offers 04, 33–40, Use Cases 51–63) deliver facilitated Executive Salons, private dataset workbooks, and AI workflow playbooks to corporate teams.',
+        commonsAlign: 'Pillar 6 of the Commons (Docs A–D) and the largest Year-3 revenue driver ($2.5M–$6.5M/yr), reducing enterprise L&D instructional overhead by 60–80%.',
+        pilot: 'Sell a $7,500 6-week Facilitated Executive Salon wrapping 5 current industry trade articles/reports for a 25-person engineering or strategy leadership team.'
+      },
+      {
+        id: 11,
+        name: '11. White-Label Production Bureau & Shared Foundry Co-op',
+        category: 'Foundry',
+        phase: 'Phase 2',
+        payer: 'Partner Agencies (Wholesale) & Member Ateliers (Co-op Dues + Metered Usage)',
+        pricing: 'Wholesale per-container fee + Monthly Foundry Membership & per-release QA/sync fees',
+        margin: '65–80% wholesale & managed service margin',
+        shortDesc: 'Operate a behind-the-scenes production bureau that assembles, converts, localizes, and QA-tests containers for multiple agencies, evolving into a Shared Foundry Cooperative.',
+        atelierAlign: 'Core model of the Foundry Services Atelier (Atlas Offers 30, 89–96, 101–104, 114). Monetizes document conversion, WCAG accessibility remediation, multilingual localization, and encrypted sync.',
+        commonsAlign: 'Provides the industrial conversion and localization backbone (Offers 90–92) that migrates legacy LMS courses and regional curricula into the Alchemosaic Open Learning Commons.',
+        pilot: 'Partner with 3 boutique agencies as their white-label VENDORZINE & Document Conversion bureau on a reserved monthly capacity retainer.'
+      },
+      {
+        id: 12,
+        name: '12. Guild Incubation, Operator Quality Marks & Sponsor-Funded Commons',
+        category: 'Foundry',
+        phase: 'Phase 3',
+        payer: 'Aspiring Sovraepreneurs (Tuition), Collective Bid Clients, Foundations & Civic Sponsors',
+        pricing: 'Incubation cohort fees + 10–20% Collective Bid margin + Milestone-based Commons Grants',
+        margin: '70–85% training, coordination & grant production margin',
+        shortDesc: 'Coordinate the wider ecosystem through Atelier Launch Incubators, voluntary Operator Quality Marks, Collective Bid Desks for large contracts, and Sponsor-Funded Public Commons.',
+        atelierAlign: 'Synthesizes Atlas Offers 113–120 (Guild & Cooperative Businesses). Enables small Ateliers to bid on large multi-specialist RFPs together while maintaining transparent quality standards.',
+        commonsAlign: 'Channels foundation grants, municipal resilience budgets, and cultural preservation funds (Offers 73–80, 119) to commission free, openly licensed SYNCZINES in the Alchemosaic Commons.',
+        pilot: 'Run a cohort-based Atelier Launch Incubator (Offer 113) guiding 10 domain practitioners to build and sell their first pilot VENDORZINE.'
+      }
+    ];
+
+    // ==========================================
+    // DATA: 6 ATELIER CONFIGURATIONS & FOUNDRY
+    // ==========================================
+    const ateliersData = [
+      {
+        id: 'delivery',
+        name: '1. Client Delivery Atelier',
+        tag: 'Recommended #1 Launch Path',
+        color: 'amber',
+        promise: 'Make client projects easier to begin, scope, approve, and retain offline without rented SaaS portals.',
+        entryOffer: 'Offer 29: Project Closeout & Handover Studio or Offer 25: Client Onboarding Atelier.',
+        reusableIP: 'VENDORZINE vertical blueprints, interactive scoping calculators, milestone change-order logs.',
+        recurringWork: 'Offer 30: White-label agency production allocations & Offer 32: Recurring client stewardship editions.',
+        collaborators: 'Project curator, experience designer, local-first automation specialist.',
+        atlasOffers: ['25. Client onboarding atelier', '26. Interactive proposal & scoping', '27. Milestone & change-order desk', '28. Project rescue & reconstruction', '29. Project closeout & handover', '30. White-label VENDORZINE bureau']
+      },
+      {
+        id: 'publishing',
+        name: '2. Knowledge Publishing Atelier',
+        tag: 'Content-to-Practice Engine',
+        color: 'emerald',
+        promise: 'Turn static books, research, videos, and back-catalogues into interactive products customers apply.',
+        entryOffer: 'Offer 01: Author Companion Studio or Offer 89: Document-to-SYNCZINE Conversion.',
+        reusableIP: 'Companion architectures, branching case-simulation modules, CODE+V study templates.',
+        recurringWork: 'Paid edition updates, research-brief library subscriptions, and instructor replication licences.',
+        collaborators: 'Developmental editor, instructional designer, interactive SYNCZ builder.',
+        atlasOffers: ['01. Author companion studio', '02. Video-to-practice atelier', '03. Podcast implementation editions', '04. Research-to-practice briefs', '07. Expert back-catalogue revival', '08. Open-knowledge editions']
+      },
+      {
+        id: 'operations',
+        name: '3. Sovereign Operations Atelier',
+        tag: 'Advisory & Decision Support',
+        color: 'cyan',
+        promise: 'Give growing small firms and leadership teams an inspectable, local-first operating memory and decision toolkit.',
+        entryOffer: 'Offer 36: Fractional Operations Playbook Service or Offer 44: Automation Documentation & Recovery.',
+        reusableIP: 'Role guides, pricing/cash-flow scenario modellers, incident continuity runbooks, local AI workflows.',
+        recurringWork: 'Quarterly process reviews, outage recovery rehearsals, and AI evaluation regression packs.',
+        collaborators: 'Fractional operations lead, domain advisor, technical workflow implementer.',
+        atlasOffers: ['34. Pricing & offer-design lab', '36. Fractional operations playbooks', '37. Tech selection & exit planning', '40. Succession knowledge capture', '44. Automation recovery guides', '47. Private dataset workbooks']
+      },
+      {
+        id: 'craft',
+        name: '4. Craft & Provenance Atelier',
+        tag: 'Physical Trades & Lifecycle',
+        color: 'rose',
+        promise: 'Connect high-value physical work, restorations, and custom commissions to permanent owner manuals and transferable provenance.',
+        entryOffer: 'Offer 49: Restoration Provenance Atelier or Offer 51: Bespoke Commission Owner Manuals.',
+        reusableIP: 'Owner-manual templates, property handover books, EU Digital Product Passport (DPP) readiness schemas.',
+        recurringWork: 'Service history updates, seasonal property/home maintenance logs, and resale ownership-transfer packs.',
+        collaborators: 'Master craft/trade specialist, technical documentarian, visual archivist.',
+        atlasOffers: ['49. Restoration provenance atelier', '51. Bespoke commission manuals', '52. Property project handover books', '55. Product-passport readiness', '56. Resale ownership-transfer packs', '57. Boutique travel VENDORZINES']
+      },
+      {
+        id: 'learning',
+        name: '5. Learning & Talent Atelier',
+        tag: 'Micro-Academies & Evidence',
+        color: 'violet',
+        promise: 'Help learners and practitioners build verifiable real-world capability and portable evidence portfolios.',
+        entryOffer: 'Offer 12: Proof-Producing Cohort Operator or Offer 17: Evidence Portfolio Atelier.',
+        reusableIP: 'Runnable coding kata packs, occupational language simulators, assessment rubrics, work-sample hiring kits.',
+        recurringWork: 'Facilitated cohorts, asynchronous critique allocations, and independent evidence review coordination.',
+        collaborators: 'Domain mentor, assessment rubric designer, independent qualified reviewer.',
+        atlasOffers: ['09. Occupational language school', '10. Coding kata publisher', '12. Proof-producing cohort operator', '17. Evidence portfolio atelier', '19. Independent evidence review desk', '22. Work-sample hiring atelier']
+      },
+      {
+        id: 'foundry',
+        name: '6. Foundry Services Atelier',
+        tag: 'B2B Ecosystem Enablement',
+        color: 'amber',
+        promise: 'Make other Ateliers, publishers, and institutions faster, accessible, and more dependable.',
+        entryOffer: 'Offer 102: Packaging & Release Service, Offer 91: Multilingual Localisation, or Offer 92: Accessibility Remediation.',
+        reusableIP: 'SYNCZ interaction components, import/export connectors, white-label authoring environments.',
+        recurringWork: 'Managed encrypted sync, dependency maintenance retainers, and release QA testing allocations.',
+        collaborators: 'Rust/Wasm developer, accessibility (WCAG 2.2) specialist, QA engineer.',
+        atlasOffers: ['90. Course & LMS export migration', '91. Multilingual localisation atelier', '92. Accessibility remediation bureau', '98. Decision-tool & calculator shop', '102. Packaging & release service', '104. Compatibility & QA laboratory']
+      }
+    ];
+
+    const foundryLayers = [
+      { layer: '1. Content Structure', asset: 'Sections, BIBFRAME/JSON-LD metadata, navigation & export conventions', revenue: 'Template licence or Foundry membership' },
+      { layer: '2. Client Workflow', asset: 'Intake, scope sliders, milestone sign-off, change-order & handover patterns', revenue: 'Blueprint licence & studio onboarding' },
+      { layer: '3. Interaction (SYNCZ)', asset: 'Tested calculators, CODE+V exercises, flashcard decks & media viewers', revenue: 'Per-module licence or bespoke adaptation fee' },
+      { layer: '4. Evidence & Trust', asset: 'Tesserae schemas, rubrics, LearnCard DID/VC & BBS+ selective disclosure', revenue: 'Rubric design & credential integration services' },
+      { layer: '5. Packaging & Print', asset: 'SQLite/OPFS bundler + Paged.js/PrinceXML Heptahexual print compiler', revenue: 'Per-release production & POD fulfillment fee' },
+      { layer: '6. Quality & Accessibility', asset: 'Cross-device offline checklist, WCAG 2.2 remediation & acceptance tests', revenue: 'Retained QA testing allocation or audit fee' },
+      { layer: '7. Continuity & Sync', asset: 'Automerge/Yjs CRDT sync over NATS/WebRTC, backup & restore procedures', revenue: 'Managed encrypted sync & stewardship retainers' },
+      { layer: '8. Commercial Ops', asset: 'Offer templates, scope boundaries, rights registers & responsibility maps', revenue: 'Operator training & shared-services co-op dues' }
+    ];
+
+    // ==========================================
+    // RENDER FUNCTIONS & INTERACTIVITY
+    // ==========================================
+
+    // 1. Render Topology Inspector
+    function renderTopologyInspector(nodeKey) {
+      const data = topologyNodes[nodeKey];
+      const container = document.getElementById('inspector-content');
+      if (!data || !container) return;
+
+      const bulletsHtml = data.bullets.map(b => {
+        const parts = b.split(':');
+        return `<li class="flex items-start gap-2 text-xs text-slate-300 leading-relaxed">
+          <span class="text-violet-400 font-bold mt-0.5">▸</span>
+          <span><strong class="text-white">${parts[0]}:</strong>${parts.slice(1).join(':')}</span>
+        </li>`;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="space-y-2">
+          <span class="px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider bg-violet-500/20 text-violet-300 border border-violet-500/30">${data.badge}</span>
+          <h3 class="text-lg sm:text-xl font-bold text-white">${data.title}</h3>
+          <p class="text-xs font-medium text-amber-300">${data.subtitle}</p>
+        </div>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed border-y border-slate-800 py-3">${data.description}</p>
+        <div class="space-y-2">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Key Architectural &amp; Commercial Mechanics</div>
+          <ul class="space-y-2">${bulletsHtml}</ul>
+        </div>
+        <div class="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-xs font-semibold text-indigo-200">
+          📊 ${data.metrics}
+        </div>
+      `;
+
+      // Highlight active node
+      document.querySelectorAll('.arch-node').forEach(el => {
+        if (el.getAttribute('data-node') === nodeKey) {
+          el.classList.add('ring-2', 'ring-violet-400', 'bg-slate-800/90');
+        } else {
+          el.classList.remove('ring-2', 'ring-violet-400', 'bg-slate-800/90');
+        }
+      });
+    }
+
+    // 2. Render 12 GTM Strategy Cards & Comparison Table
+    function renderGTMStrategies(filter = 'all') {
+      const grid = document.getElementById('gtm-cards-grid');
+      const tbody = document.getElementById('gtm-comparison-tbody');
+      if (!grid || !tbody) return;
+
+      const filtered = gtmStrategies.filter(s => {
+        if (filter === 'all') return true;
+        if (filter === 'Phase 1') return s.phase === 'Phase 1';
+        return s.category === filter;
+      });
+
+      const badgeColors = {
+        Atelier: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+        Commons: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+        Foundry: 'bg-violet-500/20 text-violet-300 border-violet-500/30'
+      };
+
+      grid.innerHTML = filtered.map(s => `
+        <div class="glass-panel rounded-2xl p-5 border border-slate-800 hover:border-slate-600 transition-all flex flex-col justify-between space-y-4 cursor-pointer gtm-card" data-id="${s.id}">
+          <div class="space-y-2.5">
+            <div class="flex items-center justify-between gap-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${badgeColors[s.category]}">${s.category} Track</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-800 text-slate-300">${s.phase}</span>
+            </div>
+            <h3 class="text-base font-bold text-white leading-snug">${s.name}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">${s.shortDesc}</p>
+          </div>
+
+          <div class="space-y-2 pt-3 border-t border-slate-800/80 text-xs">
+            <div class="flex justify-between gap-2">
+              <span class="text-slate-400">Pricing:</span>
+              <span class="font-semibold text-amber-300 text-right">${s.pricing.split('(')[0]}</span>
+            </div>
+            <div class="flex justify-between gap-2">
+              <span class="text-slate-400">Margin / Economics:</span>
+              <span class="font-semibold text-emerald-300 text-right">${s.margin}</span>
+            </div>
+            <button class="w-full mt-2 py-2 rounded-lg bg-slate-800 hover:bg-violet-600 text-slate-200 hover:text-white font-semibold text-xs transition-colors">
+              Inspect Ecosystem Alignment →
+            </button>
+          </div>
+        </div>
+      `).join('');
+
+      tbody.innerHTML = filtered.map(s => `
+        <tr class="hover:bg-slate-800/50 cursor-pointer gtm-row" data-id="${s.id}">
+          <td class="py-3 px-3 font-semibold text-white">${s.name}</td>
+          <td class="py-3 px-3 text-slate-300">${s.payer}</td>
+          <td class="py-3 px-3 text-amber-300 font-medium">${s.pricing}</td>
+          <td class="py-3 px-3 text-emerald-300 font-medium">${s.margin}</td>
+          <td class="py-3 px-3 text-slate-300 max-w-xs">${s.atelierAlign.substring(0, 95)}...</td>
+          <td class="py-3 px-3 text-slate-300 max-w-xs">${s.commonsAlign.substring(0, 95)}...</td>
+        </tr>
+      `).join('');
+
+      // Attach click listeners for modal
+      document.querySelectorAll('.gtm-card, .gtm-row').forEach(el => {
+        el.addEventListener('click', () => {
+          const id = parseInt(el.getAttribute('data-id'), 10);
+          openStrategyModal(id);
+        });
+      });
+    }
+
+    function openStrategyModal(id) {
+      const s = gtmStrategies.find(item => item.id === id);
+      if (!s) return;
+      document.getElementById('modal-badge').textContent = `${s.category} Track • ${s.phase}`;
+      document.getElementById('modal-title').textContent = s.name;
+      document.getElementById('modal-desc').textContent = s.shortDesc;
+      document.getElementById('modal-atelier-align').textContent = s.atelierAlign;
+      document.getElementById('modal-commons-align').textContent = s.commonsAlign;
+      document.getElementById('modal-payer').textContent = s.payer;
+      document.getElementById('modal-pricing').textContent = s.pricing;
+      document.getElementById('modal-metrics').textContent = s.margin;
+      document.getElementById('modal-pilot').textContent = s.pilot;
+      document.getElementById('strategy-modal').classList.remove('hidden');
+    }
+
+    // 3. Render Atelier Configurations & Foundry Layers
+    function renderAteliers(selectedId = 'delivery') {
+      const selector = document.getElementById('atelier-selector');
+      const detail = document.getElementById('atelier-detail-card');
+      const foundryList = document.getElementById('foundry-layers-list');
+      if (!selector || !detail) return;
+
+      selector.innerHTML = ateliersData.map(a => {
+        const isActive = a.id === selectedId;
+        return `<button class="atelier-btn text-left p-3 rounded-xl border transition-all ${
+          isActive
+            ? 'bg-violet-600/25 border-violet-400 text-white shadow-md'
+            : 'bg-slate-900/70 border-slate-800 text-slate-300 hover:bg-slate-800'
+        }" data-id="${a.id}">
+          <div class="text-xs font-bold leading-tight">${a.name}</div>
+          <div class="text-[10px] text-slate-400 mt-1 truncate">${a.tag}</div>
+        </button>`;
+      }).join('');
+
+      const active = ateliersData.find(a => a.id === selectedId) || ateliersData[0];
+      detail.innerHTML = `
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">${active.tag}</span>
+            <span class="text-xs text-slate-400">Micro-Enterprise Studio</span>
+          </div>
+          <h3 class="text-xl font-bold text-white">${active.name}</h3>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">${active.promise}</p>
+        </div>
+
+        <div class="space-y-3 pt-2 border-t border-slate-800 text-xs">
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="font-bold text-amber-400 uppercase text-[10px] tracking-wider">1. Concrete Entry Offer (Bespoke Service)</div>
+            <p class="text-slate-200 mt-1 font-medium">${active.entryOffer}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="font-bold text-violet-400 uppercase text-[10px] tracking-wider">2. Derived Reusable Products (Foundry IP)</div>
+            <p class="text-slate-200 mt-1 font-medium">${active.reusableIP}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="font-bold text-emerald-400 uppercase text-[10px] tracking-wider">3. Continuing Support (Recurring Stewardship)</div>
+            <p class="text-slate-200 mt-1 font-medium">${active.recurringWork}</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-800">
+            <div class="font-bold text-cyan-400 uppercase text-[10px] tracking-wider">Typical Studio Collaborators (1–5 Principals)</div>
+            <p class="text-slate-300 mt-1">${active.collaborators}</p>
+          </div>
+        </div>
+
+        <div class="space-y-2 pt-2">
+          <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Representative Atlas Offers (From 120 Catalogue)</div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            ${active.atlasOffers.map(o => `<div class="px-3 py-2 rounded-lg bg-slate-800/70 border border-slate-700/60 text-xs text-slate-200 font-medium">${o}</div>`).join('')}
+          </div>
+        </div>
+      `;
+
+      if (foundryList && foundryList.children.length === 0) {
+        foundryList.innerHTML = foundryLayers.map(f => `
+          <div class="p-3 rounded-xl bg-slate-900/80 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+            <div>
+              <div class="font-bold text-white">${f.layer}</div>
+              <div class="text-slate-400 text-[11px]">${f.asset}</div>
+            </div>
+            <span class="px-2.5 py-1 rounded bg-violet-500/15 text-violet-300 border border-violet-500/30 font-semibold text-[11px] shrink-0">${f.revenue}</span>
+          </div>
+        `).join('');
+      }
+
+      document.querySelectorAll('.atelier-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          renderAteliers(btn.getAttribute('data-id'));
+        });
+      });
+    }
+
+    // 4. Chart.js & Unit Economics Calculator
+    let scenariosChartInstance = null;
+    const modelChartData = {
+      labels: ['Year 1', 'Year 2', 'Year 3'],
+      datasets: {
+        A: { label: 'Doc A (Web3 / L2 zk-SNARK)', data: [850000, 4200000, 18500000], backgroundColor: 'rgba(245, 158, 11, 0.8)', borderColor: '#F59E0B' },
+        B: { label: 'Doc B (Library OpenURL / Grant)', data: [199300, 2195000, 13260000], backgroundColor: 'rgba(6, 182, 212, 0.8)', borderColor: '#06B6D4' },
+        C: { label: 'Doc C (Conservative / Legal)', data: [105650, 1129140, 5665560], backgroundColor: 'rgba(16, 185, 129, 0.8)', borderColor: '#10B981' },
+        D: { label: 'Doc D (BBS+ / Corporate L&D)', data: [520000, 3250000, 15100000], backgroundColor: 'rgba(139, 92, 246, 0.8)', borderColor: '#8B5CF6' }
+      }
+    };
+
+    function initOrUpdateChart(selectedModel = 'all') {
+      const ctx = document.getElementById('scenariosChart');
+      if (!ctx) return;
+
+      const activeDatasets = selectedModel === 'all'
+        ? [modelChartData.datasets.A, modelChartData.datasets.D, modelChartData.datasets.B, modelChartData.datasets.C]
+        : [modelChartData.datasets[selectedModel]];
+
+      if (scenariosChartInstance) {
+        scenariosChartInstance.destroy();
+      }
+
+      scenariosChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: modelChartData.labels,
+          datasets: activeDatasets.map(d => ({
+            ...d,
+            borderWidth: 1,
+            borderRadius: 6
+          }))
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#CBD5E1', font: { family: 'Inter', size: 11 } }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const val = context.raw || 0;
+                  return `${context.dataset.label}: $${(val / 1000000).toFixed(2)}M ($${val.toLocaleString()})`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              ticks: { color: '#94A3B8', font: { family: 'Inter', size: 11 } },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            },
+            y: {
+              ticks: {
+                color: '#94A3B8',
+                font: { family: 'Inter', size: 11 },
+                callback: function(value) { return '$' + (value / 1000000).toFixed(1) + 'M'; }
+              },
+              grid: { color: 'rgba(148, 163, 184, 0.1)' }
+            }
+          }
+        }
+      });
+    }
+
+    function updateUnitEconomics() {
+      const projects = parseInt(document.getElementById('calc-projects').value, 10);
+      const price = parseInt(document.getElementById('calc-price').value, 10);
+      const hours = parseInt(document.getElementById('calc-hours').value, 10);
+      const retainers = parseInt(document.getElementById('calc-retainers').value, 10);
+      const licenses = parseInt(document.getElementById('calc-licenses').value, 10);
+
+      document.getElementById('val-projects').textContent = `${projects} project${projects > 1 ? 's' : ''}`;
+      document.getElementById('val-price').textContent = `$${price.toLocaleString()}`;
+      document.getElementById('val-hours').textContent = `${hours} hrs (@ $35/hr)`;
+      document.getElementById('val-retainers').textContent = `${retainers} client${retainers !== 1 ? 's' : ''}`;
+      document.getElementById('val-licenses').textContent = `${licenses} unit${licenses !== 1 ? 's' : ''}`;
+
+      // Atlas §8 logic: per project direct labor ($35/hr) + $150 assumed transaction/support reserve
+      const projectGross = projects * price;
+      const projectCost = projects * ((hours * 35) + 150);
+      const projectNet = projectGross - projectCost;
+
+      // Retainers ($200/mo, ~2 hrs/mo labor @ $35 = $70 cost)
+      const retainerGross = retainers * 200;
+      const retainerNet = retainers * (200 - 70);
+
+      // Blueprint / Companion licenses ($75 net receipt)
+      const licenseGross = licenses * 75;
+      const licenseNet = licenses * 70;
+
+      const totalGross = projectGross + retainerGross + licenseGross;
+      const totalNet = projectNet + retainerNet + licenseNet;
+      const totalHours = (projects * hours) + (retainers * 2);
+      const recurringShare = totalGross > 0 ? (((retainerGross + licenseGross) / totalGross) * 100).toFixed(1) : '0.0';
+
+      document.getElementById('out-gross').textContent = `$${totalGross.toLocaleString()}`;
+      document.getElementById('out-contribution').textContent = `$${totalNet.toLocaleString()}`;
+      document.getElementById('out-total-hours').textContent = `${totalHours} hrs / mo`;
+      document.getElementById('out-recurring-share').textContent = `${recurringShare}% of Gross`;
+    }
+
+    // ==========================================
+    // INITIALIZATION & EVENT LISTENERS
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      // Initial renders
+      renderTopologyInspector('foundry');
+      renderGTMStrategies('all');
+      renderAteliers('delivery');
+      updateUnitEconomics();
+
+      // Top Navigation Tab switching
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const targetId = btn.getAttribute('data-target');
+          document.querySelectorAll('.view-section').forEach(sec => {
+            sec.classList.toggle('hidden', sec.id !== targetId);
+          });
+          document.querySelectorAll('.nav-tab').forEach(b => {
+            if (b === btn) {
+              b.className = 'nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-violet-600 text-white shadow-sm';
+            } else {
+              b.className = 'nav-tab px-3 py-1.5 rounded-lg text-xs font-semibold transition-all bg-slate-800/80 text-slate-300 hover:bg-slate-700';
+            }
+          });
+          if (targetId === 'view-economics') {
+            setTimeout(() => initOrUpdateChart('all'), 50);
+          }
+        });
+      });
+
+      // Topology node clicks
+      document.querySelectorAll('.arch-node').forEach(node => {
+        node.addEventListener('click', () => {
+          renderTopologyInspector(node.getAttribute('data-node'));
+        });
+      });
+
+      // GTM Filter clicks
+      document.querySelectorAll('.gtm-filter-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.gtm-filter-btn').forEach(b => {
+            b.classList.remove('bg-violet-600', 'text-white');
+            b.classList.add('bg-slate-800');
+          });
+          btn.classList.remove('bg-slate-800');
+          btn.classList.add('bg-violet-600', 'text-white');
+          renderGTMStrategies(btn.getAttribute('data-filter'));
+        });
+      });
+
+      // Modal close
+      document.getElementById('modal-close-btn').addEventListener('click', () => {
+        document.getElementById('strategy-modal').classList.add('hidden');
+      });
+      document.getElementById('strategy-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'strategy-modal') {
+          document.getElementById('strategy-modal').classList.add('hidden');
+        }
+      });
+
+      // Scenario Chart Filter buttons
+      document.querySelectorAll('.model-select-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.model-select-btn').forEach(b => {
+            b.className = 'model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700';
+          });
+          btn.className = 'model-select-btn px-2.5 py-1 rounded text-xs font-semibold bg-violet-600 text-white';
+          initOrUpdateChart(btn.getAttribute('data-model'));
+        });
+      });
+
+      // Calculator sliders
+      ['calc-projects', 'calc-price', 'calc-hours', 'calc-retainers', 'calc-licenses'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateUnitEconomics);
+      });
+    });
+  </script>
+</body>
+</html>
