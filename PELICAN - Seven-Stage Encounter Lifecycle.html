@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Seven-Stage Encounter Lifecycle & Graduated Pedagogical Outcomes | PELICAN Protocol</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              void: '#050811',
+              dark: '#0a0f1d',
+              card: '#0f172a',
+              cardLight: '#1e293b',
+              border: '#1e293b',
+              borderGlow: '#334155',
+              cyan: '#06b6d4',
+              cyanLight: '#22d3ee',
+              emerald: '#10b981',
+              emeraldLight: '#34d399',
+              amber: '#f59e0b',
+              purple: '#8b5cf6',
+              purpleLight: '#a78bfa',
+              rose: '#f43f5e',
+            }
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.3)',
+            'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.3)',
+            'glow-purple': '0 0 25px -5px rgba(139, 92, 246, 0.3)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0f1d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+    
+    /* Subtle radial background glow */
+    .bg-grid-pattern {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+  </style>
+</head>
+<body class="bg-brand-void text-slate-200 font-sans antialiased min-h-screen selection:bg-brand-cyan/20 selection:text-brand-cyan relative">
+
+  <!-- Ambient background glow effects -->
+  <div class="fixed inset-0 bg-grid-pattern pointer-events-none opacity-60 z-0"></div>
+  <div class="fixed top-0 left-1/4 w-96 h-96 bg-brand-cyan/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+  <div class="fixed top-1/3 right-1/4 w-96 h-96 bg-brand-purple/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-10 left-1/3 w-96 h-96 bg-brand-emerald/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <div class="relative z-10 flex flex-col min-h-screen">
+    
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-brand-dark/85 backdrop-blur-md border-b border-brand-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-cyan to-brand-purple flex items-center justify-center p-0.5 shadow-glow-cyan">
+            <div class="w-full h-full bg-brand-dark rounded-[10px] flex items-center justify-center">
+              <svg class="w-5 h-5 text-brand-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-extrabold tracking-wider text-white text-base">PELICAN</span>
+              <span class="px-2 py-0.5 text-[10px] font-mono tracking-widest uppercase bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30 rounded-full">Protocol Airlock</span>
+            </div>
+            <p class="text-xs text-slate-400 font-mono">SOVRAEGIS Architecture Specification</p>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <nav class="hidden md:flex items-center gap-1 bg-brand-card/80 p-1.5 rounded-xl border border-brand-border">
+          <button onclick="switchTab('lifecycle')" id="tab-btn-lifecycle" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 text-white bg-brand-cardLight border border-brand-borderGlow shadow-sm">
+            1. Lifecycle Explorer
+          </button>
+          <button onclick="switchTab('outcomes')" id="tab-btn-outcomes" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-brand-cardLight/50">
+            2. Graduated Outcomes
+          </button>
+          <button onclick="switchTab('simulator')" id="tab-btn-simulator" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-brand-cardLight/50">
+            3. Live Simulator
+          </button>
+          <button onclick="switchTab('codev')" id="tab-btn-codev" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-brand-cardLight/50">
+            4. CODE+V Heuristic
+          </button>
+          <button onclick="switchTab('deploy')" id="tab-btn-deploy" class="nav-tab px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-brand-cardLight/50 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+            </svg>
+            5. Deployment Guide
+          </button>
+        </nav>
+
+        <!-- Right Quick Actions -->
+        <div class="flex items-center gap-3">
+          <button onclick="quickExportPackage()" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 bg-brand-cyan/10 hover:bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30 rounded-lg text-xs font-medium transition-colors">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+            <span>Mock .pelican</span>
+          </button>
+          <a href="#simulator" onclick="switchTab('simulator')" class="px-3.5 py-1.5 bg-gradient-to-r from-brand-cyan to-brand-purple hover:opacity-90 text-white rounded-lg text-xs font-semibold shadow-glow-cyan transition-all">
+            Enter Airlock
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile Sub-navigation -->
+      <div class="md:hidden flex overflow-x-auto px-4 py-2 gap-2 border-t border-brand-border bg-brand-card/90">
+        <button onclick="switchTab('lifecycle')" class="mobile-nav-btn whitespace-nowrap px-3 py-1 text-xs rounded-md bg-brand-cardLight text-white">1. Lifecycle</button>
+        <button onclick="switchTab('outcomes')" class="mobile-nav-btn whitespace-nowrap px-3 py-1 text-xs rounded-md text-slate-400">2. Outcomes</button>
+        <button onclick="switchTab('simulator')" class="mobile-nav-btn whitespace-nowrap px-3 py-1 text-xs rounded-md text-slate-400">3. Simulator</button>
+        <button onclick="switchTab('codev')" class="mobile-nav-btn whitespace-nowrap px-3 py-1 text-xs rounded-md text-slate-400">4. CODE+V</button>
+        <button onclick="switchTab('deploy')" class="mobile-nav-btn whitespace-nowrap px-3 py-1 text-xs rounded-md text-slate-400">5. Deploy</button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      
+      <!-- Executive Framework Hero -->
+      <section class="mb-10 p-6 sm:p-8 rounded-2xl bg-gradient-to-b from-brand-card to-brand-dark border border-brand-border shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-16 -top-16 w-80 h-80 bg-brand-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-4xl relative z-10">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-mono mb-4">
+            <span class="w-2 h-2 rounded-full bg-brand-cyan animate-pulse"></span>
+            SOVEREIGN LEARNING ECOSYSTEM • HIGH-LEVEL NON-TECHNICAL SPECIFICATION
+          </div>
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight mb-4">
+            The Seven-Stage Encounter Lifecycle &amp; <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-emerald to-brand-purple">
+              Graduated Pedagogical Outcomes
+            </span>
+          </h1>
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed mb-6">
+            In legacy systems, evaluation is an asymmetric binary verdict (pass/fail) hosted on an institutional server. 
+            Within <strong class="text-white">SOVRAEGIS</strong>, the <strong class="text-brand-cyan">PELICAN PROTOCOL</strong> introduces an ephemeral, zero-trust rendezvous chamber where a <strong class="text-white">Sovereign Learner</strong> shares verified evidence (<strong class="text-brand-emerald">SYNCTESS</strong>) with trusted mentors (<strong class="text-brand-purple">SOVRAEGES</strong>). The encounter is bounded, judgments are explainable, and outcomes crystallize into an unalterable, portable <strong class="text-white">PELICAN PACKAGE</strong>.
+          </p>
+
+          <!-- Core Architectural Primitives Grid -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs font-mono">
+            <div class="p-3 rounded-xl bg-brand-cardLight/40 border border-brand-border">
+              <span class="text-slate-400 block mb-1">SOVRAELEX</span>
+              <span class="text-white font-semibold">Learner Vault &amp; Request Stage</span>
+            </div>
+            <div class="p-3 rounded-xl bg-brand-cardLight/40 border border-brand-border">
+              <span class="text-slate-400 block mb-1">SOVRAEGIX</span>
+              <span class="text-brand-purpleLight font-semibold">Reviewer Socratic Cockpit</span>
+            </div>
+            <div class="p-3 rounded-xl bg-brand-cardLight/40 border border-brand-border">
+              <span class="text-slate-400 block mb-1">SYNCTESS</span>
+              <span class="text-brand-emeraldLight font-semibold">Hexagonal Evidence Payload</span>
+            </div>
+            <div class="p-3 rounded-xl bg-brand-cardLight/40 border border-brand-border">
+              <span class="text-slate-400 block mb-1">PELICAN PACKAGE</span>
+              <span class="text-brand-cyanLight font-semibold">BBS+ Signed Evidence Dossier</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB 1: 7-STAGE ENCOUNTER LIFECYCLE                                  -->
+      <!-- =================================================================== -->
+      <section id="tab-content-lifecycle" class="tab-pane block space-y-8">
+        
+        <!-- Header & Stepper Controls -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-brand-border pb-5">
+          <div>
+            <h2 class="text-2xl font-bold text-white flex items-center gap-2">
+              <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-cyan/20 text-brand-cyan text-sm font-mono">01</span>
+              The 7-Stage Encounter Lifecycle
+            </h2>
+            <p class="text-sm text-slate-400 mt-1">
+              Step through the chronological protocol from initial scoping to cryptographic airlock destruction.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 self-start md:self-auto">
+            <button onclick="prevStage()" class="px-3 py-1.5 rounded-lg bg-brand-card border border-brand-border text-xs text-slate-300 hover:text-white hover:bg-brand-cardLight transition">
+              &larr; Previous Stage
+            </button>
+            <span id="stage-stepper-counter" class="text-xs font-mono text-brand-cyan px-2">Stage 1 of 7</span>
+            <button onclick="nextStage()" class="px-3 py-1.5 rounded-lg bg-brand-card border border-brand-border text-xs text-slate-300 hover:text-white hover:bg-brand-cardLight transition">
+              Next Stage &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Horizontal Interactive Stepper Bar -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2">
+          <!-- Step 1 -->
+          <button onclick="setStage(1)" id="step-btn-1" class="stage-step-btn text-left p-3 rounded-xl border border-brand-cyan bg-brand-cyan/10 transition-all">
+            <span class="text-[10px] font-mono text-brand-cyan block">STAGE 01</span>
+            <span class="text-xs font-bold text-white block truncate">Frame Request</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Learner Scoping</span>
+          </button>
+          <!-- Step 2 -->
+          <button onclick="setStage(2)" id="step-btn-2" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 02</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Agree Conditions</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Bilateral Pact</span>
+          </button>
+          <!-- Step 3 -->
+          <button onclick="setStage(3)" id="step-btn-3" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 03</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Stage Evidence</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Genesis Freeze</span>
+          </button>
+          <!-- Step 4 -->
+          <button onclick="setStage(4)" id="step-btn-4" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 04</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Explore &amp; Challenge</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Socratic Review</span>
+          </button>
+          <!-- Step 5 -->
+          <button onclick="setStage(5)" id="step-btn-5" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 05</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Revise &amp; Show</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Asymmetric Diff</span>
+          </button>
+          <!-- Step 6 -->
+          <button onclick="setStage(6)" id="step-btn-6" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 06</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Record Findings</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Epistemic Synthesis</span>
+          </button>
+          <!-- Step 7 -->
+          <button onclick="setStage(7)" id="step-btn-7" class="stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all">
+            <span class="text-[10px] font-mono text-slate-400 block">STAGE 07</span>
+            <span class="text-xs font-bold text-slate-300 block truncate">Package &amp; Close</span>
+            <span class="text-[10px] text-slate-400 block mt-0.5">Vault Wipe &amp; Lock</span>
+          </button>
+        </div>
+
+        <!-- Dynamic Stage Detail Card -->
+        <div id="stage-detail-container" class="p-6 sm:p-8 rounded-2xl bg-brand-card border border-brand-border shadow-xl">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+
+        <!-- Lifecycle Overview Comparison Matrix -->
+        <div class="mt-8 rounded-2xl bg-brand-dark p-6 border border-brand-border">
+          <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-emerald" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+            Why Encounters Outperform Institutional Black-Box Submissions
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-400 mb-4">
+            In standard platforms, "submitting" an assignment surrenders learner sovereignty: data is copied to a centralized LMS database where permissions, scoring, and visibility are dictated solely by the institution.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-4 rounded-xl bg-brand-card/60 border border-rose-500/20 text-rose-300">
+              <span class="text-rose-400 font-bold block mb-1">Traditional LMS Assignment Upload</span>
+              <ul class="space-y-1 list-disc list-inside text-slate-400">
+                <li>Binary verdict: 82% or "Failed" with opaque teacher notes.</li>
+                <li>Unilateral write power: School admins can delete or alter records.</li>
+                <li>Data leakage: Learner exposes full disk/folder context or cloud drive.</li>
+                <li>Locked within school database upon graduation; zero portability.</li>
+              </ul>
+            </div>
+            <div class="p-4 rounded-xl bg-brand-card/60 border border-brand-emerald/30 text-brand-emeraldLight">
+              <span class="text-brand-emerald font-bold block mb-1">PELICAN Sovereign Airlock Encounter</span>
+              <ul class="space-y-1 list-disc list-inside text-slate-300">
+                <li>7 Graduated developmental outcomes with attributed Socratic reasoning.</li>
+                <li>Strict asymmetric mutation: Mentors propose diffs; learner retains write lock.</li>
+                <li>Zero-trust airlock: Private vault keys and roots never enter the room.</li>
+                <li>Output is a cryptographically verifiable .pelican package in learner’s personal vault.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB 2: SEVEN GRADUATED OUTCOMES MATRIX                              -->
+      <!-- =================================================================== -->
+      <section id="tab-content-outcomes" class="tab-pane hidden space-y-8">
+        <div class="border-b border-brand-border pb-5">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-purple/20 text-brand-purple text-sm font-mono">02</span>
+            <h2 class="text-2xl font-bold text-white">The Seven Graduated Pedagogical Outcomes</h2>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            A single "Approved / Rejected" toggle conceals misunderstandings, coaches’ assistance, or honest epistemic disagreements. PELICAN replaces binary grading with seven authentic developmental states that preserve the full truth of an encounter.
+          </p>
+        </div>
+
+        <!-- Filter / Quick Highlight Selector -->
+        <div class="flex flex-wrap gap-2 items-center text-xs">
+          <span class="text-slate-400 font-mono">Filter by intent:</span>
+          <button onclick="filterOutcomes('all')" class="outcome-filter-btn px-3 py-1 rounded-lg bg-brand-cardLight text-white border border-brand-border">All 7 Outcomes</button>
+          <button onclick="filterOutcomes('developmental')" class="outcome-filter-btn px-3 py-1 rounded-lg bg-brand-card text-slate-400 border border-brand-border hover:text-white">Formative / Iterative</button>
+          <button onclick="filterOutcomes('evaluative')" class="outcome-filter-btn px-3 py-1 rounded-lg bg-brand-card text-slate-400 border border-brand-border hover:text-white">Evaluative / Mastery</button>
+          <button onclick="filterOutcomes('governance')" class="outcome-filter-btn px-3 py-1 rounded-lg bg-brand-card text-slate-400 border border-brand-border hover:text-white">Procedural / Disputes</button>
+        </div>
+
+        <!-- 7 Outcomes Cards Grid -->
+        <div id="outcomes-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <!-- Populated by JS -->
+        </div>
+
+        <!-- Comparative Epistemic Table -->
+        <div class="rounded-2xl bg-brand-card border border-brand-border p-6 shadow-xl overflow-x-auto">
+          <h3 class="text-lg font-bold text-white mb-3">Epistemic Precision: Legacy vs. PELICAN</h3>
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-brand-border text-slate-400">
+                <th class="pb-3 font-semibold">Scenario</th>
+                <th class="pb-3 font-semibold text-rose-400">Legacy Binary Outcome</th>
+                <th class="pb-3 font-semibold text-brand-cyan">PELICAN Graduated Outcome</th>
+                <th class="pb-3 font-semibold">Pedagogical Value Preserved</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-border/60 text-slate-300">
+              <tr>
+                <td class="py-3 font-sans text-slate-200">Argument is brilliant, but empirical verification dataset was not reproduced.</td>
+                <td class="py-3 text-rose-300">"Fail (54%)" or rejection</td>
+                <td class="py-3 text-brand-amber font-semibold">Additional Evidence Needed</td>
+                <td class="py-3 font-sans text-slate-400">Protects theoretical brilliance while isolating exact missing empirical verify check.</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200">Learner seeks coaching on rough unpolished first draft.</td>
+                <td class="py-3 text-rose-300">Graded as "D" on permanent transcript</td>
+                <td class="py-3 text-brand-cyan font-semibold">Feedback Delivered</td>
+                <td class="py-3 font-sans text-slate-400">Creates psychological safety; no premature gatekeeping or grade penalty.</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200">Mentor and learner hold divergent methodological theories.</td>
+                <td class="py-3 text-rose-300">Arbitrary instructor override (0 pts)</td>
+                <td class="py-3 text-brand-purple font-semibold">Disputed</td>
+                <td class="py-3 font-sans text-slate-400">Preserves both positions intact; triggers neutral second SOVRAEGE review.</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200">Demonstrated pristine mastery in Code &amp; Architecture, but not in UI Design.</td>
+                <td class="py-3 text-rose-300">"Pass (C+)" blurs all dimensions</td>
+                <td class="py-3 text-brand-emerald font-semibold">Mastery Supported (Specific Criteria)</td>
+                <td class="py-3 font-sans text-slate-400">Guild can issue micro-attestation for Backend, scoping UI for subsequent session.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB 3: INTERACTIVE LIVE ENCOUNTER SIMULATOR                         -->
+      <!-- =================================================================== -->
+      <section id="tab-content-simulator" class="tab-pane hidden space-y-6">
+        <div class="border-b border-brand-border pb-5">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-emerald/20 text-brand-emerald text-sm font-mono">03</span>
+                <h2 class="text-2xl font-bold text-white">Live PELICAN Encounter Simulator</h2>
+              </div>
+              <p class="text-sm text-slate-400 mt-1">
+                Walk through an active sovereign review session. Observe zero-trust Genesis freeze, test asymmetric mutation locks, anchor Socratic critiques, and crystallize a verified <code class="text-brand-cyan">.pelican</code> package.
+              </p>
+            </div>
+            <button onclick="resetSimulation()" class="px-3 py-1.5 rounded-lg bg-brand-card border border-brand-border text-xs text-slate-300 hover:text-white">
+              Reset Sandbox
+            </button>
+          </div>
+        </div>
+
+        <!-- Simulation Grid: 2 Columns -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left Column: Learner Staged SYNCTESS (SOVRAELEX view) -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="p-4 rounded-xl bg-brand-card border border-brand-border shadow-lg">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-brand-border">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-brand-emerald"></span>
+                  <span class="text-xs font-mono uppercase tracking-wider text-slate-300 font-bold">SOVRAELEX Deposit View</span>
+                </div>
+                <span id="sim-status-badge" class="px-2 py-0.5 text-[10px] font-mono rounded bg-brand-cyan/20 text-brand-cyan border border-brand-cyan/30">
+                  STAGE 3: FROZEN
+                </span>
+              </div>
+
+              <!-- Metadata bar -->
+              <div class="grid grid-cols-2 gap-2 text-xs font-mono mb-3">
+                <div class="bg-brand-dark p-2 rounded-lg border border-brand-border">
+                  <span class="text-slate-500 block text-[10px]">ARTIFACT ID</span>
+                  <span class="text-white font-semibold truncate block">synctess://ml-repro-v1.4</span>
+                </div>
+                <div class="bg-brand-dark p-2 rounded-lg border border-brand-border">
+                  <span class="text-slate-500 block text-[10px]">GENESIS BLAKE3 HASH</span>
+                  <span id="sim-genesis-hash" class="text-brand-cyan font-semibold truncate block">e3b0c44298fc1c149afbf4...</span>
+                </div>
+              </div>
+
+              <!-- Staged Artifact Payload Content -->
+              <div class="space-y-3">
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1">SYNCTESS Title &amp; Scope</label>
+                  <input id="sim-title-input" type="text" value="Hexagonal Machine Learning Reproducibility Framework" class="w-full bg-brand-dark border border-brand-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-cyan">
+                </div>
+
+                <div>
+                  <div class="flex justify-between items-center mb-1">
+                    <label class="text-xs font-mono text-slate-400">Core Synthesized Thesis / Code Snippet</label>
+                    <span class="text-[10px] font-mono text-brand-emerald">Learner Write-Locked</span>
+                  </div>
+                  <textarea id="sim-body-input" rows="7" class="w-full bg-brand-dark border border-brand-border rounded-lg p-3 text-xs font-mono text-slate-200 focus:outline-none focus:border-brand-cyan">
+// Module: ReproducibilityKernel.rs
+// Implements deterministic random seed chaining across distributed workers
+pub struct ReproducibilityProof {
+    pub seed_entropy: [u8; 32],
+    pub epoch_commitments: Vec<Blake3Hash>,
+}
+
+impl ReproducibilityProof {
+    pub fn verify_deterministic_path(&self, tolerance: f64) -> bool {
+        // CODE+V: Verify dimension logic
+        self.epoch_commitments.iter().all(|c| c.is_valid(tolerance))
+    }
+}</textarea>
+                </div>
+
+                <!-- Asymmetric Permission Demonstration Trigger -->
+                <div class="p-3 rounded-lg bg-brand-cardLight/50 border border-brand-border text-xs">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <span class="font-bold text-white block">Test Protocol Rule #2: Asymmetric Mutation</span>
+                      <span class="text-slate-400 text-[11px]">Attempt direct modification as Reviewer (SOVRAEGE)</span>
+                    </div>
+                    <button onclick="testAsymmetricMutation()" class="px-3 py-1 rounded bg-rose-500/20 text-rose-300 border border-rose-500/40 hover:bg-rose-500/30 text-xs font-mono transition">
+                      Simulate Direct Edit
+                    </button>
+                  </div>
+                  <div id="sim-mutation-alert" class="hidden mt-2 p-2 rounded bg-rose-950/60 border border-rose-600/50 text-[11px] text-rose-200 font-mono">
+                    ⚠️ PROTOCOL FAULT: Access Denied! Reducer rejected mutation. Reviewers cannot alter SYNCTESS payload. Staging diff suggestion instead.
+                  </div>
+                </div>
+
+                <!-- Proposed Staged Diffs -->
+                <div id="sim-staged-diffs" class="hidden p-3 rounded-lg bg-brand-purple/10 border border-brand-purple/30 text-xs font-mono">
+                  <div class="flex justify-between items-center mb-1 text-brand-purpleLight font-bold">
+                    <span>Proposed Mentor Diff (Awaiting Learner Merge)</span>
+                    <button onclick="acceptDiff()" class="px-2 py-0.5 rounded bg-brand-emerald text-brand-dark font-bold text-[10px]">Merge &amp; Accept</button>
+                  </div>
+                  <p class="text-slate-300 text-[11px] line-through text-rose-400">- pub fn verify_deterministic_path(&amp;self, tolerance: f64) -&gt; bool</p>
+                  <p class="text-slate-300 text-[11px] text-brand-emeraldLight">+ pub fn verify_deterministic_path(&amp;self, tolerance: f64, bounds: CheckRange) -&gt; Result&lt;ProofReceipt, VerifyError&gt;</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Reviewer Socratic Cockpit (SOVRAEGIX) -->
+          <div class="lg:col-span-6 space-y-4">
+            <div class="p-4 rounded-xl bg-brand-card border border-brand-border shadow-lg">
+              <div class="flex items-center justify-between pb-3 mb-3 border-b border-brand-border">
+                <div class="flex items-center gap-2">
+                  <span class="w-3 h-3 rounded-full bg-brand-purple"></span>
+                  <span class="text-xs font-mono uppercase tracking-wider text-slate-300 font-bold">SOVRAEGIX Socratic Cockpit</span>
+                </div>
+                <span class="text-xs font-mono text-brand-purpleLight">Reviewer DID: did:key:z6Mku...</span>
+              </div>
+
+              <!-- Socratic Inquiry Annotation Form -->
+              <div class="space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block text-xs font-mono text-slate-400 mb-1">Target Dimension (CODE+V)</label>
+                    <select id="sim-dimension-select" class="w-full bg-brand-dark border border-brand-border rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-purple">
+                      <option value="Verify">Verify (Tests &amp; Reproducibility)</option>
+                      <option value="Validate">Validate (Mastery Claim Justification)</option>
+                      <option value="Curate">Curate (Lineage &amp; Sourcing)</option>
+                      <option value="Organize">Organize (Structural Coherence)</option>
+                      <option value="Distill">Distill (Essence &amp; Conceptual Clarity)</option>
+                      <option value="Express">Express (Artifact Demonstration)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-mono text-slate-400 mb-1">Annotation Type</label>
+                    <select id="sim-critique-type" class="w-full bg-brand-dark border border-brand-border rounded-lg px-2 py-1.5 text-xs text-white focus:outline-none focus:border-brand-purple">
+                      <option value="Catalytic Challenge">Catalytic Challenge</option>
+                      <option value="Evidence Probe">Evidence Probe</option>
+                      <option value="Commendation">Commendation</option>
+                      <option value="Methodological Inquiry">Methodological Inquiry</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-mono text-slate-400 mb-1">Socratic Annotation / Challenge</label>
+                  <input id="sim-critique-input" type="text" placeholder="e.g., How does this proof handle IEEE 754 float nondeterminism across GPUs?" class="w-full bg-brand-dark border border-brand-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-purple">
+                </div>
+
+                <div class="flex justify-end">
+                  <button onclick="addAnnotation()" class="px-3 py-1.5 bg-brand-purple/20 hover:bg-brand-purple/30 text-brand-purpleLight border border-brand-purple/40 rounded-lg text-xs font-mono transition">
+                    + Anchor Socratic Feedback
+                  </button>
+                </div>
+
+                <!-- Feed of Active Annotations -->
+                <div>
+                  <span class="block text-xs font-mono text-slate-400 mb-1">Session Interaction Stream</span>
+                  <div id="sim-annotations-feed" class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    <div class="p-2 rounded bg-brand-dark/80 border border-brand-border text-xs">
+                      <div class="flex justify-between text-[10px] font-mono text-brand-cyan mb-1">
+                        <span>[VERIFY] Catalytic Challenge</span>
+                        <span>did:key:z6Mku...</span>
+                      </div>
+                      <p class="text-slate-300">Are the distributed random seeds bound to hardware execution nonces?</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Graduated Outcome Attestation Selection -->
+                <div class="pt-3 border-t border-brand-border">
+                  <label class="block text-xs font-mono text-brand-emerald font-semibold mb-1">Synthesize &amp; Formulate Graduated Outcome</label>
+                  <select id="sim-outcome-select" class="w-full bg-brand-dark border border-brand-emerald/40 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-brand-emerald">
+                    <option value="Mastery Supported for Specified Criteria">1. Mastery Supported for Specified Criteria (CODE+V: Verify &amp; Express)</option>
+                    <option value="Revision Invited">2. Revision Invited (Address GPU non-determinism)</option>
+                    <option value="Feedback Delivered">3. Feedback Delivered (Coaching session complete)</option>
+                    <option value="Additional Evidence Needed">4. Additional Evidence Needed (Supply execution log)</option>
+                    <option value="Disputed">5. Disputed (Divergent theory on stochastic variance)</option>
+                    <option value="Withdrawn">6. Withdrawn (Learner rescinds deposit)</option>
+                    <option value="Closed Without a Decision">7. Closed Without a Decision (Session time elapsed)</option>
+                  </select>
+                </div>
+
+                <!-- Crystallize Package Button -->
+                <button onclick="crystallizePackage()" class="w-full py-2.5 bg-gradient-to-r from-brand-cyan via-brand-emerald to-brand-purple text-white rounded-lg text-xs font-bold font-mono uppercase tracking-wider shadow-glow-cyan hover:opacity-95 transition">
+                  Crystallize PELICAN Package (.pelican) &amp; Wipe Airlock
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Crystallized Package Live Inspector Modal / Drawer -->
+        <div id="sim-crystallized-box" class="hidden p-6 rounded-2xl bg-brand-card border border-brand-emerald/40 shadow-glow-emerald">
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-brand-border">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-brand-emerald animate-ping"></span>
+              <h3 class="text-base font-bold text-white font-mono">CRYSTALLIZED PELICAN DOSSIER READY (.pelican)</h3>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="copyPackageJSON()" class="px-3 py-1 bg-brand-cardLight hover:bg-brand-border text-xs rounded font-mono text-slate-300">
+                Copy JSON
+              </button>
+              <button onclick="downloadPackageFile()" class="px-3 py-1 bg-brand-emerald hover:bg-brand-emeraldLight text-brand-dark font-bold text-xs rounded font-mono">
+                Download .pelican
+              </button>
+            </div>
+          </div>
+          <p class="text-xs text-slate-400 mb-3 font-sans">
+            The ephemeral SpacetimeDB/Wasm session room has been completely wiped from host memory. Both SOVRAELEX and SOVRAEGIX have downloaded their verifiable receipts below.
+          </p>
+          <pre id="sim-package-json-output" class="bg-brand-dark p-4 rounded-xl text-xs font-mono text-brand-cyanLight overflow-x-auto max-h-72 border border-brand-border"></pre>
+        </div>
+
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB 4: CODE+V SOCRATIC INQUIRY HEURISTIC MATRIX                     -->
+      <!-- =================================================================== -->
+      <section id="tab-content-codev" class="tab-pane hidden space-y-6">
+        <div class="border-b border-brand-border pb-5">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-amber/20 text-brand-amber text-sm font-mono">04</span>
+            <h2 class="text-2xl font-bold text-white">The CODE+V Socratic Heuristic Matrix</h2>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            Correcting transcript terminology discrepancies: Rather than an arbitrary score grid, CODE+V operationalizes: 
+            <span class="text-brand-amber font-mono font-semibold">Curate, Organize, Distill, Express, Verify, Validate</span>.
+            In PELICAN, these guide qualitative human inquiry rather than forcing divergent disciplines into a rigid robotic checklist.
+          </p>
+        </div>
+
+        <!-- 6 Dimension Interactive Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <!-- Curate -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-amber/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-amber/10 text-brand-amber border border-brand-amber/30">C • CURATE</span>
+              <span class="text-xs font-mono text-slate-500">Inputs &amp; Lineage</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Sources, People, Influences &amp; Lineage</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              Examines what raw materials, domain priors, human collaborators, and AI scaffolding contributed to the work.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-brand-amber block font-bold">Key Socratic Probe:</span>
+              <p>"Which foundations are independently generated versus derived, and are external contributions and model aids cleanly attributed?"</p>
+            </div>
+          </div>
+
+          <!-- Organize -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-cyan/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30">O • ORGANIZE</span>
+              <span class="text-xs font-mono text-slate-500">Structural Topology</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Structure, Path &amp; Information Architecture</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              Examines how the learner architected the inquiry, structured modules, and sequenced evidence within the SYNCTESS.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-brand-cyan block font-bold">Key Socratic Probe:</span>
+              <p>"Does the internal architecture support logical navigation, or does it collapse when dependencies are tested out of order?"</p>
+            </div>
+          </div>
+
+          <!-- Distill -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-purple/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-purple/10 text-brand-purple border border-brand-purple/30">D • DISTILL</span>
+              <span class="text-xs font-mono text-slate-500">Cognitive Essence</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Core Insight &amp; Conceptual Clarity</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              Tests whether the learner has extracted core principles or merely produced verbose, decorative padding.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-brand-purple block font-bold">Key Socratic Probe:</span>
+              <p>"Can the learner articulate the essential thesis in one minute, independent of decorative artifact polish?"</p>
+            </div>
+          </div>
+
+          <!-- Express -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-emerald/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30">E • EXPRESS</span>
+              <span class="text-xs font-mono text-slate-500">Demonstration Fidelity</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Artifact Fidelity, Performance &amp; Medium</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              Evaluates how effectively the executed medium (musical performance, software engine, doctoral thesis) manifests understanding.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-brand-emerald block font-bold">Key Socratic Probe:</span>
+              <p>"Does the tangible demonstration meet professional guild standards for clarity, aesthetic rigor, and ergonomic execution?"</p>
+            </div>
+          </div>
+
+          <!-- Verify -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-rose-400/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">V • VERIFY</span>
+              <span class="text-xs font-mono text-slate-500">Empirical Audit</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Checks, Observations, Tests &amp; Reproducibility</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              The factual reality check: running unit tests, auditing citations, inspecting laboratory controls, and checking execution nonces.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-rose-400 block font-bold">Key Socratic Probe:</span>
+              <p>"Can the claims be independently rerun or verified without the original author holding the controls?"</p>
+            </div>
+          </div>
+
+          <!-- Validate -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-cyan/40 transition">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30">V • VALIDATE</span>
+              <span class="text-xs font-mono text-slate-500">Guild Authority</span>
+            </div>
+            <h3 class="text-sm font-bold text-white mb-2">Mastery Justification against Domain Criteria</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">
+              Determines whether the verified evidence warrants sovereign credentialing, and whether the reviewing SOVRAEGE is authorized to attest.
+            </p>
+            <div class="text-[11px] font-mono text-slate-400 bg-brand-dark p-2.5 rounded-lg border border-brand-border space-y-1">
+              <span class="text-brand-cyan block font-bold">Key Socratic Probe:</span>
+              <p>"Does this achievement warrant recommendation to the Guild for formal SYNTHCRED synthesis?"</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- =================================================================== -->
+      <!-- TAB 5: GITHUB PAGES DEPLOYMENT & INTEGRATION GUIDE                 -->
+      <!-- =================================================================== -->
+      <section id="tab-content-deploy" class="tab-pane hidden space-y-6">
+        <div class="border-b border-brand-border pb-5">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-700 text-slate-200 text-sm font-mono">05</span>
+            <h2 class="text-2xl font-bold text-white">GitHub Pages Deployment &amp; Engineering Integration</h2>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            This file is completely self-contained. It requires zero compilation steps, no Node modules, and zero build toolchains. You can deploy it to GitHub Pages in under 60 seconds.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Left: 60-second deploy steps -->
+          <div class="p-6 rounded-2xl bg-brand-card border border-brand-border space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-cyan" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+              </svg>
+              Direct Git Deployment Instructions
+            </h3>
+
+            <div class="space-y-3 text-xs font-mono">
+              <div class="p-3 bg-brand-dark rounded-xl border border-brand-border">
+                <span class="text-slate-500 block mb-1"># 1. Initialize repository</span>
+                <p class="text-brand-cyan">git init</p>
+                <p class="text-brand-cyan">git add index.html</p>
+                <p class="text-brand-cyan">git commit -m "feat: deploy PELICAN Protocol Specification"</p>
+              </div>
+
+              <div class="p-3 bg-brand-dark rounded-xl border border-brand-border">
+                <span class="text-slate-500 block mb-1"># 2. Push to GitHub main branch</span>
+                <p class="text-brand-cyan">git branch -M main</p>
+                <p class="text-brand-cyan">git remote add origin https://github.com/&lt;your-org&gt;/pelican-protocol.git</p>
+                <p class="text-brand-cyan">git push -u origin main</p>
+              </div>
+
+              <div class="p-3 bg-brand-dark rounded-xl border border-brand-border">
+                <span class="text-slate-500 block mb-1"># 3. Enable Pages</span>
+                <p class="text-slate-300">Navigate to <strong>Settings &rarr; Pages</strong></p>
+                <p class="text-slate-300">Set <strong>Source</strong> to "Deploy from a branch"</p>
+                <p class="text-slate-300">Select branch: <strong>main / root</strong> and click Save.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Architecture Stack Mapping -->
+          <div class="p-6 rounded-2xl bg-brand-card border border-brand-border space-y-4">
+            <h3 class="text-base font-bold text-white">Hybrid Production Topology</h3>
+            <p class="text-xs text-slate-300">
+              In production, the static HTML front-end communicates with ephemeral SpacetimeDB WebAssembly instances or decentralized Automerge peer links:
+            </p>
+
+            <div class="space-y-2 text-xs font-mono">
+              <div class="p-2.5 rounded-lg bg-brand-dark border border-brand-border flex justify-between items-center">
+                <span class="text-slate-400">Ephemeral Sync Engine:</span>
+                <span class="text-brand-cyan">SpacetimeDB (RAM + Wasm Reducers)</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-brand-dark border border-brand-border flex justify-between items-center">
+                <span class="text-slate-400">Offline Fallback:</span>
+                <span class="text-brand-purple">Automerge 2.0 CRDT over WebRTC</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-brand-dark border border-brand-border flex justify-between items-center">
+                <span class="text-slate-400">Attestation Standard:</span>
+                <span class="text-brand-emerald">W3C Verifiable Credentials / BBS+</span>
+              </div>
+              <div class="p-2.5 rounded-lg bg-brand-dark border border-brand-border flex justify-between items-center">
+                <span class="text-slate-400">Local Cold Storage:</span>
+                <span class="text-white">SOVRAELEX SQLite Vault Container</span>
+              </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30 text-xs text-brand-emeraldLight">
+              <strong>Zero Leakage Guarantee:</strong> Client execution runs 100% locally in browser memory. No telemetry, third-party analytics, or cookie tracking cookies are loaded.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-border bg-brand-dark mt-16 py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+        <div>
+          <span class="text-slate-300 font-bold">SOVRAEGIS FRAMEWORK</span> • PELICAN PROTOCOL SPECIFICATION
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="#lifecycle" onclick="switchTab('lifecycle')" class="hover:text-brand-cyan transition">Lifecycle</a>
+          <a href="#outcomes" onclick="switchTab('outcomes')" class="hover:text-brand-cyan transition">Outcomes</a>
+          <a href="#simulator" onclick="switchTab('simulator')" class="hover:text-brand-cyan transition">Airlock Simulator</a>
+          <a href="#codev" onclick="switchTab('codev')" class="hover:text-brand-cyan transition">CODE+V</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- =================================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC                                        -->
+  <!-- =================================================================== -->
+  <script>
+    // --- Data Definitions for 7 Stages ---
+    const stagesData = [
+      {
+        stage: 1,
+        title: "Frame the Request",
+        badge: "Learner Scoping & Boundary Setting",
+        badgeColor: "border-brand-cyan/40 bg-brand-cyan/10 text-brand-cyan",
+        humanGoal: "The learner determines what kind of help they actually need and establishes the review horizon. They isolate a specific passage, prototype, performance, or research argument without exposing their entire lifelong learning portfolio.",
+        protocolAction: "Learner initializes request in SOVRAELEX, generating an encrypted reference to the SYNCTESS, linking relevant SYNCZINE context, and specifying review mode (Catalytic Coaching, Methodological Audit, or Guild Credential Assessment).",
+        cryptoRules: "Zero disk traversal allowed. Only explicit SYNCTESS node pointers are bundled into the ephemeral manifest. The learner's master vault private keys remain safely locked inside SOVRAELEX.",
+        transferred: "Staged Request Descriptor (.json-ld) containing artifact URI, author DID, and explicit focal inquiry questions."
+      },
+      {
+        stage: 2,
+        title: "Agree the Conditions",
+        badge: "Bilateral Covenant & Protocol Agreement",
+        badgeColor: "border-brand-purple/40 bg-brand-purple/10 text-brand-purple",
+        humanGoal: "Establishes psychological safety and fair terms. Participants mutually clarify review expectations, rubrics, retention duration, compensation (if any), and disclosures of reviewer conflicts of interest.",
+        protocolAction: "SOVRAEGIX review cockpit negotiates session parameters with SOVRAELEX. Both parties sign an Ephemeral Session Covenant defining permissible roles, timebox boundaries, and publication rights.",
+        cryptoRules: "Mutual handshake over QUIC/WebSocket using ephemeral session public keys (Ed25519). If terms cannot be agreed, session terminates before evidence staging.",
+        transferred: "Signed Bilateral Session Covenant with agreed CODE+V rubric scope and automatic timebox TTL."
+      },
+      {
+        stage: 3,
+        title: "Stage the Evidence",
+        badge: "Genesis Payload Freeze & Airlock Isolation",
+        badgeColor: "border-brand-emerald/40 bg-brand-emerald/10 text-brand-emerald",
+        humanGoal: "Guarantees that both mentor and learner are looking at the exact same, untampered baseline version of the work throughout the review.",
+        protocolAction: "The inbound SYNCTESS is deposited into the ephemeral SpacetimeDB/Automerge room. The protocol engine computes an unalterable content-addressed hash, freezing the genesis state.",
+        cryptoRules: "Cryptographic freeze via BLAKE3 or SHA-256 content addressing. The state machine locks this baseline: mutations will create explicit revision deltas rather than overwriting genesis.",
+        transferred: "Content-addressed frozen Genesis Payload with unalterable root hash and scoped structural AST node anchors."
+      },
+      {
+        stage: 4,
+        title: "Explore and Challenge",
+        badge: "Node-Anchored Socratic Discourse",
+        badgeColor: "border-brand-amber/40 bg-brand-amber/10 text-brand-amber",
+        humanGoal: "Mentors act as catalytic Socratic partners—asking provocative questions, testing assumptions, pinpointing ambiguities, and identifying conceptual strengths.",
+        protocolAction: "SOVRAEGES attach node-anchored critiques, highlights, or voice-timestamped inquiries directly to structural facets within the SYNCTESS, categorized under CODE+V dimensions.",
+        cryptoRules: "Append-only causal event log. Comments and challenge markers are cryptographically signed by the contributor's DID, preventing anonymous drive-by reviews or altered critique text.",
+        transferred: "Signed Socratic Event Log stream (`pelican.session.<id>.critique.*`) synchronized across viewer viewports."
+      },
+      {
+        stage: 5,
+        title: "Revise and Demonstrate",
+        badge: "Asymmetric Role-Enforced Mutation",
+        badgeColor: "border-rose-400/40 bg-rose-500/10 text-rose-300",
+        humanGoal: "The learner decides how to respond to feedback. They can clarify their reasoning, defend their initial choice, or introduce revised work without the mentor arbitrarily taking over their canvas.",
+        protocolAction: "The learner writes revisions directly to a new version fork. If a mentor proposes code or structural edits, it is staged as an isolated diff proposal sandbox that the learner must explicitly accept.",
+        cryptoRules: "Asymmetric Reducer Enforcement: State machine reducers reject any write attempt to the SYNCTESS payload by any key other than the originating Sovereign Learner. Mentors only hold write authority on suggestion branches.",
+        transferred: "Staged Diff Delta and Learner Defense Log, preserving explicit contrast between original and revised iterations."
+      },
+      {
+        stage: 6,
+        title: "Record Findings and Next Steps",
+        badge: "Epistemic Synthesis & Reasoned Attestation",
+        badgeColor: "border-brand-cyan/40 bg-brand-cyan/10 text-brand-cyan",
+        humanGoal: "Participants formulate an honest summary of what was demonstrated, what remains uncertain, and what next steps are needed. An encounter can conclude with immense educational value even without credential endorsement.",
+        protocolAction: "SOVRAEGES synthesize qualitative findings and select one of the 7 Graduated Outcomes. If criteria are satisfied, they append a reasoned attestation indicating exact competencies demonstrated.",
+        cryptoRules: "Attestations are signed with BBS+ signatures, enabling the learner to selectively disclose specific rubric accomplishments later without exposing raw transcripts.",
+        transferred: "Reasoned Attestation Block with structured CODE+V coordinate evaluations and minority opinions (if panel review)."
+      },
+      {
+        stage: 7,
+        title: "Package and Close",
+        badge: "BBS+ Package Crystallization & Ephemeral Teardown",
+        badgeColor: "border-brand-emerald/40 bg-brand-emerald/10 text-brand-emerald",
+        humanGoal: "The review closes cleanly. Both parties receive an identical portable dossier for their own vaults. The intermediary room is destroyed, leaving zero residual footprint on third-party servers.",
+        protocolAction: "The engine bundles the genesis payload, signed event ledger, revision history, and attestations into a single `.pelican` archive. Once both client nodes verify receipt, the ephemeral runtime wipes all memory.",
+        cryptoRules: "Deterministic in-memory zeroization. Session encryption keys are discarded; SpacetimeDB table instances are terminated. The final `.pelican` dossier is tamper-evident and offline-verifiable.",
+        transferred: "Self-contained, signed PELICAN PACKAGE (`.pelican` dossier) imported into local SOVRAELEX / SOVRAEGIX vaults."
+      }
+    ];
+
+    // --- Data Definitions for 7 Graduated Outcomes ---
+    const outcomesData = [
+      {
+        id: "feedback_delivered",
+        category: "developmental",
+        title: "1. Feedback Delivered",
+        badge: "Formative Coaching",
+        badgeColor: "bg-brand-cyan/10 text-brand-cyan border-brand-cyan/30",
+        summary: "The mentor provided catalytic challenge, questions, and observations. No formal credential assessment was requested or issued.",
+        meaning: "Encounter had purely developmental purpose. Gives learners a safe harbor to test unformed ideas without permanent judgment.",
+        nextSteps: "Learner incorporates insights into private practice; no institutional records altered."
+      },
+      {
+        id: "revision_invited",
+        category: "developmental",
+        title: "2. Revision Invited",
+        badge: "Iterative Pathway",
+        badgeColor: "bg-brand-amber/10 text-brand-amber border-brand-amber/30",
+        summary: "The work exhibits foundational promise, but has specific identified gaps or misconceptions that can be addressed through iteration.",
+        meaning: "Explicitly reframes 'failure' as an incomplete feedback loop. The reviewer identifies concrete areas for remediation.",
+        nextSteps: "Learner refines the SYNCTESS against anchored critique nodes and re-stages evidence in a follow-on encounter."
+      },
+      {
+        id: "additional_evidence",
+        category: "developmental",
+        title: "3. Additional Evidence Needed",
+        badge: "Verification Probe",
+        badgeColor: "bg-brand-purple/10 text-brand-purple border-brand-purple/30",
+        summary: "The core conceptual artifact is sound, but essential supporting evidence (test logs, raw datasets, citations, or execution proofs) is missing.",
+        meaning: "Separates artifact quality from proof of authenticity or reproducibility. Prevents guessing when empirical facts are unverifiable.",
+        nextSteps: "Learner gathers the missing empirical logs and links them to the existing package without redesigning the primary work."
+      },
+      {
+        id: "mastery_supported",
+        category: "evaluative",
+        title: "4. Mastery Supported for Specified Criteria",
+        badge: "Guild Attestation Ready",
+        badgeColor: "bg-brand-emerald/10 text-brand-emerald border-brand-emerald/30",
+        summary: "The learner successfully demonstrated sovereign competence against agreed CODE+V benchmarks to the satisfaction of the SOVRAEGE.",
+        meaning: "Does not automatically mint a diploma; produces an authoritative attestation that an authorized Guild uses to issue SYNTHCRED.",
+        nextSteps: "Attestation ingested into learner's wallet; can be submitted to Guild for formal credential synthesis."
+      },
+      {
+        id: "disputed",
+        category: "governance",
+        title: "5. Disputed",
+        badge: "Appellate Governance",
+        badgeColor: "bg-rose-500/10 text-rose-400 border-rose-500/30",
+        summary: "A principled divergence in methodology or interpretation between reviewer and learner that could not be resolved during the session.",
+        meaning: "Preserves the learner's right to contest subjective bias without silencing the reviewer. Eliminates institutional gaslighting.",
+        nextSteps: "Initiates secondary panel arbitration; both the mentor's original critique and learner's rebuttal are preserved intact."
+      },
+      {
+        id: "withdrawn",
+        category: "governance",
+        title: "6. Withdrawn",
+        badge: "Sovereign Retraction",
+        badgeColor: "bg-slate-700/40 text-slate-300 border-slate-600",
+        summary: "The learner chose to retract the SYNCTESS from review prior to a final determination, recognizing a need for fundamental redesign.",
+        meaning: "Protects learner agency. Withdrawing carries zero punitive penalty or permanent transcript stain.",
+        nextSteps: "Session is archived as 'withdrawn'; learner retains full ownership and may pivot direction entirely."
+      },
+      {
+        id: "closed_no_decision",
+        category: "governance",
+        title: "7. Closed Without a Decision",
+        badge: "Timebox Expiration",
+        badgeColor: "bg-slate-800 text-slate-400 border-slate-700",
+        summary: "The encounter terminated due to external constraints (e.g., agreed timebox expired, network interruption, or participant unavailability).",
+        meaning: "Transparent administrative closure. Prevents stale review requests from hanging in limbo while accurately reflecting incomplete transactions.",
+        nextSteps: "Participants may mutually agree to instantiate a fresh session or release the staging lock."
+      }
+    ];
+
+    // --- State Variables ---
+    let currentStageIndex = 1;
+    let annotationsList = [
+      {
+        dim: "Verify",
+        type: "Catalytic Challenge",
+        author: "did:key:z6MkuReviewerA",
+        text: "Are distributed random seeds bound to hardware execution nonces?"
+      }
+    ];
+    let isFrozen = true;
+    let proposedDiffStaged = false;
+
+    // --- Initialization on Window Load ---
+    window.addEventListener('DOMContentLoaded', () => {
+      renderStageDetail(1);
+      renderOutcomesGrid('all');
+      generateSimGenesisHash();
+    });
+
+    // --- Navigation Tabs ---
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.classList.add('hidden'));
+      document.getElementById('tab-content-' + tabId).classList.remove('hidden');
+
+      // Update Desktop Nav styles
+      document.querySelectorAll('.nav-tab').forEach(btn => {
+        btn.classList.remove('text-white', 'bg-brand-cardLight', 'border-brand-borderGlow');
+        btn.classList.add('text-slate-400');
+      });
+      const activeBtn = document.getElementById('tab-btn-' + tabId);
+      if (activeBtn) {
+        activeBtn.classList.remove('text-slate-400');
+        activeBtn.classList.add('text-white', 'bg-brand-cardLight', 'border-brand-borderGlow');
+      }
+
+      // Update Mobile Nav styles
+      document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+        btn.classList.remove('bg-brand-cardLight', 'text-white');
+        btn.classList.add('text-slate-400');
+      });
+    }
+
+    // --- Section 1: Lifecycle Stepper Logic ---
+    function setStage(stageNumber) {
+      currentStageIndex = stageNumber;
+      renderStageDetail(stageNumber);
+      updateStepperUI(stageNumber);
+    }
+
+    function nextStage() {
+      if (currentStageIndex < 7) {
+        setStage(currentStageIndex + 1);
+      } else {
+        setStage(1);
+      }
+    }
+
+    function prevStage() {
+      if (currentStageIndex > 1) {
+        setStage(currentStageIndex - 1);
+      } else {
+        setStage(7);
+      }
+    }
+
+    function updateStepperUI(activeNumber) {
+      document.getElementById('stage-stepper-counter').textContent = `Stage ${activeNumber} of 7`;
+
+      for (let i = 1; i <= 7; i++) {
+        const btn = document.getElementById(`step-btn-${i}`);
+        if (i === activeNumber) {
+          btn.className = "stage-step-btn text-left p-3 rounded-xl border border-brand-cyan bg-brand-cyan/10 transition-all shadow-glow-cyan";
+          btn.querySelector('span:nth-child(1)').className = "text-[10px] font-mono text-brand-cyan block font-bold";
+          btn.querySelector('span:nth-child(2)').className = "text-xs font-bold text-white block truncate";
+        } else {
+          btn.className = "stage-step-btn text-left p-3 rounded-xl border border-brand-border bg-brand-card hover:bg-brand-cardLight/50 transition-all";
+          btn.querySelector('span:nth-child(1)').className = "text-[10px] font-mono text-slate-500 block";
+          btn.querySelector('span:nth-child(2)').className = "text-xs font-bold text-slate-400 block truncate";
+        }
+      }
+    }
+
+    function renderStageDetail(num) {
+      const data = stagesData.find(s => s.stage === num);
+      const container = document.getElementById('stage-detail-container');
+
+      container.innerHTML = `
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border pb-4 mb-6">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-brand-cyan/20 text-brand-cyan font-mono font-bold text-lg flex items-center justify-center border border-brand-cyan/30">
+              0${data.stage}
+            </span>
+            <div>
+              <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Protocol Stage</span>
+              <h3 class="text-xl font-bold text-white">${data.title}</h3>
+            </div>
+          </div>
+          <span class="px-3 py-1 text-xs font-mono rounded-full border ${data.badgeColor}">
+            ${data.badge}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl bg-brand-dark/70 border border-brand-border">
+              <span class="text-xs font-mono text-brand-cyan block mb-1 font-semibold uppercase">Human &amp; Pedagogical Objective</span>
+              <p class="text-sm text-slate-200 leading-relaxed">${data.humanGoal}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-brand-dark/70 border border-brand-border">
+              <span class="text-xs font-mono text-brand-purple block mb-1 font-semibold uppercase">Protocol Operations</span>
+              <p class="text-sm text-slate-300 leading-relaxed">${data.protocolAction}</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl bg-brand-dark/70 border border-brand-border">
+              <span class="text-xs font-mono text-rose-400 block mb-1 font-semibold uppercase">Cryptographic &amp; State Rules</span>
+              <p class="text-sm text-slate-300 leading-relaxed">${data.cryptoRules}</p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30">
+              <span class="text-xs font-mono text-brand-emeraldLight block mb-1 font-semibold uppercase">Artifact Transferred in Stage</span>
+              <p class="text-sm text-emerald-200 font-mono">${data.transferred}</p>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // --- Section 2: Graduated Outcomes Matrix ---
+    function renderOutcomesGrid(filter) {
+      const grid = document.getElementById('outcomes-grid');
+      grid.innerHTML = '';
+
+      const filtered = outcomesData.filter(item => {
+        if (filter === 'all') return true;
+        return item.category === filter;
+      });
+
+      filtered.forEach(o => {
+        const card = document.createElement('div');
+        card.className = "p-5 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-borderGlow transition-all flex flex-col justify-between shadow-lg";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between gap-2 mb-3">
+              <span class="px-2.5 py-0.5 text-[10px] font-mono rounded-full border ${o.badgeColor}">
+                ${o.badge}
+              </span>
+              <span class="text-[10px] font-mono text-slate-500 uppercase">${o.category}</span>
+            </div>
+            <h4 class="text-base font-bold text-white mb-2">${o.title}</h4>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">${o.summary}</p>
+            
+            <div class="p-3 bg-brand-dark/80 rounded-xl border border-brand-border/60 text-[11px] mb-3 space-y-1">
+              <span class="text-slate-400 font-mono block font-semibold">Pedagogical Value:</span>
+              <p class="text-slate-300">${o.meaning}</p>
+            </div>
+          </div>
+
+          <div class="pt-2 border-t border-brand-border/40 text-[11px] font-mono text-brand-cyan">
+            <span class="text-slate-500 block text-[10px]">NEXT HORIZON</span>
+            ${o.nextSteps}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterOutcomes(cat) {
+      renderOutcomesGrid(cat);
+      document.querySelectorAll('.outcome-filter-btn').forEach(b => {
+        b.className = "outcome-filter-btn px-3 py-1 rounded-lg bg-brand-card text-slate-400 border border-brand-border hover:text-white";
+      });
+      event.target.className = "outcome-filter-btn px-3 py-1 rounded-lg bg-brand-cardLight text-white border border-brand-border";
+    }
+
+    // --- Section 3: Live Simulator Logic ---
+    function generateSimGenesisHash() {
+      // Deterministic pseudo-random BLAKE3 hash simulation
+      const text = document.getElementById('sim-body-input').value;
+      let hashVal = 0;
+      for (let i = 0; i < text.length; i++) {
+        hashVal = (hashVal << 5) - hashVal + text.charCodeAt(i);
+        hashVal |= 0;
+      }
+      const hex = 'blake3_' + Math.abs(hashVal).toString(16).padStart(16, '0') + '7f9c2d1b8e4a';
+      document.getElementById('sim-genesis-hash').textContent = hex;
+      return hex;
+    }
+
+    function testAsymmetricMutation() {
+      const alertBox = document.getElementById('sim-mutation-alert');
+      const diffBox = document.getElementById('sim-staged-diffs');
+      
+      alertBox.classList.remove('hidden');
+      diffBox.classList.remove('hidden');
+      proposedDiffStaged = true;
+
+      showToast("Access Denied: Asymmetric Lock Enforced. Mentor cannot edit SYNCTESS; Diff staged.", "amber");
+    }
+
+    function acceptDiff() {
+      const bodyInput = document.getElementById('sim-body-input');
+      bodyInput.value = bodyInput.value.replace(
+        "pub fn verify_deterministic_path(&self, tolerance: f64) -> bool",
+        "pub fn verify_deterministic_path(&self, tolerance: f64, bounds: CheckRange) -> Result<ProofReceipt, VerifyError>"
+      );
+      document.getElementById('sim-staged-diffs').classList.add('hidden');
+      document.getElementById('sim-mutation-alert').classList.add('hidden');
+      generateSimGenesisHash();
+      showToast("Learner accepted mentor's staged diff. Revision state updated.", "emerald");
+    }
+
+    function addAnnotation() {
+      const dim = document.getElementById('sim-dimension-select').value;
+      const type = document.getElementById('sim-critique-type').value;
+      const input = document.getElementById('sim-critique-input');
+      const text = input.value.trim();
+
+      if (!text) {
+        showToast("Please enter a Socratic inquiry note first.", "rose");
+        return;
+      }
+
+      annotationsList.unshift({
+        dim: dim,
+        type: type,
+        author: "did:key:z6MkuReviewerA",
+        text: text
+      });
+
+      input.value = "";
+      renderAnnotationsFeed();
+      showToast(`Anchored Socratic critique to CODE+V [${dim}]`, "purple");
+    }
+
+    function renderAnnotationsFeed() {
+      const feed = document.getElementById('sim-annotations-feed');
+      feed.innerHTML = '';
+      annotationsList.forEach(a => {
+        const item = document.createElement('div');
+        item.className = "p-2 rounded bg-brand-dark/80 border border-brand-border text-xs";
+        item.innerHTML = `
+          <div class="flex justify-between text-[10px] font-mono text-brand-cyan mb-1">
+            <span class="font-bold">[${a.dim.toUpperCase()}] ${a.type}</span>
+            <span class="text-slate-500">${a.author}</span>
+          </div>
+          <p class="text-slate-300 font-sans">${a.text}</p>
+        `;
+        feed.appendChild(item);
+      });
+    }
+
+    function crystallizePackage() {
+      const outcome = document.getElementById('sim-outcome-select').value;
+      const title = document.getElementById('sim-title-input').value;
+      const content = document.getElementById('sim-body-input').value;
+      const genesisHash = document.getElementById('sim-genesis-hash').textContent;
+
+      const mockPelicanPackage = {
+        "@context": [
+          "https://www.w3.org/2018/credentials/v1",
+          "https://sovraegis.org/context/pelican-protocol-v2.jsonld"
+        ],
+        "type": ["VerifiablePelicanDossier", "SovereignEncounterReceipt"],
+        "id": "urn:uuid:" + crypto.randomUUID(),
+        "issuanceDate": new Date().toISOString(),
+        "encounterScope": {
+          "sessionModel": "SpacetimeDB-Airlock-RAM",
+          "protocolVersion": "PELICAN-2.4-BOUNDED",
+          "retentionPolicy": "DESTROY_ON_CLOSE",
+          "ephemeralHostStatus": "ZEROIZED_AND_TERMINATED"
+        },
+        "genesisPayload": {
+          "artifactURI": "synctess://ml-repro-v1.4",
+          "title": title,
+          "contentHashBLAKE3": genesisHash,
+          "rawContentPreview": content.substring(0, 150) + "..."
+        },
+        "CODE_PLUS_V_Evaluation": {
+          "Curate": "Sources verified; random seed commitments properly referenced.",
+          "Organize": "Hexagonal module cleanly decouples entropy from state verify.",
+          "Distill": "Essential invariant stated: reproducibility bounds.",
+          "Express": "Idiomatic Rust kernel implementation with strict typings.",
+          "Verify": "Deterministic verification pass confirmed with bounds tolerance check.",
+          "Validate": "Meets Guild Level 3 Reproducibility Practitioner standards."
+        },
+        "socraticLedger": annotationsList,
+        "graduatedOutcome": {
+          "designation": outcome,
+          "reasoning": "Demonstrated robust mastery across CODE+V verify dimensions. Suggested GPU float bound refactoring was successfully integrated by learner.",
+          "recommendedCredentialAction": outcome.includes("Mastery Supported") ? "ELIGIBLE_FOR_SYNTHCRED_MINTING" : "FURTHER_DEVELOPMENT"
+        },
+        "attestationRing": [
+          {
+            "role": "Lead SOVRAEGE Evaluator",
+            "did": "did:key:z6MkuReviewerA82jKlw",
+            "signatureType": "BBSPlusSignature2020",
+            "proofValue": "eyJuYWRkcl9wdWJsaWMiOiAiMHg5ZjhhYjExMi4uLiJ9"
+          }
+        ]
+      };
+
+      const outBox = document.getElementById('sim-crystallized-box');
+      const jsonPre = document.getElementById('sim-package-json-output');
+      
+      jsonPre.textContent = JSON.stringify(mockPelicanPackage, null, 2);
+      outBox.classList.remove('hidden');
+      outBox.scrollIntoView({ behavior: 'smooth' });
+
+      showToast("PELICAN Package Crystallized! Airlock room zeroized.", "emerald");
+    }
+
+    function copyPackageJSON() {
+      const text = document.getElementById('sim-package-json-output').textContent;
+      copyToClipboard(text);
+      showToast("Package JSON copied to clipboard!", "cyan");
+    }
+
+    function downloadPackageFile() {
+      const text = document.getElementById('sim-package-json-output').textContent;
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `encounter_receipt_${Date.now()}.pelican`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Downloaded .pelican archive file.", "emerald");
+    }
+
+    function quickExportPackage() {
+      switchTab('simulator');
+      crystallizePackage();
+    }
+
+    function resetSimulation() {
+      document.getElementById('sim-title-input').value = "Hexagonal Machine Learning Reproducibility Framework";
+      document.getElementById('sim-body-input').value = `// Module: ReproducibilityKernel.rs
+// Implements deterministic random seed chaining across distributed workers
+pub struct ReproducibilityProof {
+    pub seed_entropy: [u8; 32],
+    pub epoch_commitments: Vec<Blake3Hash>,
+}
+
+impl ReproducibilityProof {
+    pub fn verify_deterministic_path(&self, tolerance: f64) -> bool {
+        // CODE+V: Verify dimension logic
+        self.epoch_commitments.iter().all(|c| c.is_valid(tolerance))
+    }
+}`;
+      annotationsList = [
+        {
+          dim: "Verify",
+          type: "Catalytic Challenge",
+          author: "did:key:z6MkuReviewerA",
+          text: "Are distributed random seeds bound to hardware execution nonces?"
+        }
+      ];
+      renderAnnotationsFeed();
+      generateSimGenesisHash();
+      document.getElementById('sim-staged-diffs').classList.add('hidden');
+      document.getElementById('sim-mutation-alert').classList.add('hidden');
+      document.getElementById('sim-crystallized-box').classList.add('hidden');
+      showToast("Sandbox reset to initial Stage 3 state.", "cyan");
+    }
+
+    // --- Clipboard Utility ---
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Fallback copy error', err);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // --- Toast Notifications ---
+    function showToast(message, color = 'cyan') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colorMap = {
+        cyan: 'bg-brand-card border-brand-cyan/40 text-brand-cyanLight',
+        emerald: 'bg-brand-card border-brand-emerald/40 text-brand-emeraldLight',
+        amber: 'bg-brand-card border-brand-amber/40 text-amber-200',
+        rose: 'bg-brand-card border-rose-500/40 text-rose-200',
+        purple: 'bg-brand-card border-brand-purple/40 text-brand-purpleLight'
+      };
+
+      toast.className = `p-3.5 rounded-xl border shadow-2xl text-xs font-mono max-w-sm pointer-events-auto flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${colorMap[color] || colorMap.cyan}`;
+      toast.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-current"></span>
+        <span class="flex-1">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

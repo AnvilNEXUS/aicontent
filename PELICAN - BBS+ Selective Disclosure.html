@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BBS+ Selective Disclosure & The PELICAN Package | SOVRAEGIS Framework</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              void: '#040711',
+              dark: '#080d1a',
+              card: '#0f172a',
+              cardLight: '#1e293b',
+              border: '#1e293b',
+              borderGlow: '#334155',
+              cyan: '#06b6d4',
+              cyanLight: '#22d3ee',
+              emerald: '#10b981',
+              emeraldLight: '#34d399',
+              amber: '#f59e0b',
+              purple: '#8b5cf6',
+              purpleLight: '#a78bfa',
+              rose: '#f43f5e',
+            }
+          },
+          boxShadow: {
+            'glow-cyan': '0 0 25px -5px rgba(6, 182, 212, 0.35)',
+            'glow-emerald': '0 0 25px -5px rgba(16, 185, 129, 0.35)',
+            'glow-purple': '0 0 25px -5px rgba(139, 92, 246, 0.35)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080d1a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
+
+    /* Ambient Background Texture */
+    .bg-grid-mesh {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    }
+    
+    .light .bg-grid-mesh {
+      background-image: 
+        linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    }
+
+    /* Shimmer effect for masked / concealed ZKP items */
+    @keyframes zkp-shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .zkp-masked-bar {
+      background: linear-gradient(90deg, rgba(139, 92, 246, 0.1) 25%, rgba(6, 182, 212, 0.25) 50%, rgba(139, 92, 246, 0.1) 75%);
+      background-size: 200% 100%;
+      animation: zkp-shimmer 3s infinite linear;
+    }
+  </style>
+</head>
+<body class="bg-brand-void text-slate-200 font-sans antialiased min-h-screen selection:bg-brand-cyan/25 selection:text-brand-cyan relative transition-colors duration-200">
+
+  <!-- Ambient glowing backdrop blurs -->
+  <div class="fixed inset-0 bg-grid-mesh pointer-events-none z-0"></div>
+  <div class="fixed top-0 left-1/4 w-[32rem] h-[32rem] bg-brand-cyan/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+  <div class="fixed top-1/3 right-1/4 w-[30rem] h-[30rem] bg-brand-purple/10 rounded-full blur-[160px] pointer-events-none z-0"></div>
+  <div class="fixed bottom-10 left-1/3 w-[34rem] h-[34rem] bg-brand-emerald/10 rounded-full blur-[150px] pointer-events-none z-0"></div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <div class="relative z-10 flex flex-col min-h-screen">
+
+    <!-- Top Framework Navigation Bar -->
+    <header class="sticky top-0 z-40 bg-brand-dark/90 backdrop-blur-md border-b border-brand-border">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Hierarchy Breadcrumbs Bar -->
+        <div class="py-2 border-b border-brand-border/60 flex items-center justify-between text-[11px] font-mono text-slate-400 overflow-x-auto whitespace-nowrap">
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500">SOVRAEGIS Framework</span>
+            <span class="text-slate-600">/</span>
+            <span class="text-slate-400">SOVRAELEX Vault</span>
+            <span class="text-slate-600">/</span>
+            <span class="text-slate-300">PELICAN Airlock</span>
+            <span class="text-slate-600">/</span>
+            <span class="text-brand-cyan font-semibold">BBS+ Selective Presentation</span>
+            <span class="text-slate-600">/</span>
+            <span class="text-brand-emerald font-semibold">SYNTHCRED Guild Adjudication</span>
+          </div>
+
+          <!-- Cryptographic Standard Badges & Theme Toggle -->
+          <div class="flex items-center gap-3 pl-4">
+            <span class="hidden lg:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30 text-[10px]">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-cyan animate-pulse"></span>
+              W3C VCDM 2.0 / 2.1
+            </span>
+            <span class="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-brand-purple/10 text-brand-purpleLight border border-brand-purple/30 text-[10px]">
+              BLS12-381 BBS+
+            </span>
+            <button onclick="toggleTheme()" class="p-1.5 rounded-lg bg-brand-card hover:bg-brand-cardLight border border-brand-border text-slate-300 hover:text-white transition" title="Toggle Dark/Light Mode">
+              <svg id="theme-icon-dark" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+              </svg>
+              <svg id="theme-icon-light" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Primary Header Content -->
+        <div class="h-16 flex items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-cyan via-brand-purple to-brand-emerald p-0.5 shadow-glow-cyan flex items-center justify-center">
+              <div class="w-full h-full bg-brand-dark rounded-[10px] flex items-center justify-center">
+                <svg class="w-5 h-5 text-brand-cyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                  <path d="m9 12 2 2 4-4"/>
+                </svg>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="font-bold text-white text-base tracking-wide">PELICAN DOSSIER ENGINE</h1>
+                <span class="px-2 py-0.5 text-[10px] font-mono tracking-wider uppercase bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30 rounded-full">
+                  ZKP Selective Disclosure
+                </span>
+              </div>
+              <p class="text-xs text-slate-400 font-mono">Tailoring Evidentiary Dossiers to Sovereign Recipient Needs</p>
+            </div>
+          </div>
+
+          <!-- Section Nav Buttons -->
+          <nav class="hidden md:flex items-center gap-1 bg-brand-card/80 p-1.5 rounded-xl border border-brand-border">
+            <button onclick="scrollToSection('primer')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-brand-cardLight transition">
+              1. Epistemology
+            </button>
+            <button onclick="scrollToSection('anatomy')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-brand-cardLight transition">
+              2. Dossier Anatomy (8 Claims)
+            </button>
+            <button onclick="scrollToSection('comparator')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-brand-cardLight transition">
+              3. 3-Way Recipient Views
+            </button>
+            <button onclick="scrollToSection('playground')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-white bg-brand-cardLight border border-brand-borderGlow shadow-sm">
+              4. ZKP Playground
+            </button>
+            <button onclick="scrollToSection('matrix')" class="px-3 py-1.5 rounded-lg text-xs font-medium text-slate-400 hover:text-white hover:bg-brand-cardLight transition">
+              5. Tech Matrix
+            </button>
+          </nav>
+
+          <!-- Quick Interactive Action -->
+          <div class="flex items-center gap-2">
+            <button onclick="scrollToSection('playground')" class="px-3.5 py-1.5 bg-gradient-to-r from-brand-cyan to-brand-emerald hover:opacity-95 text-brand-void font-bold rounded-lg text-xs font-mono shadow-glow-cyan transition">
+              Derive BBS+ Proof &rarr;
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-16">
+      
+      <!-- HERO & EPISTEMOLOGICAL PRIMER -->
+      <section id="primer" class="p-6 sm:p-10 rounded-3xl bg-gradient-to-b from-brand-card to-brand-dark border border-brand-border shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-20 -top-20 w-96 h-96 bg-brand-cyan/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="max-w-4xl relative z-10 space-y-6">
+          
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-cyan/10 border border-brand-cyan/20 text-brand-cyan text-xs font-mono">
+            <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            SOVEREIGN ENCOUNTER ARCHITECTURE • NON-TECHNICAL FOUNDATIONS
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-tight">
+            The Dilemma of <span class="text-rose-400">All-or-Nothing</span> Assessment <br class="hidden sm:inline">
+            vs. <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-cyan via-brand-emerald to-brand-purple">Sovereign BBS+ Disclosure</span>
+          </h2>
+
+          <p class="text-base sm:text-lg text-slate-300 leading-relaxed">
+            In legacy credentialing, learners are confronted with an impossible trade-off: either surrender their private drafts, collaborative dialogues, and unpolished iterations to an institutional cloud silo, or keep their work entirely private in an offline vault where it commands zero external social or professional trust.
+          </p>
+
+          <!-- Core Dilemma Comparison Box -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono pt-2">
+            
+            <div class="p-5 rounded-2xl bg-brand-dark/90 border border-rose-500/25 text-slate-300 space-y-3">
+              <div class="flex items-center gap-2 text-rose-400 font-bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                </svg>
+                <span>The Legacy All-or-Nothing Trap</span>
+              </div>
+              <p class="text-slate-400 font-sans leading-relaxed">
+                Submitting a portfolio forces the learner to reveal 100% of their notes, private corrections, and mentor debates to every third-party verifier. Alternatively, standard W3C RSA/ECDSA credentials sign the entire payload as one blob—if you redact a single field, the digital signature breaks.
+              </p>
+              <div class="text-[11px] text-rose-300/80 bg-rose-950/30 p-2.5 rounded-lg border border-rose-900/50">
+                <strong>Failure Mode:</strong> Verifiers track and link the learner across multiple websites via constant, static public keys and unblinded signatures.
+              </div>
+            </div>
+
+            <div class="p-5 rounded-2xl bg-brand-dark/90 border border-brand-emerald/30 text-slate-300 space-y-3 shadow-glow-emerald">
+              <div class="flex items-center gap-2 text-brand-emerald font-bold">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                </svg>
+                <span>The PELICAN + BBS+ Solution</span>
+              </div>
+              <p class="text-slate-400 font-sans leading-relaxed">
+                The PELICAN Protocol produces an 8-claim vector dossier. Using <strong>BLS12-381 BBS+ Cryptography</strong>, a single mentor signature signs all 8 messages simultaneously. The learner can derive mathematically provable presentations that reveal <em>any subset</em> of claims while completely masking others.
+              </p>
+              <div class="text-[11px] text-emerald-300/90 bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-900/50">
+                <strong>Sovereignty Guarantee:</strong> Zero-Knowledge Proofs randomize the signature upon every presentation, guaranteeing complete <em>cryptographic unlinkability</em> across relying parties.
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 2: ANATOMY OF THE MASTER PELICAN PACKAGE (THE 8 CLAIMS) -->
+      <section id="anatomy" class="space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border pb-4">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-cyan/20 text-brand-cyan font-mono text-sm">02</span>
+              <h3 class="text-2xl font-bold text-white">Anatomy of the Master PELICAN Package (<code class="text-brand-cyan">.pelican</code>)</h3>
+            </div>
+            <p class="text-sm text-slate-400 mt-1">
+              The crystallized archive models 8 constituent claims. In BLS12-381 BBS+, each message is an independent coordinate in the multi-message vector signature ring.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <span class="px-3 py-1 rounded-full text-xs font-mono bg-brand-cardLight border border-brand-border text-slate-300">
+              BLS12-381 G1/G2 Pairing Vector
+            </span>
+          </div>
+        </div>
+
+        <!-- 8 Vector Claims Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="claims-anatomy-grid">
+          
+          <!-- Claim 1: Review Brief -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-cyan/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30">m_0</span>
+              <span>Scope Descriptor</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-cyan transition">1. Review Brief</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Why the encounter occurred: explicit boundaries, session nonces, target SYNCZINE learning path, and agreed CODE+V rubric coordinate IDs.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: SHA-256(BriefManifest)
+            </div>
+          </div>
+
+          <!-- Claim 2: Evidence Record -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-emerald/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30">m_1</span>
+              <span>Genesis Freeze</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-emerald transition">2. Evidence Record</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              The immutable starting baseline: cryptographic BLAKE3 hashes of the inbound SYNCTESS, AST node anchors, and dereferenceable pointers.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: BLAKE3(SYNCTESS_v1)
+            </div>
+          </div>
+
+          <!-- Claim 3: Participant Roles -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-purple/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-purple/10 text-brand-purpleLight border border-brand-purple/30">m_2</span>
+              <span>W3C DIDs</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-purpleLight transition">3. Participant Roles</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Who contributed and under what authority: SOVRAEGE mentor DIDs, guild accreditation credentials, and disclosed conflicts of interest.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: Hash(AssessorDID + Authority)
+            </div>
+          </div>
+
+          <!-- Claim 4: Meaningful Feedback -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-amber/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-amber/10 text-brand-amber border border-brand-amber/30">m_3</span>
+              <span>Socratic Discourse</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-amber transition">4. Meaningful Feedback</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Node-anchored Socratic commentary, micro-challenges, code critique annotations, and time-indexed audio observations.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: MerkleRoot(SocraticFeed)
+            </div>
+          </div>
+
+          <!-- Claim 5: Revision History -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-rose-400/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-400 border border-rose-500/30">m_4</span>
+              <span>Attribution Matrix</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-rose-400 transition">5. Revision History</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              What changed and why: deterministic diffs between Genesis and Final states, explicitly differentiating human mentor coaching from AI tools.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: DiffRoot + AssistanceMatrix
+            </div>
+          </div>
+
+          <!-- Claim 6: Findings & Attestations -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-emerald/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-emerald/10 text-brand-emerald border border-brand-emerald/30">m_5</span>
+              <span>CODE+V Matrix</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-emerald transition">6. Findings &amp; Attestations</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              The reasoned judgment: scored CODE+V coordinates (Curate, Organize, Distill, Express, Verify, Validate) and one of 7 Graduated Outcomes.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: Hash(GraduatedOutcome + CODE+V)
+            </div>
+          </div>
+
+          <!-- Claim 7: Learner Reflection -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-purple/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-purple/10 text-brand-purpleLight border border-brand-purple/30">m_6</span>
+              <span>Metacognition</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-purpleLight transition">7. Learner Reflection</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Private metacognitive log: what the learner struggled with, insights internalized, disputed points, and follow-on research commitments.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: Hash(LearnerPersonalJournal)
+            </div>
+          </div>
+
+          <!-- Claim 8: Sharing & Retention Terms -->
+          <div class="p-4 rounded-2xl bg-brand-card border border-brand-border hover:border-brand-cyan/40 transition group">
+            <div class="flex items-center justify-between text-xs font-mono text-slate-400 mb-2">
+              <span class="px-2 py-0.5 rounded bg-brand-cyan/10 text-brand-cyan border border-brand-cyan/30">m_7</span>
+              <span>Capability Policy</span>
+            </div>
+            <h4 class="text-sm font-bold text-white group-hover:text-brand-cyan transition">8. Sharing &amp; Retention</h4>
+            <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
+              Policy boundary terms: downstream reuse permissions, AI-training consent toggles, and cryptographic expiry TTL for verification.
+            </p>
+            <div class="mt-3 pt-2 border-t border-brand-border/60 text-[10px] font-mono text-slate-500">
+              Signable Message: CapabilityDescriptorPolicy
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 3: INTERACTIVE 3-WAY RECIPIENT VIEW SWITCHER -->
+      <section id="comparator" class="space-y-6">
+        <div class="border-b border-brand-border pb-4">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-purple/20 text-brand-purple font-mono text-sm">03</span>
+            <h3 class="text-2xl font-bold text-white">Interactive 3-Way Recipient View Comparator</h3>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            See how the exact same master PELICAN package dynamically transforms across three different relying parties without requiring separate re-evaluations.
+          </p>
+        </div>
+
+        <!-- 3 View Selector Buttons -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <button onclick="setRecipientView('learner')" id="btn-view-learner" class="p-4 rounded-2xl text-left border border-brand-cyan bg-brand-cyan/10 shadow-glow-cyan transition">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-mono font-bold text-brand-cyan uppercase">View A • 100% Unredacted</span>
+              <span class="w-2 h-2 rounded-full bg-brand-cyan"></span>
+            </div>
+            <h4 class="text-sm font-bold text-white">Learner's Private Vault (SOVRAELEX)</h4>
+            <p class="text-xs text-slate-400 mt-1">Full developmental truth, private reflections, productive failures, raw Socratic audio.</p>
+          </button>
+
+          <button onclick="setRecipientView('guild')" id="btn-view-guild" class="p-4 rounded-2xl text-left border border-brand-border bg-brand-card hover:bg-brand-cardLight transition">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-mono font-bold text-slate-400 uppercase">View B • Adjudication Mask</span>
+              <span class="w-2 h-2 rounded-full bg-brand-emerald"></span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-300">Guild Credentialing (SYNTHCRED)</h4>
+            <p class="text-xs text-slate-400 mt-1">Discloses rubric scores, reviewer authority, and assistance attribution. Conceals private reflections.</p>
+          </button>
+
+          <button onclick="setRecipientView('employer')" id="btn-view-employer" class="p-4 rounded-2xl text-left border border-brand-border bg-brand-card hover:bg-brand-cardLight transition">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-mono font-bold text-slate-400 uppercase">View C • High-Level Proof</span>
+              <span class="w-2 h-2 rounded-full bg-brand-purple"></span>
+            </div>
+            <h4 class="text-sm font-bold text-slate-300">Enterprise Collaborator / Employer</h4>
+            <p class="text-xs text-slate-400 mt-1">Concise verified competence proof. Conceals proprietary source code, internal discussions, and personal notes.</p>
+          </button>
+        </div>
+
+        <!-- Comparative Interactive Dossier Card Display -->
+        <div class="p-6 rounded-2xl bg-brand-card border border-brand-border shadow-xl space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-brand-border pb-4">
+            <div>
+              <span id="active-view-tag" class="text-xs font-mono text-brand-cyan font-semibold">VIEW A ACTIVATED: SOVRAELEX PRIVATE REPOSITORY</span>
+              <h4 id="active-view-title" class="text-lg font-bold text-white">Complete Formative Evidence Dossier</h4>
+            </div>
+            <div id="active-view-stats" class="text-xs font-mono text-slate-300 bg-brand-dark px-3 py-1.5 rounded-lg border border-brand-border">
+              8 of 8 Claims Disclosed • 0 Concealed via ZKP
+            </div>
+          </div>
+
+          <!-- Dynamic 8 Claims State Presentation -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="view-claims-container">
+            <!-- Rendered by JS -->
+          </div>
+
+          <!-- Epistemic Security Verification Banner -->
+          <div id="view-epistemic-banner" class="p-4 rounded-xl bg-brand-dark border border-brand-cyan/30 text-xs font-mono flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-cyan flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <span class="text-slate-300" id="view-banner-text">Full cryptographic audit trail accessible only to Sovereign Learner key holder.</span>
+            </div>
+            <span class="text-brand-cyan font-bold whitespace-nowrap">Signature Verification: VALID (BLS12-381)</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: LIVE BBS+ CRYPTOGRAPHIC PRESENTATION PLAYGROUND -->
+      <section id="playground" class="space-y-6">
+        <div class="border-b border-brand-border pb-4">
+          <div class="flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-emerald/20 text-brand-emerald font-mono text-sm">04</span>
+                <h3 class="text-2xl font-bold text-white">Live BBS+ Cryptographic Presentation Playground</h3>
+              </div>
+              <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+                Test custom selective disclosure. Select which claims to reveal or blind via Zero-Knowledge Proofs, specify verifier nonces, and inspect the resulting W3C VCDM 2.0 Verifiable Presentation.
+              </p>
+            </div>
+            <button onclick="resetPlayground()" class="px-3 py-1.5 bg-brand-card hover:bg-brand-cardLight border border-brand-border rounded-lg text-xs font-mono text-slate-300">
+              Reset Toggles
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Left Column: Claim Toggles & Nonce Configuration (5 Cols) -->
+          <div class="lg:col-span-5 space-y-4">
+            <div class="p-5 rounded-2xl bg-brand-card border border-brand-border shadow-lg space-y-4">
+              <div class="flex items-center justify-between border-b border-brand-border pb-3">
+                <span class="text-xs font-mono font-bold text-slate-300 uppercase">Vector Claim Toggles (BLS12-381)</span>
+                <span class="text-[11px] font-mono text-brand-cyan">Master Signature: Valid</span>
+              </div>
+
+              <!-- Interactive Claim Checkboxes -->
+              <div class="space-y-2 text-xs font-mono" id="playground-checkboxes">
+                <!-- Injected via JS -->
+              </div>
+
+              <!-- Verifier Context Inputs -->
+              <div class="pt-3 border-t border-brand-border space-y-3">
+                <div>
+                  <label class="block text-[11px] font-mono text-slate-400 mb-1">Relying Party Domain (Audience)</label>
+                  <input id="pg-domain-input" type="text" value="adjudication.guild.sovraegis.org" class="w-full bg-brand-dark border border-brand-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-cyan font-mono">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-mono text-slate-400 mb-1">Challenge Nonce (Replay Protection)</label>
+                  <input id="pg-nonce-input" type="text" value="0x7f4b82d90a1e38c" class="w-full bg-brand-dark border border-brand-border rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none focus:border-brand-cyan font-mono">
+                </div>
+              </div>
+
+              <!-- Primary Action Buttons -->
+              <div class="pt-2 space-y-2">
+                <button onclick="generateBbsPresentation()" class="w-full py-2.5 bg-gradient-to-r from-brand-cyan via-brand-emerald to-brand-purple text-brand-void font-bold text-xs font-mono uppercase tracking-wider rounded-lg shadow-glow-cyan hover:opacity-95 transition">
+                  Derive BBS+ Verifiable Presentation
+                </button>
+                <button onclick="testUnlinkability()" class="w-full py-2 bg-brand-dark hover:bg-brand-cardLight border border-brand-purple/40 text-brand-purpleLight text-xs font-mono rounded-lg transition flex items-center justify-center gap-1.5">
+                  <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                  </svg>
+                  <span>Test Dual-Verifier Unlinkability (ZKP)</span>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- Mathematical Proof-of-Knowledge Metrics Card -->
+            <div class="p-4 rounded-xl bg-brand-dark/90 border border-brand-border text-xs font-mono space-y-2">
+              <span class="text-slate-400 block font-bold text-[11px] text-brand-cyan uppercase">BBS+ Proof-of-Knowledge Telemetry</span>
+              <div class="flex justify-between py-1 border-b border-brand-border/60">
+                <span class="text-slate-500">Proof Signature Size:</span>
+                <span class="text-brand-emerald font-semibold">Constant 112 bytes</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-brand-border/60">
+                <span class="text-slate-500">Elliptic Curve:</span>
+                <span class="text-white">BLS12-381 G1/G2 Pairing</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-brand-border/60">
+                <span class="text-slate-500">Active Disclosed Claims:</span>
+                <span id="pg-metric-disclosed" class="text-brand-cyan font-bold">5 / 8</span>
+              </div>
+              <div class="flex justify-between py-1 border-b border-brand-border/60">
+                <span class="text-slate-500">Blinded ZKP Claims:</span>
+                <span id="pg-metric-blinded" class="text-brand-purpleLight font-bold">3 / 8</span>
+              </div>
+              <div class="flex justify-between py-1">
+                <span class="text-slate-500">Pairing Check Equivalence:</span>
+                <span class="text-brand-emerald font-bold">e(A', W) = e(A_bar, P2)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Live Verifiable Presentation JSON Viewer (7 Cols) -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="p-5 rounded-2xl bg-brand-card border border-brand-border shadow-lg flex flex-col h-full">
+              
+              <div class="flex items-center justify-between pb-3 border-b border-brand-border mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-brand-emerald animate-pulse"></span>
+                  <span class="text-xs font-mono font-bold text-white uppercase">Derived Verifiable Presentation Payload (VCDM 2.0)</span>
+                </div>
+                <div class="flex gap-2">
+                  <button onclick="copyPresentationJSON()" class="px-2.5 py-1 bg-brand-dark hover:bg-brand-cardLight border border-brand-border rounded text-[11px] font-mono text-slate-300">
+                    Copy JSON
+                  </button>
+                  <button onclick="downloadPresentationJSON()" class="px-2.5 py-1 bg-brand-emerald hover:bg-brand-emeraldLight text-brand-void font-bold rounded text-[11px] font-mono">
+                    Download .pelican-vp.json
+                  </button>
+                </div>
+              </div>
+
+              <!-- JSON Preformatted Output -->
+              <pre id="pg-json-output" class="bg-brand-void p-4 rounded-xl text-[11px] font-mono text-brand-cyanLight overflow-x-auto flex-1 border border-brand-border/80 max-h-[520px] leading-relaxed"></pre>
+
+              <!-- Verification Confirmation -->
+              <div id="pg-verify-badge" class="mt-3 p-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30 text-xs font-mono text-brand-emeraldLight flex items-center justify-between">
+                <span class="flex items-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  <span>Cryptographic Proof Validated: Zero Knowledge Preserved</span>
+                </span>
+                <span class="text-slate-400 text-[10px]">Proof Purpose: authentication</span>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Collusion / Unlinkability Visualizer Modal/Card -->
+        <div id="unlinkability-modal" class="hidden p-6 rounded-2xl bg-brand-dark border border-brand-purple/50 shadow-glow-purple space-y-4">
+          <div class="flex items-center justify-between pb-3 border-b border-brand-border">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-brand-purple"></span>
+              <h4 class="text-sm font-bold text-white font-mono uppercase">Cryptographic Unlinkability Demonstration (Dual Verifiers)</h4>
+            </div>
+            <button onclick="document.getElementById('unlinkability-modal').classList.add('hidden')" class="text-slate-400 hover:text-white text-xs font-mono">
+              [Close Window]
+            </button>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed font-sans">
+            In standard digital signatures, two verifiers (e.g., Guild and Employer) can easily collude and determine they are looking at the exact same student by matching the identical signature string. BBS+ uses fresh random blinding scalars ($r_1, r_2$) for each presentation:
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+            <div class="p-3 bg-brand-card rounded-xl border border-brand-border space-y-1">
+              <span class="text-brand-cyan font-bold block">Presentation A (To Guild)</span>
+              <span class="text-slate-500 block text-[10px]">Domain: guild.sovraegis.org</span>
+              <p class="text-slate-300 break-all text-[10px]" id="unlinked-proof-a">ProofValue: 0x9f8c12a4b901e74...d4a82190</p>
+              <span class="text-brand-emerald block text-[10px] pt-1">&check; Verified Valid</span>
+            </div>
+            <div class="p-3 bg-brand-card rounded-xl border border-brand-border space-y-1">
+              <span class="text-brand-purpleLight font-bold block">Presentation B (To Employer)</span>
+              <span class="text-slate-500 block text-[10px]">Domain: talent.atelier.xyz</span>
+              <p class="text-slate-300 break-all text-[10px]" id="unlinked-proof-b">ProofValue: 0x3e18f0a2c5891d4...88f1107c</p>
+              <span class="text-brand-emerald block text-[10px] pt-1">&check; Verified Valid</span>
+            </div>
+          </div>
+          <div class="p-3 bg-brand-purple/10 border border-brand-purple/30 rounded-xl text-xs text-brand-purpleLight font-mono">
+            <strong>Mathematical Outcome:</strong> Both proofs are derived from the identical master PELICAN package, yet the ciphertext bitstrings have ZERO correlation. Verifier A and Verifier B cannot link the learner even if they compare logs.
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 5: COMPARATIVE TECHNOLOGY MATRIX -->
+      <section id="matrix" class="space-y-6">
+        <div class="border-b border-brand-border pb-4">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-brand-amber/20 text-brand-amber font-mono text-sm">05</span>
+            <h3 class="text-2xl font-bold text-white">Comparative Technology Matrix</h3>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            How BBS+ Vector Signatures contrast with Hash-Based Selective Disclosure (SD-JWT), standard Verifiable Credentials, and legacy LMS databases.
+          </p>
+        </div>
+
+        <div class="rounded-2xl bg-brand-card border border-brand-border p-6 shadow-xl overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-brand-border text-slate-400">
+                <th class="pb-3 font-semibold">Evaluation Dimension</th>
+                <th class="pb-3 font-semibold text-brand-cyan">PELICAN BBS+ (BLS12-381)</th>
+                <th class="pb-3 font-semibold text-brand-purpleLight">SD-JWT (IETF Hash Disclosures)</th>
+                <th class="pb-3 font-semibold text-rose-400">Full-Disclosure VC (Ed25519)</th>
+                <th class="pb-3 font-semibold text-slate-500">Legacy Institutional LMS</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-brand-border/60 text-slate-300">
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Cryptographic Unlinkability</td>
+                <td class="py-3 text-brand-emerald font-bold">Native (Zero-Knowledge Proofs)</td>
+                <td class="py-3 text-amber-400">No (Issuer signature visible)</td>
+                <td class="py-3 text-rose-400">Zero (Static signature)</td>
+                <td class="py-3 text-rose-400">Zero (Account tracking)</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Collusion Resistance</td>
+                <td class="py-3 text-brand-emerald font-bold">Complete across all verifiers</td>
+                <td class="py-3 text-rose-400">Vulnerable to signature correlation</td>
+                <td class="py-3 text-rose-400">Trivially colluded</td>
+                <td class="py-3 text-slate-500">Centralized database record</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Selective Disclosure Granularity</td>
+                <td class="py-3 text-brand-cyan">Field-by-field vector indices</td>
+                <td class="py-3 text-slate-300">Salted hash array claims</td>
+                <td class="py-3 text-rose-400">None (Binary all-or-nothing)</td>
+                <td class="py-3 text-rose-400">Institution dictates export</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Proof Size Overhead</td>
+                <td class="py-3 text-brand-emerald font-bold">Constant (~112 bytes)</td>
+                <td class="py-3 text-amber-400">Linear with disclosed claims + salts</td>
+                <td class="py-3 text-slate-300">Small (64 bytes Ed25519)</td>
+                <td class="py-3 text-slate-500">N/A (API payload)</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Holder Data Sovereignty</td>
+                <td class="py-3 text-brand-emerald font-bold">Absolute (Local-first in SOVRAELEX)</td>
+                <td class="py-3 text-slate-300">High (Held in wallet)</td>
+                <td class="py-3 text-slate-300">High (Held in wallet)</td>
+                <td class="py-3 text-rose-400">Zero (School owns database)</td>
+              </tr>
+              <tr>
+                <td class="py-3 font-sans text-slate-200 font-semibold">Verification Performance</td>
+                <td class="py-3 text-slate-300">Pairing check (~1-2 ms)</td>
+                <td class="py-3 text-brand-emerald">Fast SHA-256 hash checks</td>
+                <td class="py-3 text-brand-emerald">Sub-millisecond</td>
+                <td class="py-3 text-slate-500">HTTP REST request</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SECTION 6: BOUNDED COMMITMENTS & GOVERNANCE RULES -->
+      <section id="governance" class="space-y-6">
+        <div class="border-b border-brand-border pb-4">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-rose-500/20 text-rose-400 font-mono text-sm">06</span>
+            <h3 class="text-2xl font-bold text-white">Bounded Commitments &amp; Architectural Guardrails</h3>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            In SOVRAEGIS, cryptography enforces procedural fairness and authentic attribution—it does not substitute for sound pedagogical judgment.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
+          
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border space-y-3">
+            <div class="flex items-center gap-2 text-brand-amber font-mono font-bold">
+              <span class="w-2 h-2 rounded-full bg-brand-amber"></span>
+              <span>1. Bounded Tamper-Evidence</span>
+            </div>
+            <h4 class="text-sm font-bold text-white font-sans">Attribution vs. Absolute Truth</h4>
+            <p class="text-slate-400 leading-relaxed font-sans">
+              A cryptographic BBS+ signature mathematically proves <em>who</em> made <em>what</em> statement about <em>which</em> version of a SYNCTESS. It does not magically prove that the mentor’s pedagogical opinion was infallibly correct, nor that the underlying scientific theory will never be falsified.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border space-y-3">
+            <div class="flex items-center gap-2 text-brand-cyan font-mono font-bold">
+              <span class="w-2 h-2 rounded-full bg-brand-cyan"></span>
+              <span>2. Balanced Sovereignty</span>
+            </div>
+            <h4 class="text-sm font-bold text-white font-sans">Selective Disclosure vs. Forgery</h4>
+            <p class="text-slate-400 leading-relaxed font-sans">
+              The learner possesses complete sovereignty over which claims to disclose or conceal. However, the learner <em>cannot</em> forge or modify a reviewer’s statement. If a claim is revealed, it must match the mentor’s signed attestation bit-for-bit, preserving reciprocal accountability.
+            </p>
+          </div>
+
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border space-y-3">
+            <div class="flex items-center gap-2 text-brand-emerald font-mono font-bold">
+              <span class="w-2 h-2 rounded-full bg-brand-emerald"></span>
+              <span>3. Decoupled Credentialing</span>
+            </div>
+            <h4 class="text-sm font-bold text-white font-sans">Attestation vs. SYNTHCRED Issuance</h4>
+            <p class="text-slate-400 leading-relaxed font-sans">
+              Completing a PELICAN review does not automatically mint a credential. It outputs an evidentiary package containing verified findings. The determination to synthesize a formal <strong>SYNTHCRED</strong> remains the exclusive authority of an accredited Guild or institution.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SECTION 7: INTEGRATION ARCHITECTURE & GITHUB PAGES DEPLOYMENT -->
+      <section id="deploy" class="space-y-6">
+        <div class="border-b border-brand-border pb-4">
+          <div class="flex items-center gap-2">
+            <span class="flex items-center justify-center w-7 h-7 rounded-lg bg-slate-700 text-slate-200 font-mono text-sm">07</span>
+            <h3 class="text-2xl font-bold text-white">Integration Architecture &amp; GitHub Pages Guide</h3>
+          </div>
+          <p class="text-sm text-slate-400 mt-1 max-w-3xl">
+            How this application interfaces with open-source cryptographic toolkits and how to deploy this exact file to GitHub Pages in seconds.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          
+          <!-- Code Snippet: LearnCard / W3C SDK Integration -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border space-y-3 font-mono text-xs">
+            <div class="flex items-center justify-between pb-2 border-b border-brand-border">
+              <span class="text-brand-cyan font-bold">LearnCard SDK Integration Hook</span>
+              <span class="text-slate-500 text-[10px]">TypeScript / Node</span>
+            </div>
+            <pre class="bg-brand-void p-3.5 rounded-xl text-slate-300 overflow-x-auto text-[11px] leading-relaxed">
+<span class="text-brand-purple">import</span> { LearnCard } <span class="text-brand-purple">from</span> <span class="text-brand-emerald">'@learncard/core'</span>;
+<span class="text-brand-purple">import</span> { getBbsPlugin } <span class="text-brand-purple">from</span> <span class="text-brand-emerald">'@learncard/bbs-plugin'</span>;
+
+<span class="text-slate-500">// Initialize Sovereign Wallet in SOVRAELEX</span>
+<span class="text-brand-purple">const</span> wallet = <span class="text-brand-purple">await</span> LearnCard({ plugins: [getBbsPlugin()] });
+
+<span class="text-slate-500">// Derive ZKP Presentation revealing only Claims [0, 5]</span>
+<span class="text-brand-purple">const</span> vp = <span class="text-brand-purple">await</span> wallet.invoke.deriveBbsProof({
+  credential: masterPelicanPackage,
+  revealedIndices: [<span class="text-brand-cyan">0</span>, <span class="text-brand-cyan">5</span>], <span class="text-slate-500">// ReviewBrief & Findings</span>
+  nonce: <span class="text-brand-emerald">'0x7f4b82d90a1e38c'</span>,
+  domain: <span class="text-brand-emerald">'adjudication.guild.sovraegis.org'</span>
+});
+<span class="text-brand-cyan">console</span>.log(<span class="text-brand-emerald">"BBS+ Proof Derived:"</span>, vp.proof.proofValue);</pre>
+            <p class="text-[11px] text-slate-400 font-sans">
+              The derived presentation can be broadcast over WebSockets directly to the Guild cockpit for immediate BBS+ pairing check validation.
+            </p>
+          </div>
+
+          <!-- GitHub Pages Deploy Steps -->
+          <div class="p-5 rounded-2xl bg-brand-card border border-brand-border space-y-4 text-xs font-mono">
+            <div class="flex items-center justify-between pb-2 border-b border-brand-border">
+              <span class="text-white font-bold">Instant GitHub Pages Deployment</span>
+              <span class="text-brand-emerald text-[10px]">&check; Zero Build Required</span>
+            </div>
+
+            <div class="p-3 bg-brand-void rounded-xl border border-brand-border space-y-1">
+              <span class="text-slate-500 block"># Step 1: Save as index.html in a clean repository</span>
+              <p class="text-brand-cyan">git init</p>
+              <p class="text-brand-cyan">git add index.html</p>
+              <p class="text-brand-cyan">git commit -m "feat: deploy PELICAN BBS+ dossier application"</p>
+            </div>
+
+            <div class="p-3 bg-brand-void rounded-xl border border-brand-border space-y-1">
+              <span class="text-slate-500 block"># Step 2: Push to GitHub and enable Pages</span>
+              <p class="text-brand-cyan">git branch -M main</p>
+              <p class="text-brand-cyan">git remote add origin https://github.com/&lt;user&gt;/pelican-bbs-disclosure.git</p>
+              <p class="text-brand-cyan">git push -u origin main</p>
+            </div>
+
+            <p class="text-slate-400 font-sans text-[11px]">
+              Within your GitHub repository, open <strong>Settings &rarr; Pages</strong>, set branch to <strong>main / (root)</strong>, and click <strong>Save</strong>. Your live sovereign app is accessible globally in under 60 seconds.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-brand-border bg-brand-dark py-8 mt-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+        <div>
+          <span class="text-slate-300 font-bold">SOVRAEGIS FRAMEWORK</span> • BBS+ SELECTIVE DISCLOSURE SUITE
+        </div>
+        <div class="flex items-center gap-4">
+          <a href="#primer" class="hover:text-brand-cyan transition">Epistemology</a>
+          <a href="#anatomy" class="hover:text-brand-cyan transition">Dossier Anatomy</a>
+          <a href="#comparator" class="hover:text-brand-cyan transition">3-Way Comparator</a>
+          <a href="#playground" class="hover:text-brand-cyan transition">ZKP Playground</a>
+          <a href="#matrix" class="hover:text-brand-cyan transition">Tech Matrix</a>
+        </div>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // --- Master 8 Vector Claims Schema ---
+    const dossierClaims = [
+      {
+        id: "claim_0",
+        index: 0,
+        name: "1. Review Brief",
+        tag: "SCOPE & NONCES",
+        desc: "Why the encounter occurred: explicit boundaries, session nonces, target SYNCZINE learning path, and agreed CODE+V rubric coordinate IDs.",
+        sampleData: {
+          sessionID: "pelican-session-9882a",
+          mode: "Methodological Audit & Socratic Critique",
+          targetSynczine: "synczine://ml-reproducibility-kernel/v2",
+          scopeNonces: "0xa819cd02"
+        }
+      },
+      {
+        id: "claim_1",
+        index: 1,
+        name: "2. Evidence Record",
+        tag: "GENESIS FREEZE",
+        desc: "The immutable starting baseline: cryptographic BLAKE3 hashes of inbound SYNCTESS, AST node anchors, and dereferenceable pointers.",
+        sampleData: {
+          synctessURI: "synctess://kernel-repro-v1.4",
+          genesisBlake3: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          frozenAt: "2026-10-23T04:12:00Z"
+        }
+      },
+      {
+        id: "claim_2",
+        index: 2,
+        name: "3. Participant Roles",
+        tag: "W3C DIDs & AUTHORITY",
+        desc: "Who contributed and under what authority: SOVRAEGE mentor DIDs, guild accreditation credentials, and disclosed conflicts of interest.",
+        sampleData: {
+          mentorDID: "did:key:z6MkuReviewerA82jKlw90",
+          authorityLevel: "Guild Certified Sovereign Evaluator - Level 4",
+          coiDisclosure: "No financial or institutional conflict disclosed"
+        }
+      },
+      {
+        id: "claim_3",
+        index: 3,
+        name: "4. Meaningful Feedback",
+        tag: "SOCRATIC DIALOGUE",
+        desc: "Node-anchored Socratic commentary, micro-challenges, code critique annotations, and time-indexed audio observations.",
+        sampleData: {
+          socraticProbesCount: 4,
+          primaryProbe: "How does this proof resolve IEEE 754 float nondeterminism across heterogeneous GPU clusters?",
+          audioTimestampAnchor: "14:22"
+        }
+      },
+      {
+        id: "claim_4",
+        index: 4,
+        name: "5. Revision History",
+        tag: "ATTRIBUTION MATRIX",
+        desc: "What changed and why: deterministic diffs between Genesis and Final states, explicitly differentiating human mentor coaching from AI tools.",
+        sampleData: {
+          diffLinesAccepted: 18,
+          diffLinesRejected: 2,
+          assistanceAttribution: { humanMentor: "30%", aiScaffolding: "15%", independentLearner: "55%" }
+        }
+      },
+      {
+        id: "claim_5",
+        index: 5,
+        name: "6. Findings & Attestations",
+        tag: "GRADUATED OUTCOME",
+        desc: "The reasoned judgment: scored CODE+V coordinates (Curate, Organize, Distill, Express, Verify, Validate) and one of 7 Graduated Outcomes.",
+        sampleData: {
+          graduatedOutcome: "Mastery Supported for Specified Criteria",
+          supportedDimensions: ["Verify", "Express", "Organize"],
+          attestationProof: "Valid BLS12-381 G1 signature affirmed by mentor"
+        }
+      },
+      {
+        id: "claim_6",
+        index: 6,
+        name: "7. Learner Reflection",
+        tag: "PRIVATE METACOGNITION",
+        desc: "Private metacognitive log: what the learner struggled with, insights internalized, disputed points, and follow-on research commitments.",
+        sampleData: {
+          struggleNote: "Struggled with GPU execution jitter until introducing the seed commitment chain.",
+          unresolvedHypothesis: "Stochastic bounds under extreme memory pressure."
+        }
+      },
+      {
+        id: "claim_7",
+        index: 7,
+        name: "8. Sharing & Retention Terms",
+        tag: "CAPABILITY POLICIES",
+        desc: "Policy boundary terms: downstream reuse permissions, AI-training consent toggles, and cryptographic expiry TTL for verification.",
+        sampleData: {
+          retentionPolicy: "DESTROY_EPHEMERAL_ON_CLOSE",
+          aiTrainingConsent: false,
+          downstreamPresentationTTL: "365_DAYS"
+        }
+      }
+    ];
+
+    // Current State for Playground Toggles (True = Disclosed, False = Masked via ZKP)
+    let playgroundClaimState = [true, true, true, false, true, true, false, false];
+
+    // Recipient View Configurations
+    const viewPresets = {
+      learner: {
+        tag: "VIEW A ACTIVATED: SOVRAELEX PRIVATE REPOSITORY",
+        title: "Complete Formative Evidence Dossier (100% Unredacted)",
+        disclosedIndices: [0, 1, 2, 3, 4, 5, 6, 7],
+        bannerText: "Full developmental truth preserved. Private reflections and raw debates accessible only to Learner."
+      },
+      guild: {
+        tag: "VIEW B ACTIVATED: SYNTHCRED GUILD ADJUDICATION",
+        title: "Objective Competence Attestation (Private Reflections Masked)",
+        disclosedIndices: [0, 1, 2, 4, 5], // 3 (Feedback), 6 (Reflection), 7 (Terms) masked
+        bannerText: "Guild receives verified evidence baseline, CODE+V scores, and assistance attribution. Metacognition concealed."
+      },
+      employer: {
+        tag: "VIEW C ACTIVATED: ENTERPRISE COLLABORATOR / EMPLOYER",
+        title: "Concise Verified Mastery Proof (Proprietary Code & Notes Masked)",
+        disclosedIndices: [0, 5], // Only Brief and Findings revealed
+        bannerText: "Relying party verifies specific capability and mentor authority without seeing internal code or drafts."
+      }
+    };
+
+    // Initialize UI on window load
+    window.addEventListener('DOMContentLoaded', () => {
+      setRecipientView('learner');
+      initPlaygroundCheckboxes();
+      generateBbsPresentation();
+    });
+
+    // Navigation Scrolling Helper
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Theme Toggle Logic
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.contains('dark');
+      if (isDark) {
+        html.classList.remove('dark');
+        document.getElementById('theme-icon-dark').classList.remove('hidden');
+        document.getElementById('theme-icon-light').classList.add('hidden');
+        showToast("Switched to Light Theme", "cyan");
+      } else {
+        html.classList.add('dark');
+        document.getElementById('theme-icon-dark').classList.add('hidden');
+        document.getElementById('theme-icon-light').classList.remove('hidden');
+        showToast("Switched to Obsidian Dark Theme", "purple");
+      }
+    }
+
+    // --- SECTION 3: 3-WAY RECIPIENT VIEW LOGIC ---
+    function setRecipientView(viewKey) {
+      const preset = viewPresets[viewKey];
+      if (!preset) return;
+
+      // Update button active styling
+      ['learner', 'guild', 'employer'].forEach(key => {
+        const btn = document.getElementById('btn-view-' + key);
+        if (key === viewKey) {
+          btn.className = "p-4 rounded-2xl text-left border border-brand-cyan bg-brand-cyan/10 shadow-glow-cyan transition";
+          btn.querySelector('h4').className = "text-sm font-bold text-white";
+        } else {
+          btn.className = "p-4 rounded-2xl text-left border border-brand-border bg-brand-card hover:bg-brand-cardLight transition";
+          btn.querySelector('h4').className = "text-sm font-bold text-slate-300";
+        }
+      });
+
+      // Update Header Text & Stats
+      document.getElementById('active-view-tag').textContent = preset.tag;
+      document.getElementById('active-view-title').textContent = preset.title;
+      document.getElementById('view-banner-text').textContent = preset.bannerText;
+
+      const revealedCount = preset.disclosedIndices.length;
+      const concealedCount = 8 - revealedCount;
+      document.getElementById('active-view-stats').textContent = 
+        `${revealedCount} of 8 Claims Disclosed • ${concealedCount} Concealed via ZKP`;
+
+      // Render 8 Claims in Comparator
+      const container = document.getElementById('view-claims-container');
+      container.innerHTML = '';
+
+      dossierClaims.forEach((claim, idx) => {
+        const isRevealed = preset.disclosedIndices.includes(idx);
+        const card = document.createElement('div');
+        
+        if (isRevealed) {
+          card.className = "p-3.5 rounded-xl bg-brand-dark border border-brand-emerald/40 text-xs font-mono space-y-1.5 transition";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white">${claim.name}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] bg-brand-emerald/20 text-brand-emeraldLight border border-brand-emerald/40 flex items-center gap-1">
+                <span>&check;</span> REVEALED
+              </span>
+            </div>
+            <p class="text-slate-300 text-[11px] font-sans">${claim.desc}</p>
+            <div class="p-2 rounded bg-brand-void text-[10px] text-brand-cyan truncate">
+              ${JSON.stringify(claim.sampleData)}
+            </div>
+          `;
+        } else {
+          card.className = "p-3.5 rounded-xl bg-brand-dark/50 border border-brand-purple/30 text-xs font-mono space-y-1.5 transition";
+          card.innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-500">${claim.name}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/40 flex items-center gap-1">
+                <svg class="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="10" stroke-width="4" stroke-dasharray="32" stroke-linecap="round"></circle></svg>
+                ZKP CONCEALED
+              </span>
+            </div>
+            <div class="h-9 w-full rounded-lg zkp-masked-bar border border-brand-purple/20 flex items-center justify-center text-[10px] text-brand-purpleLight font-bold">
+              [ Cryptographically Blinded: e(A', W) Verified ]
+            </div>
+          `;
+        }
+        container.appendChild(card);
+      });
+    }
+
+    // --- SECTION 4: PLAYGROUND LOGIC ---
+    function initPlaygroundCheckboxes() {
+      const container = document.getElementById('playground-checkboxes');
+      container.innerHTML = '';
+
+      dossierClaims.forEach((claim, idx) => {
+        const row = document.createElement('label');
+        row.className = "flex items-center justify-between p-2 rounded-lg bg-brand-dark hover:bg-brand-cardLight cursor-pointer transition border border-brand-border/60";
+        row.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <input type="checkbox" id="pg-chk-${idx}" ${playgroundClaimState[idx] ? 'checked' : ''} onchange="togglePlaygroundClaim(${idx})" class="w-4 h-4 rounded text-brand-cyan focus:ring-brand-cyan bg-brand-void border-brand-border">
+            <span class="text-slate-300 font-semibold">${claim.name}</span>
+          </div>
+          <span class="text-[10px] text-slate-500 font-mono">${claim.tag}</span>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function togglePlaygroundClaim(idx) {
+      playgroundClaimState[idx] = document.getElementById(`pg-chk-${idx}`).checked;
+      generateBbsPresentation();
+    }
+
+    function resetPlayground() {
+      playgroundClaimState = [true, true, true, false, true, true, false, false];
+      initPlaygroundCheckboxes();
+      generateBbsPresentation();
+      showToast("Reset to Standard Guild Adjudication preset", "cyan");
+    }
+
+    function generateBbsPresentation() {
+      const domain = document.getElementById('pg-domain-input').value.trim() || "adjudication.guild.sovraegis.org";
+      const nonce = document.getElementById('pg-nonce-input').value.trim() || "0x7f4b82d90a1e38c";
+
+      let revealedIndices = [];
+      let disclosedClaimsMap = {};
+
+      dossierClaims.forEach((claim, idx) => {
+        if (playgroundClaimState[idx]) {
+          revealedIndices.push(idx);
+          disclosedClaimsMap[claim.id] = {
+            title: claim.name,
+            content: claim.sampleData
+          };
+        }
+      });
+
+      const disclosedCount = revealedIndices.length;
+      const blindedCount = 8 - disclosedCount;
+
+      document.getElementById('pg-metric-disclosed').textContent = `${disclosedCount} / 8`;
+      document.getElementById('pg-metric-blinded').textContent = `${blindedCount} / 8`;
+
+      // Generate simulated BLS12-381 G1 Proof Signature value
+      const simulatedProofValue = generateRandomHex(112);
+
+      const verifiablePresentation = {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2",
+          "https://w3id.org/security/bbs/v1",
+          "https://sovraegis.org/contexts/pelican-dossier-v2.jsonld"
+        ],
+        "type": [
+          "VerifiablePresentation",
+          "PelicanBbsPlusPresentation"
+        ],
+        "verifiableCredential": {
+          "@context": [
+            "https://www.w3.org/ns/credentials/v2",
+            "https://w3id.org/security/bbs/v1"
+          ],
+          "type": [
+            "VerifiableCredential",
+            "PelicanMasterDossierCredential"
+          ],
+          "id": "urn:uuid:7f3b890a-11ce-49ef-b328-98e3b4a90123",
+          "issuer": {
+            "id": "did:key:z6MkuReviewerA82jKlw90",
+            "name": "Lead SOVRAEGE Assessor"
+          },
+          "issuanceDate": "2026-10-23T04:15:00Z",
+          "credentialSubject": {
+            "id": "did:key:z6MksLearnerAutonomous44",
+            "revealedVectorIndices": revealedIndices,
+            "disclosedClaims": disclosedClaimsMap,
+            "blindedClaimsCount": blindedCount,
+            "zkpBlindingAlgorithm": "BLS12-381-BBS-BbsBlsSignatureProof2020"
+          }
+        },
+        "proof": {
+          "type": "BbsBlsSignatureProof2020",
+          "created": new Date().toISOString(),
+          "verificationMethod": "did:key:z6MkuReviewerA82jKlw90#z6MkuReviewerA82jKlw90",
+          "proofPurpose": "authentication",
+          "domain": domain,
+          "challenge": nonce,
+          "proofValue": simulatedProofValue
+        }
+      };
+
+      document.getElementById('pg-json-output').textContent = JSON.stringify(verifiablePresentation, null, 2);
+    }
+
+    function testUnlinkability() {
+      const modal = document.getElementById('unlinkability-modal');
+      const proofA = "0x" + generateRandomHex(40) + "...bbs_bls12381_guild_unlinked";
+      const proofB = "0x" + generateRandomHex(40) + "...bbs_bls12381_employer_unlinked";
+
+      document.getElementById('unlinked-proof-a').textContent = "ProofValue: " + proofA;
+      document.getElementById('unlinked-proof-b').textContent = "ProofValue: " + proofB;
+      modal.classList.remove('hidden');
+      modal.scrollIntoView({ behavior: 'smooth' });
+
+      showToast("Generated dual blinded proofs. Zero correlation confirmed!", "purple");
+    }
+
+    function generateRandomHex(len) {
+      let out = "";
+      const chars = "0123456789abcdef";
+      for (let i = 0; i < len; i++) {
+        out += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return out;
+    }
+
+    // Clipboard and Download Helpers
+    function copyPresentationJSON() {
+      const text = document.getElementById('pg-json-output').textContent;
+      copyToClipboard(text);
+      showToast("Presentation JSON copied to clipboard!", "cyan");
+    }
+
+    function downloadPresentationJSON() {
+      const text = document.getElementById('pg-json-output').textContent;
+      const blob = new Blob([text], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pelican_bbs_presentation_${Date.now()}.pelican-vp.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Downloaded .pelican-vp.json file.", "emerald");
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      try {
+        document.execCommand('copy');
+      } catch (err) {
+        console.error('Fallback copy error', err);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // Toast Notifications
+    function showToast(message, color = 'cyan') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      const colorMap = {
+        cyan: 'bg-brand-card border-brand-cyan/40 text-brand-cyanLight',
+        emerald: 'bg-brand-card border-brand-emerald/40 text-brand-emeraldLight',
+        amber: 'bg-brand-card border-brand-amber/40 text-amber-200',
+        rose: 'bg-brand-card border-rose-500/40 text-rose-200',
+        purple: 'bg-brand-card border-brand-purple/40 text-brand-purpleLight'
+      };
+
+      toast.className = `p-3.5 rounded-xl border shadow-2xl text-xs font-mono max-w-sm pointer-events-auto flex items-center gap-2 transform transition-all duration-300 translate-y-2 opacity-0 ${colorMap[color] || colorMap.cyan}`;
+      toast.innerHTML = `
+        <span class="w-2 h-2 rounded-full bg-current"></span>
+        <span class="flex-1">${message}</span>
+      `;
+
+      container.appendChild(toast);
+      
+      requestAnimationFrame(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      });
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => {
+          if (toast.parentNode) toast.parentNode.removeChild(toast);
+        }, 300);
+      }, 3500);
+    }
+  </script>
+</body>
+</html>
