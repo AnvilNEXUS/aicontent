@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS | Cybernetic Architecture & Sovereign Learner Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --bg-dark: #080c14;
+      --card-bg: rgba(14, 21, 37, 0.85);
+      --border-cyan: rgba(56, 189, 248, 0.3);
+      --glow-cyan: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      font-family: 'Space Grotesk', sans-serif;
+      color: #e2e8f0;
+      overflow-x: hidden;
+    }
+
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Ambient animated grid */
+    .bg-grid {
+      background-size: 40px 40px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    }
+
+    /* Glowing pulse animations */
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.9; transform: scale(1.05); }
+    }
+    .pulse-glow {
+      animation: pulseGlow 4s infinite ease-in-out;
+    }
+
+    @keyframes flowDash {
+      to {
+        stroke-dashoffset: -40;
+      }
+    }
+    .flow-line {
+      stroke-dasharray: 6 6;
+      animation: flowDash 2.5s linear infinite;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.8);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(56, 189, 248, 0.3);
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(56, 189, 248, 0.6);
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+    }
+
+    .active-stage-glow {
+      border-color: #38bdf8 !important;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.35) !important;
+    }
+  </style>
+</head>
+<body class="bg-grid min-h-screen text-slate-200 flex flex-col justify-between">
+
+  <!-- TOP APP BAR -->
+  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500/20 via-sky-500/10 to-indigo-500/20 border border-cyan-500/40">
+          <span class="text-cyan-400 font-bold text-lg font-mono-code">SΩ</span>
+          <div class="absolute inset-0 rounded-xl bg-cyan-400/20 filter blur-sm"></div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              SOVRAEGIS <span class="text-xs px-2 py-0.5 rounded-full bg-cyan-950 text-cyan-400 border border-cyan-700/50 font-mono-code">v2.4 Cybernetic</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400">Meta-Framework Architecture for the Sovereign Learner</p>
+        </div>
+      </div>
+
+      <!-- Quick Nav Filter Bar -->
+      <div class="flex items-center flex-wrap gap-2 text-xs font-mono-code">
+        <span class="text-slate-500 mr-1">MACRO PILLARS:</span>
+        <button onclick="filterPillar('ALL')" id="pill-ALL" class="pillar-btn px-2.5 py-1 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/50 transition">ALL (4)</button>
+        <button onclick="filterPillar('IOE')" id="pill-IOE" class="pillar-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500 transition">IoE</button>
+        <button onclick="filterPillar('EDU6')" id="pill-EDU6" class="pillar-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500 transition">Edu 6.0</button>
+        <button onclick="filterPillar('ECON')" id="pill-ECON" class="pillar-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500 transition">Learning Economy</button>
+        <button onclick="filterPillar('VELO')" id="pill-VELO" class="pillar-btn px-2.5 py-1 rounded-md bg-slate-800 text-slate-400 border border-slate-700 hover:border-slate-500 transition">Learning Velocity</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN DUAL-PANE VIEWPORT -->
+  <main class="max-w-7xl mx-auto w-full p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+
+    <!-- LEFT COLUMN: CYBERNETIC LOOP & INTERACTIVE SVG (7 Cols) -->
+    <section class="lg:col-span-7 flex flex-col gap-4">
+      
+      <!-- Stage Controller Bar -->
+      <div class="glass-card rounded-2xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-800">
+        <div class="flex items-center gap-2">
+          <span class="text-xs uppercase tracking-wider text-slate-400 font-mono-code">Cybernetic Loop Stage:</span>
+          <span id="currentStageIndicator" class="text-sm font-bold text-cyan-300 px-3 py-0.5 rounded-full bg-cyan-950/80 border border-cyan-500/40">1. Support</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="prevStage()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-mono-code text-slate-300 border border-slate-700 flex items-center gap-1 transition">
+            &larr; Prev
+          </button>
+          <button onclick="nextStage()" class="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-xs font-mono-code text-white border border-cyan-400 shadow-lg shadow-cyan-950 transition">
+            Next Stage &rarr;
+          </button>
+          <button onclick="toggleSimulation()" id="simBtn" class="px-3 py-1.5 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-xs font-mono-code text-emerald-400 border border-emerald-600/60 flex items-center gap-1.5 transition">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+            Simulate Sprint
+          </button>
+        </div>
+      </div>
+
+      <!-- Cybernetic Diagram Canvas / SVG Viewport -->
+      <div class="glass-card rounded-2xl p-6 relative overflow-hidden flex flex-col items-center justify-center min-h-[460px] border border-slate-800">
+        
+        <!-- Live Status Ribbon -->
+        <div class="absolute top-4 left-4 z-20 flex items-center gap-2 text-xs font-mono-code text-slate-400 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-slate-800">
+          <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+          <span>CYBERNETIC TELEMETRY: <strong id="telemetryStatus" class="text-cyan-300">ACTIVE LOOP</strong></span>
+        </div>
+
+        <!-- Mode Toggle (Architecture vs Scenario) -->
+        <div class="absolute top-4 right-4 z-20 flex items-center bg-slate-900/90 p-1 rounded-xl border border-slate-800 text-xs font-mono-code">
+          <button onclick="setViewMode('arch')" id="viewModeArch" class="px-2.5 py-1 rounded-lg bg-cyan-500/30 text-cyan-300 font-semibold transition">Architecture</button>
+          <button onclick="setViewMode('scenario')" id="viewModeScen" class="px-2.5 py-1 rounded-lg text-slate-400 hover:text-white transition">Kaelen's 21d Sprint</button>
+        </div>
+
+        <!-- INTERACTIVE SVG DIAGRAM -->
+        <svg id="cyberneticSvg" class="w-full max-w-[540px] h-[400px] z-10" viewBox="0 0 540 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Radial gradient for center -->
+            <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"/>
+              <stop offset="70%" stop-color="#0284c7" stop-opacity="0.1"/>
+              <stop offset="100%" stop-color="#080c14" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Marker for flows -->
+            <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+              <polygon points="0 0, 6 3, 0 6" fill="#38bdf8" />
+            </marker>
+          </defs>
+
+          <!-- Ambient Glow Ring -->
+          <circle cx="270" cy="200" r="145" fill="url(#centerGlow)" />
+
+          <!-- Cybernetic Feedback Path (Pentagon Loop) -->
+          <!-- Stage 1: (150, 90) -->
+          <!-- Stage 2: (390, 90) -->
+          <!-- Stage 3: (450, 240) -->
+          <!-- Stage 4: (270, 330) -->
+          <!-- Stage 5: (90, 240) -->
+          <path id="loop-1-2" d="M 175 90 L 365 90" stroke="#38bdf8" stroke-width="2" class="flow-line" marker-end="url(#arrowhead)"/>
+          <path id="loop-2-3" d="M 395 105 L 435 220" stroke="#38bdf8" stroke-width="2" class="flow-line" marker-end="url(#arrowhead)"/>
+          <path id="loop-3-4" d="M 425 255 L 295 325" stroke="#38bdf8" stroke-width="2" class="flow-line" marker-end="url(#arrowhead)"/>
+          <path id="loop-4-5" d="M 245 325 L 115 255" stroke="#38bdf8" stroke-width="2" class="flow-line" marker-end="url(#arrowhead)"/>
+          <!-- Refinement back to Support (Cybernetic Closing feedback) -->
+          <path id="loop-5-1" d="M 105 220 L 145 105" stroke="#a855f7" stroke-width="2.5" class="flow-line" stroke-dasharray="4 4" marker-end="url(#arrowhead)"/>
+
+          <!-- Cross-links to central learner -->
+          <line x1="270" y1="200" x2="160" y2="90" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="270" y1="200" x2="380" y2="90" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="270" y1="200" x2="435" y2="240" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="270" y1="200" x2="270" y2="330" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>
+          <line x1="270" y1="200" x2="105" y2="240" stroke="#475569" stroke-width="1" stroke-dasharray="2 4"/>
+
+          <!-- CENTRAL NODE: SOVEREIGN LEARNER -->
+          <g onclick="selectLearnerHub()" class="cursor-pointer group">
+            <circle cx="270" cy="200" r="44" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5" class="group-hover:stroke-cyan-300 transition-all"/>
+            <circle cx="270" cy="200" r="50" fill="none" stroke="#0284c7" stroke-width="1" stroke-dasharray="4 4" class="animate-spin" style="animation-duration: 25s; transform-origin: 270px 200px;"/>
+            <text x="270" y="195" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="bold" font-family="'Space Grotesk'">SOVEREIGN</text>
+            <text x="270" y="210" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold" font-family="'Space Grotesk'">LEARNER</text>
+            <text x="270" y="224" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="'JetBrains Mono'">[NEXUS]</text>
+          </g>
+
+          <!-- STAGE 1 NODE: SUPPORT -->
+          <g onclick="selectStage(1)" id="svg-node-1" class="cursor-pointer group">
+            <circle cx="160" cy="90" r="32" fill="#091322" stroke="#38bdf8" stroke-width="2" class="stage-circle transition-all"/>
+            <text x="160" y="87" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">1. SUPPORT</text>
+            <text x="160" y="100" text-anchor="middle" fill="#38bdf8" font-size="8" font-family="'JetBrains Mono'">Exocortex</text>
+          </g>
+
+          <!-- STAGE 2 NODE: GUIDANCE -->
+          <g onclick="selectStage(2)" id="svg-node-2" class="cursor-pointer group">
+            <circle cx="380" cy="90" r="32" fill="#091322" stroke="#64748b" stroke-width="2" class="stage-circle transition-all"/>
+            <text x="380" y="87" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">2. GUIDANCE</text>
+            <text x="380" y="100" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="'JetBrains Mono'">Cartography</text>
+          </g>
+
+          <!-- STAGE 3 NODE: CATALYST -->
+          <g onclick="selectStage(3)" id="svg-node-3" class="cursor-pointer group">
+            <circle cx="435" cy="240" r="32" fill="#091322" stroke="#64748b" stroke-width="2" class="stage-circle transition-all"/>
+            <text x="435" y="237" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">3. CATALYST</text>
+            <text x="435" y="250" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="'JetBrains Mono'">Scenius Mesh</text>
+          </g>
+
+          <!-- STAGE 4 NODE: ASSESSMENT -->
+          <g onclick="selectStage(4)" id="svg-node-4" class="cursor-pointer group">
+            <circle cx="270" cy="330" r="32" fill="#091322" stroke="#64748b" stroke-width="2" class="stage-circle transition-all"/>
+            <text x="270" y="327" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">4. ASSESS</text>
+            <text x="270" y="340" text-anchor="middle" fill="#94a3b8" font-size="8" font-family="'JetBrains Mono'">Adversarial</text>
+          </g>
+
+          <!-- STAGE 5 NODE: REFINEMENT -->
+          <g onclick="selectStage(5)" id="svg-node-5" class="cursor-pointer group">
+            <circle cx="105" cy="240" r="32" fill="#091322" stroke="#a855f7" stroke-width="2" class="stage-circle transition-all"/>
+            <text x="105" y="237" text-anchor="middle" fill="#ffffff" font-size="9" font-weight="bold">5. REFINE</text>
+            <text x="105" y="250" text-anchor="middle" fill="#c084fc" font-size="8" font-family="'JetBrains Mono'">Triple Loop</text>
+          </g>
+        </svg>
+
+        <!-- Dynamic Stage Indicators Below SVG -->
+        <div class="grid grid-cols-5 gap-2 w-full mt-2 pt-3 border-t border-slate-800/80">
+          <div onclick="selectStage(1)" class="cursor-pointer p-2 rounded-xl text-center border transition" id="tab-stage-1">
+            <div class="text-[10px] font-mono-code text-cyan-400">01. SUPPORT</div>
+            <div class="text-xs font-semibold text-slate-300 truncate">Exocortex & SSI</div>
+          </div>
+          <div onclick="selectStage(2)" class="cursor-pointer p-2 rounded-xl text-center border transition" id="tab-stage-2">
+            <div class="text-[10px] font-mono-code text-slate-400">02. GUIDANCE</div>
+            <div class="text-xs font-semibold text-slate-300 truncate">Skill Maps</div>
+          </div>
+          <div onclick="selectStage(3)" class="cursor-pointer p-2 rounded-xl text-center border transition" id="tab-stage-3">
+            <div class="text-[10px] font-mono-code text-slate-400">03. CATALYST</div>
+            <div class="text-xs font-semibold text-slate-300 truncate">Scenius & Flow</div>
+          </div>
+          <div onclick="selectStage(4)" class="cursor-pointer p-2 rounded-xl text-center border transition" id="tab-stage-4">
+            <div class="text-[10px] font-mono-code text-slate-400">04. ASSESS</div>
+            <div class="text-xs font-semibold text-slate-300 truncate">Stealth & Chaos</div>
+          </div>
+          <div onclick="selectStage(5)" class="cursor-pointer p-2 rounded-xl text-center border transition" id="tab-stage-5">
+            <div class="text-[10px] font-mono-code text-purple-400">05. REFINE</div>
+            <div class="text-xs font-semibold text-slate-300 truncate">Unlearning Loop</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Telemetry Monitor HUD -->
+      <div class="glass-card rounded-2xl p-4 border border-slate-800">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-mono-code text-slate-400 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            CYBERNETIC TELEMETRY STREAM
+          </span>
+          <span id="hudTimestamp" class="text-[11px] font-mono-code text-slate-500">CYCLE #4092.1</span>
+        </div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono-code">
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="text-slate-500 text-[10px]">VELOCITY MULTIPLIER</div>
+            <div id="metricVelocity" class="text-cyan-400 text-sm font-bold mt-0.5">3.1x Standard</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="text-slate-500 text-[10px]">FLOW OCCUPANCY</div>
+            <div id="metricFlow" class="text-emerald-400 text-sm font-bold mt-0.5">76.4% Zone</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="text-slate-500 text-[10px]">ZK PRIVACY PROOF</div>
+            <div id="metricZk" class="text-sky-400 text-sm font-bold mt-0.5">Verified / Shielded</div>
+          </div>
+          <div class="p-2.5 rounded-xl bg-slate-900/60 border border-slate-800">
+            <div class="text-slate-500 text-[10px]">EPISTEMIC HEALTH</div>
+            <div id="metricEpistemic" class="text-purple-400 text-sm font-bold mt-0.5">0 Biases Flagged</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT COLUMN: DETAIL INSPECTOR & SCENARIO ENGINE (5 Cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-4">
+
+      <!-- Dynamic Header Card -->
+      <div class="glass-card rounded-2xl p-5 border border-slate-800">
+        <div class="flex items-center justify-between gap-2 mb-2">
+          <div class="flex items-center gap-2">
+            <span id="detailBadge" class="text-xs px-2.5 py-0.5 rounded-full font-mono-code bg-cyan-950 text-cyan-300 border border-cyan-700/50">STAGE 1</span>
+            <span id="detailPillars" class="text-[11px] font-mono-code text-slate-400">IoE • Edu 6.0</span>
+          </div>
+          <span id="conceptCount" class="text-xs font-mono-code text-slate-400">3 Concepts</span>
+        </div>
+        <h2 id="detailTitle" class="text-xl font-bold text-white tracking-tight">Support: Sovereign Infrastructure & Ergonomics</h2>
+        <p id="detailSubtitle" class="text-xs text-slate-400 mt-1 leading-relaxed">
+          Establishing non-custodial credential custody, lifelong personal knowledge graphs, and heutagogic self-determination before beginning instruction.
+        </p>
+      </div>
+
+      <!-- Contextual Concept Cards Container -->
+      <div id="conceptsContainer" class="flex flex-col gap-3 overflow-y-auto max-h-[580px] pr-1">
+        <!-- Rendered dynamically via JS -->
+      </div>
+
+      <!-- Kaelen's Scenario Context Box (Expandable / Highlights) -->
+      <div class="glass-card rounded-2xl p-4 border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900/90 to-cyan-950/20">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+            <h3 class="text-xs font-bold font-mono-code uppercase tracking-wider text-cyan-300">Kaelen's Operational Reality</h3>
+          </div>
+          <span id="scenarioDayTag" class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-300">Day 1 / 21</span>
+        </div>
+        <p id="scenarioText" class="text-xs text-slate-300 leading-relaxed">
+          Kaelen mounts their local SSI wallet with zero-knowledge proofs of 4 years civil hydrology engineering. Their 4,120-node Exocortex graph mounts immediately, eliminating the need to take introductory prerequisite courses.
+        </p>
+        <div class="mt-3 pt-2.5 border-t border-slate-800/80 flex items-center justify-between text-[11px] font-mono-code text-slate-400">
+          <span>Active Telemetry:</span>
+          <span id="scenarioTelemetry" class="text-cyan-400">ZK-Proof #89F2A Validated</span>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="border-t border-slate-800/80 bg-slate-950/90 py-4 px-6 text-xs text-slate-500 font-mono-code">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span>SOVRAEGIS Architecture</span>
+        <span class="text-slate-700">|</span>
+        <span>The Learning Economy &bull; Education 6.0 &bull; IoE &bull; Velocity</span>
+      </div>
+      <div>Cybernetic Loop: Closed-Loop Telemetry &bull; Antifragile Learning</div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT ENGINE -->
+  <script>
+    // DATA MODEL: 5 STAGES & 12 CONCEPTS
+    const stagesData = [
+      {
+        stageNumber: 1,
+        name: "Support",
+        title: "Support: Sovereign Infrastructure & Cognitive Ergonomics",
+        subtitle: "Non-custodial credential custody, lifelong semantic exocortex memory, and heutagogic self-determination.",
+        badge: "STAGE 1 • SUPPORT",
+        pillars: "Internet of Education (IoE) • Education 6.0",
+        scenarioDay: "Day 1 (08:00 - 11:30)",
+        scenarioText: "Kaelen mounts their local SSI wallet with zero-knowledge proofs verifying 4 years of accredited civil hydrology engineering. Their 4,120-node Personal Knowledge Graph (Exocortex) syncs instantly, bypassing institutional prerequisite hurdles entirely.",
+        scenarioTelemetry: "ZK-Proof #89F2A Validated | Prerequisite Bypass: 100%",
+        metrics: { velocity: "3.1x", flow: "Baseline", zk: "Shielded (Valid)", epistemic: "100% Retained" },
+        concepts: [
+          {
+            id: 1,
+            num: "01",
+            name: "Self-Sovereign Identity (SSI) & Verifiable LERs",
+            pillar: "IOE",
+            pillarLabel: "Internet of Education",
+            summary: "Cryptographic, decentralized identifiers (DIDs) paired with W3C Verifiable Credentials stored in a learner-owned digital wallet rather than siloed institutional databases.",
+            sovraegisRole: "Ensures Data Dignity and complete credential portability across decentralized labor and learning markets.",
+            telemetry: "ZKP verification latency < 350ms; zero raw identity disclosure."
+          },
+          {
+            id: 2,
+            num: "02",
+            name: "Heutagogy (Self-Determined Learning)",
+            pillar: "EDU6",
+            pillarLabel: "Education 6.0",
+            summary: "Learner-determined inquiry focusing on developing adaptive capability in novel, unpredictable environments rather than fulfilling static institutional syllabi.",
+            sovraegisRole: "Establishes the learner as the prime architect of their trajectory, converting curricula into on-demand toolsets.",
+            telemetry: "Self-formulated learning goals vs. prescribed syllabus adherence."
+          },
+          {
+            id: 3,
+            num: "03",
+            name: "Symbiotic Exocortex & Personal Knowledge Graph (PKG)",
+            pillar: "EDU6",
+            pillarLabel: "Education 6.0 / IoE",
+            summary: "A local-first, lifelong semantic knowledge graph ('Second Brain') capturing every project artifact, mental model, and cognitive preference over decades.",
+            sovraegisRole: "Eliminates cognitive memory decay and supplies private, contextualized memory groundings for personal AI agents.",
+            telemetry: "Graph node count: 4,120 nodes; semantic recall accuracy: 98.4%."
+          }
+        ]
+      },
+      {
+        stageNumber: 2,
+        name: "Guidance",
+        title: "Guidance: Dynamic Skill Cartography & Agentic Scaffolding",
+        subtitle: "Real-time navigation of skill adjacencies and Socratic cognitive co-pilots that protect productive struggle.",
+        badge: "STAGE 2 • GUIDANCE",
+        pillars: "Learning Velocity • Education 6.0",
+        scenarioDay: "Day 2 (Synthesis & Routing)",
+        scenarioText: "The cartography engine maps Kaelen's hydraulic head loss knowledge to bio-anode electrochemical impedance, bypassing 68% of standard introductory materials. Their AI Co-Pilot refuses to write turnkey code, nudging Kaelen to adapt prior Kalman filters.",
+        scenarioTelemetry: "Skill Adjacency: 82% Transfer | Direct Answer Suppression: ACTIVE",
+        metrics: { velocity: "4.2x Peak", flow: "64% Zone", zk: "Shielded", epistemic: "Socratic Locked" },
+        concepts: [
+          {
+            id: 4,
+            num: "04",
+            name: "Agentic Socratic Scaffolding",
+            pillar: "EDU6",
+            pillarLabel: "Education 6.0 / Velocity",
+            summary: "Multi-agent cognitive co-pilots engineered to ask penetrating diagnostic questions rather than hallucinating easy answers that cause cognitive atrophy.",
+            sovraegisRole: "Maintains optimal cognitive challenge in the Zone of Proximal Development (ZPD) and intentionally fades support as mastery increases.",
+            telemetry: "Socratic query-to-answer ratio: 9:1; productive struggle index."
+          },
+          {
+            id: 5,
+            num: "05",
+            name: "Dynamic Skill Cartography & Ontologies",
+            pillar: "VELO",
+            pillarLabel: "Learning Velocity / Economy",
+            summary: "Multi-dimensional live skill graphs tracking skill half-lives, micro-competencies, and adjacency vectors across industries.",
+            sovraegisRole: "Calculates the shortest, highest-velocity cognitive bridge from current knowledge to frontier demands.",
+            telemetry: "Curriculum pruning efficiency: 68% compressed path."
+          }
+        ]
+      },
+      {
+        stageNumber: 3,
+        name: "Catalyst",
+        title: "Catalyst: Rhizomatic Mesh, Scenius & Flow Ergonomics",
+        subtitle: "Decentralized peer squads, real-world challenge bounties, and neuro-adaptive state optimization.",
+        badge: "STAGE 3 • CATALYST",
+        pillars: "The Learning Economy • IoE • Velocity",
+        scenarioDay: "Days 3 - 18 (Sprint Execution)",
+        scenarioText: "Kaelen forms an ephemeral Scenius Pod with engineers from Seoul and Nairobi, streaming live canal telemetry to build their prototype. When biometric monitors detect cognitive overload on Day 9, the system shifts modality to 3D simulation.",
+        scenarioTelemetry: "Pod Sync: 14 Code Reviews | Modality Shift: 3 Interventions",
+        metrics: { velocity: "3.8x Sustained", flow: "76.4% Flow Channel", zk: "Mesh Active", epistemic: "Optimal Challenge" },
+        concepts: [
+          {
+            id: 6,
+            num: "06",
+            name: "Rhizomatic Learning & 'Scenius' (Mesh Guilds)",
+            pillar: "IOE",
+            pillarLabel: "Internet of Education",
+            summary: "Self-organizing peer squads and research pods where intelligence is emergent and communal ('scenius') rather than solitary.",
+            sovraegisRole: "Replaces artificial cohort silos with real-time peer tutoring, code-level mutual verification, and emotional resilience.",
+            telemetry: "Peer code critique frequency; decentralized guild trust score."
+          },
+          {
+            id: 7,
+            num: "07",
+            name: "Regenerative Challenge-Based Learning",
+            pillar: "ECON",
+            pillarLabel: "The Learning Economy",
+            summary: "Directing skill acquisition toward solving live civic, ecological, and economic bottlenecks rather than textbook simulations.",
+            sovraegisRole: "Unlocks immediate economic utility and intrinsic motivation through verifiable Proof-of-Impact.",
+            telemetry: "Bounty milestone completion; live sensor telemetry throughput."
+          },
+          {
+            id: 8,
+            num: "08",
+            name: "Neuro-Adaptive Flow Ergonomics",
+            pillar: "VELO",
+            pillarLabel: "Learning Velocity",
+            summary: "Affective computing and interaction telemetry dynamically balancing difficulty, pacing, and sensory modality to maintain flow.",
+            sovraegisRole: "Protects the Sovereign Learner against burnout and cognitive thrashing while maximizing retention.",
+            telemetry: "Flow-channel residency: 76.4%; keystroke latency & HRV telemetry."
+          }
+        ]
+      },
+      {
+        stageNumber: 4,
+        name: "Assessment",
+        title: "Assessment: Stealth Diagnostic Telemetry & Chaos Defense",
+        subtitle: "Frictionless embedded evaluation and live adversarial stress-testing in place of standardized exams.",
+        badge: "STAGE 4 • ASSESSMENT",
+        pillars: "The Learning Economy • Education 6.0",
+        scenarioDay: "Days 19 - 20 (Adversarial Defense)",
+        scenarioText: "The sandbox logs Kaelen's real-time diagnostic telemetry. On Day 20, Kaelen faces an adversarial stress-agent injecting 3 unannounced chaos faults (temperature plunge, packet loss, detergent shock) and successfully defends their logic viva voce.",
+        scenarioTelemetry: "Chaos Mitigated: 3/3 | Level IV LER Credential Minted",
+        metrics: { velocity: "Verified", flow: "92% Stress Resistance", zk: "W3C Credential", epistemic: "94th Percentile" },
+        concepts: [
+          {
+            id: 9,
+            num: "09",
+            name: "Stealth Assessment & Evidence-Centered Design",
+            pillar: "EDU6",
+            pillarLabel: "Education 6.0 / Velocity",
+            summary: "Continuous diagnostic telemetry woven directly into workflows without halting learning for artificial testing.",
+            sovraegisRole: "Produces authentic, tamper-proof behavioral logs of problem-solving speed, hypothesis formation, and debugging elegance.",
+            telemetry: "Falsification cycle time: 11.2 min; error recovery trajectory."
+          },
+          {
+            id: 10,
+            num: "10",
+            name: "Proof-of-Competence & Adversarial Portfolio Defense",
+            pillar: "ECON",
+            pillarLabel: "The Learning Economy",
+            summary: "Live chaos-engineering tests, open-source code verification, and oral defense before expert human-AI panels.",
+            sovraegisRole: "Guarantees AI-resilient verification of actual cognitive capability, defeating synthetic credential fraud.",
+            telemetry: "Chaos fault survival rate: 100%; viva voce defense score: 94/100."
+          }
+        ]
+      },
+      {
+        stageNumber: 5,
+        name: "Refinement",
+        title: "Refinement: Triple-Loop Cybernetics & Unlearning",
+        subtitle: "Metacognitive recursion and epistemic quarantine of obsolete mental models closing the feedback loop.",
+        badge: "STAGE 5 • REFINEMENT",
+        pillars: "All 4 Pillars (Closed Loop)",
+        scenarioDay: "Day 21 (Meta-Learning Audit)",
+        scenarioText: "Kaelen executes a triple-loop audit, discovering that a legacy civil engineering assumption (centralized cloud polling) caused 18 hours of delay. They run an Unlearning Protocol to quarantine the habit, and receive their $4,800 bounty settlement.",
+        scenarioTelemetry: "Heuristics Quarantined: 2 | Future Velocity Mod: +1.38x",
+        metrics: { velocity: "+1.38x Upgraded", flow: "Reflective", zk: "Smart-Contract Settled", epistemic: "Antifragile" },
+        concepts: [
+          {
+            id: 11,
+            num: "11",
+            name: "Triple-Loop Metacognitive Cybernetics",
+            pillar: "VELO",
+            pillarLabel: "Learning Velocity / IoE",
+            summary: "Systematic auditing of actions (Loop 1), governing frameworks (Loop 2), and underlying epistemological identity and blindspots (Loop 3).",
+            sovraegisRole: "Ensures the Sovereign Learner continuously rewrites their cognitive operating system, compounding meta-learning speed.",
+            telemetry: "Deutero-learning index; cognitive model revision rate."
+          },
+          {
+            id: 12,
+            num: "12",
+            name: "Cognitive Antifragility & Epistemic Hygiene (Unlearning)",
+            pillar: "ALL",
+            pillarLabel: "All 4 Pillars / SOVRAEGIS Shield",
+            summary: "Deliberate pruning and tagging of obsolete mental models, algorithmic bias defense, and gaining cognitive resilience through friction.",
+            sovraegisRole: "Acts as the protective Aegis (shield), preventing intellectual stagnation and ideological capture in fast-evolving fields.",
+            telemetry: "Quarantined heuristic count: 2; cognitive antifragility delta."
+          }
+        ]
+      }
+    ];
+
+    let currentStageIndex = 0; // 0-based index (0 to 4)
+    let currentFilter = "ALL";
+    let isSimulating = false;
+    let simInterval = null;
+    let viewMode = "arch"; // 'arch' or 'scenario'
+
+    // INITIALIZATION
+    document.addEventListener("DOMContentLoaded", () => {
+      renderStage();
+    });
+
+    function selectStage(stageNumber) {
+      currentStageIndex = stageNumber - 1;
+      renderStage();
+    }
+
+    function prevStage() {
+      currentStageIndex = (currentStageIndex - 1 + stagesData.length) % stagesData.length;
+      renderStage();
+    }
+
+    function nextStage() {
+      currentStageIndex = (currentStageIndex + 1) % stagesData.length;
+      renderStage();
+    }
+
+    function filterPillar(pillarKey) {
+      currentFilter = pillarKey;
+      document.querySelectorAll('.pillar-btn').forEach(btn => {
+        btn.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        btn.classList.add('bg-slate-800', 'text-slate-400', 'border-slate-700');
+      });
+      const activeBtn = document.getElementById(`pill-${pillarKey}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/50');
+        activeBtn.classList.remove('bg-slate-800', 'text-slate-400', 'border-slate-700');
+      }
+      renderStage();
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      const archBtn = document.getElementById('viewModeArch');
+      const scenBtn = document.getElementById('viewModeScen');
+      if (mode === 'arch') {
+        archBtn.classList.add('bg-cyan-500/30', 'text-cyan-300', 'font-semibold');
+        archBtn.classList.remove('text-slate-400');
+        scenBtn.classList.remove('bg-cyan-500/30', 'text-cyan-300', 'font-semibold');
+        scenBtn.classList.add('text-slate-400');
+      } else {
+        scenBtn.classList.add('bg-cyan-500/30', 'text-cyan-300', 'font-semibold');
+        scenBtn.classList.remove('text-slate-400');
+        archBtn.classList.remove('bg-cyan-500/30', 'text-cyan-300', 'font-semibold');
+        archBtn.classList.add('text-slate-400');
+      }
+      renderStage();
+    }
+
+    function selectLearnerHub() {
+      document.getElementById('detailBadge').innerText = "CENTRAL NEXUS";
+      document.getElementById('detailBadge').className = "text-xs px-2.5 py-0.5 rounded-full font-mono-code bg-indigo-950 text-indigo-300 border border-indigo-700/50";
+      document.getElementById('detailPillars').innerText = "Sovereign Autonomy • Extended Mind • Heutagogy";
+      document.getElementById('detailTitle').innerText = "The Sovereign Learner Nexus";
+      document.getElementById('detailSubtitle').innerText = "The autonomous, antifragile center of SOVRAEGIS. The learner holds absolute custody of their learning graph, data, and epistemic sovereignty.";
+      
+      const container = document.getElementById('conceptsContainer');
+      container.innerHTML = `
+        <div class="p-4 rounded-xl bg-slate-900/80 border border-cyan-500/30 text-xs text-slate-300 leading-relaxed">
+          <div class="font-bold text-white mb-1 text-sm flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+            Sovereign Learner Operating Mandate
+          </div>
+          In SOVRAEGIS, the learner is never an object of instruction, but the conscious cybernetic helmsman. All 5 operational stages—Support, Guidance, Catalyst, Assessment, and Refinement—act as cybernetic feedback loops governed entirely by learner consent, verifiable cryptography, and intrinsic inquiry.
+        </div>
+      `;
+      document.getElementById('conceptCount').innerText = "Core Node";
+    }
+
+    function toggleSimulation() {
+      const btn = document.getElementById('simBtn');
+      if (isSimulating) {
+        clearInterval(simInterval);
+        isSimulating = false;
+        btn.innerHTML = `
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          Simulate Sprint
+        `;
+        btn.classList.remove('bg-red-950/80', 'text-red-400', 'border-red-600/60');
+        btn.classList.add('bg-emerald-950/80', 'text-emerald-400', 'border-emerald-600/60');
+      } else {
+        isSimulating = true;
+        btn.innerHTML = `
+          <span class="w-2 h-2 rounded-full bg-red-400 animate-pulse"></span>
+          Pause Simulation
+        `;
+        btn.classList.remove('bg-emerald-950/80', 'text-emerald-400', 'border-emerald-600/60');
+        btn.classList.add('bg-red-950/80', 'text-red-400', 'border-red-600/60');
+        
+        simInterval = setInterval(() => {
+          nextStage();
+        }, 3600);
+      }
+    }
+
+    // MAIN RENDER ENGINE
+    function renderStage() {
+      const stage = stagesData[currentStageIndex];
+
+      // 1. Update text indicators
+      document.getElementById('currentStageIndicator').innerText = `${stage.stageNumber}. ${stage.name}`;
+      document.getElementById('detailBadge').innerText = stage.badge;
+      document.getElementById('detailBadge').className = stage.stageNumber === 5 
+        ? "text-xs px-2.5 py-0.5 rounded-full font-mono-code bg-purple-950 text-purple-300 border border-purple-700/50" 
+        : "text-xs px-2.5 py-0.5 rounded-full font-mono-code bg-cyan-950 text-cyan-300 border border-cyan-700/50";
+      document.getElementById('detailPillars').innerText = stage.pillars;
+      document.getElementById('detailTitle').innerText = stage.title;
+      document.getElementById('detailSubtitle').innerText = stage.subtitle;
+
+      // 2. Update HUD metrics
+      document.getElementById('metricVelocity').innerText = stage.metrics.velocity;
+      document.getElementById('metricFlow').innerText = stage.metrics.flow;
+      document.getElementById('metricZk').innerText = stage.metrics.zk;
+      document.getElementById('metricEpistemic').innerText = stage.metrics.epistemic;
+      document.getElementById('hudTimestamp').innerText = `CYCLE #${stage.stageNumber}024.${Math.floor(Math.random()*900+100)}`;
+
+      // 3. Update Scenario Box
+      document.getElementById('scenarioDayTag').innerText = stage.scenarioDay;
+      document.getElementById('scenarioText').innerText = stage.scenarioText;
+      document.getElementById('scenarioTelemetry').innerText = stage.scenarioTelemetry;
+
+      // 4. Update SVG Visual States
+      for (let i = 1; i <= 5; i++) {
+        const svgNode = document.getElementById(`svg-node-${i}`);
+        const circle = svgNode.querySelector('circle');
+        const tabEl = document.getElementById(`tab-stage-${i}`);
+
+        if (i === stage.stageNumber) {
+          circle.setAttribute('stroke', i === 5 ? '#c084fc' : '#38bdf8');
+          circle.setAttribute('stroke-width', '3.5');
+          circle.setAttribute('fill', '#0e2439');
+          tabEl.classList.add('border-cyan-500', 'bg-cyan-950/40');
+          tabEl.classList.remove('border-slate-800');
+        } else {
+          circle.setAttribute('stroke', '#475569');
+          circle.setAttribute('stroke-width', '2');
+          circle.setAttribute('fill', '#091322');
+          tabEl.classList.remove('border-cyan-500', 'bg-cyan-950/40');
+          tabEl.classList.add('border-slate-800');
+        }
+      }
+
+      // Highlight active flow path
+      const pathIds = ['loop-1-2', 'loop-2-3', 'loop-3-4', 'loop-4-5', 'loop-5-1'];
+      pathIds.forEach((pid, idx) => {
+        const el = document.getElementById(pid);
+        if (el) {
+          if (idx === (stage.stageNumber - 1)) {
+            el.setAttribute('stroke', idx === 4 ? '#c084fc' : '#38bdf8');
+            el.setAttribute('stroke-width', '3.5');
+          } else {
+            el.setAttribute('stroke', '#334155');
+            el.setAttribute('stroke-width', '1.5');
+          }
+        }
+      });
+
+      // 5. Render Concepts with Filtering
+      const container = document.getElementById('conceptsContainer');
+      container.innerHTML = '';
+
+      let filteredConcepts = stage.concepts;
+      if (currentFilter !== "ALL") {
+        filteredConcepts = stage.concepts.filter(c => c.pillar === currentFilter || c.pillar === "ALL");
+      }
+
+      document.getElementById('conceptCount').innerText = `${filteredConcepts.length} of ${stage.concepts.length} Concept(s)`;
+
+      if (filteredConcepts.length === 0) {
+        container.innerHTML = `
+          <div class="p-6 rounded-xl bg-slate-900/60 border border-slate-800 text-center text-xs text-slate-500">
+            No concepts match the selected macro-pillar filter (<strong>${currentFilter}</strong>) in Stage ${stage.stageNumber}.
+            <div class="mt-2">
+              <button onclick="filterPillar('ALL')" class="text-cyan-400 underline font-mono-code">Reset to ALL</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      filteredConcepts.forEach(concept => {
+        const card = document.createElement('div');
+        card.className = "p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-cyan-500/40 transition flex flex-col gap-2 group";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono-code text-cyan-400 font-bold">${concept.num}</span>
+              <h4 class="text-sm font-bold text-white group-hover:text-cyan-300 transition">${concept.name}</h4>
+            </div>
+            <span class="text-[10px] font-mono-code px-2 py-0.5 rounded bg-slate-800 text-slate-400 border border-slate-700/80">${concept.pillarLabel}</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed">${concept.summary}</p>
+          <div class="mt-1 pt-2 border-t border-slate-800/80 text-[11px] flex flex-col gap-1">
+            <div class="text-slate-400"><strong class="text-slate-300">SOVRAEGIS Integration:</strong> ${concept.sovraegisRole}</div>
+            <div class="text-slate-500 font-mono-code text-[10px] mt-0.5 flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span>
+              Telemetry: ${concept.telemetry}
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
