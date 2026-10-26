@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOVRAEG LABS // Education 6.0 Market Diagnostic</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            925: '#0b0f19',
+                            950: '#060911',
+                        },
+                        sovraeg: {
+                            emerald: '#10b981',
+                            cyan: '#06b6d4',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            violet: '#8b5cf6'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Cyber-academic tactical terminal accents */
+        body {
+            background-color: #060911;
+            background-image: 
+                radial-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 0),
+                radial-gradient(rgba(6, 182, 212, 0.04) 1px, transparent 0);
+            background-size: 32px 32px;
+            background-position: 0 0, 16px 16px;
+        }
+        .terminal-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
+        }
+        .terminal-border-accent {
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            box-shadow: 0 0 15px -3px rgba(16, 185, 129, 0.15);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        @media print {
+            body { background: white !important; color: black !important; }
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            .terminal-border { border: 1px solid #ccc !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-200 font-sans antialiased min-h-screen selection:bg-emerald-500 selection:text-black">
+
+    <!-- Top Status Bar -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-8 w-8 rounded bg-gradient-to-br from-emerald-400 to-cyan-500 flex items-center justify-center font-mono font-bold text-black text-sm shadow-lg shadow-emerald-500/20">
+                    SÆ
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-mono text-xs font-semibold tracking-wider text-emerald-400 uppercase">SOVRAEG LABS</span>
+                        <span class="text-slate-600">/</span>
+                        <span class="font-mono text-xs text-slate-400 uppercase">MARKET DIAGNOSTIC ENGINE</span>
+                    </div>
+                    <div class="text-xs text-slate-400 hidden sm:block">Education 6.0 • Inverted Scarcity Matrix • Empirical Research Edition</div>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <div class="hidden md:flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-xs font-mono text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                    <span>EMPIRICAL HORIZON: 2019–2026</span>
+                </div>
+                <button onclick="window.print()" class="no-print flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition shadow-sm">
+                    <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span>Export Brief</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Section 1: Hero Diagnostic & Executive Problem Framing -->
+        <section class="rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 p-6 sm:p-8 terminal-border border-slate-800 relative overflow-hidden">
+            <div class="absolute -top-24 -right-24 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="max-w-4xl space-y-4 relative z-10">
+                <div class="inline-flex items-center space-x-2 rounded-full bg-rose-500/10 border border-rose-500/30 px-3 py-1 text-xs font-mono font-medium text-rose-400">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                    <span>STRUCTURAL RECRUITMENT CRISIS</span>
+                </div>
+                <h1 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-tight">
+                    THE VERIFICATION GAP: Why 70.0% of Employers Embrace Skills-Based Hiring on Paper, Yet 75% Snap Back to Degree Proxies in Practice.
+                </h1>
+                <p class="text-sm sm:text-base text-slate-300 leading-relaxed">
+                    In Education 6.0, the <span class="text-emerald-400 font-medium">Inverted Scarcity Doctrine</span> dictates that when synthetic AI generates infinite text, code, and video at near-zero marginal cost, <strong class="text-white">verifiable synthesis, cognitive coherence, and authentic human capability become the only defensible scarcities</strong>. Yet employers remain trapped in an operational dilemma: they want to abandon pedigree gatekeeping, but lack tamper-evident proof to de-risk candidate hiring.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4 text-xs font-mono text-slate-400">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-emerald-400 font-bold">●</span>
+                        <span>Source: HBS / Burning Glass (11,300 Roles)</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-cyan-400 font-bold">●</span>
+                        <span>NACE 2026 Skills Benchmarking</span>
+                    </div>
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-amber-400 font-bold">●</span>
+                        <span>SHRM & BCG Strategic Insights</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Macro Data KPI Dashboard (2019 vs 2026 Shift) -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-cyan-400 rounded-sm"></span>
+                    <span>Macro Empirical Shift: Policy Rhetoric vs Operational Reality</span>
+                </h2>
+                <span class="text-xs font-mono text-slate-500">Comparative Dataset 2019–2026</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- KPI 1 -->
+                <div class="bg-slate-900/90 rounded-xl p-4 terminal-border border-slate-800/80 hover:border-emerald-500/40 transition">
+                    <div class="text-xs font-mono text-slate-400 mb-1 flex justify-between">
+                        <span>POLICY ADOPTION</span>
+                        <span class="text-emerald-400">▲ +13.0%</span>
+                    </div>
+                    <div class="text-2xl font-bold font-mono text-white">70.0%</div>
+                    <div class="text-xs text-slate-400 mt-1">Employers reporting skills-based hiring (NACE 2026, up from 57% in 2022).</div>
+                    <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-emerald-400 h-1.5 rounded-full" style="width: 70%"></div>
+                    </div>
+                </div>
+
+                <!-- KPI 2 -->
+                <div class="bg-slate-900/90 rounded-xl p-4 terminal-border border-slate-800/80 hover:border-rose-500/40 transition">
+                    <div class="text-xs font-mono text-slate-400 mb-1 flex justify-between">
+                        <span>GPA SCREENING</span>
+                        <span class="text-rose-400">▼ -31.2%</span>
+                    </div>
+                    <div class="text-2xl font-bold font-mono text-white">42.1%</div>
+                    <div class="text-xs text-slate-400 mt-1">GPA filters collapsed from 73.3% in 2019 to 42.1% (sub-40% in updates).</div>
+                    <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-rose-400 h-1.5 rounded-full" style="width: 42.1%"></div>
+                    </div>
+                </div>
+
+                <!-- KPI 3 -->
+                <div class="bg-slate-900/90 rounded-xl p-4 terminal-border border-slate-800/80 hover:border-cyan-500/40 transition">
+                    <div class="text-xs font-mono text-slate-400 mb-1 flex justify-between">
+                        <span>DEGREE MANDATES</span>
+                        <span class="text-cyan-400">▲ 4x DROP</span>
+                    </div>
+                    <div class="text-2xl font-bold font-mono text-white">&gt; 20%</div>
+                    <div class="text-xs text-slate-400 mt-1">US corporate job postings stripped of explicit 4-year degree requirements.</div>
+                    <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-cyan-400 h-1.5 rounded-full" style="width: 22%"></div>
+                    </div>
+                </div>
+
+                <!-- KPI 4: THE SHOCK -->
+                <div class="bg-slate-900/90 rounded-xl p-4 terminal-border border-amber-500/40 bg-amber-950/10">
+                    <div class="text-xs font-mono text-amber-400 mb-1 flex justify-between font-bold">
+                        <span>THE REALITY SHOCK</span>
+                        <span class="text-amber-400">! INERTIA</span>
+                    </div>
+                    <div class="text-2xl font-bold font-mono text-amber-300">+3.5%</div>
+                    <div class="text-xs text-slate-400 mt-1">Actual non-degree hiring rise in modified roles. <strong class="text-amber-200">Net 0.14% overall shift!</strong> (HBS Fuller Study).</div>
+                    <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-amber-400 h-1.5 rounded-full" style="width: 3.5%"></div>
+                    </div>
+                </div>
+
+                <!-- KPI 5: SNAP BACK -->
+                <div class="bg-slate-900/90 rounded-xl p-4 terminal-border border-slate-800/80 hover:border-slate-600 transition">
+                    <div class="text-xs font-mono text-slate-400 mb-1 flex justify-between">
+                        <span>DEGREE SNAP-BACK</span>
+                        <span class="text-rose-400">75% BIAS</span>
+                    </div>
+                    <div class="text-2xl font-bold font-mono text-white">1 in 700</div>
+                    <div class="text-xs text-slate-400 mt-1">Fewer than 1 in 700 hires realized. SHRM: Only 34% use skills-first consistently.</div>
+                    <div class="mt-3 w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                        <div class="bg-rose-500 h-1.5 rounded-full" style="width: 75%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Interactive Visual Intelligence (Chart.js) -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Main Chart: The Disconnect (8 cols) -->
+            <div class="lg:col-span-8 bg-slate-900/80 rounded-2xl p-5 terminal-border border-slate-800 flex flex-col justify-between">
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+                    <div>
+                        <h3 class="text-sm font-semibold text-white flex items-center space-x-2">
+                            <span>The Widening Disconnect: Policy Rhetoric vs. Actual Hiring (2019–2026)</span>
+                        </h3>
+                        <p class="text-xs text-slate-400">Tracking Skills-First Stance %, GPA Gatekeeping %, and Actual Non-Degree Hires %</p>
+                    </div>
+                    <div class="flex items-center space-x-2 text-xs font-mono">
+                        <span class="inline-block w-3 h-3 rounded-sm bg-emerald-400"></span><span class="text-slate-300">Policy %</span>
+                        <span class="inline-block w-3 h-3 rounded-sm bg-rose-400"></span><span class="text-slate-300">GPA Gate %</span>
+                        <span class="inline-block w-3 h-3 rounded-sm bg-amber-400"></span><span class="text-slate-300">Real Hires %</span>
+                    </div>
+                </div>
+                <div class="relative h-72 sm:h-80 w-full pt-4">
+                    <canvas id="disconnectChart"></canvas>
+                </div>
+                <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+                    <span>Empirical finding: Policy declarations skyrocketed while operational hiring barely budged (+0.14% net).</span>
+                    <button id="toggleChartMode" class="text-cyan-400 hover:text-cyan-300 font-mono text-xs underline">Switch View</button>
+                </div>
+            </div>
+
+            <!-- Side Chart: Root Causes of Snap-Back (4 cols) -->
+            <div class="lg:col-span-4 bg-slate-900/80 rounded-2xl p-5 terminal-border border-slate-800 flex flex-col justify-between">
+                <div class="pb-3 border-b border-slate-800">
+                    <h3 class="text-sm font-semibold text-white">Why Managers Relapse to Degrees</h3>
+                    <p class="text-xs text-slate-400">Survey of 1,200+ Corporate Hiring Managers</p>
+                </div>
+                <div class="relative h-56 sm:h-64 w-full flex items-center justify-center pt-2">
+                    <canvas id="reasonsChart"></canvas>
+                </div>
+                <div class="p-3 bg-slate-950/60 rounded-xl border border-slate-800/60 text-xs text-slate-300 space-y-1 mt-2">
+                    <div class="flex justify-between font-mono">
+                        <span class="text-amber-400">Key Barrier:</span>
+                        <span class="font-bold text-white">Assessment Deficit</span>
+                    </div>
+                    <p class="text-slate-400 text-[11px] leading-tight">
+                        58% cite either lack of objective assessment instruments or defensive fear of mis-hire liability.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Performance vs Proxy Findings (BCG / iMocha Radar/Bar) -->
+        <section class="bg-slate-900/90 rounded-2xl p-6 terminal-border border-slate-800">
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <div class="inline-flex items-center space-x-1.5 text-xs font-mono text-cyan-400 uppercase">
+                        <span>Predictive Talent Science</span>
+                    </div>
+                    <h3 class="text-base font-bold text-white">BCG & iMocha Benchmark: Assessed Capability vs. Degree Pedigree</h3>
+                </div>
+                <div class="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                    Validation: Assessment is <span class="text-emerald-400 font-bold">5x more predictive</span> than academic pedigree
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mt-6">
+                <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                    <div class="text-xs font-mono text-slate-400">PREDICTIVE ACCURACY</div>
+                    <div class="text-2xl font-bold font-mono text-emerald-400 mt-1">5.0x</div>
+                    <div class="text-xs text-slate-400 mt-2">Direct capability evaluation outperforms GPA & degree brand by 500% in job success correlation.</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                    <div class="text-xs font-mono text-slate-400">TENURE EXTENSION</div>
+                    <div class="text-2xl font-bold font-mono text-cyan-400 mt-1">+9.0%</div>
+                    <div class="text-xs text-slate-400 mt-2">Candidates hired on demonstrated competence exhibit lower early turnover and longer organizational tenure.</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                    <div class="text-xs font-mono text-slate-400">CANDIDATE DIVERSITY</div>
+                    <div class="text-2xl font-bold font-mono text-violet-400 mt-1">+45.0%</div>
+                    <div class="text-xs text-slate-400 mt-2">Eliminating unverified proxy filters immediately broadens applicant pool across socioeconomic strata.</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80">
+                    <div class="text-xs font-mono text-slate-400">ON-THE-JOB RETENTION</div>
+                    <div class="text-2xl font-bold font-mono text-amber-400 mt-1">+35.0%</div>
+                    <div class="text-xs text-slate-400 mt-2">First-year retention spikes dramatically when expectations match verified practical execution capacity.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Interactive Mis-Hire Risk & Economic Simulation Calculator -->
+        <section class="bg-gradient-to-br from-slate-900 via-slate-925 to-slate-950 rounded-2xl p-6 sm:p-8 terminal-border border-emerald-500/30 shadow-2xl relative">
+            <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 uppercase tracking-widest mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span>FINANCIAL RISK MODELLING</span>
+            </div>
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Interactive Enterprise Mis-Hire Exposure Calculator</h2>
+            <p class="text-xs sm:text-sm text-slate-400 mt-1 max-w-3xl">
+                Simulate the economic fallout of candidate mis-hires resulting from AI-generated resumes, prompt-injected take-home tests, and defensive degree reversion. Calculate the ROI of transitioning to SOVRAEG Tier 3/Tier 4 SYNCTESS auditable execution.
+            </p>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-6">
+                <!-- Controls (6 cols) -->
+                <div class="lg:col-span-6 space-y-5 bg-slate-950/70 p-5 rounded-xl border border-slate-800">
+                    <!-- Control 1 -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-mono mb-2">
+                            <span class="text-slate-300">Annual Technical & Professional Hires:</span>
+                            <span id="hiresValue" class="text-emerald-400 font-bold text-sm">50 hires</span>
+                        </div>
+                        <input id="hiresInput" type="range" min="5" max="300" step="5" value="50" class="w-full accent-emerald-400 cursor-pointer bg-slate-800 rounded-lg">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                            <span>5 (Boutique)</span>
+                            <span>150 (Mid-Market)</span>
+                            <span>300 (Enterprise)</span>
+                        </div>
+                    </div>
+
+                    <!-- Control 2 -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-mono mb-2">
+                            <span class="text-slate-300">Average Base Salary:</span>
+                            <span id="salaryValue" class="text-cyan-400 font-bold text-sm">$95,000</span>
+                        </div>
+                        <input id="salaryInput" type="range" min="40000" max="220000" step="5000" value="95000" class="w-full accent-cyan-400 cursor-pointer bg-slate-800 rounded-lg">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                            <span>$40k</span>
+                            <span>$130k</span>
+                            <span>$220k+</span>
+                        </div>
+                    </div>
+
+                    <!-- Control 3 -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-mono mb-2">
+                            <span class="text-slate-300">Current Mis-Hire / Early Attrition Rate:</span>
+                            <span id="rateValue" class="text-rose-400 font-bold text-sm">22.0%</span>
+                        </div>
+                        <input id="rateInput" type="range" min="5" max="45" step="1" value="22" class="w-full accent-rose-400 cursor-pointer bg-slate-800 rounded-lg">
+                        <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
+                            <span>5% (Strict Audit)</span>
+                            <span>22% (Industry Avg)</span>
+                            <span>45% (Unfiltered AI)</span>
+                        </div>
+                    </div>
+
+                    <!-- Control 4 -->
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-mono mb-2">
+                            <span class="text-slate-300">Mis-Hire Severity Cost Formula:</span>
+                            <span class="text-amber-400 font-mono text-xs">Standard Benchmark</span>
+                        </div>
+                        <select id="costFormula" class="w-full bg-slate-900 border border-slate-700 text-xs text-slate-200 rounded-lg p-2.5 font-mono focus:border-emerald-400 focus:outline-none">
+                            <option value="percentage">Department of Labor: 30% of 1st Year Salary</option>
+                            <option value="recruiting">Direct Replacement Cost ($18,500 Fixed Base)</option>
+                            <option value="conservative">Conservative SHRM Cost: $11,500 per incident</option>
+                            <option value="highconsequence">High-Stakes Technical Failure: 50% of 1st Year Salary</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Simulation Output Display (6 cols) -->
+                <div class="lg:col-span-6 flex flex-col justify-between bg-slate-950 p-6 rounded-xl border border-slate-800 relative">
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                            <span class="text-xs font-mono text-slate-400 uppercase">Simulated Risk Model</span>
+                            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30">CURRENT EXPOSURE</span>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <span class="text-xs text-slate-400 block font-mono">ANNUAL MIS-HIRES</span>
+                                <span id="outMisHires" class="text-2xl font-bold font-mono text-rose-400">11</span>
+                                <span class="text-[10px] text-slate-500 block">Failed candidates/yr</span>
+                            </div>
+                            <div>
+                                <span class="text-xs text-slate-400 block font-mono">AVG COST PER FAILURE</span>
+                                <span id="outCostPerFail" class="text-2xl font-bold font-mono text-slate-200">$28,500</span>
+                                <span class="text-[10px] text-slate-500 block">Severance, ramp, search</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-rose-950/20 border border-rose-800/40 space-y-1">
+                            <div class="text-xs font-mono text-rose-300 flex justify-between">
+                                <span>TOTAL ANNUAL CAPITAL DRAIN (PROXY HIRING):</span>
+                            </div>
+                            <div id="outTotalLoss" class="text-3xl font-extrabold font-mono text-rose-400">$313,500</div>
+                            <p class="text-[11px] text-slate-400 leading-tight">
+                                Capital wasted on failed onboarding, lost engineering productivity, and recruitment re-spend.
+                            </p>
+                        </div>
+
+                        <!-- SOVRAEG Transformation -->
+                        <div class="p-4 rounded-xl bg-emerald-950/20 border border-emerald-800/40 space-y-2">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-mono text-emerald-400 font-semibold">WITH SYNCTESS TIER 3/4 CAPABILITY AUDIT:</span>
+                                <span class="text-[10px] font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded">-72% RISK</span>
+                            </div>
+                            <div class="flex items-baseline space-x-3">
+                                <span id="outSavedLoss" class="text-2xl font-extrabold font-mono text-emerald-300">$225,720</span>
+                                <span class="text-xs text-slate-400">Capital Protected / Year</span>
+                            </div>
+                            <p class="text-[11px] text-slate-300 leading-tight">
+                                Replaces spoofable resumes with tamper-evident CODE+V process telemetry and double-blind evaluated SYNTHCREDS.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-[11px] font-mono text-slate-500">
+                        <span>Model: SOVRAEG Capital Preservation Algorithm v2.4</span>
+                        <span class="text-cyan-400">Confidence: 94.2%</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: The 5-Tier Capability Assurance Taxonomy (T0–T4) Interactive Explorer -->
+        <section class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                        <span class="w-2 h-2 bg-emerald-400 rounded-sm"></span>
+                        <span>SOVRAEG Capability Assurance Taxonomy (T0–T4)</span>
+                    </h2>
+                    <p class="text-sm text-slate-300">Moving beyond binary certificates into auditable conditions of competence verification</p>
+                </div>
+                <div class="text-xs font-mono text-slate-400">Click tiers to inspect technical criteria</div>
+            </div>
+
+            <!-- Tier Selector Navigation -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-2" id="tierTabContainer">
+                <button onclick="selectTier(0)" class="tier-btn p-3 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 hover:border-slate-700" data-tier="0">
+                    <div class="text-[10px] text-slate-400">TIER 0</div>
+                    <div class="text-sm font-bold text-white mt-0.5">Self-Asserted</div>
+                    <div class="text-[10px] text-rose-400 mt-1">Zero Verification</div>
+                </button>
+                <button onclick="selectTier(1)" class="tier-btn p-3 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 hover:border-slate-700" data-tier="1">
+                    <div class="text-[10px] text-slate-400">TIER 1</div>
+                    <div class="text-sm font-bold text-white mt-0.5">Integrity-Verified</div>
+                    <div class="text-[10px] text-cyan-400 mt-1">Cryptographic Hash</div>
+                </button>
+                <button onclick="selectTier(2)" class="tier-btn p-3 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 hover:border-slate-700" data-tier="2">
+                    <div class="text-[10px] text-slate-400">TIER 2</div>
+                    <div class="text-sm font-bold text-white mt-0.5">Attested</div>
+                    <div class="text-[10px] text-violet-400 mt-1">Peer / Guild Endorsed</div>
+                </button>
+                <button onclick="selectTier(3)" class="tier-btn p-3 rounded-xl border text-left transition font-mono bg-slate-900 border-emerald-500/50 bg-emerald-950/20" data-tier="3">
+                    <div class="text-[10px] text-emerald-400">TIER 3 (ENTERPRISE)</div>
+                    <div class="text-sm font-bold text-white mt-0.5">Assessed</div>
+                    <div class="text-[10px] text-emerald-400 mt-1">Standardized Rubric</div>
+                </button>
+                <button onclick="selectTier(4)" class="tier-btn p-3 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 hover:border-slate-700" data-tier="4">
+                    <div class="text-[10px] text-amber-400">TIER 4 (HIGH STAKES)</div>
+                    <div class="text-sm font-bold text-white mt-0.5">Independently Validated</div>
+                    <div class="text-[10px] text-amber-400 mt-1">Adversarial Defense</div>
+                </button>
+            </div>
+
+            <!-- Dynamic Tier Inspector Panel -->
+            <div id="tierInspector" class="bg-slate-900/90 rounded-2xl p-6 terminal-border border-slate-800 space-y-6">
+                <!-- Injected via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Section 7: The SOVRAEG CODE+V Evidence Pipeline Breakdown -->
+        <section class="bg-slate-900/80 rounded-2xl p-6 terminal-border border-slate-800 space-y-6">
+            <div>
+                <div class="inline-flex items-center space-x-1.5 text-xs font-mono text-cyan-400 uppercase">
+                    <span>Process Telemetry vs. Generative Plagiarism</span>
+                </div>
+                <h2 class="text-xl font-bold text-white mt-1">The CODE+V Evidence Pipeline: How SYNCTESS Defeats AI Hallucination & Cheating</h2>
+                <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                    When foundation models can ghost-write a thesis or generate 1,000 lines of functional code from a prompt, an output artifact alone proves nothing. CODE+V captures the <strong class="text-emerald-400">cognitive telemetry</strong> of how the artifact was formed.
+                </p>
+            </div>
+
+            <!-- Stepper Navigation -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-2" id="codevSteps">
+                <!-- Step Buttons injected/managed in JS -->
+            </div>
+
+            <!-- Active Step Detail Card -->
+            <div id="codevDetail" class="bg-slate-950 p-5 rounded-xl border border-slate-800 space-y-3">
+                <!-- Dynamically rendered -->
+            </div>
+        </section>
+
+        <!-- Section 8: Strategic Comparison Table (Status Quo vs. SOVRAEG Paradigm) -->
+        <section class="bg-slate-900/90 rounded-2xl p-6 terminal-border border-slate-800 space-y-4">
+            <h2 class="text-base font-bold text-white font-mono flex items-center space-x-2">
+                <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
+                <span>Paradigm Shift Matrix: Legacy EdTech vs. SOVRAEGIS Architecture</span>
+            </h2>
+
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-slate-400 font-mono uppercase bg-slate-950/50">
+                            <th class="p-3">Operating Vector</th>
+                            <th class="p-3 text-rose-400">Legacy Status Quo (Education 4.0/5.0)</th>
+                            <th class="p-3 text-emerald-400">SOVRAEGIS Sovereign Paradigm (Education 6.0)</th>
+                            <th class="p-3 text-cyan-400">Strategic Moat</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60 font-sans">
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-medium text-white">Content Delivery</td>
+                            <td class="p-3 text-slate-300">Centralized SaaS LMS (Canvas, Coursera); subscription lock-in; lost access when billing ceases.</td>
+                            <td class="p-3 text-emerald-300 font-medium">Local-first, offline-capable SYNCZINES. Personal property owned permanently by the learner.</td>
+                            <td class="p-3 text-slate-400 font-mono">Zero marginal cloud cost; offline resilience.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-medium text-white">Instructional Unit</td>
+                            <td class="p-3 text-slate-300">Passive video streaming & text dumps; auto-generated AI chatbots spoon-feeding answers.</td>
+                            <td class="p-3 text-emerald-300 font-medium">Polymorphic SYNCZ / SRLO dynamic state machines; calibrated cognitive friction; executable puzzles.</td>
+                            <td class="p-3 text-slate-400 font-mono">Forces authentic neural encoding.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-medium text-white">Capability Evidence</td>
+                            <td class="p-3 text-slate-300">Self-reported LinkedIn badges, spoofable PDF certificates, and unverified GitHub repositories.</td>
+                            <td class="p-3 text-emerald-300 font-medium">SYNCTESS structured evidence capturing full CODE+V telemetry, debugging logs, and decision rationale.</td>
+                            <td class="p-3 text-slate-400 font-mono">Tamper-evident proof of human execution.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-medium text-white">Credential Trust</td>
+                            <td class="p-3 text-slate-300">Generalized university brand proxy or vendor vanity badge lacking verifiable assessment criteria.</td>
+                            <td class="p-3 text-emerald-300 font-medium">SYNTHCREDS (W3C VC 2.0 / 1EdTech Open Badges 3.0) with BBS+ selective disclosure and audit trails.</td>
+                            <td class="p-3 text-slate-400 font-mono">Decouples trust from institutional monopoly.</td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/30">
+                            <td class="p-3 font-mono font-medium text-white">Knowledge Topography</td>
+                            <td class="p-3 text-slate-300">Linear, rigid course syllabi; siloed departments; disconnected modular feeds.</td>
+                            <td class="p-3 text-emerald-300 font-medium">Multidimensional Capability Graphs; interdisciplinary tessellation with precise dependency nodes.</td>
+                            <td class="p-3 text-slate-400 font-mono">Cross-domain skill transferability.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 9: Executive Modal Message Box (Alert Alternative) -->
+        <div id="executiveModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-xl w-full p-6 space-y-4 shadow-2xl relative">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-3 h-3 rounded-full bg-cyan-400"></span>
+                        <h3 class="text-sm font-bold font-mono text-white uppercase">Executive Briefing Dispatch</h3>
+                    </div>
+                    <button onclick="closeModal()" class="text-slate-400 hover:text-white font-mono text-sm">✕</button>
+                </div>
+                <div id="modalBody" class="text-xs sm:text-sm text-slate-300 space-y-3 leading-relaxed">
+                    <!-- Dynamic modal content -->
+                </div>
+                <div class="pt-3 border-t border-slate-800 flex justify-end space-x-3">
+                    <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-mono rounded-lg transition">Dismiss</button>
+                    <button onclick="window.print()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-black font-semibold text-xs font-mono rounded-lg transition shadow-md">Print Full Dossier</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="pt-8 pb-12 border-t border-slate-800/80 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                <span>SOVRAEG LABS • SOVEREIGN CAPABILITY INFRASTRUCTURE</span>
+            </div>
+            <div>CATEGORY LEADERSHIP INITIATIVE • OCTOBER 2026</div>
+        </footer>
+
+    </main>
+
+    <!-- Interactive Scripting -->
+    <script>
+        // --- DATA STORE ---
+        const taxonomyData = {
+            0: {
+                tier: "Tier 0",
+                name: "Self-Asserted",
+                accent: "rose",
+                trustScore: "10% (Low Trust / High Spoof Risk)",
+                character: "Learner-generated claims, unverified resumes, raw self-published notes, subjective LinkedIn skill endorsements.",
+                verification: "Zero technical or institutional check. Susceptible to generative AI prompt hallucination and resume fraud.",
+                utility: "Personal study logs, exploratory learning journals, informal interest tracking.",
+                legacyFailure: "90% of resumes and portfolios currently live in Tier 0. Generative AI makes synthetic portfolio creation effortless."
+            },
+            1: {
+                tier: "Tier 1",
+                name: "Integrity-Verified",
+                accent: "cyan",
+                trustScore: "35% (Tamper-Evident Content)",
+                character: "Digital artifacts secured via cryptographic timestamps, content hashes (SHA-256), and immutable git commit histories.",
+                verification: "Mathematical verification that the file existed at timestamp T and has not been altered by 1 bit.",
+                utility: "Baseline copyright protection, version control auditing, code origin verification.",
+                legacyFailure: "Proves the artifact exists, but DOES NOT prove who authored it or whether an AI model generated it."
+            },
+            2: {
+                tier: "Tier 2",
+                name: "Attested",
+                accent: "violet",
+                trustScore: "60% (Social & Guild Verification)",
+                character: "Artifacts reviewed, confirmed, or co-signed by an identifiable peer, mentor, or domain guild practitioner.",
+                verification: "Digital signature of a verified human practitioner confirming participation, teamwork, or observed presentation.",
+                utility: "Open-source community endorsements, apprentice milestone verification, collaborative team checks.",
+                legacyFailure: "Susceptible to reputational cartels or superficial mutual endorsements without standardized testing."
+            },
+            3: {
+                tier: "Tier 3",
+                name: "Assessed (Enterprise Ready)",
+                accent: "emerald",
+                trustScore: "88% (Standardized Mastery)",
+                character: "Evidence systematically evaluated against published, transparent capability rubrics by qualified, accountable assessors.",
+                verification: "Double-blind, randomized multi-assessor review; full audit trail of evaluation decisions decoupled from authoring bodies.",
+                utility: "Direct replacement for corporate hiring screens; academic credit transfers; professional promotion qualifications.",
+                legacyFailure: "Where traditional 4-year degree transcripts fail: degrees hide specific competence behind letter grades (e.g. 'B in Math')."
+            },
+            4: {
+                tier: "Tier 4",
+                name: "Independently Validated",
+                accent: "amber",
+                trustScore: "99% (High-Stakes Certified)",
+                character: "Mastery demonstrated through live execution, adversarial code debugging, oral defense, or high-fidelity simulation under pressure.",
+                verification: "Independent validation by external accrediting guilds, blind challenge panels, or real-world system deployments.",
+                utility: "Safety-critical engineering, clinical systems, autonomous infrastructure, executive cyber defense roles.",
+                legacyFailure: "Legacy certifications rely on static multiple-choice exams easily defeated by LLMs; Tier 4 demands dynamic execution."
+            }
+        };
+
+        const codevStepsData = [
+            {
+                code: "C",
+                name: "Curate",
+                summary: "Source Provenance Logging",
+                desc: "The learner curates foundational texts, datasets, and inspiration. Telemetry logs time spent analyzing resources, references consulted, and initial baseline assumptions.",
+                aiDefense: "Logs origin telemetry; flags prompt-injection shortcuts; establishes an unforgeable record of inquiry."
+            },
+            {
+                code: "O",
+                name: "Organize",
+                summary: "Structural Architecture",
+                desc: "The learner structures the conceptual dependency graph, mapping out interfaces, component dependencies, and design hypotheses before writing code or text.",
+                aiDefense: "Demands architectural trade-off documentation that AI code-dump generators skip entirely."
+            },
+            {
+                code: "D",
+                name: "Distill",
+                summary: "Cognitive Synthesis",
+                desc: "The learner synthesizes complex trade-offs into formal rationales. Explains why alternative paths were rejected and defines system constraints.",
+                aiDefense: "Captures iterative typing rhythm, hesitation metrics, and genuine conceptual articulation vs clipboard paste dumps."
+            },
+            {
+                code: "E",
+                name: "Express",
+                summary: "Executable Construction",
+                desc: "Active creation inside the local-first SYNCZ runtime. Code is compiled, simulations are executed, and state changes are recorded in local telemetry.",
+                aiDefense: "Full delta-recording of state mutations prevents 'one-shot prompt pasting'; shows real problem-solving progression."
+            },
+            {
+                code: "V1",
+                name: "Verify",
+                summary: "Adversarial Stress-Testing",
+                desc: "The output is subjected to unit tests, algorithmic edge cases, peer reviews, and automated fuzzing inside the container.",
+                aiDefense: "Captures how the learner diagnosed, reasoned through, and repaired unexpected runtime failures."
+            },
+            {
+                code: "V2",
+                name: "Validate",
+                summary: "Independent Assessment",
+                desc: "The full SYNCTESS evidence container is submitted to accredited assessors for blind rubric evaluation and SYNTHCRED minting.",
+                aiDefense: "Guarantees human-in-the-loop qualitative appraisal grounded in verified execution telemetry."
+            }
+        ];
+
+        let currentTier = 3;
+        let currentStep = 3; // 'Express'
+
+        // --- CHART 1: THE DISCONNECT ---
+        let disconnectChartInstance;
+        function initDisconnectChart() {
+            const ctx = document.getElementById('disconnectChart').getContext('2d');
+            const years = ['2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026'];
+            
+            disconnectChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Skills-Based Policy Rhetoric (%)',
+                            data: [32, 38, 45, 57, 61, 64, 65, 70],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true,
+                            pointBackgroundColor: '#10b981'
+                        },
+                        {
+                            label: 'GPA Screening Reliance (%)',
+                            data: [73.3, 68.0, 62.5, 54.0, 48.0, 44.5, 43.0, 42.1],
+                            borderColor: '#f43f5e',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            pointBackgroundColor: '#f43f5e'
+                        },
+                        {
+                            label: 'Actual Non-Degree Hires Shift (%)',
+                            data: [0.02, 0.04, 0.05, 0.08, 0.10, 0.12, 0.13, 0.14],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            tension: 0.1,
+                            pointBackgroundColor: '#f59e0b',
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            titleFont: { family: 'JetBrains Mono', size: 12 },
+                            bodyFont: { family: 'Inter', size: 12 },
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 2) {
+                                        return context.dataset.label + ': +' + context.parsed.y + '% net shift';
+                                    }
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono' } }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
+                            ticks: { color: '#94a3b8', font: { family: 'JetBrains Mono' }, callback: v => v + '%' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 0,
+                            max: 1.0,
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#f59e0b', font: { family: 'JetBrains Mono' }, callback: v => '+' + v + '%' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- CHART 2: ROOT CAUSES DOUGHNUT ---
+        function initReasonsChart() {
+            const ctx = document.getElementById('reasonsChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'No Objective Assessment Tools (29%)',
+                        'Habit / Ingrained Degree Preference (29%)',
+                        'Fear of Mis-Hire Liability (22%)',
+                        'Compliance & Accreditations (12%)',
+                        'Other Organizational Friction (8%)'
+                    ],
+                    datasets: [{
+                        data: [29, 29, 22, 12, 8],
+                        backgroundColor: [
+                            '#10b981', // Emerald
+                            '#06b6d4', // Cyan
+                            '#f43f5e', // Rose
+                            '#f59e0b', // Amber
+                            '#475569'  // Slate
+                        ],
+                        borderColor: '#0b0f19',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            bodyFont: { family: 'Inter', size: 11 }
+                        }
+                    },
+                    cutout: '68%'
+                }
+            });
+        }
+
+        // --- TAXONOMY RENDERER ---
+        function selectTier(t) {
+            currentTier = t;
+            // Update tabs styling
+            document.querySelectorAll('.tier-btn').forEach(btn => {
+                const tierVal = parseInt(btn.getAttribute('data-tier'));
+                if (tierVal === t) {
+                    btn.classList.add('border-emerald-500/70', 'bg-emerald-950/20');
+                    btn.classList.remove('border-slate-800');
+                } else {
+                    btn.classList.remove('border-emerald-500/70', 'bg-emerald-950/20');
+                    btn.classList.add('border-slate-800');
+                }
+            });
+            renderTierInspector();
+        }
+
+        function renderTierInspector() {
+            const item = taxonomyData[currentTier];
+            const container = document.getElementById('tierInspector');
+            
+            let badgeColor = "text-emerald-400 bg-emerald-500/10 border-emerald-500/30";
+            if (currentTier === 0) badgeColor = "text-rose-400 bg-rose-500/10 border-rose-500/30";
+            if (currentTier === 1) badgeColor = "text-cyan-400 bg-cyan-500/10 border-cyan-500/30";
+            if (currentTier === 2) badgeColor = "text-violet-400 bg-violet-500/10 border-violet-500/30";
+            if (currentTier === 4) badgeColor = "text-amber-400 bg-amber-500/10 border-amber-500/30";
+
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+                    <div class="flex items-center space-x-3">
+                        <span class="px-3 py-1 rounded-full text-xs font-mono font-bold border ${badgeColor}">
+                            ${item.tier} : ${item.name.toUpperCase()}
+                        </span>
+                        <span class="text-xs font-mono text-slate-400">Trust Rating: <strong class="text-white">${item.trustScore}</strong></span>
+                    </div>
+                    <span class="text-xs font-mono text-slate-500">SOVRAEGIS SPEC v2.4</span>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-mono text-slate-400 uppercase">Evidence Nature & Character</div>
+                            <p class="text-sm text-slate-200 mt-1">${item.character}</p>
+                        </div>
+                        <div>
+                            <div class="text-xs font-mono text-slate-400 uppercase">Verification & Assurance Protocol</div>
+                            <p class="text-sm text-slate-300 mt-1">${item.verification}</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="text-xs font-mono text-slate-400 uppercase">Operational Enterprise Utility</div>
+                            <p class="text-sm text-slate-200 mt-1">${item.utility}</p>
+                        </div>
+                        <div class="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
+                            <div class="text-xs font-mono text-amber-400 font-semibold flex items-center space-x-1.5">
+                                <span>⚠️ Legacy System Failure Mode</span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-1 leading-relaxed">${item.legacyFailure}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- CODE+V STEPPER RENDERER ---
+        function selectStep(idx) {
+            currentStep = idx;
+            renderCodev();
+        }
+
+        function renderCodev() {
+            const btnContainer = document.getElementById('codevSteps');
+            btnContainer.innerHTML = codevStepsData.map((s, idx) => {
+                const isActive = idx === currentStep;
+                return `
+                    <button onclick="selectStep(${idx})" class="p-3 rounded-xl border text-left transition font-mono ${isActive ? 'bg-cyan-950/30 border-cyan-400 text-white shadow-lg shadow-cyan-500/10' : 'bg-slate-950 border-slate-800/80 text-slate-400 hover:border-slate-700'}">
+                        <div class="text-[10px] ${isActive ? 'text-cyan-400 font-bold' : 'text-slate-500'}">STAGE 0${idx+1}</div>
+                        <div class="text-sm font-bold text-white mt-0.5">${s.code} • ${s.name}</div>
+                        <div class="text-[10px] text-slate-400 truncate mt-1">${s.summary}</div>
+                    </button>
+                `;
+            }).join('');
+
+            const detail = codevStepsData[currentStep];
+            document.getElementById('codevDetail').innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-800 gap-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span>
+                        <h4 class="text-sm font-bold font-mono text-white uppercase">${detail.name} Protocol Details</h4>
+                    </div>
+                    <span class="text-xs font-mono text-cyan-400">TELEMETRY ANCHOR: CODE+V STEP 0${currentStep+1}</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+                    <div>
+                        <div class="text-xs font-mono text-slate-400 uppercase">Process Description</div>
+                        <p class="text-xs sm:text-sm text-slate-200 mt-1 leading-relaxed">${detail.desc}</p>
+                    </div>
+                    <div class="p-3 bg-slate-900 rounded-lg border border-slate-800">
+                        <div class="text-xs font-mono text-emerald-400 uppercase font-semibold">Anti-AI Cheat / Plagiarism Defense</div>
+                        <p class="text-xs text-slate-300 mt-1 leading-relaxed">${detail.aiDefense}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- CALCULATOR ENGINE ---
+        function calculateRisk() {
+            const hires = parseInt(document.getElementById('hiresInput').value);
+            const salary = parseInt(document.getElementById('salaryInput').value);
+            const rate = parseFloat(document.getElementById('rateInput').value) / 100;
+            const formula = document.getElementById('costFormula').value;
+
+            document.getElementById('hiresValue').innerText = hires + " hires";
+            document.getElementById('salaryValue').innerText = "$" + salary.toLocaleString();
+            document.getElementById('rateValue').innerText = (rate * 100).toFixed(1) + "%";
+
+            let costPerFail = 0;
+            if (formula === 'percentage') {
+                costPerFail = salary * 0.30;
+            } else if (formula === 'recruiting') {
+                costPerFail = 18500;
+            } else if (formula === 'conservative') {
+                costPerFail = 11500;
+            } else if (formula === 'highconsequence') {
+                costPerFail = salary * 0.50;
+            }
+
+            const misHiresCount = Math.round(hires * rate);
+            const totalLoss = misHiresCount * costPerFail;
+            const savedLoss = totalLoss * 0.72; // 72% reduction via auditable SYNCTESS assurance
+
+            document.getElementById('outMisHires').innerText = misHiresCount;
+            document.getElementById('outCostPerFail').innerText = "$" + Math.round(costPerFail).toLocaleString();
+            document.getElementById('outTotalLoss').innerText = "$" + Math.round(totalLoss).toLocaleString();
+            document.getElementById('outSavedLoss').innerText = "$" + Math.round(savedLoss).toLocaleString();
+        }
+
+        // Attach calc listeners
+        document.getElementById('hiresInput').addEventListener('input', calculateRisk);
+        document.getElementById('salaryInput').addEventListener('input', calculateRisk);
+        document.getElementById('rateInput').addEventListener('input', calculateRisk);
+        document.getElementById('costFormula').addEventListener('change', calculateRisk);
+
+        // Chart View Toggle
+        let isLogView = false;
+        document.getElementById('toggleChartMode').addEventListener('click', () => {
+            isLogView = !isLogView;
+            disconnectChartInstance.options.scales.y.type = isLogView ? 'logarithmic' : 'linear';
+            disconnectChartInstance.update();
+            document.getElementById('toggleChartMode').innerText = isLogView ? 'Switch Linear' : 'Switch View';
+        });
+
+        // --- MODAL UTILITIES ---
+        function showModal(title, text) {
+            document.getElementById('modalBody').innerHTML = `
+                <div class="font-bold text-white text-base">${title}</div>
+                <p>${text}</p>
+            `;
+            document.getElementById('executiveModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('executiveModal').classList.add('hidden');
+        }
+
+        // Close modal on Escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Initialize App
+        window.onload = function() {
+            initDisconnectChart();
+            initReasonsChart();
+            selectTier(3);
+            renderCodev();
+            calculateRisk();
+        };
+    </script>
+</body>
+</html>

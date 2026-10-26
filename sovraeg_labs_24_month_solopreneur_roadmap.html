@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOVRAEG LABS // 24-Month Solopreneur Roadmap</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        slate: {
+                            925: '#0b0f19',
+                            950: '#060911',
+                        },
+                        sov: {
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                            amber: '#f59e0b',
+                            rose: '#f43f5e',
+                            indigo: '#6366f1'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #060911;
+            background-image: 
+                radial-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 0),
+                radial-gradient(rgba(16, 185, 129, 0.04) 1px, transparent 0);
+            background-size: 28px 28px;
+            background-position: 0 0, 14px 14px;
+        }
+        .hud-border {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.7);
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 3px;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+        }
+    </style>
+</head>
+<body class="text-slate-200 font-sans antialiased min-h-screen selection:bg-cyan-500 selection:text-black">
+
+    <!-- Header Cockpit -->
+    <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="h-9 w-9 rounded-lg bg-gradient-to-tr from-cyan-500 to-emerald-400 flex items-center justify-center font-mono font-bold text-black text-base shadow-lg shadow-cyan-500/20">
+                    SL
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <span class="font-mono text-xs font-bold text-cyan-400 uppercase tracking-widest">SOVRAEG LABS</span>
+                        <span class="text-slate-600 font-mono">::</span>
+                        <span class="font-mono text-xs text-slate-300 uppercase">VENTURE STUDIO ROADMAP</span>
+                    </div>
+                    <div class="text-[11px] text-slate-400">Company of One Execution Protocol • Education 6.0 Architecture</div>
+                </div>
+            </div>
+
+            <!-- Solopreneur Mode Indicator -->
+            <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 font-mono text-xs text-slate-300">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                    <span>SOLOPRENEUR / SOLO DEVELOPER</span>
+                </div>
+                <button onclick="window.print()" class="no-print bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-lg text-xs font-mono transition">
+                    Export Plan
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Executive Charter: Solopreneur Strategic Posture -->
+        <section class="rounded-2xl bg-gradient-to-r from-slate-900 via-slate-925 to-slate-950 p-6 sm:p-8 hud-border border-cyan-500/20 relative overflow-hidden">
+            <div class="max-w-4xl space-y-3 relative z-10">
+                <div class="inline-flex items-center space-x-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 px-3 py-1 text-xs font-mono text-cyan-300">
+                    <span>CAPITAL-EFFICIENT ASYMMETRY</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    How a Company of One Outmaneuvers EdTech Silos, Agile Interlopers & Regulatory Red Tape
+                </h1>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    You do not need 50 employees or venture debt to lead Education 6.0. By anchoring in <strong class="text-white">open interoperable schemas</strong>, <strong class="text-emerald-400">local-first client execution</strong> (zero cloud hosting burn), and <strong class="text-cyan-400">standards composition (W3C VC 2.0 / 1EdTech)</strong>, SOVRAEG LABS operates with asymmetric speed and absolute data integrity.
+                </p>
+                <div class="pt-2 flex flex-wrap gap-4 text-xs font-mono text-slate-400">
+                    <div>⚡ <strong>Run-Rate:</strong> Ultra-lean (Client-side edge computing)</div>
+                    <div>🛡️ <strong>Moat:</strong> Auditable Capability Assurance vs. Generative Noise</div>
+                    <div>🎯 <strong>First Market:</strong> High-Stakes Systems Engineering & Clinical Research Ateliers</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Competitive Terrain Analysis: The 3 Forces -->
+        <section class="space-y-4">
+            <div class="flex items-center justify-between">
+                <h2 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                    <span class="w-2 h-2 bg-amber-400 rounded-sm"></span>
+                    <span>Competitive Terrain & Defensive Flanking Matrix</span>
+                </h2>
+                <span class="text-xs font-mono text-slate-500">Navigation Strategy for Solopreneurs</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Force 1: Major Highways (Status Quo Incumbents) -->
+                <div class="bg-slate-900/90 rounded-xl p-5 hud-border border-slate-800 space-y-3 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-mono font-bold text-rose-400">FORCE 01: THE MAJOR HIGHWAYS</span>
+                        <span class="text-[10px] font-mono bg-rose-500/10 text-rose-300 px-2 py-0.5 rounded">INCUMBENTS</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">Legacy Universities & SaaS LMS Silos</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Entrenched players (Canvas, Coursera, 4-year degree programs) protect gatekeeping rents, degrees, and subscription lock-in. They resist change because their economic model requires content gatekeeping.
+                    </p>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 text-[11px] space-y-1">
+                        <div class="text-cyan-400 font-mono font-bold">SOVRAEG Solopreneur Flank:</div>
+                        <div class="text-slate-400">
+                            <strong>Do not attack frontally.</strong> Package SYNCZINES via LTI 1.3 to embed inside their Canvas LMS. Give professors superior portfolio tools without asking them to tear down their registrar.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Force 2: Agile Interlopers (VC-backed AI Startups) -->
+                <div class="bg-slate-900/90 rounded-xl p-5 hud-border border-slate-800 space-y-3 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-mono font-bold text-amber-400">FORCE 02: AGILE INTERLOPERS</span>
+                        <span class="text-[10px] font-mono bg-amber-500/10 text-amber-300 px-2 py-0.5 rounded">VC AI STARTUPS</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">AI Course Generators & Chatbot Tutors</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Agile AI startups flood the web with 50-hour auto-generated linear courses, synthetic avatars, and prompt wrappers. They have deep VC war chests but suffer from content commoditization and hallucination.
+                    </p>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 text-[11px] space-y-1">
+                        <div class="text-emerald-400 font-mono font-bold">SOVRAEG Solopreneur Flank:</div>
+                        <div class="text-slate-400">
+                            <strong>Let them race to zero on content.</strong> SOVRAEG owns <em>verifiable human execution telemetry (SYNCTESS)</em> and <em>unforgeable credentials (SYNTHCREDS)</em>. When content is free, proof of competence is gold.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Force 3: Governmental Authorities & Regulators -->
+                <div class="bg-slate-900/90 rounded-xl p-5 hud-border border-slate-800 space-y-3 hover:border-slate-700 transition">
+                    <div class="flex items-center justify-between pb-2 border-b border-slate-800">
+                        <span class="text-xs font-mono font-bold text-cyan-400">FORCE 03: GOV AUTHORITIES</span>
+                        <span class="text-[10px] font-mono bg-cyan-500/10 text-cyan-300 px-2 py-0.5 rounded">BUREAUCRACY</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-white">State Boards & Accrediting Commissions</h3>
+                    <p class="text-xs text-slate-300 leading-relaxed">
+                        Governments paradoxically demand "skills-first innovation" while legally mandating accredited college degrees for licensing. They are burdened by sluggish bureaucracy and fears of credential fraud.
+                    </p>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800/80 text-[11px] space-y-1">
+                        <div class="text-indigo-400 font-mono font-bold">SOVRAEG Solopreneur Flank:</div>
+                        <div class="text-slate-400">
+                            <strong>Standardize on European Digital Credentials (EDC) & W3C VC 2.0.</strong> Present SOVRAEG as the compliance-ready audit trail that guarantees assessment integrity and eliminates fraud for state agencies.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The 24-Month Phased Roadmap Execution Stepper -->
+        <section class="space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div>
+                    <h2 class="text-xs font-mono uppercase tracking-wider text-slate-400 flex items-center space-x-2">
+                        <span class="w-2 h-2 bg-cyan-400 rounded-sm"></span>
+                        <span>24-Month Solopreneur Phased Implementation Roadmap</span>
+                    </h2>
+                    <p class="text-sm text-slate-300">Four disciplined execution phases governed by binary exit gates</p>
+                </div>
+                <div class="text-xs font-mono text-slate-500">Click a phase to inspect sprint deliverables</div>
+            </div>
+
+            <!-- Phase Tabs -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3" id="phaseTabButtons">
+                <button onclick="selectPhase(0)" class="phase-tab p-4 rounded-xl border text-left transition font-mono bg-cyan-950/20 border-cyan-400 text-white" data-phase="0">
+                    <div class="text-[10px] text-cyan-400 font-bold">PHASE I (DAYS 0–90)</div>
+                    <div class="text-sm font-bold mt-1">Define & Prove</div>
+                    <div class="text-xs text-slate-400 mt-1">Local-First Schema & Reader</div>
+                </button>
+                <button onclick="selectPhase(1)" class="phase-tab p-4 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700" data-phase="1">
+                    <div class="text-[10px] text-emerald-400 font-bold">PHASE II (MO 3–6)</div>
+                    <div class="text-sm font-bold text-white mt-1">Launch the Atelier</div>
+                    <div class="text-xs text-slate-400 mt-1">1 Specialist Domain & Guild</div>
+                </button>
+                <button onclick="selectPhase(2)" class="phase-tab p-4 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700" data-phase="2">
+                    <div class="text-[10px] text-amber-400 font-bold">PHASE III (MO 6–12)</div>
+                    <div class="text-sm font-bold text-white mt-1">Interoperability</div>
+                    <div class="text-xs text-slate-400 mt-1">LTI 1.3 & Employer Network</div>
+                </button>
+                <button onclick="selectPhase(3)" class="phase-tab p-4 rounded-xl border text-left transition font-mono bg-slate-900 border-slate-800 text-slate-400 hover:border-slate-700" data-phase="3">
+                    <div class="text-[10px] text-indigo-400 font-bold">PHASE IV (MO 12–24)</div>
+                    <div class="text-sm font-bold text-white mt-1">Federate & Scale</div>
+                    <div class="text-xs text-slate-400 mt-1">SOVRAEGENCIES Venture Spinouts</div>
+                </button>
+            </div>
+
+            <!-- Phase Detail Inspector -->
+            <div id="phaseDetailPanel" class="bg-slate-900/90 rounded-2xl p-6 sm:p-8 hud-border border-slate-800 space-y-6">
+                <!-- Dynamically loaded in JS -->
+            </div>
+        </section>
+
+        <!-- Solopreneur Weekly Resource & Focus Calculator -->
+        <section class="bg-slate-900/90 rounded-2xl p-6 hud-border border-slate-800 space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between pb-4 border-b border-slate-800 gap-4">
+                <div>
+                    <div class="text-xs font-mono text-cyan-400 uppercase">SOLO OPERATING SYSTEM (COMPANY OF ONE)</div>
+                    <h3 class="text-base font-bold text-white">Solopreneur Bandwidth & Weekly Time Allocation Engine</h3>
+                </div>
+                <div class="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1.5 rounded-lg border border-slate-800">
+                    Solo Weekly Budget: <span id="hoursTotal" class="text-cyan-400 font-bold">45 hrs/wk</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <!-- Sliders (6 cols) -->
+                <div class="lg:col-span-6 space-y-4">
+                    <div>
+                        <div class="flex justify-between text-xs font-mono mb-1">
+                            <span class="text-slate-300">Core Engine Coding (SYNCZINES/Runtime):</span>
+                            <span id="txtDev" class="text-cyan-400 font-bold">20 hrs (44%)</span>
+                        </div>
+                        <input id="sliderDev" type="range" min="5" max="35" value="20" class="w-full accent-cyan-400 cursor-pointer bg-slate-800 rounded-lg">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-mono mb-1">
+                            <span class="text-slate-300">Domain Atelier & Guild Recruitment:</span>
+                            <span id="txtGuild" class="text-emerald-400 font-bold">12 hrs (27%)</span>
+                        </div>
+                        <input id="sliderGuild" type="range" min="2" max="25" value="12" class="w-full accent-emerald-400 cursor-pointer bg-slate-800 rounded-lg">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-mono mb-1">
+                            <span class="text-slate-300">Enterprise Employer & Univ Partnerships:</span>
+                            <span id="txtBiz" class="text-amber-400 font-bold">8 hrs (18%)</span>
+                        </div>
+                        <input id="sliderBiz" type="range" min="2" max="20" value="8" class="w-full accent-amber-400 cursor-pointer bg-slate-800 rounded-lg">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between text-xs font-mono mb-1">
+                            <span class="text-slate-300">Open Specs, Standards & Community:</span>
+                            <span id="txtCom" class="text-indigo-400 font-bold">5 hrs (11%)</span>
+                        </div>
+                        <input id="sliderCom" type="range" min="1" max="15" value="5" class="w-full accent-indigo-400 cursor-pointer bg-slate-800 rounded-lg">
+                    </div>
+                </div>
+
+                <!-- Radar / Doughnut Chart (6 cols) -->
+                <div class="lg:col-span-6 flex flex-col items-center justify-center">
+                    <div class="relative h-56 w-full flex items-center justify-center">
+                        <canvas id="allocationChart"></canvas>
+                    </div>
+                    <p class="text-center text-xs text-slate-400 mt-2 font-mono">
+                        Rule: Maintain at least 40% engineering focus until Phase I exit gate is passed.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- The 10-Vector Learning Economy Observatory Scorecard -->
+        <section class="bg-slate-900/90 rounded-2xl p-6 hud-border border-slate-800 space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+                <div>
+                    <div class="text-xs font-mono text-emerald-400 uppercase">EMPIRICAL GOVERNANCE</div>
+                    <h3 class="text-base font-bold text-white">Learning Economy Observatory Scorecard (10 Strategic Vectors)</h3>
+                </div>
+                <span class="text-xs font-mono text-slate-500">Rejecting Vanity Engagement Metrics</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="scorecardGrid">
+                <!-- Dynamically generated in JS -->
+            </div>
+        </section>
+
+        <!-- Interactive 5-Question Venture Alignment Filter -->
+        <section class="bg-gradient-to-br from-slate-900 via-slate-925 to-slate-950 rounded-2xl p-6 sm:p-8 hud-border border-indigo-500/30 space-y-6">
+            <div class="flex items-center space-x-2 text-xs font-mono text-indigo-400 uppercase tracking-widest">
+                <span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+                <span>SOVRAEGOS VENTURE FILTER</span>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold text-white">The 5-Point Constitutional Decision Filter</h3>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">
+                    Before committing scarce solopreneur hours or studio resources to any feature, partnership, or sub-brand, run it through the 5 gates.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="decisionFilterContainer">
+                <!-- Injected in JS -->
+            </div>
+
+            <div class="p-4 bg-slate-950 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-3">
+                    <div id="filterScoreBadge" class="h-10 w-10 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-mono font-bold text-lg">
+                        5/5
+                    </div>
+                    <div>
+                        <div class="text-xs font-mono text-slate-400 uppercase">Alignment Verdict</div>
+                        <div id="filterVerdictText" class="text-sm font-bold text-emerald-300">Proceed to Execution • High Sovereign Value</div>
+                    </div>
+                </div>
+                <button onclick="resetFilter()" class="text-xs font-mono text-slate-400 hover:text-slate-200 underline">
+                    Reset Filter
+                </button>
+            </div>
+        </section>
+
+        <!-- Brand Voice, Mindset & Manifesto Banner -->
+        <section class="rounded-2xl bg-slate-950 p-6 sm:p-8 border border-slate-800 text-center space-y-4">
+            <div class="inline-block text-xs font-mono text-cyan-400 uppercase tracking-widest bg-cyan-950/40 px-3 py-1 rounded-full border border-cyan-800/40">
+                THE SOVRAEG MINDSET & BRAND DECLARATION
+            </div>
+            <blockquote class="text-lg sm:text-2xl font-serif italic text-slate-200 max-w-3xl mx-auto leading-relaxed">
+                "Make Knowledge Abundant. Make Mastery Evident. Make Capability Sovereign. Make Opportunity Accessible."
+            </blockquote>
+            <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto leading-normal">
+                Never compete as another content broker or chat-bot vendor. Build the sovereign rails that turn human effort into permanent, portable, unforgeable capability.
+            </p>
+        </section>
+
+        <!-- Footer -->
+        <footer class="pt-8 pb-12 border-t border-slate-800/80 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono">
+            <div>SOVRAEG LABS // COMPANY OF ONE STRATEGY</div>
+            <div>VERIFIABLE CAPABILITY RUNTIME • 2026–2028</div>
+        </footer>
+
+    </main>
+
+    <!-- Scripting Engine -->
+    <script>
+        // --- PHASE DATA ---
+        const phasesData = [
+            {
+                phase: "Phase I (Days 0–90)",
+                title: "Define, Specify & Prove the Local-First Runtime",
+                objective: "Construct the minimal viable SOVRAEGIS container specification and execute the first end-to-end offline learning-to-credential loop.",
+                soloDeliverables: [
+                    "Publish canonical JSON-LD schema for SYNCZINES and CODE+V evidence containers.",
+                    "Build lightweight client-side HTML5/WASM reference reader (zero cloud dependencies, pure local storage/IndexedDB).",
+                    "Author one flagship SYNCZ experience with interactive state machine & automated telemetry logger.",
+                    "Integrate client-side BBS+ / Ed25519 cryptographic signing for local SYNTHCRED issuance."
+                ],
+                exitGate: "MANDATORY EXIT GATE: Exactly one external technical user completes the SYNCZINE offline, exports their SYNCTESS evidence package, and verifies their SYNTHCRED independently using an open verification script without network access.",
+                capitalAllocation: "$0 AWS/Cloud Hosting burn. 100% Client-side execution.",
+                riskGuardrail: "Do not build multi-user authoring tools or dashboards yet. Focus solely on proving container execution integrity."
+            },
+            {
+                phase: "Phase II (Months 3–6)",
+                title: "Launch the Inaugural SOVRAEGENCY Atelier",
+                objective: "Deploy a high-stakes, specialized human capability center in one high-value domain (e.g. Distributed Systems Engineering or Clinical Informatics).",
+                soloDeliverables: [
+                    "Recruit 25–50 elite pilot learners and 3–5 respected domain master practitioners (SOVRAEGES).",
+                    "Deliver 2–3 advanced SYNCZINES modeling high-consequence technical workflows.",
+                    "Formalize double-blind assessment rubrics for Tier 3 Assessed SYNTHCREDS.",
+                    "Establish Guild attestation workflow with peer consensus reviews."
+                ],
+                exitGate: "MANDATORY EXIT GATE: Measurable capability gain demonstrated between baseline testing and post-experience execution, resulting in at least 15 Tier 3 assessed SYNTHCREDS issued.",
+                capitalAllocation: "Funded via initial Atelier subscription or institutional research stipend.",
+                riskGuardrail: "Avoid low-stakes consumer topics. Focus only on domains where employer mis-hire costs exceed $20,000."
+            },
+            {
+                phase: "Phase III (Months 6–12)",
+                title: "Institutional Interoperability & Enterprise Adoption",
+                objective: "Bridge the SOVRAEG stack into existing enterprise HRIS and university LMSs without requiring rip-and-replace overhauls.",
+                soloDeliverables: [
+                    "Release SYNCFORGE Authoring v1.0 for independent master practitioners to compile SYNCZINES.",
+                    "Implement 1EdTech LTI 1.3 / Advantage wrapper for seamless Canvas & Moodle launching.",
+                    "Launch the Recognition Graph connecting SYNTHCREDS to enterprise job requirements.",
+                    "Secure first 2 enterprise hiring partners who agree to interview candidates based on SYNCTESS evidence portfolios."
+                ],
+                exitGate: "MANDATORY EXIT GATE: Two independent corporate employers or university labs formally ingest SYNTHCRED portfolios into real hiring/advancement workflows.",
+                capitalAllocation: "Begin charging enterprise assessment audit and LTI integration service fees.",
+                riskGuardrail: "Do not attempt to replace university registrars. Present SOVRAEG as an evidence enhancement layer."
+            },
+            {
+                phase: "Phase IV (Months 12–24)",
+                title: "Federate the Atelier Network & Launch SOVRAEGENCIES",
+                objective: "Transition from a single studio into a federated learning economy powered by autonomous sovereign enterprises.",
+                soloDeliverables: [
+                    "Spin out the first autonomous SOVRAEGENCY commercial venture via SOVRAEGOS.",
+                    "Transition core specifications into the ALCHEMOSAIC Open Learning Commons with multi-stakeholder governance.",
+                    "Deploy BBS+ selective disclosure mobile wallet for instant zero-knowledge employer verification.",
+                    "Establish sustainable creator royalty distribution contracts for SYNCZINE contributors."
+                ],
+                exitGate: "MANDATORY EXIT GATE: Demonstrable recurring enterprise revenue and multiple independent domain Ateliers operating without direct solopreneur intervention.",
+                capitalAllocation: "Venture studio equity participation + enterprise verification API licensing.",
+                riskGuardrail: "Never extract rents by locking user data. Monetize enterprise verification assurance, not learner ownership."
+            }
+        ];
+
+        let currentPhaseIdx = 0;
+
+        function selectPhase(idx) {
+            currentPhaseIdx = idx;
+            document.querySelectorAll('.phase-tab').forEach((btn, i) => {
+                if (i === idx) {
+                    btn.classList.add('bg-cyan-950/20', 'border-cyan-400', 'text-white');
+                    btn.classList.remove('bg-slate-900', 'border-slate-800', 'text-slate-400');
+                } else {
+                    btn.classList.remove('bg-cyan-950/20', 'border-cyan-400', 'text-white');
+                    btn.classList.add('bg-slate-900', 'border-slate-800', 'text-slate-400');
+                }
+            });
+            renderPhaseDetail();
+        }
+
+        function renderPhaseDetail() {
+            const p = phasesData[currentPhaseIdx];
+            const container = document.getElementById('phaseDetailPanel');
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-800 gap-2">
+                    <div>
+                        <span class="text-xs font-mono font-bold text-cyan-400 uppercase tracking-widest">${p.phase}</span>
+                        <h3 class="text-lg font-bold text-white mt-0.5">${p.title}</h3>
+                    </div>
+                    <span class="text-xs font-mono text-slate-400 bg-slate-950 px-3 py-1 rounded border border-slate-800">
+                        Solo Sprint Execution
+                    </span>
+                </div>
+
+                <div class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                    <strong class="text-white font-mono">Core Strategic Objective:</strong> ${p.objective}
+                </div>
+
+                <div class="space-y-2">
+                    <div class="text-xs font-mono text-slate-400 uppercase">Solopreneur Engineering Deliverables:</div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        ${p.soloDeliverables.map(d => `
+                            <div class="p-3 bg-slate-950/80 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-start space-x-2">
+                                <span class="text-cyan-400 font-mono font-bold">✔</span>
+                                <span>${d}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <div class="p-4 bg-emerald-950/20 rounded-xl border border-emerald-500/40 space-y-1">
+                    <div class="text-xs font-mono text-emerald-400 font-bold flex items-center space-x-2">
+                        <span>🎯 ${p.exitGate.split(':')[0]}</span>
+                    </div>
+                    <p class="text-xs text-slate-200 leading-relaxed">${p.exitGate.split(':')[1]}</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono pt-1">
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                        <span class="text-slate-400 block text-[10px]">CAPITAL & INFRA ALLOCATION</span>
+                        <span class="text-slate-200 mt-0.5 block">${p.capitalAllocation}</span>
+                    </div>
+                    <div class="p-3 bg-slate-950 rounded-lg border border-slate-800">
+                        <span class="text-amber-400 block text-[10px]">SOLO DEFENSIVE GUARDRAIL</span>
+                        <span class="text-slate-200 mt-0.5 block">${p.riskGuardrail}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- SCORECARD DATA (10 VECTORS) ---
+        const scorecardVectors = [
+            { id: "v1", name: "Verified Capability Gain", target: "> 25% Delta", desc: "Measured difference between pre-experience baseline and post-experience performance.", status: "Optimal" },
+            { id: "v2", name: "Longitudinal Durability", target: "85% at 90-Day", desc: "Retention of skill after 90 days with zero interim practice.", status: "Active" },
+            { id: "v3", name: "Contextual Transferability", target: "> 70% Transfer", desc: "Application of competencies to novel unscripted scenarios.", status: "Optimal" },
+            { id: "v4", name: "Sovereignty Retention", target: "100% Export", desc: "Learners executing and exporting state without server dependency.", status: "Guaranteed" },
+            { id: "v5", name: "Assessment Agreement", target: "Kappa > 0.85", desc: "Inter-rater reliability between independent double-blind assessors.", status: "Strict" },
+            { id: "v6", name: "Enterprise Acceptance", target: "2+ Partners", desc: "Corporates accepting SYNTHCREDS for hiring decisions.", status: "Phase III" },
+            { id: "v7", name: "Economic Conversion", target: "Tangible Career", desc: "Placements, contracts, and venture spinouts created.", status: "Phase IV" },
+            { id: "v8", name: "Creator Sustainability", target: "Transparent Royalties", desc: "Predictable revenue for SYNCZINE authors and assessors.", status: "Active" },
+            { id: "v9", name: "Open Commons Vitality", target: "Apache/MIT Core", desc: "Volume of open schemas and reader downloads in the wild.", status: "Public" },
+            { id: "v10", name: "Capital Efficiency", target: "Zero AWS Lock-in", desc: "Operating with negligible fixed server infrastructure burn.", status: "Lean" }
+        ];
+
+        function renderScorecard() {
+            const container = document.getElementById('scorecardGrid');
+            container.innerHTML = scorecardVectors.map((v, i) => `
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800/90 hover:border-slate-700 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center text-[10px] font-mono text-slate-500">
+                            <span>VECTOR 0${i+1}</span>
+                            <span class="text-cyan-400 font-bold">${v.status}</span>
+                        </div>
+                        <div class="text-xs font-bold text-white mt-1">${v.name}</div>
+                        <p class="text-[11px] text-slate-400 mt-1 leading-tight">${v.desc}</p>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-slate-800/80 flex justify-between items-center font-mono text-[10px]">
+                        <span class="text-slate-500">Target:</span>
+                        <span class="text-emerald-400 font-bold">${v.target}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- ALLOCATION CHART (CHART.JS) ---
+        let allocationChartInstance;
+        function initAllocationChart() {
+            const ctx = document.getElementById('allocationChart').getContext('2d');
+            allocationChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Engine Dev', 'Atelier & Guilds', 'Enterprise BD', 'Open Standards'],
+                    datasets: [{
+                        data: [20, 12, 8, 5],
+                        backgroundColor: ['#06b6d4', '#10b981', '#f59e0b', '#6366f1'],
+                        borderColor: '#0b0f19',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                            bodyFont: { family: 'JetBrains Mono', size: 11 },
+                            callbacks: {
+                                label: ctx => ` ${ctx.label}: ${ctx.parsed} hrs/wk`
+                            }
+                        }
+                    },
+                    cutout: '70%'
+                }
+            });
+        }
+
+        function updateAllocation() {
+            const dev = parseInt(document.getElementById('sliderDev').value);
+            const guild = parseInt(document.getElementById('sliderGuild').value);
+            const biz = parseInt(document.getElementById('sliderBiz').value);
+            const com = parseInt(document.getElementById('sliderCom').value);
+            const total = dev + guild + biz + com;
+
+            document.getElementById('hoursTotal').innerText = total + " hrs/wk";
+            document.getElementById('txtDev').innerText = `${dev} hrs (${Math.round((dev/total)*100)}%)`;
+            document.getElementById('txtGuild').innerText = `${guild} hrs (${Math.round((guild/total)*100)}%)`;
+            document.getElementById('txtBiz').innerText = `${biz} hrs (${Math.round((biz/total)*100)}%)`;
+            document.getElementById('txtCom').innerText = `${com} hrs (${Math.round((com/total)*100)}%)`;
+
+            allocationChartInstance.data.datasets[0].data = [dev, guild, biz, com];
+            allocationChartInstance.update();
+        }
+
+        ['sliderDev', 'sliderGuild', 'sliderBiz', 'sliderCom'].forEach(id => {
+            document.getElementById(id).addEventListener('input', updateAllocation);
+        });
+
+        // --- 5-POINT DECISION FILTER ---
+        const filterCriteria = [
+            { id: 1, title: "Capability", question: "Does it increase demonstrable human capability rather than merely content volume?", state: true },
+            { id: 2, title: "Sovereignty", question: "Does it preserve or improve meaningful learner control, portability and independence?", state: true },
+            { id: 3, title: "Trust", question: "Does it strengthen credible evidence, assessment, recognition or governance?", state: true },
+            { id: 4, title: "Value", question: "Does it create a genuine service, economic opportunity or commons benefit?", state: true },
+            { id: 5, title: "Synergy", question: "Can it strengthen other parts of the SOVRAEG ecosystem without imposing coercive dependencies?", state: true }
+        ];
+
+        function toggleFilter(id) {
+            const item = filterCriteria.find(c => c.id === id);
+            item.state = !item.state;
+            renderFilter();
+        }
+
+        function resetFilter() {
+            filterCriteria.forEach(c => c.state = true);
+            renderFilter();
+        }
+
+        function renderFilter() {
+            const container = document.getElementById('decisionFilterContainer');
+            container.innerHTML = filterCriteria.map(c => `
+                <div onclick="toggleFilter(${c.id})" class="cursor-pointer p-4 rounded-xl border transition ${c.state ? 'bg-indigo-950/20 border-indigo-500/50 text-white' : 'bg-slate-950 border-slate-800 text-slate-500'}">
+                    <div class="flex justify-between items-center text-[10px] font-mono">
+                        <span>GATE 0${c.id}</span>
+                        <span class="${c.state ? 'text-emerald-400 font-bold' : 'text-rose-400 font-bold'}">${c.state ? 'PASS' : 'FAIL'}</span>
+                    </div>
+                    <div class="text-xs font-bold mt-1 text-white">${c.title}</div>
+                    <p class="text-[11px] mt-1 leading-tight ${c.state ? 'text-slate-300' : 'text-slate-600'}">${c.question}</p>
+                </div>
+            `).join('');
+
+            const passedCount = filterCriteria.filter(c => c.state).length;
+            const badge = document.getElementById('filterScoreBadge');
+            const verdict = document.getElementById('filterVerdictText');
+
+            badge.innerText = `${passedCount}/5`;
+            if (passedCount === 5) {
+                badge.className = "h-10 w-10 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center font-mono font-bold text-lg";
+                verdict.innerText = "Proceed to Execution • High Sovereign Value & Strategic Fit";
+                verdict.className = "text-sm font-bold text-emerald-300";
+            } else if (passedCount >= 3) {
+                badge.className = "h-10 w-10 rounded-lg bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center font-mono font-bold text-lg";
+                verdict.innerText = "Promising • Resolve Remaining Governance/Dependency Risks";
+                verdict.className = "text-sm font-bold text-amber-300";
+            } else {
+                badge.className = "h-10 w-10 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/40 flex items-center justify-center font-mono font-bold text-lg";
+                verdict.innerText = "Halt Initiative • Violates Core Sovereignty Principles";
+                verdict.className = "text-sm font-bold text-rose-400";
+            }
+        }
+
+        // Initialize Cockpit
+        window.onload = function() {
+            selectPhase(0);
+            renderScorecard();
+            initAllocationChart();
+            renderFilter();
+        };
+    </script>
+</body>
+</html>
