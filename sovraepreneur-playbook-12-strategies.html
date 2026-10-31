@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The SOVRÆPRENEUR Playbook: Twelve Constructive Asymmetry Strategies</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #070913;
+      color: #e2e8f0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .play-card {
+      background: rgba(22, 30, 49, 0.65);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: all 0.25s ease-out;
+    }
+    .play-card:hover {
+      border-color: rgba(139, 92, 246, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(139, 92, 246, 0.15);
+    }
+    .tab-btn.active {
+      background: #8b5cf6;
+      color: #ffffff;
+      border-color: #a78bfa;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+  <div class="max-w-7xl mx-auto space-y-6">
+
+    <!-- Header Section -->
+    <header class="glass-panel rounded-2xl p-6 md:p-8 relative overflow-hidden">
+      <div class="absolute -top-24 -right-24 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div class="space-y-2">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-300 text-xs font-mono tracking-wide uppercase">
+            <span>SOVRÆG Tactical Doctrine</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Education 6.0 Asymmetric Architecture</span>
+          </div>
+          <h1 class="text-2xl md:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+            The <span class="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-indigo-300 to-cyan-400">SOVRÆPRENEUR</span> Playbook
+          </h1>
+          <p class="text-slate-400 text-sm md:text-base max-w-3xl leading-relaxed">
+            Twelve constructive asymmetry strategies designed for a solo architect to build the decentralized, human-centered capability infrastructure that institutional giants are structurally unable to deliver.
+          </p>
+        </div>
+
+        <!-- Scenario Recommender Dropdown -->
+        <div class="glass-panel p-4 rounded-xl border border-slate-700/80 w-full md:w-80 space-y-2 font-mono">
+          <label class="text-[11px] text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-violet-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+            Deployment Scenario Matcher
+          </label>
+          <select id="scenario-selector" onchange="applyScenario(this.value)" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-violet-500">
+            <option value="all">View All 12 Strategies</option>
+            <option value="university">University Faculty & Department Chairs</option>
+            <option value="guild">Professional Guilds & Tech Syndicates</option>
+            <option value="globalsouth">Global South & Special Economic Zones</option>
+            <option value="solopreneur">Solo Educators & Course Creators</option>
+            <option value="enterprise">Enterprise Workforce & Employers</option>
+          </select>
+          <div id="scenario-hint" class="text-[10px] text-violet-300/80 leading-tight">
+            Showing complete 12-strategy portfolio across all 4 operational domains.
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Filter Bar and Search Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 glass-panel p-4 rounded-xl font-mono text-xs">
+      <!-- Category Tabs -->
+      <div class="flex flex-wrap gap-2">
+        <button onclick="filterCategory('all')" class="tab-btn active px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition-all">
+          All (12)
+        </button>
+        <button onclick="filterCategory('penetration')" class="tab-btn px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition-all">
+          Deep Penetration (3)
+        </button>
+        <button onclick="filterCategory('defense')" class="tab-btn px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition-all">
+          Asymmetric Defense (3)
+        </button>
+        <button onclick="filterCategory('protocols')" class="tab-btn px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition-all">
+          Ecosystem Protocols (3)
+        </button>
+        <button onclick="filterCategory('absorption')" class="tab-btn px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800 text-slate-300 hover:text-white transition-all">
+          Economic Absorption (3)
+        </button>
+      </div>
+
+      <!-- Quick Search Bar -->
+      <div class="relative w-full sm:w-64">
+        <input type="text" id="play-search" oninput="searchPlays(this.value)" placeholder="Search plays, tools, components..." class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-8 pr-3 py-1.5 text-xs text-white placeholder-slate-400 focus:outline-none focus:border-violet-500">
+        <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+    </div>
+
+    <!-- 12 Plays Card Grid -->
+    <div id="plays-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      
+      <!-- Play 01 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="penetration" data-scenarios="university,enterprise">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 font-semibold">
+            DEEP PENETRATION • PLAY 01
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#01</span>
+        </div>
+        <h3 class="text-base font-bold text-white">The Trojan Horse</h3>
+        <div class="text-xs text-emerald-400 font-mono">Entry via Compliance Bridge</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Embed open-source, compliant LTI 1.3 / xAPI SYNCZ modules directly inside Canvas or Moodle. The university gets automated gradebook compliance, while learners seamlessly acquire portable, self-sovereign credentials.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">LMS Procurement Walls</span>
+        </div>
+        <div class="text-[11px] font-mono text-violet-300">
+          Component: <span class="text-slate-300">SYNCZ / SRLO • LTI 1.3</span>
+        </div>
+      </div>
+
+      <!-- Play 02 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="penetration" data-scenarios="guild,enterprise">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 font-semibold">
+            DEEP PENETRATION • PLAY 02
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#02</span>
+        </div>
+        <h3 class="text-base font-bold text-white">The Beachhead Bypass</h3>
+        <div class="text-xs text-emerald-400 font-mono">Employer-Direct Talent Rails</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Bypass higher education gatekeepers by aligning credential taxonomies natively with employer hiring pipelines, professional guilds, and tech syndicates who prioritize verified skill over pedigree.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Degree Screening Proxies</span>
+        </div>
+        <div class="text-[11px] font-mono text-violet-300">
+          Component: <span class="text-slate-300">FOUNDRY MATRIX • LearnCard</span>
+        </div>
+      </div>
+
+      <!-- Play 03 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="penetration" data-scenarios="globalsouth">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20 font-semibold">
+            DEEP PENETRATION • PLAY 03
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#03</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Regulatory Sandbox Enclave</h3>
+        <div class="text-xs text-emerald-400 font-mono">Jurisdictional Arbitrage</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Partner with sovereign nations or charter special economic zones (e.g., in Africa, Southeast Asia) lacking capital for legacy campuses, enacting statutes that give sovereign credentials full legal parity.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">National Accreditation Monopolies</span>
+        </div>
+        <div class="text-[11px] font-mono text-violet-300">
+          Component: <span class="text-slate-300">EducationOS • SOVRÆGOS</span>
+        </div>
+      </div>
+
+      <!-- Play 04 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="defense" data-scenarios="guild,solopreneur">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-semibold">
+            ASYMMETRIC DEFENSE • PLAY 04
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#04</span>
+        </div>
+        <h3 class="text-base font-bold text-white">The Moat</h3>
+        <div class="text-xs text-cyan-400 font-mono">Trust & Permissionless Composability</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Build defensibility through assessment credibility, real-world practitioner evidence, and open standards (W3C VCs, Open Badges 3.0) rather than proprietary patents or closed software lock-in.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Proprietary IP Litigation</span>
+        </div>
+        <div class="text-[11px] font-mono text-indigo-300">
+          Component: <span class="text-slate-300">W3C VC 2.0 • Open Badges 3.0</span>
+        </div>
+      </div>
+
+      <!-- Play 05 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="defense" data-scenarios="solopreneur,university">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-semibold">
+            ASYMMETRIC DEFENSE • PLAY 05
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#05</span>
+        </div>
+        <h3 class="text-base font-bold text-white">The Poison Pill</h3>
+        <div class="text-xs text-cyan-400 font-mono">Anti-Capture Architecture</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Learners hold 100% of their private keys and portfolio evidence. If a predatory vendor or centralized university acquires or attacks the network, they inherit an empty shell—learner data cannot be captured.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Hostile Platform Takeovers</span>
+        </div>
+        <div class="text-[11px] font-mono text-indigo-300">
+          Component: <span class="text-slate-300">Local-First Portability • DIDs</span>
+        </div>
+      </div>
+
+      <!-- Play 06 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="defense" data-scenarios="university,guild">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-semibold">
+            ASYMMETRIC DEFENSE • PLAY 06
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#06</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Decoupled Arbitrage</h3>
+        <div class="text-xs text-cyan-400 font-mono">Separating Instruction from Assessment</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Dismantle the conflict of interest where the school that sells tuition grades its own students. Educational content is open and commoditized, while third-party guilds handle rigorous evidence assessment.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Grade Inflation Cartels</span>
+        </div>
+        <div class="text-[11px] font-mono text-indigo-300">
+          Component: <span class="text-slate-300">PELICAN PROTOCOL • SYNCTESS</span>
+        </div>
+      </div>
+
+      <!-- Play 07 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="protocols" data-scenarios="guild,solopreneur">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold">
+            ECOSYSTEM PROTOCOLS • PLAY 07
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#07</span>
+        </div>
+        <h3 class="text-base font-bold text-white">The Shadow Pipeline</h3>
+        <div class="text-xs text-amber-400 font-mono">Parallel Learning Communities</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Cultivate autonomous mastery circles, developer ateliers, and open-source guilds completely outside legacy academia. By the time universities take notice, the talent is already building production systems.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Slow Academic Revision Cycles</span>
+        </div>
+        <div class="text-[11px] font-mono text-emerald-300">
+          Component: <span class="text-slate-300">SOVRÆGENCY ATELIERS</span>
+        </div>
+      </div>
+
+      <!-- Play 08 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="protocols" data-scenarios="globalsouth,solopreneur">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold">
+            ECOSYSTEM PROTOCOLS • PLAY 08
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#08</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Forking the Canon</h3>
+        <div class="text-xs text-amber-400 font-mono">Education 6.0 Curricular Sovereignty</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Reject Western-centric publishing monopolies through LIKEMS and STEMMA frameworks. Communities fork learning paths into indigenous knowledge, mother-tongue languages, and localized industry needs.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Colonial Publishing Monopolies</span>
+        </div>
+        <div class="text-[11px] font-mono text-emerald-300">
+          Component: <span class="text-slate-300">LIKEMS • STEMMA • ALCHEMOSAIC</span>
+        </div>
+      </div>
+
+      <!-- Play 09 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="protocols" data-scenarios="enterprise,guild">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-semibold">
+            ECOSYSTEM PROTOCOLS • PLAY 09
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#09</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Sovereign Escrow</h3>
+        <div class="text-xs text-amber-400 font-mono">Milestone-Settled Learning</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Replace upfront tuition with milestone-driven escrows. Learners pay zero tuition until verifiable capability proofs are validated in the real economy, eliminating predatory debt financing.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Non-Contingent Cash Flow</span>
+        </div>
+        <div class="text-[11px] font-mono text-emerald-300">
+          Component: <span class="text-slate-300">FOUNDRY MATRIX Escrow</span>
+        </div>
+      </div>
+
+      <!-- Play 10 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="absorption" data-scenarios="enterprise,globalsouth">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 font-semibold">
+            SYSTEM ABSORPTION • PLAY 10
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#10</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Reverse Liquidity</h3>
+        <div class="text-xs text-rose-400 font-mono">Subsidizing the Learner's Curve</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Invert the cash flow: instead of learners paying tuition, employer sponsorships, foundation grants, and bounties flow directly to learners as they achieve verified scarce micro-skills.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Tuition Cost Barrier</span>
+        </div>
+        <div class="text-[11px] font-mono text-amber-300">
+          Component: <span class="text-slate-300">Learn-to-Earn Rails • SOVRÆNGAGE</span>
+        </div>
+      </div>
+
+      <!-- Play 11 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="absorption" data-scenarios="university,enterprise">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 font-semibold">
+            SYSTEM ABSORPTION • PLAY 11
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#11</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Institutional Vampirism</h3>
+        <div class="text-xs text-rose-400 font-mono">Credential Wrapping & Translation</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Import legacy syllabi, course transcripts, and coursework into self-sovereign wallets, where AI maps unbundled fragments into liquid micro-competencies. The legacy school pays overhead; the learner keeps the capability.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Locked Transcript Silos</span>
+        </div>
+        <div class="text-[11px] font-mono text-amber-300">
+          Component: <span class="text-slate-300">SOVRÆLEX • CLR 2.0 Ingestion</span>
+        </div>
+      </div>
+
+      <!-- Play 12 -->
+      <div class="play-card rounded-xl p-5 space-y-3" data-cat="absorption" data-scenarios="university,globalsouth">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20 font-semibold">
+            SYSTEM ABSORPTION • PLAY 12
+          </span>
+          <span class="font-mono text-xs text-slate-400 font-bold">#12</span>
+        </div>
+        <h3 class="text-base font-bold text-white">Cathedral Hollow-Out</h3>
+        <div class="text-xs text-rose-400 font-mono">Administrative Attrition</div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Automate the sprawling administrative machinery (admissions, transfer credit evaluations, graduation auditing) that consumes 60%+ of university budgets with open protocols and self-governing academic guilds.
+        </p>
+        <div class="pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] font-mono">
+          <span class="text-slate-400">Target Vulnerability:</span>
+          <span class="text-slate-300 font-medium">Bloated University Bureaucracy</span>
+        </div>
+        <div class="text-[11px] font-mono text-amber-300">
+          Component: <span class="text-slate-300">EducationOS • Automated Auditing</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Active Scenario Summary Banner -->
+    <div id="scenario-summary" class="hidden glass-panel p-5 rounded-xl border border-violet-500/30 font-mono text-xs space-y-2">
+      <div class="text-violet-300 font-bold flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-violet-400"></span>
+        <span id="summary-title">Recommended Strategy Stack</span>
+      </div>
+      <p id="summary-desc" class="text-slate-300 leading-relaxed">
+        Description of how the highlighted plays work together for this scenario.
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center font-mono text-xs text-slate-400 py-2 border-t border-slate-800">
+      SOVRÆG LABS • Sovereign Learning Architecture • Reference Blueprint v0.1 • October 2026
+    </footer>
+
+  </div>
+
+  <script>
+    const scenarioData = {
+      all: {
+        hint: 'Showing complete 12-strategy portfolio across all 4 operational domains.',
+        summaryTitle: '',
+        summaryDesc: '',
+        plays: []
+      },
+      university: {
+        hint: 'Focusing on coexistence, compliance bridging, unbundling, and administrative reduction.',
+        summaryTitle: 'Higher Ed Bridge & Coexistence Stack (Plays 01, 05, 06, 11, 12)',
+        summaryDesc: 'Adopt the Trojan Horse (#01) to embed SYNCZ modules inside legacy Canvas/Moodle systems for grading compliance. Safeguard learner sovereignty with Poison Pill (#05) encryption. Enforce Decoupled Arbitrage (#06) to maintain assessment integrity, while using Credential Wrapping (#11) and Cathedral Hollow-Out (#12) to reduce 60%+ administrative overhead.',
+        plays: ['01', '05', '06', '11', '12']
+      },
+      guild: {
+        hint: 'Focusing on direct employer alignment, decoupled assessment, parallel pipelines, and escrow.',
+        summaryTitle: 'Independent Guild & Tech Syndicate Stack (Plays 02, 04, 06, 07, 09)',
+        summaryDesc: 'Bypass degree gates via Beachhead Bypass (#02). Build defensibility through open W3C/1EdTech trust standards (#04). Separate teaching from assessment through PELICAN Decoupled Arbitrage (#06), cultivate talent in Shadow Pipelines (#07), and settle tuition contingently with Sovereign Escrow (#09).',
+        plays: ['02', '04', '06', '07', '09']
+      },
+      globalsouth: {
+        hint: 'Focusing on charter enclaves, curricular sovereignty (STEMMA/LIKEMS), and administrative automation.',
+        summaryTitle: 'Continental Sovereignty & Global South Stack (Plays 03, 08, 10, 12)',
+        summaryDesc: 'Leverage Regulatory Sandbox Enclaves (#03) in special economic zones to establish degree parity. Fork the Canon (#08) using LIKEMS and STEMMA to integrate local languages and industrial needs. Attract youth via Reverse Liquidity (#10), avoiding bloated administrative overhead via Cathedral Hollow-Out (#12).',
+        plays: ['03', '08', '10', '12']
+      },
+      solopreneur: {
+        hint: 'Focusing on solo agility, open standards, anti-capture, and autonomous ateliers.',
+        summaryTitle: 'SOVRÆPRENEUR Solo Catalyst Stack (Plays 04, 05, 07, 08)',
+        summaryDesc: 'Operate with minimal overhead. Rely on open cryptographic standards for your moat (#04). Give learners 100% key ownership via the Poison Pill (#05) so trust cannot be compromised. Operate specialized Ateliers in the Shadow Pipeline (#07) and author localized curricula via Forking the Canon (#08).',
+        plays: ['04', '05', '07', '08']
+      },
+      enterprise: {
+        hint: 'Focusing on verified talent pipelines, reverse liquidity, milestone escrow, and LERs.',
+        summaryTitle: 'Enterprise Workforce & Direct Hiring Stack (Plays 01, 02, 09, 10, 11)',
+        summaryDesc: 'Integrate directly with employee HR portals (#01) and bypass unverified resume bloat with verifiable skill proofs (#02). Finance critical skills using Sovereign Escrow (#09) and Reverse Liquidity Learn-to-Earn bounties (#10), wrapping existing internal training into liquid micro-credentials (#11).',
+        plays: ['01', '02', '09', '10', '11']
+      }
+    };
+
+    function filterCategory(cat) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const cards = document.querySelectorAll('.play-card');
+      cards.forEach(card => {
+        if (cat === 'all' || card.getAttribute('data-cat') === cat) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+      document.getElementById('scenario-selector').value = 'all';
+      document.getElementById('scenario-summary').classList.add('hidden');
+      document.getElementById('scenario-hint').innerText = 'Filtered by category: ' + cat;
+    }
+
+    function searchPlays(query) {
+      const q = query.toLowerCase();
+      const cards = document.querySelectorAll('.play-card');
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(q)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    function applyScenario(scenarioKey) {
+      const scenario = scenarioData[scenarioKey];
+      document.getElementById('scenario-hint').innerText = scenario.hint;
+
+      const summaryBox = document.getElementById('scenario-summary');
+      if (scenarioKey === 'all') {
+        summaryBox.classList.add('hidden');
+        document.querySelectorAll('.play-card').forEach(card => card.classList.remove('hidden'));
+        return;
+      }
+
+      summaryBox.classList.remove('hidden');
+      document.getElementById('summary-title').innerText = scenario.summaryTitle;
+      document.getElementById('summary-desc').innerText = scenario.summaryDesc;
+
+      const cards = document.querySelectorAll('.play-card');
+      cards.forEach(card => {
+        const playNum = card.querySelector('.font-bold.text-white').innerText;
+        const matches = scenario.plays.some(num => card.innerText.includes('#' + num));
+        if (matches) {
+          card.classList.remove('hidden');
+          card.classList.add('border-violet-500/80');
+        } else {
+          card.classList.add('hidden');
+          card.classList.remove('border-violet-500/80');
+        }
+      });
+    }
+  </script>
+</body>
+</html>
