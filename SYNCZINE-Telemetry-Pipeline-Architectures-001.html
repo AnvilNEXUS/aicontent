@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZINE Telemetry Pipeline Architectures</title>
+  <meta name="description" content="Interactive 5-Stage Architecture Diagram: Privacy-Preserving Edge Telemetry vs. Pseudonymous Streaming for SYNCZ, SYNCTESS, and SYNCZINE containers." />
+  <style>
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      /* Dark Theme (Default) */
+      --bg-primary: #090d16;
+      --bg-secondary: #0f172a;
+      --bg-card: #141e33;
+      --bg-card-hover: #1c2b48;
+      --border: #1e293b;
+      --border-highlight: #334155;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.15);
+      
+      --color-safe: #10b981;
+      --color-safe-bg: rgba(16, 185, 129, 0.12);
+      --color-warning: #f59e0b;
+      --color-warning-bg: rgba(245, 158, 11, 0.12);
+      --color-danger: #ef4444;
+      --color-danger-bg: rgba(239, 68, 68, 0.12);
+      
+      --badge-bg: #1e293b;
+      --code-bg: #070a11;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --border-highlight: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --accent: #0284c7;
+      --accent-glow: rgba(2, 132, 199, 0.12);
+      
+      --color-safe: #059669;
+      --color-safe-bg: rgba(5, 150, 105, 0.1);
+      --color-warning: #d97706;
+      --color-warning-bg: rgba(217, 119, 6, 0.1);
+      --color-danger: #dc2626;
+      --color-danger-bg: rgba(220, 38, 38, 0.1);
+      
+      --badge-bg: #f1f5f9;
+      --code-bg: #0f172a;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      line-height: 1.5;
+      padding: 24px 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: var(--bg-secondary);
+      padding: 24px 28px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .title-area h1 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-badge {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--color-safe-bg);
+      color: var(--color-safe);
+      border: 1px solid var(--color-safe);
+    }
+
+    .header-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 900px;
+      line-height: 1.55;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-icon {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn-icon:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-highlight);
+    }
+
+    /* Mode Selector Bar */
+    .mode-bar {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .mode-card {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 18px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      text-align: left;
+    }
+
+    .mode-card:hover {
+      border-color: var(--border-highlight);
+      background: var(--bg-card-hover);
+    }
+
+    .mode-card.active {
+      border-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    .mode-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mode-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 4px;
+    }
+
+    .mode-card h3 {
+      font-size: 1.02rem;
+      font-weight: 600;
+    }
+
+    .mode-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Summary Metrics Strip */
+    .summary-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+    }
+
+    .metric-value {
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Interactive Pipeline Stage Container */
+    .pipeline-wrapper {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pipeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pipeline-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pipeline-controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sim-button {
+      background: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .sim-button:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* Pipeline 5-Stage Diagram */
+    .stages-track {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 14px;
+      position: relative;
+    }
+
+    @media (max-width: 990px) {
+      .stages-track {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .stage-node {
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 16px 14px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+      user-select: none;
+    }
+
+    .stage-node:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-2px);
+    }
+
+    .stage-node.selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow);
+    }
+
+    .stage-num-tag {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    .stage-status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+
+    .stage-node h4 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .stage-summary {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      min-height: 48px;
+    }
+
+    .stage-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: auto;
+    }
+
+    .chip {
+      font-size: 0.68rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--badge-bg);
+      border: 1px solid var(--border);
+      font-family: var(--font-mono);
+    }
+
+    /* Packet animation on simulated run */
+    .packet-indicator {
+      position: absolute;
+      top: -6px;
+      right: 12px;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent);
+      display: none;
+    }
+
+    .packet-animating .packet-indicator {
+      display: block;
+      animation: pulseGlow 1s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { transform: scale(0.9); opacity: 0.7; }
+      to { transform: scale(1.3); opacity: 1; }
+    }
+
+    /* Stage Detail & Inspection Deck */
+    .inspector-deck {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .inspector-deck {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .deck-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .panel-title {
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .data-audit-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .audit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+
+    .audit-icon {
+      font-size: 1rem;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    .audit-content strong {
+      color: var(--text-main);
+    }
+
+    .audit-content span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+    }
+
+    /* Code & JSON Display */
+    .code-container {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      max-height: 280px;
+      line-height: 1.45;
+    }
+
+    pre {
+      margin: 0;
+    }
+
+    /* Pedagogical / Friction Analysis Matrix */
+    .matrix-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .matrix-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+      text-align: left;
+    }
+
+    th {
+      background: var(--bg-card);
+      padding: 12px 14px;
+      border-bottom: 2px solid var(--border);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+      vertical-align: top;
+    }
+
+    tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    .tag-safe {
+      color: var(--color-safe);
+      font-weight: 600;
+    }
+
+    .tag-warn {
+      color: var(--color-warning);
+      font-weight: 600;
+    }
+
+    .tag-danger {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px 8px;
+      color: var(--text-dim);
+      font-size: 0.8rem;
+      width: 100%;
+    }
+
+    footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    footer a:hover {
+      color: var(--accent);
+    }
+
+    /* Simulation status banner */
+    .sim-banner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sim-banner.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="header-top">
+        <div class="title-area">
+          <h1>
+            <span>SYNCZINE Telemetry Pipeline Architectures</span>
+            <span class="title-badge" id="headerModeBadge">Edge Summary (Mode 3)</span>
+          </h1>
+        </div>
+        <div class="header-controls">
+          <button class="btn-icon" id="themeToggleBtn" aria-label="Toggle theme">
+            <span id="themeIcon">☀️</span>
+            <span id="themeText">Light Mode</span>
+          </button>
+        </div>
+      </div>
+      <p class="header-desc">
+        Explore how container telemetry flows from <strong>SYNCZ</strong> checkpoints and <strong>SYNCTESS</strong> modules to analytics dashboards. Inspect legal classification under GDPR & Vietnam PDPL, linkability side-channels, and how relative friction ratios ($Actual/Expected$) are measured without harvesting user identity.
+      </p>
+    </header>
+
+    <!-- Architecture Mode Switcher -->
+    <div class="mode-bar">
+      <!-- Mode 1 -->
+      <div class="mode-card" data-mode="1">
+        <div class="mode-card-header">
+          <span class="mode-tag" style="background: var(--color-danger-bg); color: var(--color-danger);">Mode 1</span>
+          <span style="font-size: 0.72rem; color: var(--color-danger); font-weight: 600;">High Linkability</span>
+        </div>
+        <h3>Live Instance UUID Stream</h3>
+        <p>Continuous network events with persistent container UUID & UTC wall-clock stamps. Immediate drop-off detection.</p>
+      </div>
+
+      <!-- Mode 2 -->
+      <div class="mode-card" data-mode="2">
+        <div class="mode-card-header">
+          <span class="mode-tag" style="background: var(--color-warning-bg); color: var(--color-warning);">Mode 2</span>
+          <span style="font-size: 0.72rem; color: var(--color-warning); font-weight: 600;">Borderline Pseudonymous</span>
+        </div>
+        <h3>Scoped Run UUID + Deltas</h3>
+        <p>Wall-clock times stripped; relative elapsed seconds batched at SYNCTESS boundary. IP stripped at relay.</p>
+      </div>
+
+      <!-- Mode 3 -->
+      <div class="mode-card active" data-mode="3">
+        <div class="mode-card-header">
+          <span class="mode-tag" style="background: var(--color-safe-bg); color: var(--color-safe);">Mode 3 · Default</span>
+          <span style="font-size: 0.72rem; color: var(--color-safe); font-weight: 600;">Truly Anonymous</span>
+        </div>
+        <h3>Edge-Computed + k-Anonymity</h3>
+        <p>On-device friction calculation, single jittered payload with disposable nonce, stateless relay, k&ge;10 cohort threshold.</p>
+      </div>
+    </div>
+
+    <!-- Summary Metrics Strip -->
+    <div class="summary-strip">
+      <div class="metric-card">
+        <span class="metric-label">Legal Classification</span>
+        <span class="metric-value" id="summaryLegal">Truly Anonymous (Outside GDPR/PDPL)</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Re-ID / Linkability Risk</span>
+        <span class="metric-value" id="summaryRisk" style="color: var(--color-safe);">Negligible (k&ge;10 Guardrail)</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Pedagogical Utility</span>
+        <span class="metric-value" id="summaryUtility">100% Velocity & Friction Ratios</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Abandonment Visibility</span>
+        <span class="metric-value" id="summaryAbandon">On Re-Open / Module Completion</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Consent Burden</span>
+        <span class="metric-value" id="summaryConsent" style="color: var(--color-safe);">Minimal / Transparency Notice</span>
+      </div>
+    </div>
+
+    <!-- Interactive Pipeline Stages -->
+    <div class="pipeline-wrapper">
+      <div class="pipeline-header">
+        <div class="pipeline-title">
+          <span>Pipeline Dataflow & Boundary Inspector</span>
+          <span style="font-size: 0.8rem; font-weight: 400; color: var(--text-muted);">(Select any stage to audit data transformations)</span>
+        </div>
+        <div class="pipeline-controls">
+          <button class="sim-button" id="runSimBtn">
+            <span>▶</span>
+            <span>Simulate Learner Trajectory</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Interactive Sim Banner -->
+      <div class="sim-banner" id="simBanner">
+        <span id="simStatusText">Learner running SYNCZINE: SZ-01 (Start) &rarr; SZ-02 &rarr; SZ-04 (Stall/Friction) &rarr; Complete...</span>
+        <span id="simStepText" style="font-weight: 600; color: var(--accent);">Processing locally...</span>
+      </div>
+
+      <!-- 5-Stage Diagram Cards -->
+      <div class="stages-track" id="stagesTrack">
+        <!-- Stage 1 -->
+        <div class="stage-node" data-stage="1">
+          <div class="stage-num-tag">
+            <span>Stage 1</span>
+            <div class="stage-status-dot" id="dotStage1" style="background: var(--color-safe);"></div>
+          </div>
+          <h4>Client Runtime</h4>
+          <p class="stage-summary">SYNCZINE interactive container running on learner's device (Tauri/Browser).</p>
+          <div class="stage-badges">
+            <span class="chip">play / pause</span>
+            <span class="chip">dwell_timer</span>
+          </div>
+          <div class="packet-indicator" id="pkt1"></div>
+        </div>
+
+        <!-- Stage 2 -->
+        <div class="stage-node selected" data-stage="2">
+          <div class="stage-num-tag">
+            <span>Stage 2</span>
+            <div class="stage-status-dot" id="dotStage2" style="background: var(--color-safe);"></div>
+          </div>
+          <h4>Local Telemetry Engine</h4>
+          <p class="stage-summary">On-device evaluation: compares actual dwell time against authored baseline manifest.</p>
+          <div class="stage-badges">
+            <span class="chip">delta_calc</span>
+            <span class="chip">friction_ratio</span>
+          </div>
+          <div class="packet-indicator" id="pkt2"></div>
+        </div>
+
+        <!-- Stage 3 -->
+        <div class="stage-node" data-stage="3">
+          <div class="stage-num-tag">
+            <span>Stage 3</span>
+            <div class="stage-status-dot" id="dotStage3" style="background: var(--color-safe);"></div>
+          </div>
+          <h4>Network Dispatch</h4>
+          <p class="stage-summary">Payload serialized and queued for HTTP/3 transmission with randomized jitter delay.</p>
+          <div class="stage-badges">
+            <span class="chip">jitter_delay</span>
+            <span class="chip">nonce_token</span>
+          </div>
+          <div class="packet-indicator" id="pkt3"></div>
+        </div>
+
+        <!-- Stage 4 -->
+        <div class="stage-node" data-stage="4">
+          <div class="stage-num-tag">
+            <span>Stage 4</span>
+            <div class="stage-status-dot" id="dotStage4" style="background: var(--color-safe);"></div>
+          </div>
+          <h4>Stateless Edge Relay</h4>
+          <p class="stage-summary">Reverse proxy strips IP headers, user-agent details, and TCP connection fingerprints.</p>
+          <div class="stage-badges">
+            <span class="chip">ip_strip</span>
+            <span class="chip">geo_coarsen</span>
+          </div>
+          <div class="packet-indicator" id="pkt4"></div>
+        </div>
+
+        <!-- Stage 5 -->
+        <div class="stage-node" data-stage="5">
+          <div class="stage-num-tag">
+            <span>Stage 5</span>
+            <div class="stage-status-dot" id="dotStage5" style="background: var(--color-safe);"></div>
+          </div>
+          <h4>Curriculum Store</h4>
+          <p class="stage-summary">Analytics dashboard enforcing k&ge;10 cohort threshold before displaying friction heatmaps.</p>
+          <div class="stage-badges">
+            <span class="chip">k_anonymity</span>
+            <span class="chip">heatmap_agg</span>
+          </div>
+          <div class="packet-indicator" id="pkt5"></div>
+        </div>
+      </div>
+
+      <!-- Stage Detail & Inspector Deck -->
+      <div class="inspector-deck">
+        <!-- Left: Data Audit -->
+        <div class="deck-panel">
+          <div class="panel-title">
+            <span id="inspectorTitle">Stage 2: Local Telemetry Engine Audit</span>
+            <span class="chip" id="inspectorStageBadge">Active Mode: 3</span>
+          </div>
+          <div class="data-audit-list" id="auditList">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Right: Wire Payload JSON -->
+        <div class="deck-panel">
+          <div class="panel-title">
+            <span>Payload Serialization / Memory Model</span>
+            <span class="chip">JSON Schema</span>
+          </div>
+          <div class="code-container">
+            <pre><code id="payloadJsonBlock"></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparative Matrix -->
+    <div class="matrix-section">
+      <div class="matrix-title">Telemetry Architecture Legal & Technical Trade-Off Matrix</div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Architecture Pattern</th>
+              <th>Identifier Strategy</th>
+              <th>Re-Identification Vectors</th>
+              <th>Legal Classification</th>
+              <th>Curriculum Friction Value</th>
+              <th>ePrivacy / Consent Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Mode 1: Live Instance UUID</strong></td>
+              <td>Persistent Container UUID (DID excluded)</td>
+              <td><span class="tag-danger">High:</span> Linkable via IP, UTC timestamp & credential signing</td>
+              <td><span class="tag-danger">Pseudonymous Personal Data</span> (GDPR / Vietnam PDPL)</td>
+              <td>100% (Instant real-time pauses & drop-offs)</td>
+              <td>Explicit Prior Opt-In Required</td>
+            </tr>
+            <tr>
+              <td><strong>Mode 2: Scoped Run Deltas</strong></td>
+              <td>Session-Scoped Run UUID (Regenerated per run)</td>
+              <td><span class="tag-warn">Moderate:</span> Single run linkable in small cohorts (<5 learners)</td>
+              <td><span class="tag-warn">Borderline Pseudonymous</span></td>
+              <td>95% (SYNCTESS checkpoint drop-offs & friction)</td>
+              <td>Opt-In recommended for local device store</td>
+            </tr>
+            <tr>
+              <td><strong>Mode 3: Edge Summary + k-Anon</strong></td>
+              <td>Disposable Packet Nonce (No persistent ID)</td>
+              <td><span class="tag-safe">Negligible:</span> Jitter delay, IP stripped, k&ge;10 cohort gate</td>
+              <td><span class="tag-safe">Truly Anonymous Data</span></td>
+              <td>90% (Intra-run velocity & friction correlations)</td>
+              <td>Clear Technical Disclosure Notice</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>SYNCZINE Architecture Specifications &bull; Local-First Learning Pods</div>
+      <div>
+        <a href="#top" id="backToTop">Back to Top &uarr;</a>
+      </div>
+    </footer>
+
+  </div>
+
+  <script>
+    // State Model
+    const state = {
+      mode: 3,        // 1, 2, or 3
+      selectedStage: 2, // 1 to 5
+      theme: 'dark',
+      simulating: false
+    };
+
+    // Mode Definitions
+    const modeConfigs = {
+      1: {
+        title: "Live Instance UUID Stream",
+        badgeText: "Live Stream (Mode 1)",
+        legal: "Pseudonymous Personal Data",
+        risk: "High (Timing & IP linkable)",
+        riskColor: "var(--color-danger)",
+        utility: "100% (Real-Time Scrubbing)",
+        abandon: "Instant per-SYNCZ drop-off",
+        consent: "Strict Prior Opt-In Required",
+        consentColor: "var(--color-danger)",
+        stages: {
+          1: {
+            title: "Stage 1: Client Runtime (Mode 1)",
+            kept: [
+              { name: "Continuous Interaction Hooks", desc: "Every play, pause, seek, and retry emits an immediate client event." },
+              { name: "Full UTC Clock", desc: "Attaches sub-second ISO timestamps: 2026-11-01T14:42:11.892Z." }
+            ],
+            stripped: [
+              { name: "DID (Decentralized Identifier)", desc: "User identity string omitted from JSON payload." }
+            ],
+            json: {
+              "runtime_event": "syncz_interaction",
+              "action": "pause",
+              "synczine_id": "SZ-BIOCHEM-2026",
+              "synctess_id": "ST-02-ALCHEM",
+              "syncz_id": "SZ-04-CATALYST",
+              "client_utc": "2026-11-01T14:42:11.892Z"
+            }
+          },
+          2: {
+            title: "Stage 2: Local Telemetry Engine (Mode 1)",
+            kept: [
+              { name: "Persistent Instance UUID", desc: "Ties all events over days/weeks to a single installation UUID." },
+              { name: "Direct Hardware Metadata", desc: "OS version, screen dimensions, and battery status." }
+            ],
+            stripped: [
+              { name: "Learner Name/Email", desc: "No direct contact records stored in client logs." }
+            ],
+            json: {
+              "synczine_instance_uuid": "8f3a2b1c-90de-4f5a-b67c-1234567890ab",
+              "session_id": "sess-live-9941",
+              "syncz_index": 4,
+              "pause_count": 3,
+              "playback_position_sec": 142.4
+            }
+          },
+          3: {
+            title: "Stage 3: Network Transmission (Mode 1)",
+            kept: [
+              { name: "Live TCP / WebSocket Stream", desc: "Packets fire continuously as user clicks; linkable to network activity." },
+              { name: "Client IP & User-Agent", desc: "Transmitted untouched in HTTP request headers." }
+            ],
+            stripped: [
+              { name: "None", desc: "Standard browser/app network headers sent directly." }
+            ],
+            json: {
+              "wire_protocol": "HTTP/2 POST /telemetry/stream",
+              "client_ip": "113.161.42.19",
+              "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)...",
+              "synczine_instance_uuid": "8f3a2b1c-90de-4f5a-b67c-1234567890ab",
+              "event_payload": { "syncz": "SZ-04", "state": "paused", "dwell": 140 }
+            }
+          },
+          4: {
+            title: "Stage 4: Edge Gateway (Mode 1)",
+            kept: [
+              { name: "Unfiltered Server Access Logs", desc: "IP address and connection timestamp recorded in server access logs." },
+              { name: "Live Forwarding", desc: "Events forwarded immediately into event buses without batching." }
+            ],
+            stripped: [
+              { name: "None", desc: "Transparent proxy without edge sanitization." }
+            ],
+            json: {
+              "edge_relay_action": "forward_transparent",
+              "logged_ip": "113.161.42.19",
+              "upstream_target": "nats://telemetry-ingress.internal",
+              "tls_fingerprint_logged": true
+            }
+          },
+          5: {
+            title: "Stage 5: Analytics & Dashboards (Mode 1)",
+            kept: [
+              { name: "Full Replayable Trajectories", desc: "View individual timelines of single unnamed users across hours." },
+              { name: "Real-Time Abandonment Alerts", desc: "Detect exact second a student leaves the application." }
+            ],
+            stripped: [
+              { name: "Student Profile Photo/Bio", desc: "No identity metadata rendered in graphs." }
+            ],
+            json: {
+              "curriculum_store": "time_series_db",
+              "reconstruction_possible": true,
+              "single_learner_drilldown": "ENABLED",
+              "warning": "Small cohort of 4 students easily allows instructor to de-anonymize."
+            }
+          }
+        }
+      },
+      2: {
+        title: "Scoped Run UUID + Relative Deltas",
+        badgeText: "Relative Deltas (Mode 2)",
+        legal: "Borderline Pseudonymous",
+        risk: "Low-to-Moderate (Small Cohorts)",
+        riskColor: "var(--color-warning)",
+        utility: "95% (Friction & Checkpoints)",
+        abandon: "SYNCTESS Boundary Drop-offs",
+        consent: "Opt-In Recommended",
+        consentColor: "var(--color-warning)",
+        stages: {
+          1: {
+            title: "Stage 1: Client Runtime (Mode 2)",
+            kept: [
+              { name: "Interaction Counters", desc: "Records dwell time and pause counts within the active container." }
+            ],
+            stripped: [
+              { name: "UTC Wall-Clock Timestamps", desc: "Converted immediately to relative seconds (dwell_sec: 140)." }
+            ],
+            json: {
+              "container_runtime": "SYNCZINE_v1",
+              "action_buffer": [
+                { "syncz_id": "SZ-01", "dwell_sec": 45, "pauses": 0 },
+                { "syncz_id": "SZ-04", "dwell_sec": 140, "pauses": 3, "retries": 1 }
+              ]
+            }
+          },
+          2: {
+            title: "Stage 2: Local Telemetry Engine (Mode 2)",
+            kept: [
+              { name: "Single-Run Ephemeral UUID", desc: "New UUID generated on each attempt; not persisted across distinct launches." },
+              { name: "Expected vs Actual Ratios", desc: "Computes friction index per SYNCZ checkpoint." }
+            ],
+            stripped: [
+              { name: "Persistent Hardware Fingerprint", desc: "No MAC, Canvas, or persistent device identifiers stored." }
+            ],
+            json: {
+              "run_uuid": "sess-delta-8491",
+              "synctess_id": "ST-02-ALCHEM",
+              "module_progress": 0.8,
+              "friction_calc": { "SZ-04": { "actual": 140, "expected": 45, "ratio": 3.11 } }
+            }
+          },
+          3: {
+            title: "Stage 3: Network Transmission (Mode 2)",
+            kept: [
+              { name: "Checkpoint Batch Flush", desc: "Data is held locally until a SYNCTESS boundary is reached." }
+            ],
+            stripped: [
+              { name: "Continuous Event Stream", desc: "Zero network packets sent during mid-task interaction." }
+            ],
+            json: {
+              "flush_trigger": "synctess_boundary_completed",
+              "run_uuid": "sess-delta-8491",
+              "elapsed_module_time_sec": 482,
+              "syncz_summary": [
+                { "id": "SZ-01", "friction": 1.0 },
+                { "id": "SZ-04", "friction": 3.11 }
+              ]
+            }
+          },
+          4: {
+            title: "Stage 4: Edge Gateway (Mode 2)",
+            kept: [
+              { name: "Sanitized Batch Forwarding", desc: "Forwards batch payloads to curriculum database." }
+            ],
+            stripped: [
+              { name: "IP Address Headers", desc: "Client IP stripped at edge reverse proxy before entering telemetry cluster." },
+              { name: "Precise User-Agent", desc: "Coarsened to major OS only (e.g., 'macOS')." }
+            ],
+            json: {
+              "edge_proxy": "envoy-edge-gate",
+              "ip_header": "STRIPPED",
+              "coarsened_platform": "macOS",
+              "upstream_forwarded": true
+            }
+          },
+          5: {
+            title: "Stage 5: Analytics & Dashboards (Mode 2)",
+            kept: [
+              { name: "SYNCTESS Dropout Rates", desc: "Reveals what percent of learners quit before finishing module." },
+              { name: "Checkpoint Friction Curves", desc: "Friction heatmaps displayed with relative dwell benchmarks." }
+            ],
+            stripped: [
+              { name: "Cross-Session Tracking", desc: "Cannot link today's run to yesterday's run by the same learner." }
+            ],
+            json: {
+              "curriculum_store": "relational_metrics",
+              "synctess_retention": "82%",
+              "notable_bottleneck": "SZ-04 (Ratio: 3.11x)",
+              "warning": "Small classes (<5) may still deduce struggling learners if timestamps leaked."
+            }
+          }
+        }
+      },
+      3: {
+        title: "Edge-Computed Summary + k-Anonymity",
+        badgeText: "Edge Summary (Mode 3)",
+        legal: "Truly Anonymous Data",
+        risk: "Negligible (k&ge;10 Guardrail)",
+        riskColor: "var(--color-safe)",
+        utility: "100% Velocity & Friction Ratios",
+        abandon: "On Re-Open / Checkpoint End",
+        consent: "Minimal / Transparency Notice",
+        consentColor: "var(--color-safe)",
+        stages: {
+          1: {
+            title: "Stage 1: Client Runtime (Mode 3)",
+            kept: [
+              { name: "Local Interaction Memory Buffer", desc: "Dwells, pauses, and retries exist strictly in volatile container RAM." }
+            ],
+            stripped: [
+              { name: "All Outbound Network Calls", desc: "Completely air-gapped while learner is engaged with content." },
+              { name: "Wall-Clock Timestamps", desc: "Only internal high-resolution duration ticks used." }
+            ],
+            json: {
+              "container_status": "active_airgapped",
+              "local_ram_buffer": {
+                "active_syncz": "SZ-04",
+                "dwell_ticks_ms": 135400,
+                "pause_count": 3
+              }
+            }
+          },
+          2: {
+            title: "Stage 2: Local Telemetry Engine (Mode 3)",
+            kept: [
+              { name: "Author Baseline Comparison", desc: "Calculates friction ratio = (Actual / Manifest Baseline) on the edge." },
+              { name: "Overall Velocity Score", desc: "Container completion velocity relative to authored pacing." }
+            ],
+            stripped: [
+              { name: "Instance UUID", desc: "Zero persistent UUIDs generated or stored in database." },
+              { name: "Exact Dwell Outliers", desc: "Durations rounded to 5s increments; idle pauses capped at 10m." }
+            ],
+            json: {
+              "edge_computation_complete": true,
+              "overall_velocity_score": 1.18,
+              "completion_status": "complete",
+              "friction_profile": [
+                { "syncz_id": "SZ-01", "dwell_sec": 40, "expected_sec": 45, "ratio": 0.89 },
+                { "syncz_id": "SZ-04", "dwell_sec": 135, "expected_sec": 45, "ratio": 3.00, "flag": "high_friction" }
+              ]
+            }
+          },
+          3: {
+            title: "Stage 3: Network Transmission (Mode 3)",
+            kept: [
+              { name: "Single Self-Contained Summary", desc: "One JSON packet flushed on completion with single-use packet nonce." },
+              { name: "Randomized Jitter Delay", desc: "Packet transmission delayed randomly by 15-45s to kill DID timing correlation." }
+            ],
+            stripped: [
+              { name: "Real-Time Signals", desc: "Cannot correlate network transmission with instant credential export." },
+              { name: "Cross-Call Identifiers", desc: "Packet nonce is destroyed after single HTTP roundtrip." }
+            ],
+            json: {
+              "schema_version": "synczine_telemetry_v1",
+              "packet_nonce": "9x77a-ephemeral-nonce",
+              "synczine_template_id": "SZ-BIOCHEM-2026",
+              "total_run_duration_sec": 1045,
+              "jitter_delay_applied_sec": 24.8,
+              "payload_type": "aggregate_run_summary"
+            }
+          },
+          4: {
+            title: "Stage 4: Edge Gateway (Mode 3)",
+            kept: [
+              { name: "Stateless Ingestion Queue", desc: "Accepts JSON summary, checks schema validity, pushes to analytics sink." }
+            ],
+            stripped: [
+              { name: "Client IP Address", desc: "Zero-log reverse proxy discards IP address before socket buffer closes." },
+              { name: "TLS & TCP Fingerprints", desc: "Terminated at stateless edge node with standardized upstream headers." }
+            ],
+            json: {
+              "stateless_relay": "cloudflare_worker_zero_log",
+              "client_ip_status": "DISCARDED_AT_SOCKET",
+              "geographic_region": "VN-SG (Coarsened to province level)",
+              "sanitized": true
+            }
+          },
+          5: {
+            title: "Stage 5: Analytics & Dashboards (Mode 3)",
+            kept: [
+              { name: "k-Anonymity Gated Heatmaps", desc: "Only surfaces aggregate metrics once &ge;10 distinct runs accumulate." },
+              { name: "Curriculum Diagnostic Curves", desc: "Proves that SZ-04 causes 3x intended friction without grading persons." }
+            ],
+            stripped: [
+              { name: "Individual Trajectories", desc: "Single runs cannot be isolated or viewed individually by teachers." }
+            ],
+            json: {
+              "curriculum_intelligence": {
+                "synczine_id": "SZ-BIOCHEM-2026",
+                "accumulated_runs": 14,
+                "k_anonymity_status": "UNLOCKED (k >= 10)",
+                "critical_friction_node": "SZ-04-CATALYST",
+                "mean_friction_ratio": 3.02,
+                "author_recommendation": "Scaffold vocabulary or add diagram at SZ-04"
+              }
+            }
+          }
+        }
+      }
+    };
+
+    // DOM Elements
+    const modeCards = document.querySelectorAll('.mode-card');
+    const stageNodes = document.querySelectorAll('.stage-node');
+    const headerModeBadge = document.getElementById('headerModeBadge');
+    
+    const summaryLegal = document.getElementById('summaryLegal');
+    const summaryRisk = document.getElementById('summaryRisk');
+    const summaryUtility = document.getElementById('summaryUtility');
+    const summaryAbandon = document.getElementById('summaryAbandon');
+    const summaryConsent = document.getElementById('summaryConsent');
+
+    const inspectorTitle = document.getElementById('inspectorTitle');
+    const inspectorStageBadge = document.getElementById('inspectorStageBadge');
+    const auditList = document.getElementById('auditList');
+    const payloadJsonBlock = document.getElementById('payloadJsonBlock');
+
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+    const runSimBtn = document.getElementById('runSimBtn');
+    const simBanner = document.getElementById('simBanner');
+    const simStepText = document.getElementById('simStepText');
+
+    // Update UI based on active state
+    function render() {
+      const config = modeConfigs[state.mode];
+      
+      // Update Mode Cards UI
+      modeCards.forEach(card => {
+        const m = parseInt(card.getAttribute('data-mode'));
+        if (m === state.mode) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      // Header badge
+      headerModeBadge.textContent = config.badgeText;
+      if (state.mode === 1) {
+        headerModeBadge.style.color = "var(--color-danger)";
+        headerModeBadge.style.borderColor = "var(--color-danger)";
+        headerModeBadge.style.background = "var(--color-danger-bg)";
+      } else if (state.mode === 2) {
+        headerModeBadge.style.color = "var(--color-warning)";
+        headerModeBadge.style.borderColor = "var(--color-warning)";
+        headerModeBadge.style.background = "var(--color-warning-bg)";
+      } else {
+        headerModeBadge.style.color = "var(--color-safe)";
+        headerModeBadge.style.borderColor = "var(--color-safe)";
+        headerModeBadge.style.background = "var(--color-safe-bg)";
+      }
+
+      // Summary Strip
+      summaryLegal.textContent = config.legal;
+      summaryRisk.textContent = config.risk;
+      summaryRisk.style.color = config.riskColor;
+      summaryUtility.textContent = config.utility;
+      summaryAbandon.textContent = config.abandon;
+      summaryConsent.textContent = config.consent;
+      summaryConsent.style.color = config.consentColor;
+
+      // Update Node Selected Classes
+      stageNodes.forEach(node => {
+        const s = parseInt(node.getAttribute('data-stage'));
+        if (s === state.selectedStage) {
+          node.classList.add('selected');
+        } else {
+          node.classList.remove('selected');
+        }
+
+        // Dot colors
+        const dot = node.querySelector('.stage-status-dot');
+        if (state.mode === 1) {
+          dot.style.background = s === 3 || s === 4 ? "var(--color-danger)" : "var(--color-warning)";
+        } else if (state.mode === 2) {
+          dot.style.background = "var(--color-warning)";
+        } else {
+          dot.style.background = "var(--color-safe)";
+        }
+      });
+
+      // Update Inspector Panel
+      const currentStageData = config.stages[state.selectedStage];
+      inspectorTitle.textContent = currentStageData.title;
+      inspectorStageBadge.textContent = `Active Mode: ${state.mode}`;
+
+      // Build Audit List
+      let auditHtml = '';
+      currentStageData.kept.forEach(item => {
+        auditHtml += `
+          <div class="audit-item">
+            <div class="audit-icon" style="color: var(--color-safe);">✓</div>
+            <div class="audit-content">
+              <strong>${item.name}</strong>
+              <span>${item.desc}</span>
+            </div>
+          </div>
+        `;
+      });
+      currentStageData.stripped.forEach(item => {
+        auditHtml += `
+          <div class="audit-item">
+            <div class="audit-icon" style="color: var(--color-danger);">&#x2715;</div>
+            <div class="audit-content">
+              <strong style="text-decoration: line-through; color: var(--text-muted);">${item.name}</strong>
+              <span>${item.desc}</span>
+            </div>
+          </div>
+        `;
+      });
+      auditList.innerHTML = auditHtml;
+
+      // JSON Payload Block
+      payloadJsonBlock.textContent = JSON.stringify(currentStageData.json, null, 2);
+    }
+
+    // Event Handlers
+    modeCards.forEach(card => {
+      card.addEventListener('click', () => {
+        state.mode = parseInt(card.getAttribute('data-mode'));
+        render();
+      });
+    });
+
+    stageNodes.forEach(node => {
+      node.addEventListener('click', () => {
+        state.selectedStage = parseInt(node.getAttribute('data-stage'));
+        render();
+      });
+    });
+
+    // Theme Toggle
+    themeToggleBtn.addEventListener('click', () => {
+      if (state.theme === 'dark') {
+        state.theme = 'light';
+        document.documentElement.setAttribute('data-theme', 'light');
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+      } else {
+        state.theme = 'dark';
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+      }
+    });
+
+    // Simulation Runner
+    runSimBtn.addEventListener('click', () => {
+      if (state.simulating) return;
+      state.simulating = true;
+      simBanner.classList.add('active');
+      runSimBtn.disabled = true;
+      runSimBtn.style.opacity = '0.6';
+
+      const sequence = [1, 2, 3, 4, 5];
+      let idx = 0;
+
+      function step() {
+        if (idx < sequence.length) {
+          const stageNum = sequence[idx];
+          state.selectedStage = stageNum;
+          render();
+
+          // Highlight packet indicator
+          document.querySelectorAll('.packet-indicator').forEach(p => p.style.display = 'none');
+          const pkt = document.getElementById(`pkt${stageNum}`);
+          if (pkt) pkt.style.display = 'block';
+
+          if (stageNum === 1) {
+            simStepText.textContent = `Stage 1: User starts SYNCZINE, interacts with SZ-01...`;
+          } else if (stageNum === 2) {
+            simStepText.textContent = `Stage 2: Dwell on SZ-04 hit 140s vs 45s expected. Friction = 3.1x!`;
+          } else if (stageNum === 3) {
+            simStepText.textContent = state.mode === 3 
+              ? `Stage 3: Completed! Adding 24s randomized jitter delay before dispatch...`
+              : `Stage 3: Packet transmitted via network with ${state.mode === 1 ? 'client IP + UTC' : 'relative deltas'}.`;
+          } else if (stageNum === 4) {
+            simStepText.textContent = state.mode === 3 
+              ? `Stage 4: Edge Relay received packet; IP address purged at socket boundary.`
+              : `Stage 4: Ingress relay receiving data payload.`;
+          } else if (stageNum === 5) {
+            simStepText.textContent = state.mode === 3
+              ? `Stage 5: Aggregated into cohort store (k >= 10). Friction heatmap unlocked!`
+              : `Stage 5: Live timeline recorded in curriculum analytics database.`;
+          }
+
+          idx++;
+          setTimeout(step, 1400);
+        } else {
+          simStepText.textContent = "Simulation finished! Inspect stages above.";
+          document.querySelectorAll('.packet-indicator').forEach(p => p.style.display = 'none');
+          state.simulating = false;
+          runSimBtn.disabled = false;
+          runSimBtn.style.opacity = '1';
+          setTimeout(() => {
+            if (!state.simulating) simBanner.classList.remove('active');
+          }, 4000);
+        }
+      }
+
+      step();
+    });
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>

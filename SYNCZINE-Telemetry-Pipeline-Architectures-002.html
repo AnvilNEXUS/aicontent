@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SYNCZINE Telemetry Architecture & Privacy Inspector</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(156, 163, 175, 0.4);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(156, 163, 175, 0.7);
+    }
+
+    /* Flow connector beam animation */
+    @keyframes flowBeam {
+      0% {
+        stroke-dashoffset: 40;
+      }
+      100% {
+        stroke-dashoffset: 0;
+      }
+    }
+
+    .animated-wire {
+      stroke-dasharray: 6 6;
+      animation: flowBeam 1.2s linear infinite;
+    }
+
+    .animated-wire-slow {
+      stroke-dasharray: 8 6;
+      animation: flowBeam 2.2s linear infinite;
+    }
+
+    .animated-wire-paused {
+      animation-play-state: paused;
+    }
+
+    /* Gradient glow effects */
+    .glow-emerald {
+      box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.35);
+    }
+    .glow-amber {
+      box-shadow: 0 0 25px -5px rgba(245, 158, 11, 0.35);
+    }
+    .glow-rose {
+      box-shadow: 0 0 25px -5px rgba(244, 63, 94, 0.35);
+    }
+
+    /* Code block styling */
+    pre code {
+      font-feature-settings: "liga" 0;
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen antialiased transition-colors duration-300 font-sans flex flex-col selection:bg-emerald-500 selection:text-white">
+
+  <!-- Toast Notification Container -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium border"></div>
+
+  <!-- Header Section -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-3 sm:space-x-4">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 via-teal-500 to-cyan-500 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center">
+          <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
+            <svg class="w-6 h-6 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              SYNCZINE <span class="text-xs uppercase px-2 py-0.5 font-mono tracking-wider font-semibold rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">Telemetry Inspector</span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400 hidden sm:block">Interactive 5-stage pipeline comparison: privacy boundaries, legal scope & curriculum metrics</p>
+        </div>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Simulation Pulse Toggle -->
+        <button id="btn-toggle-sim" class="px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/80 hover:bg-slate-700/80 text-xs font-medium text-slate-300 transition-all flex items-center gap-2" title="Toggle Animated Wire Packets">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping" id="sim-status-dot"></span>
+          <span id="sim-btn-text">Packets: Live</span>
+        </button>
+
+        <!-- Speed Selector -->
+        <div class="relative inline-block text-left hidden sm:block">
+          <select id="sim-speed-select" class="bg-slate-800 border border-slate-700 text-slate-300 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-emerald-500 cursor-pointer">
+            <option value="1">1.0x Speed</option>
+            <option value="1.8">2.0x Fast</option>
+            <option value="0.5">0.5x Slow</option>
+          </select>
+        </div>
+
+        <!-- Light / Dark Mode Toggle -->
+        <button id="theme-toggle" class="p-2 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors" aria-label="Toggle Theme">
+          <!-- Sun Icon (Hidden in dark) -->
+          <svg id="sun-icon" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <!-- Moon Icon (Shown in dark) -->
+          <svg id="moon-icon" class="w-5 h-5 block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 flex flex-col space-y-6">
+
+    <!-- Top Architecture Mode Switcher Strip -->
+    <section class="bg-slate-800/60 border border-slate-700/80 rounded-2xl p-3 sm:p-4 shadow-xl backdrop-blur-sm">
+      <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+        
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold uppercase text-slate-400 tracking-wider">Select Architecture Mode:</span>
+          <span id="current-mode-indicator" class="text-xs px-2.5 py-0.5 rounded-full font-semibold border bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
+            Mode 3 (Default)
+          </span>
+        </div>
+
+        <!-- 3-Way Segmented Mode Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-700/70" role="tablist">
+          
+          <!-- Mode 1 Button -->
+          <button id="btn-mode-1" onclick="switchMode(1)" class="mode-tab-btn flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60" role="tab">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-xs font-bold">Mode 1: Live Instance UUID</span>
+              <span class="w-2 h-2 rounded-full bg-rose-500 ml-1.5"></span>
+            </div>
+            <span class="text-[11px] text-slate-500 font-mono mt-0.5">Continuous Raw Streaming</span>
+          </button>
+
+          <!-- Mode 2 Button -->
+          <button id="btn-mode-2" onclick="switchMode(2)" class="mode-tab-btn flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60" role="tab">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-xs font-bold">Mode 2: Scoped Run UUID</span>
+              <span class="w-2 h-2 rounded-full bg-amber-500 ml-1.5"></span>
+            </div>
+            <span class="text-[11px] text-slate-500 font-mono mt-0.5">Session Deltas & Flushes</span>
+          </button>
+
+          <!-- Mode 3 Button (Default) -->
+          <button id="btn-mode-3" onclick="switchMode(3)" class="mode-tab-btn active-mode flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm" role="tab">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-xs font-bold flex items-center gap-1.5">
+                Mode 3: Edge Summary
+                <span class="text-[9px] uppercase font-bold tracking-widest px-1.5 py-0.2 rounded bg-emerald-500/30 text-emerald-200">Recommended</span>
+              </span>
+              <span class="w-2 h-2 rounded-full bg-emerald-400 ml-1.5"></span>
+            </div>
+            <span class="text-[11px] text-emerald-400/70 font-mono mt-0.5">Local Synthesis + k-Anonymity</span>
+          </button>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Central 5-Stage Interactive Pipeline Architecture Diagram -->
+    <section class="bg-slate-800/40 border border-slate-700/60 rounded-2xl p-4 sm:p-6 shadow-2xl relative overflow-hidden">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4 pb-3 border-b border-slate-700/50">
+        <div>
+          <h2 class="text-base font-bold text-white flex items-center gap-2">
+            <span>5-Stage Telemetry Dataflow & Boundary Inspector</span>
+            <span class="text-xs font-normal text-slate-400">| Click any stage below to inspect payload transformations & privacy controls</span>
+          </h2>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono text-slate-400">
+          <span class="inline-flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500/80"></span> Kept
+          </span>
+          <span class="inline-flex items-center gap-1.5 ml-2">
+            <span class="w-2.5 h-2.5 rounded-sm bg-rose-500/80"></span> Stripped
+          </span>
+        </div>
+      </div>
+
+      <!-- Pipeline Container (Scrollable on small displays, grid on desktop) -->
+      <div class="overflow-x-auto pb-4 pt-2">
+        <div class="min-w-[980px] relative">
+          
+          <!-- Animated SVG Flow Conduits connecting nodes -->
+          <svg class="absolute top-[68px] left-0 w-full h-8 pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 1000 32">
+            <defs>
+              <linearGradient id="wire-grad-mode1" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#fb7185" stop-opacity="0.8" />
+              </linearGradient>
+              <linearGradient id="wire-grad-mode2" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#fbbf24" stop-opacity="0.8" />
+              </linearGradient>
+              <linearGradient id="wire-grad-mode3" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.8" />
+                <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.8" />
+              </linearGradient>
+            </defs>
+
+            <!-- Conduit Lines between nodes -->
+            <!-- Link 1-2 -->
+            <line x1="160" y1="16" x2="240" y2="16" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <line id="wire-1" x1="160" y1="16" x2="240" y2="16" stroke="url(#wire-grad-mode3)" stroke-width="3" stroke-linecap="round" class="animated-wire" />
+            
+            <!-- Link 2-3 -->
+            <line x1="360" y1="16" x2="440" y2="16" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <line id="wire-2" x1="360" y1="16" x2="440" y2="16" stroke="url(#wire-grad-mode3)" stroke-width="3" stroke-linecap="round" class="animated-wire" />
+
+            <!-- Link 3-4 -->
+            <line x1="560" y1="16" x2="640" y2="16" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <line id="wire-3" x1="560" y1="16" x2="640" y2="16" stroke="url(#wire-grad-mode3)" stroke-width="3" stroke-linecap="round" class="animated-wire" />
+
+            <!-- Link 4-5 -->
+            <line x1="760" y1="16" x2="840" y2="16" stroke="#334155" stroke-width="4" stroke-linecap="round" />
+            <line id="wire-4" x1="760" y1="16" x2="840" y2="16" stroke="url(#wire-grad-mode3)" stroke-width="3" stroke-linecap="round" class="animated-wire" />
+          </svg>
+
+          <!-- 5 Pipeline Stage Cards Grid -->
+          <div class="grid grid-cols-5 gap-5 relative z-10">
+
+            <!-- STAGE 1: Client Runtime -->
+            <div id="stage-card-1" onclick="selectStage(1)" class="stage-card cursor-pointer group bg-slate-900/90 border border-slate-700 hover:border-slate-500 rounded-xl p-3.5 transition-all duration-300 hover:scale-[1.02]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Stage 01</span>
+                <span class="status-pill text-[10px] font-mono px-2 py-0.5 rounded font-medium bg-emerald-500/10 text-emerald-400">Learner Device</span>
+              </div>
+              <h3 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">SYNCZINE Client</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">Learner Container Runtime</p>
+
+              <!-- Node payload dynamic tags -->
+              <div id="stage-1-badges" class="mt-3 flex flex-wrap gap-1 min-h-[58px]">
+                <!-- Populated dynamically via JS -->
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-200">
+                <span class="font-mono text-[10px]" id="stage-1-metric-label">Memory: Isolated</span>
+                <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </div>
+            </div>
+
+            <!-- STAGE 2: Local Telemetry Engine -->
+            <div id="stage-card-2" onclick="selectStage(2)" class="stage-card cursor-pointer group bg-slate-900/90 border border-slate-700 hover:border-slate-500 rounded-xl p-3.5 transition-all duration-300 hover:scale-[1.02]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Stage 02</span>
+                <span class="status-pill text-[10px] font-mono px-2 py-0.5 rounded font-medium bg-emerald-500/10 text-emerald-400">On-Device Engine</span>
+              </div>
+              <h3 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">Local Telemetry</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">Delta & Metric Synthesis</p>
+
+              <div id="stage-2-badges" class="mt-3 flex flex-wrap gap-1 min-h-[58px]">
+                <!-- Populated dynamically -->
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-200">
+                <span class="font-mono text-[10px]" id="stage-2-metric-label">Transforms: Active</span>
+                <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </div>
+            </div>
+
+            <!-- STAGE 3: Network Payload -->
+            <div id="stage-card-3" onclick="selectStage(3)" class="stage-card cursor-pointer group bg-slate-900/90 border border-slate-700 hover:border-slate-500 rounded-xl p-3.5 transition-all duration-300 hover:scale-[1.02]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Stage 03</span>
+                <span class="status-pill text-[10px] font-mono px-2 py-0.5 rounded font-medium bg-cyan-500/10 text-cyan-400">Egress Wire</span>
+              </div>
+              <h3 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">Network Payload</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">Wire Transmission Schema</p>
+
+              <div id="stage-3-badges" class="mt-3 flex flex-wrap gap-1 min-h-[58px]">
+                <!-- Populated dynamically -->
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-200">
+                <span class="font-mono text-[10px]" id="stage-3-metric-label">Dispatch: Jittered</span>
+                <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </div>
+            </div>
+
+            <!-- STAGE 4: Stateless Edge Relay -->
+            <div id="stage-card-4" onclick="selectStage(4)" class="stage-card cursor-pointer group bg-slate-900/90 border border-slate-700 hover:border-slate-500 rounded-xl p-3.5 transition-all duration-300 hover:scale-[1.02]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Stage 04</span>
+                <span class="status-pill text-[10px] font-mono px-2 py-0.5 rounded font-medium bg-emerald-500/10 text-emerald-400">Network Edge</span>
+              </div>
+              <h3 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">Stateless Relay</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">IP Scrub & Metadata Proxy</p>
+
+              <div id="stage-4-badges" class="mt-3 flex flex-wrap gap-1 min-h-[58px]">
+                <!-- Populated dynamically -->
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-200">
+                <span class="font-mono text-[10px]" id="stage-4-metric-label">Header: Stripped</span>
+                <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </div>
+            </div>
+
+            <!-- STAGE 5: Curriculum Analytics Store -->
+            <div id="stage-card-5" onclick="selectStage(5)" class="stage-card cursor-pointer group bg-slate-900/90 border border-slate-700 hover:border-slate-500 rounded-xl p-3.5 transition-all duration-300 hover:scale-[1.02]">
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-[10px] font-mono font-bold tracking-wider uppercase px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">Stage 05</span>
+                <span class="status-pill text-[10px] font-mono px-2 py-0.5 rounded font-medium bg-emerald-500/10 text-emerald-400">Aggregator</span>
+              </div>
+              <h3 class="text-xs font-bold text-white group-hover:text-emerald-400 transition-colors line-clamp-1">Analytics Store</h3>
+              <p class="text-[11px] text-slate-400 mt-0.5">Heatmaps & Velocity Dash</p>
+
+              <div id="stage-5-badges" class="mt-3 flex flex-wrap gap-1 min-h-[58px]">
+                <!-- Populated dynamically -->
+              </div>
+
+              <div class="mt-3 pt-2 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 group-hover:text-slate-200">
+                <span class="font-mono text-[10px]" id="stage-5-metric-label">Gate: k >= 10</span>
+                <span class="text-xs group-hover:translate-x-0.5 transition-transform">&rarr;</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Stage Detail Inspector (Slide-down interactive split panel) -->
+      <div id="stage-detail-inspector" class="mt-4 pt-4 border-t border-slate-700/70 transition-all duration-300">
+        <div class="bg-slate-900/95 border border-slate-700/80 rounded-xl p-4 sm:p-5 shadow-2xl">
+          
+          <!-- Inspector Header -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-800">
+            <div class="flex items-center gap-3">
+              <span id="inspector-stage-badge" class="font-mono text-xs font-bold px-2.5 py-1 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Stage 01 Focus
+              </span>
+              <div>
+                <h3 id="inspector-title" class="text-sm sm:text-base font-bold text-white">Stage 1: SYNCZINE Client Runtime</h3>
+                <p id="inspector-desc" class="text-xs text-slate-400">Granular interaction logging inside the sandboxed learner app container</p>
+              </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-mono text-slate-400 hidden md:inline">Click other stages to inspect boundary</span>
+              <button onclick="simulateSinglePacket()" class="px-3 py-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-emerald-400 flex items-center gap-1.5 transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Pulse Trace
+              </button>
+            </div>
+          </div>
+
+          <!-- Inspector Content Grid: Kept vs Stripped + JSON Wire Payload -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 mt-4">
+            
+            <!-- Column 1: Kept vs Stripped + Privacy Mitigations (7 Cols) -->
+            <div class="lg:col-span-7 space-y-4">
+              
+              <!-- Data boundary: Kept vs Stripped Table -->
+              <div class="bg-slate-950/60 rounded-lg p-3.5 border border-slate-800">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-2 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Boundary Transformation: Data Kept vs. Stripped
+                </h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div class="bg-emerald-950/20 border border-emerald-900/40 rounded-md p-2.5">
+                    <div class="font-mono font-semibold text-emerald-400 flex items-center gap-1.5 mb-1.5">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Data Kept in Payload:
+                    </div>
+                    <ul id="inspector-kept-list" class="space-y-1 font-mono text-[11px] text-slate-300 list-disc list-inside">
+                      <!-- Filled by JS -->
+                    </ul>
+                  </div>
+
+                  <div class="bg-rose-950/20 border border-rose-900/40 rounded-md p-2.5">
+                    <div class="font-mono font-semibold text-rose-400 flex items-center gap-1.5 mb-1.5">
+                      <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Explicitly Stripped / Blocked:
+                    </div>
+                    <ul id="inspector-stripped-list" class="space-y-1 font-mono text-[11px] text-slate-300 list-disc list-inside">
+                      <!-- Filled by JS -->
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Side Channel Risk & Mitigations at this node -->
+              <div class="bg-slate-950/60 rounded-lg p-3.5 border border-slate-800 text-xs">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5 flex items-center gap-2">
+                  <svg class="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Side-Channel Linkability & Vector Mitigations
+                </h4>
+                <p id="inspector-mitigation" class="text-slate-300 leading-relaxed font-sans text-xs">
+                  <!-- Filled by JS -->
+                </p>
+                <div class="mt-2 text-[11px] font-mono text-slate-400 flex items-center gap-2">
+                  <span class="font-semibold text-slate-300">Regulatory Impact:</span>
+                  <span id="inspector-legal-note" class="text-emerald-400">Outside personal data scope</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Column 2: Live Wire Schema JSON (5 Cols) -->
+            <div class="lg:col-span-5 flex flex-col">
+              <div class="bg-slate-950 rounded-lg border border-slate-800 overflow-hidden flex flex-col h-full shadow-inner">
+                <div class="flex items-center justify-between px-3.5 py-2 bg-slate-900 border-b border-slate-800">
+                  <span class="font-mono text-[11px] text-slate-400 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-slate-600"></span>
+                    Wire JSON Representation (<span id="json-label-mode">Mode 3</span>)
+                  </span>
+                  <button onclick="copyCurrentJSON()" class="text-slate-400 hover:text-white transition-colors text-[11px] font-mono flex items-center gap-1">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                    </svg>
+                    Copy
+                  </button>
+                </div>
+                <div class="p-3.5 font-mono text-xs overflow-x-auto flex-1 text-emerald-300 bg-slate-950/90 leading-relaxed max-h-64 sm:max-h-72">
+                  <pre id="json-preview-code"><code>// JSON Payload Schema</code></pre>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bottom Comparative Metrics & Risk Assessment Strip -->
+    <section>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Card 1: Legal Classification -->
+        <div class="bg-slate-800/50 border border-slate-700/70 rounded-xl p-4 transition-all duration-300 hover:border-slate-600 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-400">Legal Classification</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
+              </svg>
+            </div>
+            <div id="metric-legal-badge" class="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 mb-2">
+              Truly Anonymous (Exempt)
+            </div>
+            <p id="metric-legal-desc" class="text-xs text-slate-300 leading-relaxed">
+              Data is stripped of identifiers at edge and cohort-gated; falls entirely outside GDPR and Vietnam PDPL personal data jurisdiction.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-700/60 text-[10px] font-mono text-slate-400" id="metric-legal-sub">
+            Scope: EDPB 01/2025 & VN Decree 356
+          </div>
+        </div>
+
+        <!-- Card 2: Re-identification Risk Meter -->
+        <div class="bg-slate-800/50 border border-slate-700/70 rounded-xl p-4 transition-all duration-300 hover:border-slate-600 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-400">Re-Identification Risk</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div class="flex items-baseline justify-between mb-1.5">
+              <span id="metric-reid-text" class="text-base font-bold text-emerald-400">Negligible Risk</span>
+              <span id="metric-reid-pct" class="text-xs font-mono font-semibold text-slate-400">Score: 10/100</span>
+            </div>
+            <!-- Visual Risk Meter Bar -->
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden mb-2 border border-slate-700">
+              <div id="metric-reid-bar" class="h-full bg-emerald-500 transition-all duration-500 rounded-full" style="width: 10%;"></div>
+            </div>
+            <p id="metric-reid-desc" class="text-xs text-slate-300 leading-relaxed">
+              Jitter delay eliminates DID credential correlation; no persistent token; k-cohort threshold prevents deduction in small groups.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-700/60 text-[10px] font-mono text-slate-400" id="metric-reid-sub">
+            Linkability: Broken via Nonce + Delay
+          </div>
+        </div>
+
+        <!-- Card 3: Pedagogical Insights Retained -->
+        <div class="bg-slate-800/50 border border-slate-700/70 rounded-xl p-4 transition-all duration-300 hover:border-slate-600 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-400">Curriculum Utility</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </div>
+            <div class="flex items-baseline justify-between mb-1.5">
+              <span id="metric-utility-text" class="text-base font-bold text-cyan-400">88% Preserved</span>
+              <span id="metric-utility-pct" class="text-xs font-mono font-semibold text-slate-400">Velocity & Friction</span>
+            </div>
+            <!-- Visual Utility Meter Bar -->
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden mb-2 border border-slate-700">
+              <div id="metric-utility-bar" class="h-full bg-cyan-500 transition-all duration-500 rounded-full" style="width: 88%;"></div>
+            </div>
+            <p id="metric-utility-desc" class="text-xs text-slate-300 leading-relaxed">
+              Full within-run velocity curves and SYNCZ friction points. Trade-off: does not capture unresumed mid-SYNCTESS abandonments.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-700/60 text-[10px] font-mono text-slate-400" id="metric-utility-sub">
+            Target: Content Quality, Not Learner
+          </div>
+        </div>
+
+        <!-- Card 4: Consent Requirement & Storage Burden -->
+        <div class="bg-slate-800/50 border border-slate-700/70 rounded-xl p-4 transition-all duration-300 hover:border-slate-600 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] uppercase font-mono font-bold tracking-wider text-slate-400">Consent & Storage Burden</span>
+              <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div id="metric-consent-badge" class="inline-block px-2.5 py-1 rounded-md text-xs font-bold bg-slate-700 text-slate-200 border border-slate-600 mb-2">
+              Minimal Disclosure
+            </div>
+            <p id="metric-consent-desc" class="text-xs text-slate-300 leading-relaxed">
+              No tracking consent banner required under GDPR/PDPL. Verify EU ePrivacy Art. 5(3) device caching exemptions for diagnostics.
+            </p>
+          </div>
+          <div class="mt-3 pt-2 border-t border-slate-700/60 text-[10px] font-mono text-slate-400" id="metric-consent-sub">
+            COPPA Status: Diagnostic Internal Ops
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Detailed Comparative Matrix & Privacy Engineering Deep-Dive -->
+    <section class="bg-slate-800/30 border border-slate-700/60 rounded-2xl p-4 sm:p-6 shadow-xl">
+      
+      <!-- Tabs for Matrix vs Educational Deep-Dive -->
+      <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+        <div class="flex gap-4">
+          <button id="tab-matrix-btn" onclick="switchDetailTab('matrix')" class="text-xs sm:text-sm font-bold text-white border-b-2 border-emerald-500 pb-1 flex items-center gap-1.5 transition-colors">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+            </svg>
+            Comparative Architecture Matrix
+          </button>
+          <button id="tab-deepdive-btn" onclick="switchDetailTab('deepdive')" class="text-xs sm:text-sm font-bold text-slate-400 hover:text-slate-200 border-b-2 border-transparent pb-1 flex items-center gap-1.5 transition-colors">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            Privacy Side-Channel Principles
+          </button>
+        </div>
+        <span class="text-xs font-mono text-slate-500 hidden sm:inline">Regulatory benchmark: 2026 Standards</span>
+      </div>
+
+      <!-- Tab Content 1: Comparative Matrix -->
+      <div id="content-matrix" class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-700 bg-slate-900/60 font-mono text-[11px] text-slate-400">
+              <th class="py-2.5 px-3">Evaluation Vector</th>
+              <th class="py-2.5 px-3 text-rose-400">Mode 1: Live Instance UUID</th>
+              <th class="py-2.5 px-3 text-amber-400">Mode 2: Scoped Run UUID</th>
+              <th class="py-2.5 px-3 text-emerald-400">Mode 3: Edge Summary + k-Anonymity</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Identifier Scope</td>
+              <td class="py-3 px-3 font-mono text-[11px] text-rose-300">Persistent synczine_instance_uuid (Multi-day)</td>
+              <td class="py-3 px-3 font-mono text-[11px] text-amber-300">Session run_uuid (Discarded on close)</td>
+              <td class="py-3 px-3 font-mono text-[11px] text-emerald-300">Zero UUIDs. Single-use packet nonce</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Timestamp Granularity</td>
+              <td class="py-3 px-3">Microsecond UTC wall-clock timestamps</td>
+              <td class="py-3 px-3">Relative elapsed seconds (dwell_sec, pause_sec)</td>
+              <td class="py-3 px-3">No timestamps; aggregated friction & velocity ratios</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Timing Linkability (DID Export)</td>
+              <td class="py-3 px-3 text-rose-300 font-medium">Critical: Correlatable with DID credential signing within seconds</td>
+              <td class="py-3 px-3 text-amber-300">Low-Moderate: Flushed per SYNCTESS, potential time boundary leak</td>
+              <td class="py-3 px-3 text-emerald-300 font-medium">Negligible: Randomized jitter delay (30-90s) detaches arrival from DID signing</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Small-Cohort Risk (Deduction)</td>
+              <td class="py-3 px-3 text-rose-300">High: Instructors in classes of 3-5 can trivially identify who breezed or stalled</td>
+              <td class="py-3 px-3 text-amber-300">Moderate: Trajectory singling-out in small tutoring groups</td>
+              <td class="py-3 px-3 text-emerald-300 font-medium">Safe: Analytics dashboard enforces $k \ge 10$ runs before rendering heatmaps</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Mid-Stream Drop-Off Visibility</td>
+              <td class="py-3 px-3 text-emerald-400 font-semibold">100% Live: Detects exact freeze point in real-time</td>
+              <td class="py-3 px-3 text-amber-300">85%: Captures drop-off at SYNCTESS boundary flush</td>
+              <td class="py-3 px-3 text-slate-400">Tradeoff: Requires container completion or next-launch flush cache</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">Legal Scope (GDPR / VN PDPL)</td>
+              <td class="py-3 px-3 text-rose-400 font-mono font-semibold">Personal Data (Pseudonymous)</td>
+              <td class="py-3 px-3 text-amber-400 font-mono font-semibold">Borderline Pseudonymous</td>
+              <td class="py-3 px-3 text-emerald-400 font-mono font-semibold">Truly Anonymous (Exempt)</td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-semibold text-white">User Consent Mandate</td>
+              <td class="py-3 px-3">Mandatory Prior Opt-in Banner</td>
+              <td class="py-3 px-3">Recommended Opt-in for storage access</td>
+              <td class="py-3 px-3">Transparent Diagnostic Notice in Settings</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Tab Content 2: Educational Deep-Dive Principles -->
+      <div id="content-deepdive" class="hidden space-y-4 text-xs text-slate-300">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <div class="bg-slate-900/70 border border-slate-700/80 rounded-xl p-4">
+            <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono text-xs">1</span>
+              The "Video Player Analogy" & Singling Out
+            </h4>
+            <p class="leading-relaxed text-slate-300">
+              Omitting a learner's <code class="text-emerald-300 bg-slate-800 px-1 py-0.5 rounded">DID</code> does not make telemetry anonymous. Under the EDPB 01/2025 guidelines and Vietnam’s Personal Data Protection Law (Law No. 91/2025/QH15), data protection applies to any stream that can <strong>single out</strong> a person. If a system records that "Person X paused 3 times at 142 seconds, backtracked to SYNCZ-02, and spent 18 minutes", that unique fingerprint isolates their behavioral trajectory just as effectively as a username.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/70 border border-slate-700/80 rounded-xl p-4">
+            <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-mono text-xs">2</span>
+              Timing Side-Channels with Verifiable Credentials
+            </h4>
+            <p class="leading-relaxed text-slate-300">
+              When learners complete a SYNCZINE, they frequently issue or export a cryptographic <code class="text-cyan-300 bg-slate-800 px-1 py-0.5 rounded">DID-signed Credential</code> or submit assignments to an LMS. If telemetry packets arrive at server timestamp <code class="text-slate-400 font-mono">15:42:11 UTC</code> and the DID credential is cryptographically anchored at <code class="text-slate-400 font-mono">15:42:14 UTC</code>, any observer with access to server network ingress can trivially correlate the telemetry instance UUID back to the learner's public identity.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/70 border border-slate-700/80 rounded-xl p-4">
+            <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-amber-500/20 text-amber-400 flex items-center justify-center font-mono text-xs">3</span>
+              Small-Cohort Deduction Vulnerability
+            </h4>
+            <p class="leading-relaxed text-slate-300">
+              In tutoring groups or small classroom cohorts of 3 to 8 learners, "anonymized" timestamps are futile. An educator who knows Learner Alice was struggling while Learner Bob finished early can review individual telemetry curves on an analytics dashboard and deduce precisely which run belonged to whom, circumventing privacy protections.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/70 border border-slate-700/80 rounded-xl p-4">
+            <h4 class="text-sm font-bold text-white mb-2 flex items-center gap-2">
+              <span class="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-mono text-xs">4</span>
+              The Edge-Computation & k-Anonymity Guardrail
+            </h4>
+            <p class="leading-relaxed text-slate-300">
+              Mode 3 solves these vulnerabilities simultaneously:
+              <br><strong class="text-emerald-400">1. On-device synthesis:</strong> Raw timestamps are converted locally to relative velocity scores and friction ratios against baseline manifests.
+              <br><strong class="text-emerald-400">2. Jitter delay:</strong> A random 30-90 second transmission offset detaches egress packet arrival from credential signing.
+              <br><strong class="text-emerald-400">3. k-Anonymity ($k \ge 10$):</strong> The curriculum dashboard prohibits viewing any SYNCZ heatmap until at least 10 unique runs have aggregated.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 bg-slate-900/70 mt-8 py-4 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span class="font-mono text-slate-400">SYNCZINE Privacy Verification Spec &middot; Standard EDPB 01/2025</span>
+      </div>
+      <div>
+        <span>Telemetry evaluating container quality, never profiling the learner.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Logic & Data Script -->
+  <script>
+    // --- Telemetry Model Specification ---
+    const PIPELINE_MODES = {
+      1: {
+        id: 'mode_1',
+        title: 'Mode 1: Live Instance UUID Stream',
+        subtitle: 'Continuous Live Event Streaming with Persistent Instance UUID',
+        badgeText: 'Regulated Personal Data',
+        badgeClass: 'bg-rose-500/20 text-rose-300 border-rose-500/40',
+        wireColor: '#f43f5e',
+        glowClass: 'glow-rose',
+        legalStatus: 'Pseudonymous Personal Data (GDPR & Vietnam PDPL Scope)',
+        legalDesc: 'Attaching a persistent UUID across multi-day sessions legally singles out the device. Full GDPR and Vietnam PDPL personal data regulations apply.',
+        legalSub: 'Scope: GDPR Art. 4(1) & VN Law 91/2025/QH15',
+        reidRisk: 'High Linkability Risk',
+        reidScore: 88,
+        reidClass: 'text-rose-400',
+        reidBarClass: 'bg-rose-500',
+        reidDesc: 'Critical vulnerability to network timing side-channels with DID credentials, IP correlation, and small-cohort educator deduction.',
+        reidSub: 'Linkability: Trivially correlated with DID signing',
+        utilityText: '100% Granular Utility',
+        utilityScore: 100,
+        utilityClass: 'text-rose-400',
+        utilityBarClass: 'bg-rose-500',
+        utilityDesc: 'Full real-time visibility into pauses, backtracks, replays, and instantaneous live mid-run abandonment.',
+        utilitySub: 'Preserves complete live behavioral stream',
+        consentBadge: 'Prior Opt-In Required',
+        consentDesc: 'Requires explicit prior opt-in consent for tracking technologies under EU ePrivacy Art. 5(3) and Vietnam Decree 356.',
+        consentSub: 'Strict parental consent required for minors',
+        stages: {
+          1: {
+            title: 'Stage 1: SYNCZINE Client Runtime',
+            desc: 'Continuous micro-event emission for every play, pause, seek, and buffer tick within the active SYNCZ.',
+            kept: ['raw_event_type (PLAY, PAUSE, SEEK)', 'microsecond_timestamp', 'current_syncz_id', 'playback_head_sec', 'container_state'],
+            stripped: ['did (Decentralized Identifier omitted)'],
+            mitigation: 'DID omitted from client memory dispatch; however, high-frequency timer events create an identifiable behavioral signature.',
+            legal: 'Pseudonymous Personal Data created upon generation.',
+            badges: [
+              { text: 'raw_events: LIVE', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'timestamp: UTC', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'DID: Omitted', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Clock: UTC High-Res',
+            json: {
+              "event_seq": 1402,
+              "event_type": "SYNCZ_PAUSE",
+              "synczine_id": "zn_quantum_mech_01",
+              "synctess_id": "ts_superposition_03",
+              "syncz_id": "sz_schrodinger_wave_04",
+              "utc_wall_clock": "2026-11-01T15:42:11.842Z",
+              "playback_position_sec": 142.84,
+              "learner_did": null
+            }
+          },
+          2: {
+            title: 'Stage 2: Local Telemetry Engine',
+            desc: 'Attaches long-lived installation/instance UUID and appends device state to event stream.',
+            kept: ['synczine_instance_uuid (persistent multi-day)', 'event_batch_id', 'exact_wall_clock_utc', 'hardware_concurrency'],
+            stripped: ['None (Full diagnostic fidelity preserved)'],
+            mitigation: 'No on-device filtering or relative aggregation applied. Device remains traceable across launches.',
+            legal: 'GDPR Article 4(5) Pseudonymisation with long-term identifier retention.',
+            badges: [
+              { text: 'uuid: persistent', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'clock: wall-clock', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'batch: un-jittered', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' }
+            ],
+            metricLabel: 'UUID: Persistent Token',
+            json: {
+              "synczine_instance_uuid": "8f3a41bc-e902-4b2a-8d19-33d014bc90a1",
+              "session_continuity_counter": 14,
+              "payload_events": [
+                { "type": "PAUSE", "sec": 142.84, "utc": "2026-11-01T15:42:11.842Z" },
+                { "type": "RESUME", "sec": 142.84, "utc": "2026-11-01T15:42:24.102Z" }
+              ]
+            }
+          },
+          3: {
+            title: 'Stage 3: Network Payload (Egress Wire)',
+            desc: 'Continuous real-time outbound HTTPS POST streams directly over the wire.',
+            kept: ['synczine_instance_uuid', 'HTTP request headers', 'User-Agent header', 'exact dispatch timestamp'],
+            stripped: ['Authorization bearer tokens (if isolated)'],
+            mitigation: 'Egress packet timing aligns immediately with learner actions, exposing correlation with DID transactions on same IP.',
+            legal: 'Transmitted as pseudonymous data over public network; subject to cross-border transfer laws.',
+            badges: [
+              { text: 'stream: continuous', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'jitter: NONE (0ms)', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'headers: verbose', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' }
+            ],
+            metricLabel: 'Egress: Immediate Live',
+            json: {
+              "egress_type": "REALTIME_EVENT_STREAM",
+              "synczine_instance_uuid": "8f3a41bc-e902-4b2a-8d19-33d014bc90a1",
+              "wire_timestamp_utc": "2026-11-01T15:42:11.850Z",
+              "packet_latency_ms": 8,
+              "action": "SYNCZ_INTERACTION"
+            }
+          },
+          4: {
+            title: 'Stage 4: Stateless Edge Relay',
+            desc: 'Standard reverse-proxy load balancer forwarding packets to storage pipeline.',
+            kept: ['Client IP Address (in socket / X-Forwarded-For)', 'TLS Client Fingerprint', 'Raw UUID Stream'],
+            stripped: ['Cookies (if unauthenticated)'],
+            mitigation: 'IP address logged in edge access logs. Re-identification trivially achievable via IP + timestamp joins.',
+            legal: 'IP addresses constitute personal data under GDPR Court of Justice Breyer ruling (C-582/14).',
+            badges: [
+              { text: 'Client IP: PRESERVED', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'Edge Proxy: Default', class: 'bg-slate-700 text-slate-300' }
+            ],
+            metricLabel: 'IP Header: Preserved',
+            json: {
+              "edge_relay": "gateway_us_west_01",
+              "client_ip_logged": "198.51.100.42",
+              "user_agent": "Mozilla/5.0 SYNCZINE_Player/2.4",
+              "forwarded_uuid": "8f3a41bc-e902-4b2a-8d19-33d014bc90a1",
+              "forward_latency_ms": 2
+            }
+          },
+          5: {
+            title: 'Stage 5: Curriculum Analytics Store',
+            desc: 'Time-series database holding replayable chronological event trails per instance UUID.',
+            kept: ['Longitudinal event replay per instance', 'Exact chronological timelines', 'Cross-session activity curves'],
+            stripped: ['None'],
+            mitigation: 'Educator or author can inspect individual learner timelines. High deduction risk in cohorts of < 15.',
+            legal: 'Requires Data Protection Impact Assessment (DPIA) and GDPR Article 17 Right to Erasure handling.',
+            badges: [
+              { text: 'Replay: Full Playback', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'k-Gate: Disabled', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' },
+              { text: 'Retention: 90 Days', class: 'bg-slate-700 text-slate-300' }
+            ],
+            metricLabel: 'Storage: Granular Replay',
+            json: {
+              "analytics_mode": "PER_INSTANCE_REPLAY",
+              "instance_uuid": "8f3a41bc-e902-4b2a-8d19-33d014bc90a1",
+              "total_events_logged": 4390,
+              "mid_run_abandonment_flag": false,
+              "reconstruction_fidelity": "100%"
+            }
+          }
+        }
+      },
+      2: {
+        id: 'mode_2',
+        title: 'Mode 2: Scoped Run UUID + Relative Deltas',
+        subtitle: 'Ephemeral Single-Session Run UUID with Relative Durations',
+        badgeText: 'Borderline Pseudonymous',
+        badgeClass: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+        wireColor: '#f59e0b',
+        glowClass: 'glow-amber',
+        legalStatus: 'Borderline Pseudonymous (Singling-Out Risk)',
+        legalDesc: 'Stripping wall-clock timestamps and persistent IDs greatly reduces linkability, but behavioral trajectories in small classes still risk singling out.',
+        legalSub: 'Scope: EDPB 01/2025 Singling-Out Criteria',
+        reidRisk: 'Low-to-Moderate Risk',
+        reidScore: 48,
+        reidClass: 'text-amber-400',
+        reidBarClass: 'bg-amber-500',
+        reidDesc: 'Single-session token prevents cross-day tracking. Small class cohort deduction remains possible if progress is discussed openly.',
+        reidSub: 'Linkability: Severed across sessions, partial within-run',
+        utilityText: '95% Preserved Utility',
+        utilityScore: 95,
+        utilityClass: 'text-amber-400',
+        utilityBarClass: 'bg-amber-500',
+        utilityDesc: 'Full velocity metrics, pause counts, friction ratios, and module drop-off at SYNCTESS boundaries.',
+        utilitySub: 'Preserves SYNCTESS drop-offs; loses mid-second crash state',
+        consentBadge: 'Opt-In Recommended',
+        consentDesc: 'Opt-in recommended for local storage tokens under ePrivacy rules; substantially easier compliance justification.',
+        consentSub: 'Compatible with standard educational internal ops',
+        stages: {
+          1: {
+            title: 'Stage 1: SYNCZINE Client Runtime',
+            desc: 'Captures play, pause, and retry counts in temporary volatile memory during current container session.',
+            kept: ['Relative dwell ticks', 'Pause counters per SYNCZ', 'Retry invocations'],
+            stripped: ['did', 'Absolute wall-clock UTC dates'],
+            mitigation: 'Timestamps immediately converted to relative session offset (T+0s).',
+            legal: 'Internal runtime memory state.',
+            badges: [
+              { text: 'events: Batched', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+              { text: 'time: Relative Sec', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'DID: Omitted', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Clock: Relative Deltas',
+            json: {
+              "runtime_session_offset_sec": 384,
+              "syncz_id": "sz_schrodinger_wave_04",
+              "dwell_sec": 140,
+              "pause_count": 3,
+              "retry_count": 1
+            }
+          },
+          2: {
+            title: 'Stage 2: Local Telemetry Engine',
+            desc: 'Generates disposable run_uuid valid strictly for this single execution. Discards all device tokens.',
+            kept: ['Single-session run_uuid', 'Aggregated elapsed dwell seconds per SYNCZ', 'SYNCTESS completion flag'],
+            stripped: ['synczine_instance_uuid', 'Hardware fingerprints', 'UTC wall-clock stamps'],
+            mitigation: 'Session UUID destroyed from disk upon completion or container close.',
+            legal: 'De-identified session telemetry; lower risk tier.',
+            badges: [
+              { text: 'uuid: Scoped (Session)', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+              { text: 'dwell: relative_sec', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'UUID: Ephemeral Run',
+            json: {
+              "run_uuid": "run_sess_e409b821",
+              "synczine_id": "zn_quantum_mech_01",
+              "synctess_id": "ts_superposition_03",
+              "elapsed_run_sec": 384,
+              "syncz_metrics": [
+                { "syncz_id": "sz_01", "dwell_sec": 42, "pauses": 0 },
+                { "syncz_id": "sz_02", "dwell_sec": 115, "pauses": 2 }
+              ]
+            }
+          },
+          3: {
+            title: 'Stage 3: Network Payload (Egress Wire)',
+            desc: 'Periodic batched flush executed exclusively at SYNCTESS module boundary (not per micro-event).',
+            kept: ['run_uuid', 'Aggregated syncz_metrics', 'Module drop-off indicators'],
+            stripped: ['Continuous event streams', 'Per-second timestamps'],
+            mitigation: 'Batched flush prevents packet arrival timing from mirroring individual learner video-play pauses.',
+            legal: 'Pseudonymous aggregated session packet.',
+            badges: [
+              { text: 'flush: Periodic SYNCTESS', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+              { text: 'batch_size: 1 payload', class: 'bg-slate-700 text-slate-300' }
+            ],
+            metricLabel: 'Egress: Periodic Flushes',
+            json: {
+              "packet_type": "SYNCTESS_BOUNDARY_FLUSH",
+              "run_uuid": "run_sess_e409b821",
+              "synctess_progress": "3_of_5",
+              "completed": false,
+              "abandoned_at_boundary": false
+            }
+          },
+          4: {
+            title: 'Stage 4: Stateless Edge Relay',
+            desc: 'Ingestion gateway actively scrubs incoming HTTP headers before forwarding data.',
+            kept: ['Scrubbed payload', 'Coarse geo-region (Country only)'],
+            stripped: ['Client IP Address (Overwritten to 0.0.0.0)', 'User-Agent & Device Fingerprint', 'Cookie headers'],
+            mitigation: 'Network edge removes IP linkability; prevents IP-to-DID correlation in server access logs.',
+            legal: 'IP scrubbing removes primary personal data vector at boundary.',
+            badges: [
+              { text: 'Client IP: STRIPPED', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'User-Agent: Neutralized', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'IP: Zeroed at Relay',
+            json: {
+              "edge_relay": "gateway_stateless_ingress",
+              "source_ip": "[STRIPPED_AT_EGRESS]",
+              "client_user_agent": "[STRIPPED]",
+              "retained_geo": "VN_SG"
+            }
+          },
+          5: {
+            title: 'Stage 5: Curriculum Analytics Store',
+            desc: 'Stores de-timed sequence trajectories per session run without persistent device tracking.',
+            kept: ['Session completion trajectory', 'Relative velocity curves', 'SYNCTESS module drop-off rates'],
+            stripped: ['Cross-day learner histories', 'Learner identity'],
+            mitigation: 'Runs cannot be connected across multiple days. However, single outlier runs can be singled out.',
+            legal: 'Borderline Pseudonymous dataset; low re-identification capability.',
+            badges: [
+              { text: 'Trajectory: Session Only', class: 'bg-amber-500/20 text-amber-300 border-amber-500/30' },
+              { text: 'Drop-off: SYNCTESS Level', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Analytics: Session Trajectory',
+            json: {
+              "analytics_mode": "SCOPED_RUN_AGGREGATE",
+              "run_uuid": "run_sess_e409b821",
+              "completed_synctess_count": 3,
+              "detected_friction_points": ["sz_04"],
+              "cross_session_linkable": false
+            }
+          }
+        }
+      },
+      3: {
+        id: 'mode_3',
+        title: 'Mode 3: Edge-Computed Summary + k-Anonymity',
+        subtitle: 'True Edge Privacy: On-Device Metric Synthesis, Jitter Delay & k-Gating',
+        badgeText: 'Truly Anonymous (Exempt)',
+        badgeClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+        wireColor: '#10b981',
+        glowClass: 'glow-emerald',
+        legalStatus: 'Truly Anonymous (Outside Personal Data Scope)',
+        legalDesc: 'Irreversible anonymization: no persistent tokens, jitter delay prevents DID signing timing correlation, and analytics enforce k-anonymity (k >= 10 runs).',
+        legalSub: 'Scope: EDPB 01/2025 Draft Standards & VN Decree 356',
+        reidRisk: 'Negligible Risk',
+        reidScore: 10,
+        reidClass: 'text-emerald-400',
+        reidBarClass: 'bg-emerald-500',
+        reidDesc: 'Zero linkability. Single-use packet nonce cannot correlate across requests. Jitter delay breaks DID transaction time alignment. Small cohort deduction mathematically barred.',
+        reidSub: 'Linkability: Mathematically severed via Nonce + Jitter + k-Gate',
+        utilityText: '88% Preserved Utility',
+        utilityScore: 88,
+        utilityClass: 'text-emerald-400',
+        utilityBarClass: 'bg-emerald-500',
+        utilityDesc: 'Full velocity scores and friction ratios against expected manifest baselines. Only loses mid-run unresumed abandonment.',
+        utilitySub: 'Trades off mid-SYNCTESS live crash telemetry',
+        consentBadge: 'Minimal Disclosure (Exempt)',
+        consentDesc: 'Falls outside GDPR & Vietnam PDPL personal data jurisdiction. Provide transparent diagnostic disclosure in app settings.',
+        consentSub: 'COPPA: Diagnostic Internal Operations Exemption',
+        stages: {
+          1: {
+            title: 'Stage 1: SYNCZINE Client Runtime',
+            desc: 'Monitors granular interactions inside learner sandbox; stores state strictly in ephemeral RAM array.',
+            kept: ['Granular play/pause ticks in RAM buffer only'],
+            stripped: ['did', 'Persistent device identifiers', 'Disk-persisted event logs'],
+            mitigation: 'Buffer is strictly ephemeral; never written to unencrypted storage.',
+            legal: 'Local volatile processing only; no data egress occurs.',
+            badges: [
+              { text: 'storage: RAM Only', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'DID: Blocked', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'Disk I/O: 0 bytes', class: 'bg-slate-700 text-slate-300' }
+            ],
+            metricLabel: 'Memory: Isolated RAM',
+            json: {
+              "container_runtime": "SYNCZINE_SANDBOX_V2",
+              "ram_buffer_events_count": 48,
+              "disk_persisted": false,
+              "did_omitted": true
+            }
+          },
+          2: {
+            title: 'Stage 2: Local Telemetry Engine',
+            desc: 'Computes velocity_score and friction_ratio locally against manifest baseline; purges raw event logs.',
+            kept: ['Overall velocity_score (actual vs expected)', 'SYNCZ friction_ratios', 'Capped pause counts (max 10)'],
+            stripped: ['Raw interaction streams', 'Wall-clock timestamps', 'Persistent UUIDs', 'Idle pauses > 10 min (capped)'],
+            mitigation: 'Extreme outliers capped to prevent unique signature creation. Only mathematical summary survives.',
+            legal: 'Edge de-identification and synthesis before network egress.',
+            badges: [
+              { text: 'velocity_score: Calc', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'friction_ratio: Calc', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'raw_events: PURGED', class: 'bg-rose-500/20 text-rose-300 border-rose-500/30' }
+            ],
+            metricLabel: 'On-Device: Metric Synthesis',
+            json: {
+              "synthesis": "EDGE_LOCAL_SUMMARY",
+              "synczine_id": "zn_quantum_mech_01",
+              "total_dwell_sec": 840,
+              "expected_dwell_sec": 780,
+              "overall_velocity_score": 1.077,
+              "friction_points": [
+                { "syncz_idx": 4, "expected_sec": 45, "actual_sec": 140, "friction_ratio": 3.11 }
+              ]
+            }
+          },
+          3: {
+            title: 'Stage 3: Network Payload (Egress Wire)',
+            desc: 'Transmits one single summary packet upon completion with disposable nonce and randomized jitter delay.',
+            kept: ['One-time disposable packet nonce', 'Summary metrics', 'Jitter delay offset value'],
+            stripped: ['Any persistent or session UUID', 'User Identity', 'Accurate egress timestamp'],
+            mitigation: 'Jitter delay (30-90 sec random wait) prevents correlation with DID credential signing times.',
+            legal: 'Truly anonymous payload; unlinkable to individual.',
+            badges: [
+              { text: 'packet_nonce: 1-Time', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'jitter_delay: +47.3s', class: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30' },
+              { text: 'UUID: None (0)', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Egress: Jittered Nonce',
+            json: {
+              "packet_nonce": "nonce_c9201f4e19da77",
+              "synczine_id": "zn_quantum_mech_01",
+              "velocity_score": 1.08,
+              "friction_ratio_sz04": 3.11,
+              "jitter_delay_applied_sec": 47.3,
+              "uuid": null
+            }
+          },
+          4: {
+            title: 'Stage 4: Stateless Edge Relay',
+            desc: 'Zero-trust relay terminates TLS, discards all network metadata, and forwards anonymous payload.',
+            kept: ['Pure payload body without transport metadata'],
+            stripped: ['Client IP Address', 'TCP/TLS connection fingerprints', 'All HTTP Request Headers', 'Geo-IP city data'],
+            mitigation: 'Stateless proxy ensures analytics database never receives or logs origin IP address.',
+            legal: 'Network linkability broken before database persistence.',
+            badges: [
+              { text: 'IP: Stripped (0.0.0.0)', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'TLS Fingerprint: Strip', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Relay: Zero Transport Meta',
+            json: {
+              "relay_state": "STATELESS_FORWARD_SUCCESS",
+              "client_ip": "0.0.0.0",
+              "forwarded_headers": ["Content-Type: application/json"],
+              "retained_metadata": null
+            }
+          },
+          5: {
+            title: 'Stage 5: Curriculum Analytics Store',
+            desc: 'Cohort aggregation engine enforcing strict k-anonymity (k >= 10 runs) before displaying data.',
+            kept: ['Cohort aggregate velocity distribution', 'SYNCZ friction heatmaps (k >= 10)', 'Curriculum revision flags'],
+            stripped: ['Individual run records (merged into cohort bins immediately)'],
+            mitigation: 'Educators cannot view single-run curves in classes of 3-4 students, preventing deduction.',
+            legal: 'Compliant with ethical guardrail: evaluates container quality, never profiling the learner.',
+            badges: [
+              { text: 'k-Gate: k >= 10 Runs', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'View: Aggregate Heatmap', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' },
+              { text: 'Profiling: Barred', class: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
+            ],
+            metricLabel: 'Cohort Gate: k >= 10',
+            json: {
+              "analytics_engine": "COHORT_HEATMAP_PROCESSOR",
+              "synczine_id": "zn_quantum_mech_01",
+              "aggregated_cohort_runs": 12,
+              "k_threshold_satisfied": true,
+              "curriculum_insight": "High friction at sz_04 (ratio 3.11). Revise explanatory diagrams."
+            }
+          }
+        }
+      }
+    };
+
+    // --- State Variables ---
+    let currentModeId = 3; // Default Mode 3
+    let currentSelectedStage = 1; // Default Stage 1
+    let simulationActive = true;
+    let simSpeed = 1.0;
+
+    // --- DOM Elements ---
+    const htmlEl = document.documentElement;
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+    const simToggleBtn = document.getElementById('btn-toggle-sim');
+    const simStatusDot = document.getElementById('sim-status-dot');
+    const simBtnText = document.getElementById('sim-btn-text');
+    const simSpeedSelect = document.getElementById('sim-speed-select');
+    const toast = document.getElementById('toast');
+
+    // --- Toast Notification Handler ---
+    function showToast(message, isSuccess = true) {
+      toast.textContent = message;
+      toast.className = `fixed bottom-6 right-6 z-50 transform translate-y-0 opacity-100 transition-all duration-300 flex items-center gap-2 px-4 py-3 rounded-xl shadow-2xl text-xs font-mono font-medium border ${
+        isSuccess 
+          ? 'bg-slate-900 text-emerald-300 border-emerald-500/50 shadow-emerald-500/20' 
+          : 'bg-slate-900 text-rose-300 border-rose-500/50 shadow-rose-500/20'
+      }`;
+      setTimeout(() => {
+        toast.className = 'fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 px-4 py-3 rounded-xl shadow-2xl text-xs font-mono font-medium border';
+      }, 2600);
+    }
+
+    // --- Theme Engine (Light / Dark) ---
+    function initTheme() {
+      const savedTheme = localStorage.getItem('synczine_theme') || 'dark';
+      if (savedTheme === 'light') {
+        setTheme('light');
+      } else {
+        setTheme('dark');
+      }
+    }
+
+    function setTheme(mode) {
+      if (mode === 'light') {
+        htmlEl.classList.remove('dark');
+        moonIcon.classList.remove('block');
+        moonIcon.classList.add('hidden');
+        sunIcon.classList.remove('hidden');
+        sunIcon.classList.add('block');
+        localStorage.setItem('synczine_theme', 'light');
+      } else {
+        htmlEl.classList.add('dark');
+        sunIcon.classList.remove('block');
+        sunIcon.classList.add('hidden');
+        moonIcon.classList.remove('hidden');
+        moonIcon.classList.add('block');
+        localStorage.setItem('synczine_theme', 'dark');
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      const isDark = htmlEl.classList.contains('dark');
+      setTheme(isDark ? 'light' : 'dark');
+    });
+
+    // --- Mode Switcher ---
+    function switchMode(modeNum) {
+      currentModeId = modeNum;
+      
+      // Update Mode button active states
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById(`btn-mode-${i}`);
+        if (i === modeNum) {
+          btn.classList.add('active-mode');
+          if (modeNum === 1) {
+            btn.className = 'mode-tab-btn active-mode flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm';
+          } else if (modeNum === 2) {
+            btn.className = 'mode-tab-btn active-mode flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm';
+          } else {
+            btn.className = 'mode-tab-btn active-mode flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-sm';
+          }
+        } else {
+          btn.className = 'mode-tab-btn flex flex-col items-start px-3.5 py-2 rounded-lg text-left transition-all duration-200 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60';
+        }
+      }
+
+      // Update indicator in top bar
+      const indicator = document.getElementById('current-mode-indicator');
+      const modeData = PIPELINE_MODES[modeNum];
+      indicator.textContent = modeData.badgeText;
+      indicator.className = `text-xs px-2.5 py-0.5 rounded-full font-semibold border ${modeData.badgeClass}`;
+
+      // Update Conduits stroke colors
+      const wires = ['wire-1', 'wire-2', 'wire-3', 'wire-4'];
+      const gradientUrl = `url(#wire-grad-mode${modeNum})`;
+      wires.forEach(wireId => {
+        const w = document.getElementById(wireId);
+        if (w) w.setAttribute('stroke', gradientUrl);
+      });
+
+      // Render Stage Badges
+      renderStageCards();
+
+      // Update Inspector Panel with current selected stage
+      updateInspectorView();
+
+      // Update Bottom 4-Card Summary
+      renderBottomMetrics();
+
+      showToast(`Switched to ${modeData.title}`);
+    }
+
+    // --- Render Stage Cards ---
+    function renderStageCards() {
+      const mode = PIPELINE_MODES[currentModeId];
+
+      for (let s = 1; s <= 5; s++) {
+        const stageData = mode.stages[s];
+        const badgesContainer = document.getElementById(`stage-${s}-badges`);
+        const metricLabel = document.getElementById(`stage-${s}-metric-label`);
+        const card = document.getElementById(`stage-card-${s}`);
+
+        if (badgesContainer && stageData) {
+          badgesContainer.innerHTML = '';
+          stageData.badges.forEach(b => {
+            const badge = document.createElement('span');
+            badge.className = `text-[10px] font-mono px-1.5 py-0.5 rounded border ${b.class}`;
+            badge.textContent = b.text;
+            badgesContainer.appendChild(badge);
+          });
+        }
+
+        if (metricLabel && stageData) {
+          metricLabel.textContent = stageData.metricLabel;
+        }
+
+        // Active selection styling
+        if (s === currentSelectedStage) {
+          card.classList.add('ring-2', 'ring-emerald-400/80', 'bg-slate-900', mode.glowClass);
+          card.classList.remove('border-slate-700');
+        } else {
+          card.classList.remove('ring-2', 'ring-emerald-400/80', 'glow-emerald', 'glow-amber', 'glow-rose');
+          card.classList.add('border-slate-700');
+        }
+      }
+    }
+
+    // --- Select Specific Stage for Inspector ---
+    function selectStage(stageNum) {
+      currentSelectedStage = stageNum;
+      renderStageCards();
+      updateInspectorView();
+    }
+
+    // --- Update Inspector Panel ---
+    function updateInspectorView() {
+      const mode = PIPELINE_MODES[currentModeId];
+      const stage = mode.stages[currentSelectedStage];
+
+      document.getElementById('inspector-stage-badge').textContent = `Stage 0${currentSelectedStage} Boundary`;
+      document.getElementById('inspector-title').textContent = stage.title;
+      document.getElementById('inspector-desc').textContent = stage.desc;
+
+      // Kept items list
+      const keptList = document.getElementById('inspector-kept-list');
+      keptList.innerHTML = '';
+      stage.kept.forEach(k => {
+        const li = document.createElement('li');
+        li.textContent = k;
+        keptList.appendChild(li);
+      });
+
+      // Stripped items list
+      const strippedList = document.getElementById('inspector-stripped-list');
+      strippedList.innerHTML = '';
+      stage.stripped.forEach(s => {
+        const li = document.createElement('li');
+        li.textContent = s;
+        strippedList.appendChild(li);
+      });
+
+      // Mitigations & Legal
+      document.getElementById('inspector-mitigation').textContent = stage.mitigation;
+      document.getElementById('inspector-legal-note').textContent = stage.legal;
+      document.getElementById('json-label-mode').textContent = mode.title.split(':')[0];
+
+      // JSON Representation
+      const jsonCode = document.getElementById('json-preview-code');
+      jsonCode.innerHTML = syntaxHighlightJSON(stage.json);
+    }
+
+    // --- Syntax Highlight JSON ---
+    function syntaxHighlightJSON(json) {
+      let str = typeof json !== 'string' ? JSON.stringify(json, null, 2) : json;
+      str = str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'text-amber-300'; // number
+        if (/^"/.test(match)) {
+          if (/:$/.test(match)) {
+            cls = 'text-cyan-300 font-semibold'; // key
+          } else {
+            cls = 'text-emerald-300'; // string
+          }
+        } else if (/true|false/.test(match)) {
+          cls = 'text-purple-400 font-bold'; // boolean
+        } else if (/null/.test(match)) {
+          cls = 'text-rose-400 italic'; // null
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+      });
+    }
+
+    // --- Copy JSON to Clipboard (Safe for iFrames) ---
+    function copyCurrentJSON() {
+      const mode = PIPELINE_MODES[currentModeId];
+      const stage = mode.stages[currentSelectedStage];
+      const rawText = JSON.stringify(stage.json, null, 2);
+
+      const textArea = document.createElement("textarea");
+      textArea.value = rawText;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+          showToast("JSON payload copied to clipboard!");
+        } else {
+          showToast("Unable to copy", false);
+        }
+      } catch (err) {
+        showToast("Copy error: " + err, false);
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // --- Render Bottom 4-Card Summary ---
+    function renderBottomMetrics() {
+      const mode = PIPELINE_MODES[currentModeId];
+
+      // Legal Classification
+      const legalBadge = document.getElementById('metric-legal-badge');
+      legalBadge.textContent = mode.legalStatus;
+      legalBadge.className = `inline-block px-2.5 py-1 rounded-md text-xs font-bold border mb-2 ${mode.badgeClass}`;
+      document.getElementById('metric-legal-desc').textContent = mode.legalDesc;
+      document.getElementById('metric-legal-sub').textContent = mode.legalSub;
+
+      // Re-identification Risk
+      const reidText = document.getElementById('metric-reid-text');
+      reidText.textContent = mode.reidRisk;
+      reidText.className = `text-base font-bold ${mode.reidClass}`;
+      document.getElementById('metric-reid-pct').textContent = `Score: ${mode.reidScore}/100`;
+      const reidBar = document.getElementById('metric-reid-bar');
+      reidBar.className = `h-full rounded-full transition-all duration-500 ${mode.reidBarClass}`;
+      reidBar.style.width = `${mode.reidScore}%`;
+      document.getElementById('metric-reid-desc').textContent = mode.reidDesc;
+      document.getElementById('metric-reid-sub').textContent = mode.reidSub;
+
+      // Pedagogical Utility
+      const utilityText = document.getElementById('metric-utility-text');
+      utilityText.textContent = `${mode.utilityScore}% Preserved`;
+      utilityText.className = `text-base font-bold ${mode.utilityClass}`;
+      document.getElementById('metric-utility-pct').textContent = mode.utilityText;
+      const utilityBar = document.getElementById('metric-utility-bar');
+      utilityBar.className = `h-full rounded-full transition-all duration-500 ${mode.utilityBarClass}`;
+      utilityBar.style.width = `${mode.utilityScore}%`;
+      document.getElementById('metric-utility-desc').textContent = mode.utilityDesc;
+      document.getElementById('metric-utility-sub').textContent = mode.utilitySub;
+
+      // Consent Requirement
+      const consentBadge = document.getElementById('metric-consent-badge');
+      consentBadge.textContent = mode.consentBadge;
+      consentBadge.className = `inline-block px-2.5 py-1 rounded-md text-xs font-bold border mb-2 ${mode.badgeClass}`;
+      document.getElementById('metric-consent-desc').textContent = mode.consentDesc;
+      document.getElementById('metric-consent-sub').textContent = mode.consentSub;
+    }
+
+    // --- Switch Comparison Tabs (Matrix vs Principles) ---
+    function switchDetailTab(tab) {
+      const matrixBtn = document.getElementById('tab-matrix-btn');
+      const deepdiveBtn = document.getElementById('tab-deepdive-btn');
+      const matrixContent = document.getElementById('content-matrix');
+      const deepdiveContent = document.getElementById('content-deepdive');
+
+      if (tab === 'matrix') {
+        matrixBtn.className = 'text-xs sm:text-sm font-bold text-white border-b-2 border-emerald-500 pb-1 flex items-center gap-1.5 transition-colors';
+        deepdiveBtn.className = 'text-xs sm:text-sm font-bold text-slate-400 hover:text-slate-200 border-b-2 border-transparent pb-1 flex items-center gap-1.5 transition-colors';
+        matrixContent.classList.remove('hidden');
+        deepdiveContent.classList.add('hidden');
+      } else {
+        deepdiveBtn.className = 'text-xs sm:text-sm font-bold text-white border-b-2 border-cyan-500 pb-1 flex items-center gap-1.5 transition-colors';
+        matrixBtn.className = 'text-xs sm:text-sm font-bold text-slate-400 hover:text-slate-200 border-b-2 border-transparent pb-1 flex items-center gap-1.5 transition-colors';
+        matrixContent.classList.add('hidden');
+        deepdiveContent.classList.remove('hidden');
+      }
+    }
+
+    // --- Animation Simulation Controls ---
+    simToggleBtn.addEventListener('click', () => {
+      simulationActive = !simulationActive;
+      const wires = ['wire-1', 'wire-2', 'wire-3', 'wire-4'];
+      
+      if (simulationActive) {
+        wires.forEach(id => {
+          const w = document.getElementById(id);
+          if (w) w.classList.remove('animated-wire-paused');
+        });
+        simStatusDot.className = 'w-2 h-2 rounded-full bg-emerald-400 animate-ping';
+        simBtnText.textContent = 'Packets: Live';
+        showToast("Packet animation resumed");
+      } else {
+        wires.forEach(id => {
+          const w = document.getElementById(id);
+          if (w) w.classList.add('animated-wire-paused');
+        });
+        simStatusDot.className = 'w-2 h-2 rounded-full bg-slate-500';
+        simBtnText.textContent = 'Packets: Paused';
+        showToast("Packet animation paused");
+      }
+    });
+
+    simSpeedSelect.addEventListener('change', (e) => {
+      simSpeed = parseFloat(e.target.value);
+      const wires = ['wire-1', 'wire-2', 'wire-3', 'wire-4'];
+      const duration = 1.2 / simSpeed;
+      wires.forEach(id => {
+        const w = document.getElementById(id);
+        if (w) w.style.animationDuration = `${duration}s`;
+      });
+      showToast(`Simulation speed set to ${e.target.value}x`);
+    });
+
+    // Pulse trace step-through simulation
+    function simulateSinglePacket() {
+      showToast(`Tracing packet hop across pipeline [Stage 1 → 5]...`);
+      let step = 1;
+      const interval = setInterval(() => {
+        if (step <= 5) {
+          selectStage(step);
+          step++;
+        } else {
+          clearInterval(interval);
+          showToast(`Packet ingress confirmed in Stage 5 Store.`);
+        }
+      }, 550);
+    }
+
+    // --- On Window Load ---
+    window.onload = function () {
+      initTheme();
+      switchMode(3); // Start with Mode 3 as requested
+      selectStage(1);
+    };
+  </script>
+</body>
+</html>
