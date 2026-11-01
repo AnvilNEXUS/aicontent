@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZINE Architecture & Sovereign Runtime Explorer | SOVRÆG LABS</title>
+  <style>
+    :root {
+      --bg-base: #090d16;
+      --bg-panel: #101726;
+      --bg-card: #162033;
+      --bg-elevated: #1d2a42;
+      --border: #263654;
+      --border-bright: #3b527e;
+      --text-main: #e8eef7;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --cyan: #22d3ee;
+      --cyan-bg: rgba(34, 211, 238, 0.12);
+      --violet: #a78bfa;
+      --violet-bg: rgba(167, 139, 250, 0.14);
+      --emerald: #34d399;
+      --emerald-bg: rgba(52, 211, 153, 0.14);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251, 191, 36, 0.14);
+      --rose: #fb7185;
+      --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --font-mono: "SF Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: radial-gradient(circle at 15% 0%, #131d33 0%, var(--bg-base) 55%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+
+    /* Top Header */
+    header {
+      background: rgba(16, 23, 38, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, rgba(34,211,238,0.22), rgba(167,139,250,0.28));
+      border: 1px solid var(--cyan);
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: 0.5px;
+      color: var(--cyan);
+      box-shadow: 0 0 18px rgba(34, 211, 238, 0.18);
+    }
+
+    .brand-title {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--violet-bg);
+      color: var(--violet);
+      border: 1px solid rgba(167, 139, 250, 0.35);
+      text-transform: uppercase;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 8px var(--emerald);
+    }
+
+    .dot.offline {
+      background: var(--amber);
+      box-shadow: 0 0 8px var(--amber);
+    }
+
+    /* Controls Toolbar */
+    .toolbar {
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .lens-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .lens-btn {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 7px 13px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .lens-btn:hover {
+      border-color: var(--border-bright);
+      color: var(--text-main);
+    }
+
+    .lens-btn.active {
+      background: var(--cyan-bg);
+      color: var(--cyan);
+      border-color: var(--cyan);
+      box-shadow: 0 0 14px rgba(34, 211, 238, 0.14);
+    }
+
+    .toggles-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .ctrl-select {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 7px 11px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .toggle-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.18s ease;
+    }
+
+    .toggle-chip.active-prune {
+      background: var(--violet-bg);
+      color: var(--violet);
+      border-color: var(--violet);
+    }
+
+    .toggle-chip.active-offline {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border-color: var(--amber);
+    }
+
+    .btn-reset {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 7px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-reset:hover {
+      color: var(--rose);
+      border-color: var(--rose);
+    }
+
+    /* Main Workspace Grid */
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: minmax(540px, 1.35fr) minmax(390px, 1fr);
+      gap: 18px;
+      padding: 18px 24px 24px;
+      max-width: 1680px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1080px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.32);
+    }
+
+    .panel-header {
+      padding: 13px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(22, 32, 51, 0.55);
+    }
+
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+
+    .panel-subtitle {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    /* Left DAG Canvas Area */
+    .dag-stage {
+      position: relative;
+      flex: 1;
+      min-height: 460px;
+      background:
+        radial-gradient(rgba(59, 82, 126, 0.22) 1px, transparent 1px);
+      background-size: 22px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .lens-banner {
+      margin: 14px 16px 0;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(22, 32, 51, 0.88);
+      border: 1px solid var(--border-bright);
+      font-size: 12.5px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .lens-banner strong {
+      color: var(--cyan);
+    }
+
+    .svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+      padding: 6px 10px;
+    }
+
+    svg#dagSvg {
+      width: 100%;
+      height: auto;
+      min-width: 680px;
+      max-height: 430px;
+      display: block;
+    }
+
+    .edge-path {
+      fill: none;
+      stroke-width: 2.3;
+      transition: stroke 0.25s ease, opacity 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .edge-active-flow {
+      fill: none;
+      stroke-width: 2.6;
+      stroke-dasharray: 7 7;
+      animation: dashFlow 1.2s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes dashFlow {
+      to {
+        stroke-dashoffset: -28;
+      }
+    }
+
+    .dag-node {
+      cursor: pointer;
+      transition: transform 0.18s ease;
+    }
+
+    .dag-node:hover rect.node-box {
+      filter: brightness(1.15);
+    }
+
+    .dag-legend {
+      padding: 11px 16px;
+      border-top: 1px solid var(--border);
+      background: rgba(16, 23, 38, 0.9);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .swatch {
+      width: 11px;
+      height: 11px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    /* Telemetry Drawer inside Left Panel */
+    .telemetry-box {
+      border-top: 1px solid var(--border);
+      background: #0b101b;
+      padding: 12px 16px;
+    }
+
+    .telemetry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .telemetry-log {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      max-height: 115px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .log-entry {
+      color: #cbd5e1;
+      padding: 3px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.02);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .log-entry .ts {
+      color: var(--text-dim);
+      margin-right: 6px;
+    }
+
+    .log-entry .tag {
+      color: var(--cyan);
+      margin-right: 6px;
+    }
+
+    /* Right Inspector Panel */
+    .inspector-tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-card);
+    }
+
+    .insp-tab {
+      padding: 11px 8px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .insp-tab:hover {
+      color: var(--text-main);
+    }
+
+    .insp-tab.active {
+      color: var(--cyan);
+      border-bottom-color: var(--cyan);
+      background: rgba(34, 211, 238, 0.06);
+    }
+
+    .inspector-body {
+      padding: 18px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      overflow-y: auto;
+      max-height: 680px;
+    }
+
+    .node-head-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 14px;
+    }
+
+    .node-badges {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .type-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.4px;
+    }
+
+    .type-SYNCZ-SRLO {
+      background: var(--cyan-bg);
+      color: var(--cyan);
+      border: 1px solid rgba(34, 211, 238, 0.4);
+    }
+
+    .type-SYNCTESS {
+      background: var(--amber-bg);
+      color: var(--amber);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .type-SYNTHCRED {
+      background: var(--emerald-bg);
+      color: var(--emerald);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+    }
+
+    .state-badge {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .st-VERIFIED { background: var(--emerald-bg); color: var(--emerald); }
+    .st-PRUNED { background: var(--violet-bg); color: var(--violet); }
+    .st-READY { background: var(--cyan-bg); color: var(--cyan); }
+    .st-LOCKED { background: rgba(100,116,139,0.2); color: var(--text-muted); }
+
+    .node-title-lg {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .node-cid {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .spec-row {
+      background: rgba(22, 32, 51, 0.65);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .spec-label {
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .spec-val {
+      font-size: 12.5px;
+      color: var(--text-main);
+    }
+
+    .spec-val.mono {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      color: var(--cyan);
+    }
+
+    .action-card {
+      background: linear-gradient(145deg, rgba(29, 42, 66, 0.9), rgba(16, 23, 38, 0.95));
+      border: 1px solid var(--border-bright);
+      border-radius: 11px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #06b6d4, #6366f1);
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      border-radius: 9px;
+      padding: 11px 16px;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-1px);
+      opacity: 0.95;
+    }
+
+    .btn-primary:disabled {
+      background: #1e293b;
+      color: var(--text-dim);
+      cursor: not-allowed;
+    }
+
+    /* Host Simulator Viewport */
+    .host-switcher {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .host-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .host-btn.active {
+      border-color: var(--cyan);
+      color: var(--cyan);
+      background: var(--cyan-bg);
+    }
+
+    .viewport-frame {
+      background: #0b101d;
+      border: 1px solid var(--border-bright);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .vp-chrome {
+      background: var(--bg-elevated);
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .vp-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .vp-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #475569;
+    }
+
+    .vp-content {
+      padding: 15px;
+      font-size: 12.5px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .code-box {
+      background: #070b14;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.55;
+      color: #a5f3fc;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .copy-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-copy {
+      background: var(--bg-elevated);
+      color: var(--text-main);
+      border: 1px solid var(--border-bright);
+      border-radius: 7px;
+      padding: 5px 11px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-copy:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand-group">
+      <div class="brand-mark">Æ</div>
+      <div>
+        <div class="brand-title">
+          SOVRÆG LABS // SYNCZINE EXPLORER
+          <span class="brand-tag">ALCHEMOSAIC COMMONS v2.0</span>
+        </div>
+        <div class="brand-sub">Decentralized CRDT-DAG Learning Container, Polymorphic SYNCZ-SRLO Runtime &amp; W3C VCDM v2.0 Credential Simulator</div>
+      </div>
+    </div>
+
+    <div class="status-pills">
+      <div class="pill">
+        <span class="dot" id="netDot"></span>
+        <span id="netLabel">CRDT Relay: Synced (IndexedDB + Peers)</span>
+      </div>
+      <div class="pill" id="progressPill">Mastery: 0 / 6 Nodes Verified</div>
+    </div>
+  </header>
+
+  <section class="toolbar">
+    <div class="lens-group" id="lensGroup">
+      <button class="lens-btn active" data-lens="dag">1. CRDT-DAG Learning Path</button>
+      <button class="lens-btn" data-lens="runtime">2. Polymorphic SRLO Runtime</button>
+      <button class="lens-btn" data-lens="ssi">3. SSI Cryptographic Proof Chain</button>
+    </div>
+
+    <div class="toggles-group">
+      <select class="ctrl-select" id="routeSelect" title="Select OR-Equivalent Modality Branch">
+        <option value="02A">OR Modality: Visual Wasm Sandbox (SRLO-02A)</option>
+        <option value="02B">OR Modality: Formal Spec &amp; Feed Frame (SRLO-02B)</option>
+      </select>
+
+      <div class="toggle-chip" id="pruneToggle">
+        <span>⚡ Simulate Prior SYNTHCRED Pruning</span>
+      </div>
+
+      <div class="toggle-chip" id="offlineToggle">
+        <span>📡 Offline Partition Mode</span>
+      </div>
+
+      <button class="btn-reset" id="resetBtn">Reset DAG</button>
+    </div>
+  </section>
+
+  <main>
+    <!-- LEFT: Interactive Directed Acyclic Graph -->
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">SYNCZINE Directed Acyclic Graph (IPLD + Automerge/Yjs State)</div>
+          <div class="panel-subtitle">Click any vertex to inspect its polymorphic host adapters, execute sandbox verification, or copy its JSON-LD schema</div>
+        </div>
+      </div>
+
+      <div class="dag-stage">
+        <div class="lens-banner" id="lensBanner">
+          <div><strong>Lens 1 — Causal DAG Orchestration:</strong> Solid edges enforce strict <code>REQUIRES_ALL (AND)</code> prerequisites; dashed edges permit sovereign <code>REQUIRES_ANY (OR)</code> modality choice.</div>
+        </div>
+
+        <div class="svg-wrap">
+          <svg id="dagSvg" viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#475569" />
+              </marker>
+              <marker id="arrow-cyan" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#22d3ee" />
+              </marker>
+              <marker id="arrow-emerald" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#34d399" />
+              </marker>
+              <marker id="arrow-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+              </marker>
+            </defs>
+
+            <!-- Column Headers -->
+            <text x="105" y="28" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle" letter-spacing="0.8">EXECUTION LAYER (SYNCZ-SRLO)</text>
+            <text x="370" y="28" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle" letter-spacing="0.8">POLYMORPHIC OR-BRANCH</text>
+            <text x="580" y="28" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle" letter-spacing="0.8">EVIDENCE GATES (SYNCTESS)</text>
+            <text x="748" y="28" fill="#64748b" font-size="10.5" font-weight="700" text-anchor="middle" letter-spacing="0.8">SYNTHCRED</text>
+
+            <g id="edgesLayer"></g>
+            <g id="nodesLayer"></g>
+          </svg>
+        </div>
+
+        <div class="dag-legend">
+          <div class="legend-items">
+            <span class="legend-item"><span class="swatch" style="background:#22d3ee"></span>SYNCZ-SRLO (React + Wasm)</span>
+            <span class="legend-item"><span class="swatch" style="background:#fbbf24"></span>SYNCTESS (Skill Evidence)</span>
+            <span class="legend-item"><span class="swatch" style="background:#34d399"></span>SYNTHCRED (W3C VC v2.0)</span>
+            <span class="legend-item"><span class="swatch" style="background:#a78bfa"></span>Wallet-Pruned Node</span>
+          </div>
+          <div id="pendingQueueLabel" style="font-family:var(--font-mono); color:var(--amber);"></div>
+        </div>
+      </div>
+
+      <div class="telemetry-box">
+        <div class="telemetry-header">
+          <span>LOCAL SOVEREIGN EVENT STREAM (CRDT + xAPI + ZERO-TRUST SANDBOX)</span>
+          <span id="clockCounter">Vector Clock: { sovraenaut_01: 1 }</span>
+        </div>
+        <div class="telemetry-log" id="telemetryLog"></div>
+      </div>
+    </section>
+
+    <!-- RIGHT: Multi-Tab Node Inspector & Simulator -->
+    <section class="panel">
+      <div class="inspector-tabs">
+        <button class="insp-tab active" data-tab="spec">Node &amp; Execution</button>
+        <button class="insp-tab" data-tab="viewport">Polymorphic Host</button>
+        <button class="insp-tab" data-tab="schema">JSON-LD Schema</button>
+      </div>
+
+      <div class="inspector-body" id="inspectorBody"></div>
+    </section>
+  </main>
+
+  <script>
+    // --- Core SYNCZINE Graph Specification ---
+    const NODES = [
+      {
+        id: "SRLO-01",
+        shortLabel: "SRLO-01",
+        title: "Core Primitives Lab",
+        nodeType: "SYNCZ-SRLO",
+        x: 25, y: 175, w: 165, h: 76,
+        cid: "bafybeig7a1c9z4m2x8k...9f2",
+        delivery: "Web Component (Shadow DOM) / LTI 1.3 / Farcaster Mini App / Tauri PWA",
+        crdtSpec: "Local Yjs Y.Map + IndexedDB Persistence + DID-Signed xAPI",
+        runtimeSpec: "React 19 Isolated Root + Wasm 3.0 Sandbox",
+        ssiSpec: "Ed25519 Ephemeral Session Key -> Learner DID Binding",
+        actionLabel: "Complete Interactive Lab & Commit CRDT State",
+        summary: "Foundational interactive lab introducing decentralized capability primitives with context injected dynamically by the parent SYNCZINE DAG."
+      },
+      {
+        id: "SRLO-02A",
+        shortLabel: "SRLO-02A",
+        title: "Interactive Sandbox Sim",
+        nodeType: "SYNCZ-SRLO",
+        x: 278, y: 78, w: 182, h: 76,
+        cid: "bafybeih9b2q7w4v1n6p...3d1",
+        delivery: "React + WebGPU / In-Browser WebContainer / Offline .car Archive",
+        crdtSpec: "Automerge Commit DAG + Delta Structural Sharing",
+        runtimeSpec: "Cross-Origin Isolated SharedArrayBuffer + Virtualized ServiceWorker TCP",
+        ssiSpec: "Deterministic Wasm Execution Trace Hash",
+        actionLabel: "Run Live Wasm Simulation & Capture Trace",
+        summary: "Visual, compute-intensive simulation branch running live code inside a zero-server browser sandbox."
+      },
+      {
+        id: "SRLO-02B",
+        shortLabel: "SRLO-02B",
+        title: "Formal Spec Walkthrough",
+        nodeType: "SYNCZ-SRLO",
+        x: 278, y: 205, w: 182, h: 76,
+        cid: "bafybeic4c8r5t9m3j2k...8e4",
+        delivery: "Accessible Reader + Farcaster Mini App (424x695) + Mobile PWA",
+        crdtSpec: "Compact YATA Sequence Log + 80% Delta Compression",
+        runtimeSpec: "Lightweight Custom Element + Frame SDK eth_signTypedData_v4",
+        ssiSpec: "Signed Formal Proof Step Assertions",
+        actionLabel: "Verify Formal Proof Walkthrough Steps",
+        summary: "OR-equivalent analytical and mobile-friendly modality satisfying the exact same downstream SYNCTESS competency target."
+      },
+      {
+        id: "SYNCTESS-01",
+        shortLabel: "SYNCTESS-01",
+        title: "Signed Build Artifact",
+        nodeType: "SYNCTESS",
+        x: 505, y: 120, w: 162, h: 78,
+        cid: "bafybeie31a8z6x4v9c1...7c0",
+        delivery: "Portable CLR 2.0 / Open Badges 3.0 Evidence Bundle",
+        crdtSpec: "Immutable IPLD Content-Addressed Evidence Leaf",
+        runtimeSpec: "Isolated Web Worker Rubric Verifier via postMessage()",
+        ssiSpec: "Zero-Trust Wasm Test Harness + Learner DID Signature",
+        actionLabel: "Run Zero-Trust Rubric & Sign SYNCTESS-01",
+        summary: "Tangible evidence checkpoint binding passing sandbox build traces directly to the sovereign learner's DID to prevent Sybil replay."
+      },
+      {
+        id: "SYNCTESS-02",
+        shortLabel: "SYNCTESS-02",
+        title: "Applied System Audit",
+        nodeType: "SYNCTESS",
+        x: 505, y: 275, w: 162, h: 78,
+        cid: "bafybeif59d2p7l3n8w4...2a9",
+        delivery: "IPFS Content-Addressed Portfolio Bundle (.car)",
+        crdtSpec: "Multi-Peer Signed Audit Branch Merge",
+        runtimeSpec: "Deterministic Architecture Lint + Peer Review Payload",
+        ssiSpec: "2-of-3 Alchemosaic Guild Threshold Co-Signature",
+        actionLabel: "Execute Guild Threshold Audit & Sign SYNCTESS-02",
+        summary: "Applied architecture audit verified via deterministic linting plus 2-of-3 threshold co-signatures from credentialed Alchemosaic peers."
+      },
+      {
+        id: "SYNTHCRED-01",
+        shortLabel: "SYNTHCRED",
+        title: "Sovereign Systems Architect",
+        nodeType: "SYNTHCRED",
+        x: 696, y: 196, w: 112, h: 84,
+        cid: "did:key:z6MkpTHR8VNsBxYAAWHut2Geadd9jSwuBV8xRoAnwWsdvktH",
+        delivery: "W3C VCDM v2.0 Wallet / EUDI / ATS Instant Verifier",
+        crdtSpec: "Anchored Edition Pointer + Bitstring Status List v1.0 Index #4092",
+        runtimeSpec: "Offline-Verifiable JSON-LD + refreshService Delta Endpoint",
+        ssiSpec: "BBS+ Zero-Knowledge Selective Disclosure Proof",
+        actionLabel: "Synthesize & Issue W3C v2.0 SYNTHCRED",
+        summary: "Higher-order sovereign credential synthesized from verified SYNCTESS checkpoints with selective disclosure and live delta-refresh support."
+      }
+    ];
+
+    const EDGES = [
+      { from: "SRLO-01", to: "SRLO-02A", logic: "AND", label: "prereq" },
+      { from: "SRLO-01", to: "SRLO-02B", logic: "AND", label: "prereq" },
+      { from: "SRLO-02A", to: "SYNCTESS-01", logic: "OR", label: "OR path A" },
+      { from: "SRLO-02B", to: "SYNCTESS-01", logic: "OR", label: "OR path B" },
+      { from: "SRLO-01", to: "SYNCTESS-02", logic: "AND", label: "foundation" },
+      { from: "SYNCTESS-01", to: "SYNTHCRED-01", logic: "ATTESTS_TO", label: "AND input" },
+      { from: "SYNCTESS-02", to: "SYNTHCRED-01", logic: "ATTESTS_TO", label: "AND input" }
+    ];
+
+    const LENS_COPY = {
+      dag: "<strong>Lens 1 — Causal CRDT-DAG Orchestration:</strong> Local Automerge/Yjs state tracks prerequisite locks offline in <code>IndexedDB</code>; solid lines denote <code>REQUIRES_ALL (AND)</code> edges and dashed lines denote <code>REQUIRES_ANY (OR)</code> modality equivalence.",
+      runtime: "<strong>Lens 2 — Polymorphic SYNCZ-SRLO Runtime:</strong> Each React SRLO mounts inside a version-isolated Shadow DOM / Wasm 3.0 sandbox and adapts via host adapters across Tauri Desktop, Farcaster Mini Apps, and LTI 1.3.",
+      ssi: "<strong>Lens 3 — SSI Cryptographic Proof Chain:</strong> Sandbox execution traces produce DID-signed <code>SYNCTESS</code> evidence bundles that synthesize into a selective-disclosure W3C VCDM v2.0 <code>SYNTHCRED</code>."
+    };
+
+    // --- Mutable Application State ---
+    const state = {
+      lens: "dag",
+      route: "02A",
+      prunePrior: false,
+      offline: false,
+      pendingOfflineCommits: 0,
+      vectorClock: 1,
+      selectedNodeId: "SRLO-01",
+      activeTab: "spec",
+      activeHost: "tauri",
+      verified: new Set(),
+      proofHashes: {},
+      logs: []
+    };
+
+    function pushLog(tag, msg) {
+      const now = new Date();
+      const ts = now.toTimeString().slice(0, 8);
+      state.logs.unshift({ ts, tag, msg });
+      if (state.logs.length > 30) state.logs.pop();
+      renderLogs();
+    }
+
+    function randomHex(len) {
+      const chars = "0123456789abcdef";
+      let out = "";
+      for (let i = 0; i < len; i++) out += chars[Math.floor(Math.random() * 16)];
+      return out;
+    }
+
+    function isNodeSatisfied(id) {
+      if (state.prunePrior && (id === "SRLO-01" || id === "SYNCTESS-01")) {
+        return true;
+      }
+      return state.verified.has(id);
+    }
+
+    function getNodeStatus(id) {
+      if (state.prunePrior && (id === "SRLO-01" || id === "SYNCTESS-01") && !state.verified.has(id)) {
+        return "PRUNED";
+      }
+      if (state.verified.has(id)) {
+        return "VERIFIED";
+      }
+      // Check prerequisites
+      if (id === "SRLO-01") return "READY";
+      if (id === "SRLO-02A" || id === "SRLO-02B") {
+        return isNodeSatisfied("SRLO-01") ? "READY" : "LOCKED";
+      }
+      if (id === "SYNCTESS-01") {
+        return (isNodeSatisfied("SRLO-02A") || isNodeSatisfied("SRLO-02B")) ? "READY" : "LOCKED";
+      }
+      if (id === "SYNCTESS-02") {
+        return isNodeSatisfied("SRLO-01") ? "READY" : "LOCKED";
+      }
+      if (id === "SYNTHCRED-01") {
+        return (isNodeSatisfied("SYNCTESS-01") && isNodeSatisfied("SYNCTESS-02")) ? "READY" : "LOCKED";
+      }
+      return "LOCKED";
+    }
+
+    function executeNode(id) {
+      const status = getNodeStatus(id);
+      if (status !== "READY") return;
+
+      state.vectorClock += 1;
+      state.verified.add(id);
+      const proof = "0x" + randomHex(24);
+      state.proofHashes[id] = proof;
+
+      if (state.offline) {
+        state.pendingOfflineCommits += 1;
+        pushLog("CRDT-LOCAL", `Appended offline delta commit for ${id} (${proof.slice(0, 12)}...) to IndexedDB`);
+      } else {
+        pushLog("EXEC-VERIFY", `${id} verified & synced -> proof ${proof.slice(0, 14)}...`);
+      }
+
+      if (id === "SYNTHCRED-01") {
+        pushLog("W3C-VCDM-2.0", "Issued BBS+ Selective-Disclosure SYNTHCRED to Learner Wallet!");
+      }
+
+      renderAll();
+    }
+
+    // --- SVG Graph Rendering ---
+    function getNodeById(id) {
+      return NODES.find(n => n.id === id);
+    }
+
+    function renderDAG() {
+      const edgesLayer = document.getElementById("edgesLayer");
+      const nodesLayer = document.getElementById("nodesLayer");
+      edgesLayer.innerHTML = "";
+      nodesLayer.innerHTML = "";
+
+      // Draw Edges
+      EDGES.forEach(edge => {
+        const src = getNodeById(edge.from);
+        const dst = getNodeById(edge.to);
+        const x1 = src.x + src.w;
+        const y1 = src.y + src.h / 2;
+        const x2 = dst.x;
+        const y2 = dst.y + dst.h / 2;
+        const dx = Math.max(48, (x2 - x1) * 0.5);
+        const d = `M ${x1} ${y1} C ${x1 + dx} ${y1}, ${x2 - dx} ${y2}, ${x2} ${y2}`;
+
+        const isRouteDeemphasized =
+          (edge.from === "SRLO-02A" && state.route === "02B" && !isNodeSatisfied("SRLO-02A")) ||
+          (edge.from === "SRLO-02B" && state.route === "02A" && !isNodeSatisfied("SRLO-02B")) ||
+          (edge.to === "SRLO-02A" && state.route === "02B" && !isNodeSatisfied("SRLO-02A")) ||
+          (edge.to === "SRLO-02B" && state.route === "02A" && !isNodeSatisfied("SRLO-02B"));
+
+        const srcDone = isNodeSatisfied(edge.from);
+        const dstDone = isNodeSatisfied(edge.to);
+
+        let stroke = "#334155";
+        let marker = "url(#arrow-muted)";
+        if (state.prunePrior && (edge.to === "SYNCTESS-01" || edge.from === "SRLO-01" && edge.to !== "SYNCTESS-02")) {
+          stroke = "#7c3aed";
+          marker = "url(#arrow-violet)";
+        }
+        if (srcDone && dstDone) {
+          stroke = "#34d399";
+          marker = "url(#arrow-emerald)";
+        } else if (srcDone && !isRouteDeemphasized) {
+          stroke = "#22d3ee";
+          marker = "url(#arrow-cyan)";
+        }
+
+        const basePath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        basePath.setAttribute("d", d);
+        basePath.setAttribute("class", "edge-path");
+        basePath.setAttribute("stroke", stroke);
+        basePath.setAttribute("marker-end", marker);
+        basePath.setAttribute("opacity", isRouteDeemphasized ? "0.28" : "0.95");
+        if (edge.logic === "OR") {
+          basePath.setAttribute("stroke-dasharray", "6 5");
+        }
+        edgesLayer.appendChild(basePath);
+
+        // Animated flow overlay on active/unlocked paths
+        if (srcDone && !isRouteDeemphasized) {
+          const animPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
+          animPath.setAttribute("d", d);
+          animPath.setAttribute("class", "edge-active-flow");
+          animPath.setAttribute("stroke", dstDone ? "#34d399" : "#22d3ee");
+          animPath.setAttribute("opacity", "0.75");
+          edgesLayer.appendChild(animPath);
+        }
+
+        // Edge Badge Label
+        const mx = (x1 + x2) / 2;
+        const my = (y1 + y2) / 2 - 6;
+        const lbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        lbl.setAttribute("x", mx);
+        lbl.setAttribute("y", my);
+        lbl.setAttribute("text-anchor", "middle");
+        lbl.setAttribute("font-size", "9.5");
+        lbl.setAttribute("font-family", "monospace");
+        lbl.setAttribute("fill", isRouteDeemphasized ? "#475569" : "#94a3b8");
+        lbl.textContent = edge.logic === "ATTESTS_TO" ? "AND+ATTEST" : edge.logic;
+        edgesLayer.appendChild(lbl);
+      });
+
+      // Draw Nodes
+      NODES.forEach(node => {
+        const status = getNodeStatus(node.id);
+        const isSelected = state.selectedNodeId === node.id;
+
+        const isAltBranch =
+          (node.id === "SRLO-02A" && state.route === "02B" && status !== "VERIFIED") ||
+          (node.id === "SRLO-02B" && state.route === "02A" && status !== "VERIFIED");
+
+        let borderCol = "#334155";
+        let accentCol = "#22d3ee";
+        if (node.nodeType === "SYNCTESS") accentCol = "#fbbf24";
+        if (node.nodeType === "SYNTHCRED") accentCol = "#34d399";
+
+        if (status === "VERIFIED") borderCol = "#34d399";
+        else if (status === "PRUNED") borderCol = "#a78bfa";
+        else if (status === "READY") borderCol = accentCol;
+
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "dag-node");
+        g.setAttribute("opacity", isAltBranch ? "0.48" : "1");
+        g.addEventListener("click", () => {
+          state.selectedNodeId = node.id;
+          renderAll();
+        });
+
+        // Selection Halo
+        if (isSelected) {
+          const halo = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+          halo.setAttribute("x", node.x - 4);
+          halo.setAttribute("y", node.y - 4);
+          halo.setAttribute("width", node.w + 8);
+          halo.setAttribute("height", node.h + 8);
+          halo.setAttribute("rx", "13");
+          halo.setAttribute("fill", "none");
+          halo.setAttribute("stroke", accentCol);
+          halo.setAttribute("stroke-width", "2");
+          halo.setAttribute("stroke-dasharray", "4 3");
+          g.appendChild(halo);
+        }
+
+        const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        rect.setAttribute("class", "node-box");
+        rect.setAttribute("x", node.x);
+        rect.setAttribute("y", node.y);
+        rect.setAttribute("width", node.w);
+        rect.setAttribute("height", node.h);
+        rect.setAttribute("rx", "10");
+        rect.setAttribute("fill", "#151f32");
+        rect.setAttribute("stroke", borderCol);
+        rect.setAttribute("stroke-width", isSelected ? "2.4" : "1.6");
+        g.appendChild(rect);
+
+        // Top Accent Strip
+        const strip = document.createElementNS("http://www.w3.org/2000/svg", "line");
+        strip.setAttribute("x1", node.x + 10);
+        strip.setAttribute("y1", node.y + 1);
+        strip.setAttribute("x2", node.x + node.w - 10);
+        strip.setAttribute("y2", node.y + 1);
+        strip.setAttribute("stroke", accentCol);
+        strip.setAttribute("stroke-width", "2.5");
+        g.appendChild(strip);
+
+        // Node ID + Status Pill
+        const idTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        idTxt.setAttribute("x", node.x + 10);
+        idTxt.setAttribute("y", node.y + 20);
+        idTxt.setAttribute("fill", accentCol);
+        idTxt.setAttribute("font-family", "monospace");
+        idTxt.setAttribute("font-size", "10");
+        idTxt.setAttribute("font-weight", "700");
+        idTxt.textContent = node.shortLabel;
+        g.appendChild(idTxt);
+
+        const stTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        stTxt.setAttribute("x", node.x + node.w - 9);
+        stTxt.setAttribute("y", node.y + 20);
+        stTxt.setAttribute("text-anchor", "end");
+        stTxt.setAttribute("font-family", "monospace");
+        stTxt.setAttribute("font-size", "9");
+        stTxt.setAttribute("font-weight", "700");
+        stTxt.setAttribute("fill",
+          status === "VERIFIED" ? "#34d399" :
+          status === "PRUNED" ? "#a78bfa" :
+          status === "READY" ? "#e2e8f0" : "#64748b"
+        );
+        stTxt.textContent = status === "VERIFIED" ? "✓ VERIFIED" : status === "PRUNED" ? "⚡ PRUNED" : status;
+        g.appendChild(stTxt);
+
+        // Title
+        const titleTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        titleTxt.setAttribute("x", node.x + 10);
+        titleTxt.setAttribute("y", node.y + 41);
+        titleTxt.setAttribute("fill", "#f1f5f9");
+        titleTxt.setAttribute("font-size", "11.5");
+        titleTxt.setAttribute("font-weight", "700");
+        titleTxt.textContent = node.title.length > 22 ? node.title.slice(0, 21) + "…" : node.title;
+        g.appendChild(titleTxt);
+
+        // Lens-specific subcaption
+        let subLine = node.cid.slice(0, 19) + "…";
+        if (state.lens === "runtime") {
+          subLine = node.nodeType === "SYNCZ-SRLO" ? "React + Wasm Adapter" : node.nodeType === "SYNCTESS" ? "Worker Rubric Gate" : "Wallet VC Endpoint";
+        } else if (state.lens === "ssi") {
+          subLine = node.nodeType === "SYNTHCRED" ? "BBS+ Selective Proof" : "DID-Signed Payload";
+        }
+
+        const subTxt = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        subTxt.setAttribute("x", node.x + 10);
+        subTxt.setAttribute("y", node.y + 60);
+        subTxt.setAttribute("fill", "#94a3b8");
+        subTxt.setAttribute("font-family", "monospace");
+        subTxt.setAttribute("font-size", "9.5");
+        subTxt.textContent = subLine;
+        g.appendChild(subTxt);
+
+        nodesLayer.appendChild(g);
+      });
+    }
+
+    // --- Inspector Rendering ---
+    function buildSchemaJSON(node, status) {
+      const proofHash = state.proofHashes[node.id] || "0xpending_execution_trace";
+      if (node.nodeType === "SYNCZ-SRLO") {
+        return JSON.stringify({
+          "@context": ["https://www.w3.org/ns/did/v1", "https://alchemosaic.org/ns/synczine/v2"],
+          "type": "SynczSRLOManifest",
+          "id": `ipld://${node.cid}`,
+          "nodeId": node.id,
+          "title": node.title,
+          "crdtEngine": "Automerge-Wasm / Yjs-Delta",
+          "vectorClock": { "sovraenaut_01": state.vectorClock },
+          "polymorphicAdapters": ["custom-element-shadow-dom", "farcaster-miniapp-424x695", "lti-1.3-ags", "tauri-local-pwa"],
+          "executionStatus": status,
+          "lastStateCommit": proofHash
+        }, null, 2);
+      }
+      if (node.nodeType === "SYNCTESS") {
+        return JSON.stringify({
+          "@context": [
+            "https://www.w3.org/ns/credentials/v2",
+            "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+          ],
+          "type": ["VerifiableCredential", "OpenBadgeCredential", "SynctessEvidenceBundle"],
+          "id": `urn:uuid:${node.id.toLowerCase()}-artifact`,
+          "credentialSubject": {
+            "id": "did:key:z6MksovraenautLearnerWallet991",
+            "evidenceType": node.title,
+            "artifactCid": node.cid,
+            "sandboxTraceDigest": proofHash,
+            "verificationMode": node.id === "SYNCTESS-02" ? "2-of-3-Alchemosaic-Guild-Multisig" : "Zero-Trust-Wasm-Harness"
+          },
+          "status": status
+        }, null, 2);
+      }
+      return JSON.stringify({
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2",
+          "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+        ],
+        "type": ["VerifiableCredential", "OpenBadgeCredential", "SynthCredMastery"],
+        "issuer": {
+          "id": "did:web:alchemosaic.sovraeg.org",
+          "name": "SOVRÆG LABS // Alchemosaic Open Learning Commons"
+        },
+        "validFrom": new Date().toISOString(),
+        "credentialSubject": {
+          "id": "did:key:z6MksovraenautLearnerWallet991",
+          "achievement": {
+            "name": node.title,
+            "synthesizedFrom": ["SYNCTESS-01", "SYNCTESS-02"],
+            "synczineEditionCid": "bafybeisynczinev2rootdag8841"
+          }
+        },
+        "credentialStatus": {
+          "id": "https://alchemosaic.sovraeg.org/status/bitstring#4092",
+          "type": "BitstringStatusListEntry",
+          "statusPurpose": "revocation",
+          "statusListIndex": "4092"
+        },
+        "refreshService": {
+          "id": "https://alchemosaic.sovraeg.org/delta-synczine/v2.1",
+          "type": "SynczineDeltaUpgradeService"
+        },
+        "proof": {
+          "type": "DataIntegrityProof",
+          "cryptosuite": "bbs-2023",
+          "proofPurpose": "assertionMethod",
+          "proofValue": proofHash
+        }
+      }, null, 2);
+    }
+
+    function renderInspector() {
+      const container = document.getElementById("inspectorBody");
+      const node = getNodeById(state.selectedNodeId);
+      const status = getNodeStatus(node.id);
+
+      const headerHTML = `
+        <div class="node-head-card">
+          <div class="node-badges">
+            <span class="type-badge type-${node.nodeType}">${node.nodeType}</span>
+            <span class="state-badge st-${status}">${status === "PRUNED" ? "PRE-SATISFIED VIA WALLET" : status}</span>
+          </div>
+          <div class="node-title-lg">${node.id}: ${node.title}</div>
+          <div class="node-cid">${node.cid}</div>
+        </div>
+      `;
+
+      if (state.activeTab === "spec") {
+        let btnText = node.actionLabel;
+        let disabledAttr = "";
+        let helperNote = "Prerequisites satisfied. Execute inside local browser sandbox to append a DID-signed proof to the CRDT-DAG.";
+
+        if (status === "LOCKED") {
+          disabledAttr = "disabled";
+          btnText = "Locked — Satisfy Upstream DAG Prerequisites First";
+          helperNote = "Causal DAG lock active: complete upstream prerequisite nodes (or toggle Prior SYNTHCRED Wallet Pruning) to unlock.";
+        } else if (status === "VERIFIED") {
+          disabledAttr = "disabled";
+          btnText = "✓ Node Cryptographically Verified in Local DAG";
+          helperNote = `Signed execution digest: ${state.proofHashes[node.id]}`;
+        } else if (status === "PRUNED") {
+          disabledAttr = "disabled";
+          btnText = "⚡ Bypassed via Sovereign Wallet Credential Intersection";
+          helperNote = "Zero-Redundancy DAG Pruning matched an existing SYNTHCRED competency hash in the learner's wallet.";
+        }
+
+        container.innerHTML = `
+          ${headerHTML}
+          <p style="font-size:12.5px; color:var(--text-muted);">${node.summary}</p>
+          <div class="spec-grid">
+            <div class="spec-row">
+              <div class="spec-label">Polymorphic Delivery Targets</div>
+              <div class="spec-val">${node.delivery}</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-label">CRDT &amp; Sovereign State Persistence</div>
+              <div class="spec-val mono">${node.crdtSpec}</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-label">Sandbox &amp; Execution Isolation</div>
+              <div class="spec-val">${node.runtimeSpec}</div>
+            </div>
+            <div class="spec-row">
+              <div class="spec-label">Cryptographic Attestation Spec</div>
+              <div class="spec-val mono">${node.ssiSpec}</div>
+            </div>
+          </div>
+          <div class="action-card">
+            <div style="font-size:12px; color:var(--text-muted);">${helperNote}</div>
+            <button class="btn-primary" id="execNodeBtn" ${disabledAttr}>${btnText}</button>
+          </div>
+        `;
+
+        const btn = document.getElementById("execNodeBtn");
+        if (btn && !disabledAttr) {
+          btn.addEventListener("click", () => executeNode(node.id));
+        }
+        return;
+      }
+
+      if (state.activeTab === "viewport") {
+        const hostTemplates = {
+          tauri: {
+            bar: "SOVRAELEX Desktop Runtime (Tauri + Rust + Local OPFS/IndexedDB)",
+            body: `
+              <div style="color:var(--emerald); font-family:var(--font-mono); font-size:11px;">● WebGPU + Wasm 3.0 Sandbox Active | Zero Cloud Dependency</div>
+              <div>Mounting <strong>${node.id}</strong> as an isolated React 19 Shadow DOM root backed by local Automerge/Yjs storage.</div>
+              <div class="code-box">// Local-First Host Bridge
+const doc = await sovraegVault.openCRDT("${node.id}");
+const trace = await wasmSandbox.runDeterministicSuite(userArtifact);
+await learnerDID.signAndCommit(doc, trace);</div>
+            `
+          },
+          farcaster: {
+            bar: "Farcaster Mini App Modal (424x695px) — @farcaster/miniapp-sdk",
+            body: `
+              <div style="color:var(--violet); font-family:var(--font-mono); font-size:11px;">● /.well-known/farcaster.json + fc:miniapp Embed</div>
+              <div>In-feed discovery card launches <strong>${node.title}</strong> directly inside social feed without stripping JS or losing session state.</div>
+              <div class="code-box">await sdk.actions.ready();
+const sig = await walletProvider.request({
+  method: "eth_signTypedData_v4",
+  params: [fidAddress, synctessTypedPayload]
+});</div>
+            `
+          },
+          lti: {
+            bar: "Institutional LMS Frame — LTI 1.3 Advantage + cmi5 Dual-Write",
+            body: `
+              <div style="color:var(--cyan); font-family:var(--font-mono); font-size:11px;">● OAuth 2.0 JWT Launch Verified | Dual Telemetry Multiplexer</div>
+              <div>Simultaneously posts institutional AGS grade passbacks to the university LMS while writing sovereign xAPI records to the learner's personal vault.</div>
+              <div class="code-box">await Promise.all([
+  ltiAGS.postScore({ scoreGiven: 100, activityProgress: "Completed" }),
+  sovereignVault.appendXAPI({ verb: "mastered", object: "${node.id}" })
+]);</div>
+            `
+          },
+          car: {
+            bar: "Offline Mesh Bundle — SYNCZINE.car (IPFS Content-Addressed Archive)",
+            body: `
+              <div style="color:var(--amber); font-family:var(--font-mono); font-size:11px;">● Peer-to-Peer Local Wi-Fi / AirDrop WebBundle</div>
+              <div>Complete DAG + React SRLO assets + Wasm test harnesses execute 100% air-gapped and reconcile state vectors via Bloom filters upon reconnect.</div>
+              <div class="code-box">synczineArchive.verifyCID("${node.cid}");
+crdtDoc.mergeRemoteHeads(peerBloomFilterExchange());</div>
+            `
+          }
+        };
+
+        const activeHostData = hostTemplates[state.activeHost];
+        container.innerHTML = `
+          ${headerHTML}
+          <div class="host-switcher">
+            <button class="host-btn ${state.activeHost === "tauri" ? "active" : ""}" data-host="tauri">🖥 Desktop Tauri / PWA</button>
+            <button class="host-btn ${state.activeHost === "farcaster" ? "active" : ""}" data-host="farcaster">📱 Farcaster Mini App</button>
+            <button class="host-btn ${state.activeHost === "lti" ? "active" : ""}" data-host="lti">🎓 LMS (LTI 1.3 + cmi5)</button>
+            <button class="host-btn ${state.activeHost === "car" ? "active" : ""}" data-host="car">📦 Offline .car Bundle</button>
+          </div>
+          <div class="viewport-frame">
+            <div class="vp-chrome">
+              <div class="vp-dots"><span></span><span></span><span></span></div>
+              <span>${activeHostData.bar}</span>
+            </div>
+            <div class="vp-content">
+              ${activeHostData.body}
+            </div>
+          </div>
+        `;
+
+        container.querySelectorAll(".host-btn").forEach(btn => {
+          btn.addEventListener("click", () => {
+            state.activeHost = btn.dataset.host;
+            renderInspector();
+          });
+        });
+        return;
+      }
+
+      // Schema Tab
+      const jsonText = buildSchemaJSON(node, status);
+      container.innerHTML = `
+        ${headerHTML}
+        <div class="copy-bar">
+          <span style="font-size:12px; color:var(--text-muted);">Live IPLD / W3C VCDM v2.0 Payload</span>
+          <button class="btn-copy" id="copyJsonBtn">Copy JSON-LD</button>
+        </div>
+        <div class="code-box" id="schemaCodeBox">${jsonText.replace(/</g, "&lt;")}</div>
+      `;
+
+      document.getElementById("copyJsonBtn").addEventListener("click", (e) => {
+        navigator.clipboard.writeText(jsonText).then(() => {
+          e.target.textContent = "Copied!";
+          setTimeout(() => { e.target.textContent = "Copy JSON-LD"; }, 1400);
+        });
+      });
+    }
+
+    function renderLogs() {
+      const logBox = document.getElementById("telemetryLog");
+      logBox.innerHTML = state.logs.map(item =>
+        `<div class="log-entry"><span class="ts">[${item.ts}]</span><span class="tag">${item.tag}</span>${item.msg}</div>`
+      ).join("");
+    }
+
+    function renderHeaderAndControls() {
+      document.getElementById("lensBanner").innerHTML = `<div>${LENS_COPY[state.lens]}</div>`;
+      document.getElementById("clockCounter").textContent = `Vector Clock: { sovraenaut_01: ${state.vectorClock} }`;
+
+      const satisfiedCount = NODES.filter(n => isNodeSatisfied(n.id)).length;
+      document.getElementById("progressPill").textContent = `Mastery: ${satisfiedCount} / ${NODES.length} Nodes Satisfied`;
+
+      const netDot = document.getElementById("netDot");
+      const netLabel = document.getElementById("netLabel");
+      const pendingLabel = document.getElementById("pendingQueueLabel");
+
+      if (state.offline) {
+        netDot.classList.add("offline");
+        netLabel.textContent = "Offline Partition: Local IndexedDB Only";
+        pendingLabel.textContent = `Pending CRDT Delta Commits: ${state.pendingOfflineCommits}`;
+      } else {
+        netDot.classList.remove("offline");
+        netLabel.textContent = "CRDT Relay: Synced (IndexedDB + Peers)";
+        pendingLabel.textContent = "";
+      }
+
+      document.getElementById("pruneToggle").classList.toggle("active-prune", state.prunePrior);
+      document.getElementById("offlineToggle").classList.toggle("active-offline", state.offline);
+    }
+
+    function renderAll() {
+      renderHeaderAndControls();
+      renderDAG();
+      renderInspector();
+    }
+
+    // --- Event Listeners ---
+    document.querySelectorAll(".lens-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".lens-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        state.lens = btn.dataset.lens;
+        pushLog("LENS-SWITCH", `Switched architecture perspective to ${state.lens.toUpperCase()}`);
+        renderAll();
+      });
+    });
+
+    document.getElementById("routeSelect").addEventListener("change", (e) => {
+      state.route = e.target.value;
+      state.selectedNodeId = state.route === "02A" ? "SRLO-02A" : "SRLO-02B";
+      pushLog("DAG-ROUTE", `Selected OR-equivalent modality branch SRLO-${state.route}`);
+      renderAll();
+    });
+
+    document.getElementById("pruneToggle").addEventListener("click", () => {
+      state.prunePrior = !state.prunePrior;
+      pushLog(
+        "WALLET-DID",
+        state.prunePrior
+          ? "Prior SYNTHCRED detected: pruned SRLO-01 & SYNCTESS-01 -> delta route active"
+          : "Disabled prior-credential pruning -> full SYNCZINE DAG restored"
+      );
+      if (state.prunePrior) {
+        state.selectedNodeId = "SYNCTESS-02";
+      }
+      renderAll();
+    });
+
+    document.getElementById("offlineToggle").addEventListener("click", () => {
+      state.offline = !state.offline;
+      if (state.offline) {
+        pushLog("NET-PARTITION", "Entered air-gapped local-first mode; mutations persist to IndexedDB CRDT");
+      } else {
+        pushLog("BLOOM-SYNC", `Reconnected: reconciled ${state.pendingOfflineCommits} queued CRDT commits via Bloom filter sync`);
+        state.pendingOfflineCommits = 0;
+      }
+      renderAll();
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", () => {
+      state.verified.clear();
+      state.proofHashes = {};
+      state.prunePrior = false;
+      state.offline = false;
+      state.pendingOfflineCommits = 0;
+      state.vectorClock = 1;
+      state.selectedNodeId = "SRLO-01";
+      pushLog("DAG-RESET", "Reset local learner CRDT state to initial root vertex SRLO-01");
+      renderAll();
+    });
+
+    document.querySelectorAll(".insp-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".insp-tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        state.activeTab = tab.dataset.tab;
+        renderInspector();
+      });
+    });
+
+    // Boot
+    pushLog("BOOT", "Initialized local-first SYNCZINE container (bafybeisynczinev2rootdag8841)");
+    renderAll();
+  </script>
+</body>
+</html>
