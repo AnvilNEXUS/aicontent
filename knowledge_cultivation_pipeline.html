@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Knowledge Cultivation Pipeline: Raw Seedlings to SyncZines & Physical Twins</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            slate: {
+              850: '#161b22',
+              900: '#0d1117',
+              950: '#0a0e14',
+            },
+            stage1: {
+              light: '#38bdf8',
+              DEFAULT: '#0284c7',
+              glow: 'rgba(56, 189, 248, 0.15)',
+              border: 'rgba(56, 189, 248, 0.35)',
+            },
+            stage2: {
+              light: '#34d399',
+              DEFAULT: '#059669',
+              glow: 'rgba(52, 211, 153, 0.15)',
+              border: 'rgba(52, 211, 153, 0.35)',
+            },
+            stage3: {
+              light: '#10b981',
+              DEFAULT: '#047857',
+              glow: 'rgba(16, 185, 129, 0.15)',
+              border: 'rgba(16, 185, 129, 0.35)',
+            },
+            stage4: {
+              light: '#60a5fa',
+              DEFAULT: '#2563eb',
+              glow: 'rgba(96, 165, 250, 0.15)',
+              border: 'rgba(96, 165, 250, 0.35)',
+            },
+            stage5: {
+              light: '#fbbf24',
+              DEFAULT: '#d97706',
+              glow: 'rgba(251, 191, 36, 0.15)',
+              border: 'rgba(251, 191, 36, 0.35)',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0e14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #30363d;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #484f58;
+    }
+
+    .pipeline-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .pipeline-card:hover {
+      border-color: #484f58;
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+    }
+
+    .code-editor {
+      background: #070a0e;
+      border: 1px solid #21262d;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .connector-line {
+      position: relative;
+    }
+    .connector-line::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 2px;
+      background: #30363d;
+      transform: translateX(-50%);
+      z-index: 1;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      background: rgba(10, 14, 20, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Subtle pulse animation for loop */
+    @keyframes subtlePulse {
+      0%, 100% { opacity: 0.9; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.008); }
+    }
+    .pulse-glow {
+      animation: subtlePulse 4s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen font-sans selection:bg-cyan-500 selection:text-black pb-24">
+
+  <!-- ================================================================= -->
+  <!-- TOP HERO & NAVIGATION HEADER                                      -->
+  <!-- ================================================================= -->
+  <header class="border-b border-[#30363d] bg-slate-900/90 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+              SYNCDIN PROTOCOL V2.6
+            </span>
+            <span class="text-xs text-slate-400 font-mono">Education 6.0 Self-Sovereign Architecture</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            The Knowledge Cultivation Pipeline Transforms Raw Seedlings into Multimodal SyncZines and Physical Twins
+          </h1>
+        </div>
+
+        <div class="flex items-center gap-2.5">
+          <button id="btn-toggle-telemetry" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition shadow-sm">
+            <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+            Gate & Telemetry Simulator
+          </button>
+          <button id="btn-toggle-qr-demo" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition shadow-sm">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
+            Test QR Loop
+          </button>
+        </div>
+      </div>
+
+      <!-- Control Bar: Journey Selector & Expand All Toggle -->
+      <div class="mt-4 pt-3 border-t border-[#21262d] flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-slate-400 font-mono uppercase text-[11px] tracking-wider">SYNCZINE USER JOURNEY EXAMPLE:</span>
+          
+          <button id="btn-journey-entropy" onclick="switchJourney('entropy')" class="journey-btn px-3 py-1 rounded-md font-medium border border-blue-500/40 bg-blue-600/20 text-blue-300 transition shadow-sm">
+            Entropy & Economics
+          </button>
+          
+          <button id="btn-journey-quantum" onclick="switchJourney('quantum')" class="journey-btn px-3 py-1 rounded-md font-medium border border-[#30363d] bg-slate-850 hover:bg-slate-800 text-slate-300 transition">
+            Quantum Mechanics
+          </button>
+
+          <button id="btn-journey-custom" onclick="openCustomSandboxModal()" class="journey-btn px-3 py-1 rounded-md font-medium border border-purple-500/30 bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 transition flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            Custom / Sandbox Mode
+          </button>
+        </div>
+
+        <button id="btn-master-expand" onclick="toggleAllDrawers()" class="px-3 py-1 rounded-md border border-[#30363d] bg-slate-850 hover:bg-slate-800 text-slate-300 font-mono text-[11px] transition flex items-center gap-1.5">
+          <span id="label-master-expand">Expand All 5 Drawers</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- PIPELINE COLUMN HEADERS                                           -->
+  <!-- ================================================================= -->
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="hidden md:grid grid-cols-12 gap-4 pb-2 border-b border-[#21262d] text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+      <div class="col-span-4">Maturation Stage & Space</div>
+      <div class="col-span-4">Cognitive & Technical Gate</div>
+      <div class="col-span-4">Emitted xAPI Telemetry & Artifact Output</div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- PIPELINE CONTAINER                                                -->
+  <!-- ================================================================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4 space-y-4">
+
+    <!-- ============================================================= -->
+    <!-- STAGE 1: RAW SEEDLING                                         -->
+    <!-- ============================================================= -->
+    <div class="pipeline-stage" data-stage="1">
+      <div class="pipeline-card rounded-xl p-4 sm:p-5 relative border-l-4 border-l-sky-500">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Column 1: Stage & Space -->
+          <div class="md:col-span-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono bg-sky-500/10 text-sky-400 border border-sky-500/30">
+              Stage 1: Raw Seedling (🌱)
+            </div>
+            <div class="text-xs text-slate-300 font-medium mt-1.5">
+              The Greenhouse (Capture/Curate)
+            </div>
+            <button onclick="toggleDrawer(1)" class="mt-2 text-xs font-mono text-sky-400 hover:text-sky-300 flex items-center gap-1 transition">
+              <span id="drawer-arrow-1">▼</span> <span id="drawer-btn-label-1">Hide Stage Example</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Cognitive & Technical Gate -->
+          <div class="md:col-span-4 text-xs text-slate-200">
+            <div class="font-medium">90-Second Blind Capture or Magpie Clip + Dialectical Reaction</div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Active retrieval buffer prevents mindless verbatim copying; enforces immediate cognitive reaction.
+            </div>
+          </div>
+
+          <!-- Column 3: Emitted xAPI & Artifact -->
+          <div class="md:col-span-4 text-xs space-y-2">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Emitted xAPI Telemetry</span>
+              <div class="font-mono text-xs text-slate-300">
+                [Actor] <span class="text-sky-400 font-bold bg-sky-500/10 px-1.5 py-0.5 rounded">collected</span> [Object]
+                <span class="text-slate-400">( <span class="bg-slate-800 text-sky-300 px-1.5 py-0.5 rounded border border-slate-700">VDI baseline recorded</span> )</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Artifact Output</span>
+              <div class="font-mono text-xs text-slate-300">
+                Inquiry Ledger / Raw Atomic Card
+                <span class="text-slate-400">( <span class="bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded border border-slate-700">status: 🌱 seedling</span> )</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 1 INLINE ARTIFACT INSPECTOR (EXPANDED BY DEFAULT) -->
+        <div id="drawer-1" class="mt-5 pt-4 border-t border-[#21262d]">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-sky-400 font-bold mb-3 flex items-center justify-between">
+            <span id="inspector-title-1">INLINE ARTIFACT INSPECTOR — ENTROPY & ECONOMICS SYNCZINE JOURNEY</span>
+            <span class="text-slate-500">STAGE 1 DEEP INSPECTION</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <!-- Concrete Journey Step & Garden Ethos -->
+            <div class="lg:col-span-6 bg-slate-900/80 p-3.5 rounded-lg border border-[#21262d] text-xs">
+              <div class="font-mono text-[10px] uppercase font-bold text-slate-400 mb-1.5">Concrete Journey Step & Garden Ethos</div>
+              <p id="journey-narrative-1" class="text-slate-300 leading-relaxed">
+                Learner clips Nicholas Georgescu-Roegen’s thermodynamic critique of neoclassical economics and records a 90-second blind dialectical reaction questioning whether recycling can ever be 100% entropy-neutral.
+              </p>
+              <div class="mt-3 pt-2.5 border-t border-[#30363d]/60 text-[11px] text-slate-400 italic">
+                <strong class="text-slate-300 not-italic">Seeds & Disclosed Imperfection:</strong> Capture an initial observation, quotation, or hypothesis with its original context and unresolved tension (Weekly Verb: Return).
+              </div>
+            </div>
+
+            <!-- Schema Payload & xAPI Statement -->
+            <div class="lg:col-span-6 code-editor p-3 rounded-lg text-xs">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-2 border-b border-[#21262d] pb-1">
+                <span>SCHEMA PAYLOAD & XAPI STATEMENT</span>
+                <button onclick="copyCode('code-stage-1')" class="text-sky-400 hover:text-sky-300">Copy</button>
+              </div>
+              <pre id="code-stage-1" class="text-slate-300 overflow-x-auto text-[11px] leading-relaxed"><code>---
+id: seed-georgescu-entropy-01
+status: 🌱 seedling
+space: The Greenhouse (Capture/Curate)
+vdi_baseline: 0.34
+unresolved_question: "Can closed-loop solar economies bypass material entropy degradation?"
+---
+xAPI: [Actor] collected [seed-georgescu-entropy-01]
+      (VDI baseline recorded)</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONNECTOR: GATE 1-2 -->
+    <div class="py-1 flex items-center justify-center">
+      <div class="text-[11px] font-mono text-slate-400 flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-[#30363d]">
+        <svg class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        <span>Gate 1-2: Vernacular translation & topological linking</span>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- STAGE 2: SPROUTING NODE                                       -->
+    <!-- ============================================================= -->
+    <div class="pipeline-stage" data-stage="2">
+      <div class="pipeline-card rounded-xl p-4 sm:p-5 relative border-l-4 border-l-emerald-500">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Column 1: Stage & Space -->
+          <div class="md:col-span-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              Stage 2: Sprouting Node (🌿)
+            </div>
+            <div class="text-xs text-slate-300 font-medium mt-1.5">
+              The Garden Plot (Organize)
+            </div>
+            <button onclick="toggleDrawer(2)" class="mt-2 text-xs font-mono text-emerald-400 hover:text-emerald-300 flex items-center gap-1 transition">
+              <span id="drawer-arrow-2">►</span> <span id="drawer-btn-label-2">Inspect Stage Example</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Cognitive & Technical Gate -->
+          <div class="md:col-span-4 text-xs text-slate-200">
+            <div class="font-medium">
+              Vernacular Tax Paid ( <span class="font-mono text-emerald-400 bg-emerald-500/10 px-1 py-0.5 rounded border border-emerald-500/20">VDI &gt; 0.60</span> ) + Rule of Two Links (1 Upward + 1 Lateral Link with Rationale)
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Guarantees student re-authors concept in personal voice and anchors node into cognitive network.
+            </div>
+          </div>
+
+          <!-- Column 3: Emitted xAPI & Artifact -->
+          <div class="md:col-span-4 text-xs space-y-2">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Emitted xAPI Telemetry</span>
+              <div class="font-mono text-xs text-slate-300">
+                [Actor] <span class="text-blue-400 font-bold bg-blue-500/10 px-1.5 py-0.5 rounded">connected</span> [Node A] -&gt; [Target Node]
+                <span class="text-slate-400">( <span class="bg-slate-800 text-emerald-300 px-1.5 py-0.5 rounded border border-slate-700">Or &lt; 0.10, Br &gt; 0.25</span> )</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Artifact Output</span>
+              <div class="font-mono text-xs text-slate-300">
+                Validated Atomic Concept Card
+                <span class="text-slate-400">( <span class="bg-slate-800 text-emerald-400 px-1.5 py-0.5 rounded border border-slate-700">status: 🌿 sprouting</span> )</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 2 INLINE ARTIFACT INSPECTOR -->
+        <div id="drawer-2" class="hidden mt-5 pt-4 border-t border-[#21262d]">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-emerald-400 font-bold mb-3 flex items-center justify-between">
+            <span id="inspector-title-2">INLINE ARTIFACT INSPECTOR — ENTROPY & ECONOMICS SYNCZINE JOURNEY</span>
+            <span class="text-slate-500">STAGE 2 DEEP INSPECTION</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <div class="lg:col-span-6 bg-slate-900/80 p-3.5 rounded-lg border border-[#21262d] text-xs">
+              <div class="font-mono text-[10px] uppercase font-bold text-slate-400 mb-1.5">Concrete Journey Step & Garden Ethos</div>
+              <p id="journey-narrative-2" class="text-slate-300 leading-relaxed">
+                Student re-explains Georgescu-Roegen's thesis using the vernacular analogy of a household kitchen: "You can bake a cake, but you cannot unbake it without expending immense energy." Adds upward link to [[Macro-Thermodynamics]] and lateral link to [[Resource-Depletion-Paradox]].
+              </p>
+              <div class="mt-3 pt-2.5 border-t border-[#30363d]/60 text-[11px] text-slate-400 italic">
+                <strong class="text-slate-300 not-italic">Topological Over Hierarchical:</strong> The Rule of Two Links prevents isolated dead-ends (orphans) and forces relational cognitive integration.
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 code-editor p-3 rounded-lg text-xs">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-2 border-b border-[#21262d] pb-1">
+                <span>SCHEMA PAYLOAD & XAPI STATEMENT</span>
+                <button onclick="copyCode('code-stage-2')" class="text-emerald-400 hover:text-emerald-300">Copy</button>
+              </div>
+              <pre id="code-stage-2" class="text-slate-300 overflow-x-auto text-[11px] leading-relaxed"><code>---
+id: concept-entropy-recycling-limits
+status: 🌿 sprouting
+vdi_score: 0.78
+upward_links:
+  - "[[Macro-Thermodynamics]]"
+lateral_links:
+  - "[[Resource-Depletion-Paradox]]"
+vernacular_analogy: "Unbaking a cake: high entropy transformations are irreversible without surplus work."
+---
+xAPI: [Actor] connected [concept-entropy-recycling-limits] -> [[Macro-Thermodynamics]]
+      (Or = 0.04, Br = 0.38)</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONNECTOR: GATE 2-3 -->
+    <div class="py-1 flex items-center justify-center">
+      <div class="text-[11px] font-mono text-slate-400 flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-[#30363d]">
+        <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        <span>Gate 2-3: Socratic AI challenge & peer cross-pollination</span>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- STAGE 3: EVERGREEN HUB                                        -->
+    <!-- ============================================================= -->
+    <div class="pipeline-stage" data-stage="3">
+      <div class="pipeline-card rounded-xl p-4 sm:p-5 relative border-l-4 border-l-teal-500">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Column 1: Stage & Space -->
+          <div class="md:col-span-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono bg-teal-500/10 text-teal-400 border border-teal-500/30">
+              Stage 3: Evergreen Hub (🌲)
+            </div>
+            <div class="text-xs text-slate-300 font-medium mt-1.5">
+              The Workshop (Distill in Commons)
+            </div>
+            <button onclick="toggleDrawer(3)" class="mt-2 text-xs font-mono text-teal-400 hover:text-teal-300 flex items-center gap-1 transition">
+              <span id="drawer-arrow-3">►</span> <span id="drawer-btn-label-3">Inspect Stage Example</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Cognitive & Technical Gate -->
+          <div class="md:col-span-4 text-xs text-slate-200">
+            <div class="font-medium">
+              Socratic AI Critic Inquiry + Peer Cross-Pollination + Distillation Ratio ( <span class="font-mono text-teal-400 bg-teal-500/10 px-1 py-0.5 rounded border border-teal-500/20">5% &lt; Dr &lt; 15%</span> )
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Verifies compression and synthesis: prevents copy-paste (Dr ~ 100%) and oversimplification (Dr &lt; 1%).
+            </div>
+          </div>
+
+          <!-- Column 3: Emitted xAPI & Artifact -->
+          <div class="md:col-span-4 text-xs space-y-2">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Emitted xAPI Telemetry</span>
+              <div class="font-mono text-xs text-slate-300">
+                [Actor] <span class="text-teal-400 font-bold bg-teal-500/10 px-1.5 py-0.5 rounded">summarized</span> [Cluster]
+                <span class="text-slate-400">( <span class="bg-slate-800 text-teal-300 px-1.5 py-0.5 rounded border border-slate-700">Ci &ge; 5 , #harvest-ready</span> )</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Artifact Output</span>
+              <div class="font-mono text-xs text-slate-300">
+                Thematic Map of Content ( <span class="text-sky-300 font-bold">syncdin-moc.md</span> ) /
+                <span class="text-slate-400">( <span class="bg-slate-800 text-teal-400 px-1.5 py-0.5 rounded border border-slate-700">status: 🌲 evergreen</span> )</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 3 INLINE ARTIFACT INSPECTOR -->
+        <div id="drawer-3" class="hidden mt-5 pt-4 border-t border-[#21262d]">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-teal-400 font-bold mb-3 flex items-center justify-between">
+            <span id="inspector-title-3">INLINE ARTIFACT INSPECTOR — ENTROPY & ECONOMICS SYNCZINE JOURNEY</span>
+            <span class="text-slate-500">STAGE 3 DEEP INSPECTION</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <div class="lg:col-span-6 bg-slate-900/80 p-3.5 rounded-lg border border-[#21262d] text-xs">
+              <div class="font-mono text-[10px] uppercase font-bold text-slate-400 mb-1.5">Concrete Journey Step & Garden Ethos</div>
+              <p id="journey-narrative-3" class="text-slate-300 leading-relaxed">
+                Learner synthesizes 5 atomic cards into a Map of Content (MOC). The AI Socratic Critic challenges: "If recycling is never 100% efficient, how do closed ecological biosystems survive on Earth?" The learner refines synthesis to reflect solar energy throughput. Distillation Ratio clears at 8.4%.
+              </p>
+              <div class="mt-3 pt-2.5 border-t border-[#30363d]/60 text-[11px] text-slate-400 italic">
+                <strong class="text-slate-300 not-italic">Continuous Cultivation:</strong> Notes mature through recurring dialogic distillation and Socratic pressure in the Commons rather than solitary isolation.
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 code-editor p-3 rounded-lg text-xs">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-2 border-b border-[#21262d] pb-1">
+                <span>SCHEMA PAYLOAD & XAPI STATEMENT</span>
+                <button onclick="copyCode('code-stage-3')" class="text-teal-400 hover:text-teal-300">Copy</button>
+              </div>
+              <pre id="code-stage-3" class="text-slate-300 overflow-x-auto text-[11px] leading-relaxed"><code>---
+id: moc-ecological-economics-limits
+title: "Map of Content: Thermodynamic Economic Limits"
+type: moc-hub
+status: 🌲 evergreen
+distillation_ratio: 0.084
+connectivity_index: 6.2
+tags:
+  - syncdin/moc
+  - #harvest-ready
+---
+xAPI: [Actor] summarized [Cluster: Ecological Economics]
+      (source_len: 4200, summary_len: 352, Dr: 0.084, Ci: 6.2)</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONNECTOR: GATE 3-4 -->
+    <div class="py-1 flex items-center justify-center">
+      <div class="text-[11px] font-mono text-slate-400 flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-[#30363d]">
+        <svg class="w-3.5 h-3.5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        <span>Gate 3-4: Multimodal curation & 3 peer reviews</span>
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- STAGE 4: DIGITAL SYNCZINE (.syncz)                            -->
+    <!-- ============================================================= -->
+    <div class="pipeline-stage" data-stage="4">
+      <div class="pipeline-card rounded-xl p-4 sm:p-5 relative border-l-4 border-l-blue-600">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Column 1: Stage & Space -->
+          <div class="md:col-span-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono bg-blue-500/10 text-blue-400 border border-blue-500/30">
+              Stage 4: Digital SyncZine (.syncz)
+            </div>
+            <div class="text-xs text-slate-300 font-medium mt-1.5">
+              The Gallery (Express)
+            </div>
+            <button onclick="toggleDrawer(4)" class="mt-2 text-xs font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1 transition">
+              <span id="drawer-arrow-4">►</span> <span id="drawer-btn-label-4">Inspect Stage Example</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Cognitive & Technical Gate -->
+          <div class="md:col-span-4 text-xs text-slate-200">
+            <div class="font-medium">Assemble 3-5 Evergreen Cards + Visual Canvas + Executive Synthesis + 3 Peer Reviews</div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Transition from private digital garden into public learning hub; integrates interactive HAX and p5.js/D3 blocks.
+            </div>
+          </div>
+
+          <!-- Column 3: Emitted xAPI & Artifact -->
+          <div class="md:col-span-4 text-xs space-y-2">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Emitted xAPI Telemetry</span>
+              <div class="font-mono text-xs text-slate-300">
+                [Actor] <span class="text-purple-400 font-bold bg-purple-500/10 px-1.5 py-0.5 rounded">published</span> [Artifact]
+                <span class="text-slate-400">( <span class="bg-slate-800 text-purple-300 px-1.5 py-0.5 rounded border border-slate-700">parent_lineage & CC-BY-SA license</span> )</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Artifact Output</span>
+              <div class="font-mono text-xs text-slate-300 flex flex-wrap items-center gap-1">
+                <span>Interactive Multimedia SyncZine (</span>
+                <span class="bg-slate-800 text-sky-400 px-1 py-0.2 rounded border border-slate-700 text-[10px]">HAX</span>
+                <span class="bg-slate-800 text-cyan-400 px-1 py-0.2 rounded border border-slate-700 text-[10px]">WebXR</span>
+                <span class="bg-slate-800 text-pink-400 px-1 py-0.2 rounded border border-slate-700 text-[10px]">p5.js</span>
+                <span class="bg-slate-800 text-amber-400 px-1 py-0.2 rounded border border-slate-700 text-[10px]">D3.js</span>
+                <span>)</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 4 INLINE ARTIFACT INSPECTOR -->
+        <div id="drawer-4" class="hidden mt-5 pt-4 border-t border-[#21262d]">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-blue-400 font-bold mb-3 flex items-center justify-between">
+            <span id="inspector-title-4">INLINE ARTIFACT INSPECTOR — ENTROPY & ECONOMICS SYNCZINE JOURNEY</span>
+            <span class="text-slate-500">STAGE 4 DEEP INSPECTION</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <div class="lg:col-span-6 bg-slate-900/80 p-3.5 rounded-lg border border-[#21262d] text-xs">
+              <div class="font-mono text-[10px] uppercase font-bold text-slate-400 mb-1.5">Concrete Journey Step & Garden Ethos</div>
+              <p id="journey-narrative-4" class="text-slate-300 leading-relaxed">
+                The student packages their MOC into a standalone interactive web publication featuring an interactive D3 Sankey diagram illustrating thermodynamic energy degradation in industrial supply chains. 3 verified classmates complete structured peer reviews via The Commons.
+              </p>
+              <div class="mt-3 pt-2.5 border-t border-[#30363d]/60 text-[11px] text-slate-400 italic">
+                <strong class="text-slate-300 not-italic">Public Expression & TESS:</strong> Knowledge is transformed into Tangible Evidence of Sovereign Skills (TESS), packaged as a resilient client-side application.
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 code-editor p-3 rounded-lg text-xs">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-2 border-b border-[#21262d] pb-1">
+                <span>SCHEMA PAYLOAD & XAPI STATEMENT</span>
+                <button onclick="copyCode('code-stage-4')" class="text-blue-400 hover:text-blue-300">Copy</button>
+              </div>
+              <pre id="code-stage-4" class="text-slate-300 overflow-x-auto text-[11px] leading-relaxed"><code>---
+manifest_id: syncz-dissipative-economics-v1
+format: .syncz (Single File Web Component Package)
+license: CC-BY-SA-4.0
+peer_endorsements: 3
+interactive_components:
+  - "<d3-sankey-entropy src='./data/throughput.json'>"
+  - "<p5-thermo-gas-sim>"
+---
+xAPI: [Actor] published [syncz-dissipative-economics-v1]
+      (peer_reviews: 3, license: "CC-BY-SA-4.0", parent_nodes: 5)</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CONNECTOR: GATE 4-5 WITH SCAN LOOP BUTTON -->
+    <div class="py-1 flex flex-col sm:flex-row items-center justify-between gap-2 px-2">
+      <div class="text-[11px] font-mono text-slate-400 flex items-center gap-2 bg-slate-900 px-3 py-1 rounded-full border border-[#30363d]">
+        <svg class="w-3.5 h-3.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+        <span>Gate 4-5: Inference Engine Logic Gate &rarr; DID Minting + POD Export</span>
+      </div>
+
+      <button onclick="openQRModal()" class="text-[11px] font-mono text-amber-300 bg-amber-500/10 hover:bg-amber-500/20 px-3 py-1 rounded-full border border-amber-500/30 flex items-center gap-1.5 transition">
+        <span>↺</span> <span>Dynamic QR Code Scan Loop (Stage 5 &rarr; Stage 4 / LRS)</span>
+      </button>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- STAGE 5: PHYSICAL TWIN & +V CREDENTIAL                        -->
+    <!-- ============================================================= -->
+    <div class="pipeline-stage" data-stage="5">
+      <div class="pipeline-card rounded-xl p-4 sm:p-5 relative border-l-4 border-l-amber-500">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+          
+          <!-- Column 1: Stage & Space -->
+          <div class="md:col-span-4">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-md text-xs font-bold font-mono bg-amber-500/10 text-amber-400 border border-amber-500/30">
+              Stage 5: Physical Twin & +V Credential
+            </div>
+            <div class="text-xs text-slate-300 font-medium mt-1.5">
+              POD Print Bridge & Sanctum LRS
+            </div>
+            <button onclick="toggleDrawer(5)" class="mt-2 text-xs font-mono text-amber-400 hover:text-amber-300 flex items-center gap-1 transition">
+              <span id="drawer-arrow-5">►</span> <span id="drawer-btn-label-5">Inspect Stage Example</span>
+            </button>
+          </div>
+
+          <!-- Column 2: Cognitive & Technical Gate -->
+          <div class="md:col-span-4 text-xs text-slate-200">
+            <div class="font-medium">
+              Inference Engine Logic Gate Cleared -&gt; <span class="bg-purple-900/60 text-purple-300 font-mono px-1.5 py-0.5 rounded border border-purple-500/30">LearnCard DID Minting</span> + POD PDF Export
+            </div>
+            <div class="text-[11px] text-slate-400 mt-1">
+              Normative Sequence enforced: Pedagogical validation precedes cryptographic verification.
+            </div>
+          </div>
+
+          <!-- Column 3: Emitted xAPI & Artifact -->
+          <div class="md:col-span-4 text-xs space-y-2">
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Emitted xAPI Telemetry</span>
+              <div class="font-mono text-xs text-slate-300">
+                [Actor] <span class="text-blue-400 font-bold bg-blue-500/10 px-1 py-0.2 rounded text-[11px]">interacted-with-physical-twin</span> [QR_Object] -&gt; [Issuer] <span class="text-amber-400 font-bold bg-amber-500/10 px-1 py-0.2 rounded text-[11px]">asserted</span> [Credential]
+              </div>
+            </div>
+            <div>
+              <span class="text-[10px] font-mono uppercase tracking-wider text-slate-400 block mb-0.5">Artifact Output</span>
+              <div class="font-mono text-xs text-slate-300 space-y-1">
+                <div>
+                  Print-on-Demand Zine Booklet ( <span class="bg-slate-800 text-slate-300 px-1 py-0.2 rounded border border-slate-700 text-[10px]">PrintNinja/Mixam</span> ) +
+                </div>
+                <div>
+                  <span class="bg-purple-950/80 text-purple-300 px-1.5 py-0.5 rounded border border-purple-500/40 text-[10px] font-mono">W3C Verifiable Credential v2.0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- STAGE 5 INLINE ARTIFACT INSPECTOR -->
+        <div id="drawer-5" class="hidden mt-5 pt-4 border-t border-[#21262d]">
+          <div class="text-[10px] font-mono uppercase tracking-wider text-amber-400 font-bold mb-3 flex items-center justify-between">
+            <span id="inspector-title-5">INLINE ARTIFACT INSPECTOR — ENTROPY & ECONOMICS SYNCZINE JOURNEY</span>
+            <span class="text-slate-500">STAGE 5 DEEP INSPECTION</span>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            
+            <div class="lg:col-span-6 bg-slate-900/80 p-3.5 rounded-lg border border-[#21262d] text-xs">
+              <div class="font-mono text-[10px] uppercase font-bold text-slate-400 mb-1.5">Concrete Journey Step & Garden Ethos</div>
+              <p id="journey-narrative-5" class="text-slate-300 leading-relaxed">
+                Platform compiles a print-ready PDF for custom POD saddle-stitch publication. Each printed article includes a dynamic QR code. When readers scan it, the interaction is logged to the SQL LRS, and the reader is transported back into the live WebXR / p5.js sandbox. The learner receives a W3C Verifiable Credential anchored to their personal DID.
+              </p>
+              <div class="mt-3 pt-2.5 border-t border-[#30363d]/60 text-[11px] text-slate-400 italic">
+                <strong class="text-slate-300 not-italic">Physical-Digital Symbiosis:</strong> Physical zines honor independent DIY print culture while acting as bi-directional telemetry portals back into decentralized digital memory.
+              </div>
+            </div>
+
+            <div class="lg:col-span-6 code-editor p-3 rounded-lg text-xs">
+              <div class="flex justify-between items-center text-[10px] font-mono text-slate-400 mb-2 border-b border-[#21262d] pb-1">
+                <span>W3C VC V2.0 SCHEMA & XAPI EVENT</span>
+                <button onclick="copyCode('code-stage-5')" class="text-amber-400 hover:text-amber-300">Copy</button>
+              </div>
+              <pre id="code-stage-5" class="text-slate-300 overflow-x-auto text-[11px] leading-relaxed"><code>{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "urn:uuid:synczine-entropy-vc-01",
+  "type": ["VerifiableCredential", "AchievementCredential"],
+  "issuer": "did:web:synczine.io",
+  "credentialSubject": {
+    "id": "did:key:z6MkhaXgBZDvotDkL5257faiz4898G8",
+    "achievement": {
+      "name": "Thermodynamics in Ecological Economics",
+      "criteria": "Dr BETWEEN 0.05 AND 0.15, VDI > 0.60, PeerReviews >= 3"
+    }
+  }
+}
+xAPI: [Actor] interacted-with-physical-twin [QR-Mixam-402]
+      -> [Issuer] asserted [urn:uuid:synczine-entropy-vc-01]</code></pre>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- DYNAMIC QR SCAN LOOP CALLOUT BANNER                           -->
+    <!-- ============================================================= -->
+    <div class="p-4 rounded-xl border border-dashed border-amber-500/40 bg-amber-500/5 text-xs text-amber-200/90 flex flex-col sm:flex-row items-center justify-between gap-3 pulse-glow">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-amber-400 flex-shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.03 8.03 0 01-15.357-2m15.357 2H15"/></svg>
+        </div>
+        <div class="leading-relaxed">
+          <strong class="text-amber-300 font-mono">↺ Dynamic xAPI QR Code Loop (Stage 5 ↺ Stage 4 & Sanctum LRS):</strong>
+          Scanning the Physical Twin booklet emits <span class="font-mono bg-blue-950 text-blue-300 px-1 py-0.5 rounded border border-blue-500/30">interacted-with-physical-twin</span> and <span class="font-mono bg-amber-950 text-amber-300 px-1 py-0.5 rounded border border-amber-500/30">asserted</span> back to the LRS while routing readers to the live <span class="font-mono text-cyan-300">.syncz</span> digital canvas.
+        </div>
+      </div>
+
+      <button onclick="openQRModal()" class="flex-shrink-0 px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold font-mono text-[11px] transition shadow-md shadow-amber-500/20">
+        Simulate Scan
+      </button>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- FOOTER SUMMARY & CITATIONS                                    -->
+    <!-- ============================================================= -->
+    <footer class="pt-6 border-t border-[#21262d] text-xs text-slate-400 space-y-2">
+      <p class="leading-relaxed">
+        Knowledge in SYNCDIN matures through five explicit stages. Notes enter as raw Seedlings, promote to Sprouting once translated into personal vernacular and bound by the Rule of Two Links, consolidate into Evergreen Maps of Content, publish as interactive digital SyncZines, and compile into Print-on-Demand Physical Twins bridged back to the Learning Record Store via dynamic xAPI QR codes.
+      </p>
+      <div class="text-[11px] text-slate-500 font-mono">
+        Data sources: <span class="text-slate-400">EdenLumina (Digital Gardens Guide)</span>, <span class="text-slate-400">Fabric (Digital Garden Patterns & Botanical Taxonomy)</span>, <span class="text-slate-400">Schroeder et al. (2018)</span>, <span class="text-slate-400">Mueller & Oppenheimer (2014)</span>.
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: QR CODE SCANNER SIMULATION                                -->
+  <!-- ================================================================= -->
+  <div id="modal-qr" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-slate-900 border border-[#30363d] rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-[#21262d]">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+          <h3 class="font-bold text-sm text-white font-mono uppercase tracking-wider">Physical Twin &rarr; Digital Canvas Loop</h3>
+        </div>
+        <button onclick="closeQRModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-4 text-xs">
+        <div class="p-4 rounded-xl bg-slate-950 border border-[#21262d] flex items-center gap-4">
+          <!-- Stylized QR Code SVG -->
+          <div class="w-24 h-24 bg-white p-2 rounded-lg flex-shrink-0 flex items-center justify-center">
+            <svg class="w-full h-full text-slate-950" viewBox="0 0 100 100" fill="currentColor">
+              <!-- Position markers -->
+              <rect x="5" y="5" width="30" height="30" rx="4" />
+              <rect x="12" y="12" width="16" height="16" fill="white" />
+              <rect x="16" y="16" width="8" height="8" />
+
+              <rect x="65" y="5" width="30" height="30" rx="4" />
+              <rect x="72" y="12" width="16" height="16" fill="white" />
+              <rect x="76" y="16" width="8" height="8" />
+
+              <rect x="5" y="65" width="30" height="30" rx="4" />
+              <rect x="12" y="72" width="16" height="16" fill="white" />
+              <rect x="16" y="76" width="8" height="8" />
+
+              <!-- Data dots pattern -->
+              <rect x="42" y="10" width="8" height="8" />
+              <rect x="52" y="20" width="6" height="6" />
+              <rect x="40" y="30" width="6" height="6" />
+              <rect x="10" y="45" width="8" height="8" />
+              <rect x="25" y="50" width="6" height="6" />
+              <rect x="45" y="45" width="10" height="10" />
+              <rect x="65" y="45" width="6" height="6" />
+              <rect x="80" y="50" width="8" height="8" />
+              <rect x="45" y="65" width="8" height="8" />
+              <rect x="60" y="70" width="6" height="6" />
+              <rect x="75" y="65" width="10" height="10" />
+              <rect x="50" y="85" width="12" height="6" />
+              <rect x="80" y="82" width="8" height="8" />
+            </svg>
+          </div>
+
+          <div>
+            <div class="font-bold text-slate-200">Mixam Print Twin #0894</div>
+            <div class="text-[11px] text-slate-400 mt-0.5">Target: <code class="text-cyan-400 font-mono">https://syncz.io/v/entropy-economics</code></div>
+            <div class="mt-2 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 inline-block">
+              Dynamic Destination Resolver Active
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label class="font-semibold text-slate-300 block mb-1">Simulated xAPI Telemetry Pipeline Event:</label>
+          <div id="qr-log-terminal" class="code-editor p-3 rounded-lg text-[11px] text-slate-300 space-y-1 max-h-36 overflow-y-auto">
+            <div class="text-slate-500">// Ready to trigger QR scan event...</div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2 border-t border-[#21262d]">
+          <button onclick="triggerQRScanExecution()" class="px-3.5 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-semibold font-mono text-xs transition">
+            Dispatch Scan Event
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- DRAWER / MODAL: INFERENCE ENGINE & GATE SIMULATOR                -->
+  <!-- ================================================================= -->
+  <div id="modal-simulator" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-slate-900 border border-[#30363d] rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-[#21262d]">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+          <h3 class="font-bold text-sm text-white font-mono uppercase tracking-wider">Inference Engine Gate & Telemetry Simulator</h3>
+        </div>
+        <button onclick="closeTelemetrySimulator()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-5 text-xs">
+        <p class="text-slate-400 leading-relaxed">
+          Test how real-time client-side heuristics evaluate a learner's knowledge garden without inspecting private un-published text. Adjust the parameters below to verify whether the <strong>Normative Sequence</strong> unlocks the W3C Verifiable Credential.
+        </p>
+
+        <!-- Slider 1: Vernacular Divergence Index (VDI) -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-[#21262d]">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-semibold text-slate-200">1. Vernacular Divergence Index (VDI):</span>
+            <span id="sim-vdi-val" class="font-mono font-bold text-emerald-400 text-sm">0.78</span>
+          </div>
+          <input id="sim-vdi-slider" type="range" min="0" max="100" value="78" oninput="updateSimCalculations()" class="w-full accent-emerald-500 bg-slate-800 h-2 rounded cursor-pointer">
+          <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+            <span class="text-rose-400">0.0 (Verbatim Copy-Paste)</span>
+            <span>Threshold &ge; 0.60</span>
+            <span class="text-emerald-400">1.0 (Original Vernacular)</span>
+          </div>
+          <div id="sim-vdi-badge" class="mt-2 text-[10px] font-mono text-emerald-400">
+            ✓ Gate 1-2 Cleared: High semantic divergence from Seed Bank anchor.
+          </div>
+        </div>
+
+        <!-- Slider 2: Distillation Ratio (Dr) -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-[#21262d]">
+          <div class="flex justify-between items-center mb-1">
+            <span class="font-semibold text-slate-200">2. Distillation Ratio (Dr):</span>
+            <span id="sim-dr-val" class="font-mono font-bold text-teal-400 text-sm">8.4%</span>
+          </div>
+          <input id="sim-dr-slider" type="range" min="0" max="100" value="8" oninput="updateSimCalculations()" class="w-full accent-teal-500 bg-slate-800 h-2 rounded cursor-pointer">
+          <div class="flex justify-between text-[10px] font-mono text-slate-500 mt-1">
+            <span class="text-rose-400">&lt;1% (Oversimplified)</span>
+            <span class="text-teal-400">Green Zone: 5% &le; Dr &le; 15%</span>
+            <span class="text-rose-400">100% (No Compression)</span>
+          </div>
+          <div id="sim-dr-badge" class="mt-2 text-[10px] font-mono text-teal-400">
+            ✓ Gate 2-3 Cleared: Optimal compression ratio.
+          </div>
+        </div>
+
+        <!-- Checkbox: Rule of Two Links -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-[#21262d] flex items-center justify-between">
+          <div>
+            <div class="font-semibold text-slate-200">3. Rule of Two Links Attached</div>
+            <div class="text-[11px] text-slate-400">1 Upward Mental Model Link + 1 Lateral Cross-Domain Mirror</div>
+          </div>
+          <input id="sim-two-links" type="checkbox" checked onchange="updateSimCalculations()" class="w-5 h-5 accent-emerald-500 rounded bg-slate-900 border-slate-700 cursor-pointer">
+        </div>
+
+        <!-- Counter: Peer Endorsements -->
+        <div class="p-3.5 rounded-xl bg-slate-950 border border-[#21262d] flex items-center justify-between">
+          <div>
+            <div class="font-semibold text-slate-200">4. Commons Peer Endorsements</div>
+            <div class="text-[11px] text-slate-400">Structured reviews submitted by cohort members (Target &ge; 3)</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="changePeerCount(-1)" class="w-7 h-7 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">-</button>
+            <span id="sim-peer-count" class="font-mono font-bold text-sm text-white">3</span>
+            <button onclick="changePeerCount(1)" class="w-7 h-7 rounded bg-slate-800 text-slate-300 font-bold hover:bg-slate-700">+</button>
+          </div>
+        </div>
+
+        <!-- Overall Gate Status Banner -->
+        <div id="sim-gate-result-box" class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 flex items-center justify-between">
+          <div>
+            <div class="font-mono font-bold uppercase text-xs">Inference Engine Verdict:</div>
+            <div id="sim-verdict-title" class="text-sm font-bold text-white mt-0.5">ALL GATES CLEARED &mdash; READY TO MINT VC</div>
+            <div id="sim-verdict-desc" class="text-[11px] text-slate-300 mt-1">Pedagogical validation ($V_1$) complete. Technical verification ($V_2$) unlocked.</div>
+          </div>
+          <button id="btn-mint-vc" onclick="simulateVCMinting()" class="px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-bold text-xs transition shadow-lg shadow-emerald-500/20">
+            Mint W3C VC
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: CUSTOM SANDBOX JOURNEY BUILDER                            -->
+  <!-- ================================================================= -->
+  <div id="modal-custom-sandbox" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-slate-900 border border-[#30363d] rounded-2xl max-w-xl w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-[#21262d]">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+          <h3 class="font-bold text-sm text-white font-mono uppercase tracking-wider">Configure Custom Learning Sandbox</h3>
+        </div>
+        <button onclick="closeCustomSandboxModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-3.5 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Concept or Inquiry Topic Name:</label>
+          <input id="input-custom-topic" type="text" value="Attention Economics & Cognitive Scarcity" class="w-full p-2.5 rounded-lg bg-slate-950 border border-[#30363d] text-slate-200 font-mono focus:border-cyan-500 focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Raw Seedling Clip (Stage 1 Source):</label>
+          <textarea id="input-custom-seed" rows="2" class="w-full p-2.5 rounded-lg bg-slate-950 border border-[#30363d] text-slate-200 font-mono focus:border-cyan-500 focus:outline-none">Herbert Simon (1971): 'A wealth of information creates a poverty of attention and a need to allocate that attention efficiently.'</textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Upward Link (Macro Model):</label>
+            <input id="input-custom-upward" type="text" value="[[Information-Theory]]" class="w-full p-2.5 rounded-lg bg-slate-950 border border-[#30363d] text-slate-200 font-mono focus:border-cyan-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-300 mb-1">Lateral Link (Unexpected Mirror):</label>
+            <input id="input-custom-lateral" type="text" value="[[Tragedy-of-the-Commons]]" class="w-full p-2.5 rounded-lg bg-slate-950 border border-[#30363d] text-slate-200 font-mono focus:border-cyan-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-300 mb-1">Student Vernacular Translation (Stage 2):</label>
+          <textarea id="input-custom-vernacular" rows="2" class="w-full p-2.5 rounded-lg bg-slate-950 border border-[#30363d] text-slate-200 font-mono focus:border-cyan-500 focus:outline-none">When endless notifications and algorithms bombard my screen, my brain cannot digest any of it; human focus becomes the ultimate scarce commodity.</textarea>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-3 border-t border-[#21262d]">
+          <button onclick="applyCustomSandbox()" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-semibold font-mono text-xs transition">
+            Apply Custom Journey to Pipeline
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-cyan-500 text-slate-950 px-4 py-2.5 rounded-lg shadow-xl font-medium text-xs flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-message">Action confirmed</span>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- JAVASCRIPT STATE ENGINE & INTERACTION LOGIC                       -->
+  <!-- ================================================================= -->
+  <script>
+    // -----------------------------------------------------------------
+    // JOURNEY DATASETS
+    // -----------------------------------------------------------------
+    const journeys = {
+      entropy: {
+        name: "ENTROPY & ECONOMICS SYNCZINE JOURNEY",
+        s1: {
+          narrative: "Learner clips Nicholas Georgescu-Roegen’s thermodynamic critique of neoclassical economics and records a 90-second blind dialectical reaction questioning whether recycling can ever be 100% entropy-neutral.",
+          code: `---
+id: seed-georgescu-entropy-01
+status: 🌱 seedling
+space: The Greenhouse (Capture/Curate)
+vdi_baseline: 0.34
+unresolved_question: "Can closed-loop solar economies bypass material entropy degradation?"
+---
+xAPI: [Actor] collected [seed-georgescu-entropy-01]
+      (VDI baseline recorded)`
+        },
+        s2: {
+          narrative: `Student re-explains Georgescu-Roegen's thesis using the vernacular analogy of a household kitchen: "You can bake a cake, but you cannot unbake it without expending immense energy." Adds upward link to [[Macro-Thermodynamics]] and lateral link to [[Resource-Depletion-Paradox]].`,
+          code: `---
+id: concept-entropy-recycling-limits
+status: 🌿 sprouting
+vdi_score: 0.78
+upward_links:
+  - "[[Macro-Thermodynamics]]"
+lateral_links:
+  - "[[Resource-Depletion-Paradox]]"
+vernacular_analogy: "Unbaking a cake: high entropy transformations are irreversible without surplus work."
+---
+xAPI: [Actor] connected [concept-entropy-recycling-limits] -> [[Macro-Thermodynamics]]
+      (Or = 0.04, Br = 0.38)`
+        },
+        s3: {
+          narrative: `Learner synthesizes 5 atomic cards into a Map of Content (MOC). The AI Socratic Critic challenges: "If recycling is never 100% efficient, how do closed ecological biosystems survive on Earth?" The learner refines synthesis to reflect solar energy throughput. Distillation Ratio clears at 8.4%.`,
+          code: `---
+id: moc-ecological-economics-limits
+title: "Map of Content: Thermodynamic Economic Limits"
+type: moc-hub
+status: 🌲 evergreen
+distillation_ratio: 0.084
+connectivity_index: 6.2
+tags:
+  - syncdin/moc
+  - #harvest-ready
+---
+xAPI: [Actor] summarized [Cluster: Ecological Economics]
+      (source_len: 4200, summary_len: 352, Dr: 0.084, Ci: 6.2)`
+        },
+        s4: {
+          narrative: `The student packages their MOC into a standalone interactive web publication featuring an interactive D3 Sankey diagram illustrating thermodynamic energy degradation in industrial supply chains. 3 verified classmates complete structured peer reviews via The Commons.`,
+          code: `---
+manifest_id: syncz-dissipative-economics-v1
+format: .syncz (Single File Web Component Package)
+license: CC-BY-SA-4.0
+peer_endorsements: 3
+interactive_components:
+  - "<d3-sankey-entropy src='./data/throughput.json'>"
+  - "<p5-thermo-gas-sim>"
+---
+xAPI: [Actor] published [syncz-dissipative-economics-v1]
+      (peer_reviews: 3, license: "CC-BY-SA-4.0", parent_nodes: 5)`
+        },
+        s5: {
+          narrative: `Platform compiles a print-ready PDF for custom POD saddle-stitch publication. Each printed article includes a dynamic QR code. When readers scan it, the interaction is logged to the SQL LRS, and the reader is transported back into the live WebXR / p5.js sandbox. The learner receives a W3C Verifiable Credential anchored to their personal DID.`,
+          code: `{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "urn:uuid:synczine-entropy-vc-01",
+  "type": ["VerifiableCredential", "AchievementCredential"],
+  "issuer": "did:web:synczine.io",
+  "credentialSubject": {
+    "id": "did:key:z6MkhaXgBZDvotDkL5257faiz4898G8",
+    "achievement": {
+      "name": "Thermodynamics in Ecological Economics",
+      "criteria": "Dr BETWEEN 0.05 AND 0.15, VDI > 0.60, PeerReviews >= 3"
+    }
+  }
+}
+xAPI: [Actor] interacted-with-physical-twin [QR-Mixam-402]
+      -> [Issuer] asserted [urn:uuid:synczine-entropy-vc-01]`
+        }
+      },
+
+      quantum: {
+        name: "QUANTUM MECHANICS SYNCZINE JOURNEY",
+        s1: {
+          narrative: `Learner captures Louis de Broglie's Matter Wave hypothesis (λ = h / p) and registers an active dialectical objection: "If baseballs have wave-particle duality, why don't they create diffraction fringes when thrown through a doorway?"`,
+          code: `---
+id: seed-debroglie-matter-waves-01
+status: 🌱 seedling
+space: The Greenhouse (Capture/Curate)
+vdi_baseline: 0.29
+unresolved_question: "At what exact macroscopic mass limit does thermal decoherence wash out observable interference?"
+---
+xAPI: [Actor] collected [seed-debroglie-matter-waves-01]
+      (VDI baseline recorded)`
+        },
+        s2: {
+          narrative: `Student translates de Broglie wavelength into plain language: "Everything behaves as a ripple, but heavier objects have wavelengths smaller than a trillionth of a proton, making their wave-nature impossible to detect." Links Upward to [[Quantum-Wave-Mechanics]] and Lateral to [[Acoustic-Doppler-Waves]].`,
+          code: `---
+id: concept-macroscopic-decoherence
+status: 🌿 sprouting
+vdi_score: 0.81
+upward_links:
+  - "[[Quantum-Wave-Mechanics]]"
+lateral_links:
+  - "[[Acoustic-Doppler-Waves]]"
+vernacular_analogy: "A bowling ball still ripples like a pebble in a pond, but its wave is so microscopic it looks completely solid to us."
+---
+xAPI: [Actor] connected [concept-macroscopic-decoherence] -> [[Quantum-Wave-Mechanics]]
+      (Or = 0.02, Br = 0.34)`
+        },
+        s3: {
+          narrative: `Learner links 6 concept cards into an Evergreen Hub on the Quantum Measurement Problem. Socratic AI prompts: "How does Zurek's quantum Darwinism explain the appearance of classical reality without requiring an observer's consciousness?" Distillation Ratio clears at 10.2%.`,
+          code: `---
+id: moc-quantum-measurement-darwinism
+title: "Map of Content: Quantum Decoherence & Darwinism"
+type: moc-hub
+status: 🌲 evergreen
+distillation_ratio: 0.102
+connectivity_index: 7.1
+tags:
+  - syncdin/moc
+  - #harvest-ready
+---
+xAPI: [Actor] summarized [Cluster: Quantum Measurement Problem]
+      (source_len: 5400, summary_len: 550, Dr: 0.102, Ci: 7.1)`
+        },
+        s4: {
+          narrative: `The learner composes a multimodal .syncz container featuring an embedded WebXR 3D double-slit simulation and an interactive p5.js density-matrix visualizer showing phase dampening under thermal collisions. 3 cohort peers endorse the publication.`,
+          code: `---
+manifest_id: syncz-quantum-darwinism-v2
+format: .syncz (WebComponent WebXR Bundle)
+license: CC-BY-SA-4.0
+peer_endorsements: 3
+interactive_components:
+  - "<webxr-double-slit-sim wavelength='500nm'>"
+  - "<p5-density-matrix-decoherence>"
+---
+xAPI: [Actor] published [syncz-quantum-darwinism-v2]
+      (peer_reviews: 3, license: "CC-BY-SA-4.0", parent_nodes: 6)`
+        },
+        s5: {
+          narrative: `The published Zine is exported to POD saddle-stitch format via PrintNinja with spot-UV cover printing. Readers scan dynamic QR codes next to wave equations to launch client-side WebGPU matrix solvers. The student's LearnCard wallet receives an Open Badges v3.0 / W3C VC credential.`,
+          code: `{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "urn:uuid:synczine-quantum-darwinism-vc",
+  "type": ["VerifiableCredential", "AchievementCredential"],
+  "issuer": "did:web:synczine.io",
+  "credentialSubject": {
+    "id": "did:key:z6MkhaXgBZDvotDkL5257faiz4898G8",
+    "achievement": {
+      "name": "Quantum Foundations & Decoherence Modeling",
+      "criteria": "Dr BETWEEN 0.05 AND 0.15, VDI > 0.60, PeerReviews >= 3"
+    }
+  }
+}
+xAPI: [Actor] interacted-with-physical-twin [QR-PrintNinja-882]
+      -> [Issuer] asserted [urn:uuid:synczine-quantum-darwinism-vc]`
+        }
+      }
+    };
+
+    let currentJourneyKey = 'entropy';
+    let allDrawersExpanded = false;
+
+    // -----------------------------------------------------------------
+    // ACCORDION DRAWER CONTROLLERS
+    // -----------------------------------------------------------------
+    function toggleDrawer(stageNum) {
+      const drawer = document.getElementById(`drawer-${stageNum}`);
+      const arrow = document.getElementById(`drawer-arrow-${stageNum}`);
+      const label = document.getElementById(`drawer-btn-label-${stageNum}`);
+      
+      const isHidden = drawer.classList.contains('hidden');
+      if (isHidden) {
+        drawer.classList.remove('hidden');
+        arrow.innerText = '▼';
+        label.innerText = 'Hide Stage Example';
+      } else {
+        drawer.classList.add('hidden');
+        arrow.innerText = '►';
+        label.innerText = 'Inspect Stage Example';
+      }
+    }
+
+    function toggleAllDrawers() {
+      allDrawersExpanded = !allDrawersExpanded;
+      const label = document.getElementById('label-master-expand');
+      
+      for (let i = 1; i <= 5; i++) {
+        const drawer = document.getElementById(`drawer-${i}`);
+        const arrow = document.getElementById(`drawer-arrow-${i}`);
+        const btnLabel = document.getElementById(`drawer-btn-label-${i}`);
+        
+        if (allDrawersExpanded) {
+          drawer.classList.remove('hidden');
+          arrow.innerText = '▼';
+          btnLabel.innerText = 'Hide Stage Example';
+        } else {
+          drawer.classList.add('hidden');
+          arrow.innerText = '►';
+          btnLabel.innerText = 'Inspect Stage Example';
+        }
+      }
+
+      label.innerText = allDrawersExpanded ? 'Collapse All 5 Drawers' : 'Expand All 5 Drawers';
+    }
+
+    // -----------------------------------------------------------------
+    // SWITCH JOURNEY PATHWAY
+    // -----------------------------------------------------------------
+    function switchJourney(key) {
+      currentJourneyKey = key;
+      const data = journeys[key];
+
+      // Update button styling
+      document.querySelectorAll('.journey-btn').forEach(btn => {
+        btn.classList.remove('bg-blue-600/20', 'text-blue-300', 'border-blue-500/40');
+        btn.classList.add('bg-slate-850', 'text-slate-300', 'border-[#30363d]');
+      });
+
+      const activeBtn = document.getElementById(`btn-journey-${key}`);
+      if (activeBtn) {
+        activeBtn.classList.add('bg-blue-600/20', 'text-blue-300', 'border-blue-500/40');
+        activeBtn.classList.remove('bg-slate-850', 'text-slate-300', 'border-[#30363d]');
+      }
+
+      // Populate stage content
+      for (let s = 1; s <= 5; s++) {
+        const stageData = data[`s${s}`];
+        document.getElementById(`inspector-title-${s}`).innerText = `INLINE ARTIFACT INSPECTOR — ${data.name}`;
+        document.getElementById(`journey-narrative-${s}`).innerText = stageData.narrative;
+        document.getElementById(`code-stage-${s}`).querySelector('code').innerText = stageData.code;
+      }
+
+      showToast(`Loaded Journey: ${data.name}`);
+    }
+
+    // -----------------------------------------------------------------
+    // CUSTOM SANDBOX MODAL & BUILDER
+    // -----------------------------------------------------------------
+    function openCustomSandboxModal() {
+      document.getElementById('modal-custom-sandbox').classList.remove('hidden');
+    }
+
+    function closeCustomSandboxModal() {
+      document.getElementById('modal-custom-sandbox').classList.add('hidden');
+    }
+
+    function applyCustomSandbox() {
+      const topic = document.getElementById('input-custom-topic').value.trim() || 'Custom Knowledge Domain';
+      const seed = document.getElementById('input-custom-seed').value.trim();
+      const upward = document.getElementById('input-custom-upward').value.trim();
+      const lateral = document.getElementById('input-custom-lateral').value.trim();
+      const vernacular = document.getElementById('input-custom-vernacular').value.trim();
+
+      journeys.custom = {
+        name: topic.toUpperCase() + " SYNCZINE JOURNEY",
+        s1: {
+          narrative: `Learner captures anchor: "${seed}" and logs a 90-second blind distillation probing unresolved boundaries.`,
+          code: `---
+id: seed-custom-${Date.now().toString().slice(-4)}
+status: 🌱 seedling
+space: The Greenhouse (Capture/Curate)
+vdi_baseline: 0.32
+unresolved_question: "What are the hidden failure modes of ${topic}?"
+---
+xAPI: [Actor] collected [seed-custom]
+      (VDI baseline recorded)`
+        },
+        s2: {
+          narrative: `Student translates concept into personal vernacular: "${vernacular}". Binds upward link to ${upward} and lateral link to ${lateral}.`,
+          code: `---
+id: concept-${topic.toLowerCase().replace(/[^a-z0-9]/g, '-')}-01
+status: 🌿 sprouting
+vdi_score: 0.85
+upward_links:
+  - "${upward}"
+lateral_links:
+  - "${lateral}"
+vernacular_analogy: "${vernacular}"
+---
+xAPI: [Actor] connected [concept-custom] -> [${upward}]
+      (Or = 0.05, Br = 0.40)`
+        },
+        s3: {
+          narrative: `Synthesized into Map of Content [[MOC-${topic}]]. Socratic Critic prompts dialectical counter-perspectives; distillation ratio clears at 9.1%.`,
+          code: `---
+id: moc-${topic.toLowerCase().replace(/[^a-z0-9]/g, '-')}
+title: "Map of Content: ${topic}"
+type: moc-hub
+status: 🌲 evergreen
+distillation_ratio: 0.091
+connectivity_index: 6.8
+tags:
+  - syncdin/moc
+  - #harvest-ready
+---
+xAPI: [Actor] summarized [Cluster: ${topic}]
+      (source_len: 4800, summary_len: 436, Dr: 0.091, Ci: 6.8)`
+        },
+        s4: {
+          narrative: `Assembled 4 Evergreen nodes into an interactive multimedia .syncz container. Tested against 3 cohort peer reviews with verifiable feedback receipts.`,
+          code: `---
+manifest_id: syncz-${topic.toLowerCase().replace(/[^a-z0-9]/g, '-')}-v1
+format: .syncz (Interactive Sandbox Canvas)
+license: CC-BY-SA-4.0
+peer_endorsements: 3
+interactive_components:
+  - "<custom-data-canvas topic='${topic}'>"
+---
+xAPI: [Actor] published [syncz-${topic.toLowerCase().replace(/[^a-z0-9]/g, '-')}-v1]
+      (peer_reviews: 3, license: "CC-BY-SA-4.0")`
+        },
+        s5: {
+          narrative: `Exported to POD PDF with dynamic QR portal. Readers scanning the booklet emit xAPI statements back to Sanctum LRS. Sovereign learner is awarded a W3C Verifiable Credential.`,
+          code: `{
+  "@context": ["https://www.w3.org/2018/credentials/v1"],
+  "id": "urn:uuid:synczine-custom-vc",
+  "type": ["VerifiableCredential", "AchievementCredential"],
+  "issuer": "did:web:synczine.io",
+  "credentialSubject": {
+    "id": "did:key:z6MkhaXgBZDvotDkL5257faiz4898G8",
+    "achievement": {
+      "name": "${topic}",
+      "criteria": "Dr BETWEEN 0.05 AND 0.15, VDI > 0.60, PeerReviews >= 3"
+    }
+  }
+}
+xAPI: [Actor] interacted-with-physical-twin [QR-Custom-Booklet]
+      -> [Issuer] asserted [urn:uuid:synczine-custom-vc]`
+        }
+      };
+
+      closeCustomSandboxModal();
+      switchJourney('custom');
+    }
+
+    // -----------------------------------------------------------------
+    // QR CODE SIMULATOR MODAL & EXECUTION
+    // -----------------------------------------------------------------
+    function openQRModal() {
+      document.getElementById('modal-qr').classList.remove('hidden');
+      const log = document.getElementById('qr-log-terminal');
+      log.innerHTML = '<div class="text-slate-500">// Ready to trigger QR scan event...</div>';
+    }
+
+    function closeQRModal() {
+      document.getElementById('modal-qr').classList.add('hidden');
+    }
+
+    function triggerQRScanExecution() {
+      const log = document.getElementById('qr-log-terminal');
+      log.innerHTML = '';
+      
+      const steps = [
+        { t: 100, text: '<span class="text-cyan-400">[CAMERA]</span> Optical target acquired: QR-Payload: urn:syncz:entropy-economics:sec-04' },
+        { t: 400, text: '<span class="text-amber-400">[NETWORK]</span> Resolving dynamic destination on Skyway protocol DNS...' },
+        { t: 800, text: '<span class="text-blue-400">[xAPI DISPATCH]</span> Emitting statement to Sanctum SQL LRS:' },
+        { t: 1100, text: '<pre class="text-[10px] text-slate-400 pl-2">{\n  "actor": { "mbox": "mailto:reader.external@open.edu" },\n  "verb": { "id": "http://synczine.io/verbs/interacted-with-physical-twin" },\n  "object": { "id": "urn:syncz:physical-zine:mixam-0894" }\n}</pre>' },
+        { t: 1500, text: '<span class="text-emerald-400 font-bold">[SUCCESS]</span> Status 200 OK. Redirecting viewport to live .syncz web canvas...' }
+      ];
+
+      steps.forEach(s => {
+        setTimeout(() => {
+          log.innerHTML += `<div>${s.text}</div>`;
+          log.scrollTop = log.scrollHeight;
+        }, s.t);
+      });
+
+      setTimeout(() => {
+        showToast("Physical Twin xAPI event logged to Sanctum LRS!");
+      }, 1600);
+    }
+
+    // -----------------------------------------------------------------
+    // GATE & TELEMETRY SIMULATOR LOGIC
+    // -----------------------------------------------------------------
+    let simPeerCount = 3;
+
+    document.getElementById('btn-toggle-telemetry').addEventListener('click', () => {
+      document.getElementById('modal-simulator').classList.remove('hidden');
+      updateSimCalculations();
+    });
+
+    document.getElementById('btn-toggle-qr-demo').addEventListener('click', () => {
+      openQRModal();
+    });
+
+    function closeTelemetrySimulator() {
+      document.getElementById('modal-simulator').classList.add('hidden');
+    }
+
+    function changePeerCount(delta) {
+      simPeerCount = Math.max(0, Math.min(10, simPeerCount + delta));
+      document.getElementById('sim-peer-count').innerText = simPeerCount;
+      updateSimCalculations();
+    }
+
+    function updateSimCalculations() {
+      const vdiRaw = parseInt(document.getElementById('sim-vdi-slider').value);
+      const vdi = (vdiRaw / 100).toFixed(2);
+      document.getElementById('sim-vdi-val').innerText = vdi;
+
+      const drRaw = parseInt(document.getElementById('sim-dr-slider').value);
+      document.getElementById('sim-dr-val').innerText = drRaw + '%';
+
+      const hasTwoLinks = document.getElementById('sim-two-links').checked;
+
+      // Gate evaluations
+      const vdiPassed = vdi >= 0.60;
+      const vdiBadge = document.getElementById('sim-vdi-badge');
+      if (vdiPassed) {
+        vdiBadge.className = 'mt-2 text-[10px] font-mono text-emerald-400';
+        vdiBadge.innerText = '✓ Gate 1-2 Cleared: High semantic divergence from Seed Bank anchor.';
+      } else {
+        vdiBadge.className = 'mt-2 text-[10px] font-mono text-rose-400';
+        vdiBadge.innerText = '✗ Gate 1-2 Blocked: VDI < 0.60 (Collector\'s Fallacy / Excessive Verbatim Copying)';
+      }
+
+      const drPassed = drRaw >= 5 && drRaw <= 15;
+      const drBadge = document.getElementById('sim-dr-badge');
+      if (drPassed) {
+        drBadge.className = 'mt-2 text-[10px] font-mono text-teal-400';
+        drBadge.innerText = '✓ Gate 2-3 Cleared: Optimal compression ratio (5% <= Dr <= 15%).';
+      } else if (drRaw < 5) {
+        drBadge.className = 'mt-2 text-[10px] font-mono text-amber-400';
+        drBadge.innerText = '✗ Gate 2-3 Blocked: Dr < 5% (Oversimplification / Lack of Conceptual Nuance)';
+      } else {
+        drBadge.className = 'mt-2 text-[10px] font-mono text-rose-400';
+        drBadge.innerText = '✗ Gate 2-3 Blocked: Dr > 15% (Insufficient Distillation / Bloated Summary)';
+      }
+
+      const peersPassed = simPeerCount >= 3;
+      const allPassed = vdiPassed && drPassed && hasTwoLinks && peersPassed;
+
+      const resultBox = document.getElementById('sim-gate-result-box');
+      const title = document.getElementById('sim-verdict-title');
+      const desc = document.getElementById('sim-verdict-desc');
+      const mintBtn = document.getElementById('btn-mint-vc');
+
+      if (allPassed) {
+        resultBox.className = 'p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-300 flex items-center justify-between';
+        title.innerText = 'ALL GATES CLEARED — READY TO MINT VC';
+        title.className = 'text-sm font-bold text-white mt-0.5';
+        desc.innerText = 'Pedagogical validation (V_1) complete. Technical verification (V_2) unlocked.';
+        mintBtn.disabled = false;
+        mintBtn.className = 'px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-bold text-xs transition shadow-lg shadow-emerald-500/20 cursor-pointer';
+      } else {
+        resultBox.className = 'p-4 rounded-xl border border-rose-500/40 bg-rose-500/10 text-rose-300 flex items-center justify-between';
+        title.innerText = 'INFERENCE ENGINE GATE LOCKED';
+        title.className = 'text-sm font-bold text-rose-200 mt-0.5';
+        
+        let failures = [];
+        if (!vdiPassed) failures.push('VDI < 0.60');
+        if (!drPassed) failures.push('Dr out of bounds');
+        if (!hasTwoLinks) failures.push('Missing Two Links');
+        if (!peersPassed) failures.push('Peers < 3');
+
+        desc.innerText = `Prerequisites missing: ${failures.join(', ')}. Normative Sequence prevents minting unvalidated noise.`;
+        mintBtn.disabled = true;
+        mintBtn.className = 'px-3.5 py-2 rounded-lg bg-slate-800 text-slate-500 font-mono font-bold text-xs cursor-not-allowed border border-slate-700';
+      }
+    }
+
+    function simulateVCMinting() {
+      showToast("W3C Verifiable Credential v2.0 successfully minted to LearnCard DID!");
+      setTimeout(() => {
+        closeTelemetrySimulator();
+      }, 700);
+    }
+
+    // -----------------------------------------------------------------
+    // UTILITY: CLIPBOARD & TOAST
+    // -----------------------------------------------------------------
+    function copyCode(elementId) {
+      const codeText = document.getElementById(elementId).innerText;
+      const el = document.createElement('textarea');
+      el.value = codeText;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      showToast("Schema payload copied to clipboard!");
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toast-message');
+      msg.innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2600);
+    }
+
+    // -----------------------------------------------------------------
+    // INITIALIZATION
+    // -----------------------------------------------------------------
+    window.onload = function() {
+      // Stage 1 starts open by default as in the screenshot
+      switchJourney('entropy');
+    };
+  </script>
+
+</body>
+</html>
