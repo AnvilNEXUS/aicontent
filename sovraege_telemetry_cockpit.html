@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sovraege Telemetry Cockpit &amp; Normative Verification Ledger</title>
+  
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            cockpit: {
+              bg: '#0a0e14',
+              surface: '#0d1117',
+              card: '#161b22',
+              border: '#30363d',
+              muted: '#21262d',
+              textMuted: '#8b949e',
+            },
+            status: {
+              optimal: '#10b981',
+              lateral: '#38bdf8',
+              warning: '#f59e0b',
+              alert: '#f43f5e',
+              accent: '#8b5cf6',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0a0e14; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #484f58; }
+
+    /* Cockpit Base Card */
+    .cockpit-card {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 0.75rem;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cockpit-card-hover:hover {
+      border-color: #484f58;
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Radar Scanning Sweep */
+    @keyframes radarSweep {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .radar-sweep-line {
+      transform-origin: 310px 175px;
+      animation: radarSweep 8s linear infinite;
+    }
+
+    /* Pulse animations */
+    @keyframes membranePulse {
+      0%, 100% { opacity: 0.85; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.015); box-shadow: 0 0 12px rgba(16, 185, 129, 0.4); }
+    }
+    .pulse-membrane {
+      animation: membranePulse 3s infinite ease-in-out;
+    }
+
+    /* Modal Backdrop */
+    .modal-backdrop {
+      background: rgba(10, 14, 20, 0.88);
+      backdrop-filter: blur(8px);
+    }
+  </style>
+</head>
+<body class="bg-[#0a0e14] text-slate-200 min-h-screen font-sans selection:bg-cyan-500 selection:text-black pb-16 antialiased">
+
+  <!-- ================================================================= -->
+  <!-- TOP SYSTEM HEADER & PRIVACY MEMBRANE STATUS                       -->
+  <!-- ================================================================= -->
+  <header class="border-b border-[#30363d] bg-[#0d1117]/95 sticky top-0 z-40 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5">
+      
+      <!-- Topmost System Tag & Glowing Privacy Badge -->
+      <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-mono font-bold tracking-wider text-cyan-400 uppercase">
+            SOVRAEGE TELEMETRY COCKPIT &amp; NORMATIVE VERIFICATION LEDGER
+          </span>
+          <span class="text-[10px] text-slate-500 font-mono">v3.4-prod</span>
+        </div>
+
+        <!-- Glowing Cognitive Membrane Active Pill -->
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 pulse-membrane">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+          <span>Cognitive Membrane Active: Zero Raw Private Text Accessed</span>
+        </div>
+      </div>
+
+      <!-- Main Header Title & Controls Row -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            The Sovraege Cockpit Combines <span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-400">Privacy-Preserving Graph Telemetry</span> with the Normative Verification Gate
+          </h1>
+          <p class="text-xs text-slate-400 mt-0.5">
+            Real-time client-side heuristics &amp; graph morphology evaluating student second brains without pedagogical panopticon surveillance.
+          </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex items-center gap-2.5 flex-wrap">
+          <select id="select-cohort" onchange="switchCohort(this.value)" class="bg-[#161b22] border border-[#30363d] text-xs font-mono text-slate-200 rounded-lg px-3 py-1.5 focus:border-cyan-500 focus:outline-none">
+            <option value="phil-systems">Cohort: Gr 10 Philosophy &amp; Systems</option>
+            <option value="quantum-foundations">Cohort: Quantum Mechanics &amp; Information</option>
+            <option value="macro-thermo">Cohort: Ecological Economics &amp; Entropy</option>
+          </select>
+
+          <button id="btn-sweep" onclick="runEdgeSweep()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold font-mono bg-cyan-600/20 hover:bg-cyan-600/30 text-cyan-300 border border-cyan-500/40 transition shadow-sm">
+            <svg id="icon-sweep" class="w-3.5 h-3.5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.03 8.03 0 01-15.357-2m15.357 2H15"/></svg>
+            <span id="label-sweep">Run Edge Graph Sweep</span>
+          </button>
+
+          <button onclick="resetCohortData()" title="Reset cohort data to initial calibration" class="p-1.5 rounded-lg text-xs bg-[#161b22] hover:bg-slate-800 text-slate-400 border border-[#30363d] transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.03 8.03 0 01-15.357-2m15.357 2H15"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-5 space-y-6">
+
+    <!-- =============================================================== -->
+    <!-- LAYER 1: COHORT EDGE TELEMETRY SCORECARDS (7 METRICS)           -->
+    <!-- =============================================================== -->
+    <section class="cockpit-card p-4 sm:p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#21262d] gap-2 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">LAYER 1</span>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Cohort Edge Telemetry Scorecards (7 Graph &amp; Semantic Metrics)</h2>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">
+          Computed locally at the edge against mastery thresholds
+        </div>
+      </div>
+
+      <!-- 7 Metric Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+        
+        <!-- Metric 1: Orphan Ratio -->
+        <div onclick="filterByMetric('orphan')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Orphan Ratio: Proportion of nodes with zero connections. Low is optimal.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Orphan Ratio (Or)</div>
+          <div id="card-val-or" class="text-xl font-black font-mono text-white mt-1">0.07</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: &lt; 0.10</span>
+            <span id="card-status-or" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 2: Network Density -->
+        <div onclick="filterByMetric('density')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Network Density: Ratio of actual edges to possible edges. Target: 0.04 - 0.12.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Network Density (D)</div>
+          <div id="card-val-d" class="text-xl font-black font-mono text-white mt-1">0.082</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: 0.04 - 0.12</span>
+            <span id="card-status-d" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 3: Bridge Ratio -->
+        <div onclick="filterByMetric('bridge')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Bridge Ratio: Cross-domain links connecting distinct Maps of Content. Target: > 0.25.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Bridge Ratio (Br)</div>
+          <div id="card-val-br" class="text-xl font-black font-mono text-white mt-1">0.28</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: &gt; 0.25</span>
+            <span id="card-status-br" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 4: Lifecycle Velocity -->
+        <div onclick="filterByMetric('velocity')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Lifecycle Velocity: Notes promoted from Seedling to Sprouting to Evergreen per week.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Lifecycle Velocity (VL)</div>
+          <div id="card-val-vl" class="text-xl font-black font-mono text-white mt-1">2.4/wk</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: &ge; 2/wk</span>
+            <span id="card-status-vl" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 5: Vernacular Delta -->
+        <div onclick="filterByMetric('vdi')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Vernacular Divergence Index: Lexical distance between teacher anchor and student summary.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Vernacular Delta (VDI)</div>
+          <div id="card-val-vdi" class="text-xl font-black font-mono text-white mt-1">0.68</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: &gt; 0.60</span>
+            <span id="card-status-vdi" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 6: Distillation Ratio -->
+        <div onclick="filterByMetric('dr')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Distillation Ratio: Ratio of distilled summary tokens to source lecture tokens. Target: 5% - 15%.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Distillation Ratio (Dr)</div>
+          <div id="card-val-dr" class="text-xl font-black font-mono text-white mt-1">8.4%</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: 5% - 15%</span>
+            <span id="card-status-dr" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+        <!-- Metric 7: Connectivity Index -->
+        <div onclick="filterByMetric('ci')" class="cockpit-card cockpit-card-hover p-3 rounded-lg cursor-pointer border-l-2 border-l-emerald-500 group" title="Connectivity Index: Mean degree of inter-connectedness per evergreen node. Target: ≥ 5.">
+          <div class="text-[10px] font-mono text-slate-400 truncate group-hover:text-cyan-300">Connectivity Index (Ci)</div>
+          <div id="card-val-ci" class="text-xl font-black font-mono text-white mt-1">6.2</div>
+          <div class="flex items-center justify-between mt-2 pt-1.5 border-t border-[#21262d] text-[10px] font-mono">
+            <span class="text-slate-500">Target: &ge; 5</span>
+            <span id="card-status-ci" class="text-emerald-400 font-bold flex items-center gap-1">● Optimal</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- LAYER 2: DIAGNOSTIC ARCHETYPE QUADRANT & FORMATIVE TRIAGE QUEUE -->
+    <!-- =============================================================== -->
+    <section class="cockpit-card p-4 sm:p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#21262d] gap-2 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">LAYER 2</span>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Diagnostic Archetype Quadrant &amp; Formative Triage Queue</h2>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">
+          Click any student node or queue alert to inspect their telemetry vector &amp; Socratic AI probe
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- LEFT: SVG Scatter Plot Quadrant (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col justify-between">
+          <div class="relative bg-[#070a0e] rounded-xl border border-[#21262d] p-3 overflow-hidden shadow-inner">
+            
+            <!-- SVG Scatter Plot Canvas -->
+            <svg id="svg-quadrant" viewBox="0 0 620 370" class="w-full h-auto select-none font-mono">
+              <defs>
+                <!-- Quadrant background gradients -->
+                <linearGradient id="grad-gardener" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#10b981" stop-opacity="0.10"/>
+                  <stop offset="100%" stop-color="#10b981" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="grad-siloed" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.09"/>
+                  <stop offset="100%" stop-color="#f59e0b" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="grad-hoarder" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#f43f5e" stop-opacity="0.12"/>
+                  <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.02"/>
+                </linearGradient>
+                <linearGradient id="grad-drifter" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#64748b" stop-opacity="0.08"/>
+                  <stop offset="100%" stop-color="#64748b" stop-opacity="0.02"/>
+                </linearGradient>
+
+                <!-- Glow filter for selected node -->
+                <filter id="glow-filter" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3" result="blur"/>
+                  <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                </filter>
+              </defs>
+
+              <!-- Quadrant Zone Rectangles -->
+              <!-- Top-Left: Siloed Filer (Br 0 to 0.25, D 0.08 to 0.16) -->
+              <rect x="55" y="30" width="255" height="140" fill="url(#grad-siloed)" stroke="#f59e0b" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
+              <!-- Top-Right: Sovereign Gardener (Br 0.25 to 0.50, D 0.08 to 0.16) -->
+              <rect x="310" y="30" width="255" height="140" fill="url(#grad-gardener)" stroke="#10b981" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.6"/>
+              <!-- Bottom-Left: The Hoarder (Br 0 to 0.25, D 0.00 to 0.08) -->
+              <rect x="55" y="170" width="255" height="140" fill="url(#grad-hoarder)" stroke="#f43f5e" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.5"/>
+              <!-- Bottom-Right: The Drifter (Br 0.25 to 0.50, D 0.00 to 0.08) -->
+              <rect x="310" y="170" width="255" height="140" fill="url(#grad-drifter)" stroke="#64748b" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.4"/>
+
+              <!-- Grid Horizontal Lines -->
+              <line x1="55" y1="310" x2="565" y2="310" stroke="#21262d" stroke-width="1"/>
+              <line x1="55" y1="240" x2="565" y2="240" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="55" y1="170" x2="565" y2="170" stroke="#30363d" stroke-width="1.2"/>
+              <line x1="55" y1="100" x2="565" y2="100" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="55" y1="30" x2="565" y2="30" stroke="#21262d" stroke-width="1"/>
+
+              <!-- Target Range Lines: D = 0.04 (y=240) and D = 0.12 (y=100) -->
+              <line x1="55" y1="100" x2="565" y2="100" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+              <line x1="55" y1="240" x2="565" y2="240" stroke="#38bdf8" stroke-width="1" stroke-dasharray="4,4" opacity="0.5"/>
+
+              <!-- Grid Vertical Lines -->
+              <line x1="55" y1="30" x2="55" y2="310" stroke="#30363d" stroke-width="1"/>
+              <line x1="157" y1="30" x2="157" y2="310" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="259" y1="30" x2="259" y2="310" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="310" y1="30" x2="310" y2="310" stroke="#38bdf8" stroke-width="1.2" stroke-dasharray="4,3"/>
+              <line x1="412" y1="30" x2="412" y2="310" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="514" y1="30" x2="514" y2="310" stroke="#21262d" stroke-width="1" stroke-dasharray="2,2"/>
+              <line x1="565" y1="30" x2="565" y2="310" stroke="#21262d" stroke-width="1"/>
+
+              <!-- Quadrant Watermark Titles -->
+              <text x="65" y="48" fill="#f59e0b" font-size="10" font-weight="bold" opacity="0.85">THE SILOED FILER</text>
+              <text x="65" y="60" fill="#8b949e" font-size="8">[Marcus K.: Br = 0.00, High Siloing]</text>
+
+              <text x="320" y="48" fill="#10b981" font-size="10" font-weight="bold" opacity="0.95">THE SOVEREIGN GARDENER</text>
+              <text x="320" y="60" fill="#8b949e" font-size="8">[Sarah T., David L., Linh N.: #harvest-ready]</text>
+
+              <text x="65" y="195" fill="#f43f5e" font-size="10" font-weight="bold" opacity="0.9">THE HOARDER</text>
+              <text x="65" y="207" fill="#8b949e" font-size="8">[Alex M.: Or = 0.48; Elena R.: VDI = 0.18]</text>
+
+              <text x="320" y="195" fill="#94a3b8" font-size="10" font-weight="bold" opacity="0.8">THE DRIFTER</text>
+              <text x="320" y="207" fill="#8b949e" font-size="8">[Low Node Count, &gt;14d Stagnant Seedlings]</text>
+
+              <!-- Target Band Labels on Graph -->
+              <text x="560" y="96" fill="#38bdf8" font-size="8" text-anchor="end">D = 0.12 (Upper Target)</text>
+              <text x="560" y="236" fill="#38bdf8" font-size="8" text-anchor="end">D = 0.04 (Lower Target)</text>
+
+              <!-- Dynamic Crosshairs Layer -->
+              <g id="svg-crosshairs" opacity="0">
+                <line id="crosshair-x" x1="55" y1="0" x2="565" y2="0" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2,2"/>
+                <line id="crosshair-y" x1="0" y1="30" x2="0" y2="310" stroke="#38bdf8" stroke-width="1" stroke-dasharray="2,2"/>
+              </g>
+
+              <!-- Plot Points Container (Dynamically rendered via JS) -->
+              <g id="svg-nodes-group"></g>
+
+              <!-- Y-Axis Labels (Network Density D) -->
+              <text x="48" y="313" fill="#8b949e" font-size="9" text-anchor="end">0.00</text>
+              <text x="48" y="243" fill="#8b949e" font-size="9" text-anchor="end">0.04</text>
+              <text x="48" y="173" fill="#8b949e" font-size="9" text-anchor="end">0.08</text>
+              <text x="48" y="103" fill="#8b949e" font-size="9" text-anchor="end">0.12</text>
+              <text x="48" y="33" fill="#8b949e" font-size="9" text-anchor="end">0.16</text>
+              <!-- Y-Axis Title -->
+              <text x="-170" y="18" fill="#94a3b8" font-size="9" font-weight="600" text-anchor="middle" transform="rotate(-90)">Network Density (D)</text>
+
+              <!-- X-Axis Labels (Bridge Ratio Br) -->
+              <text x="55" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.00</text>
+              <text x="157" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.10</text>
+              <text x="259" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.20</text>
+              <text x="310" y="325" fill="#38bdf8" font-size="9" font-weight="bold" text-anchor="middle">0.25</text>
+              <text x="361" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.30</text>
+              <text x="463" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.40</text>
+              <text x="565" y="325" fill="#8b949e" font-size="9" text-anchor="middle">0.50</text>
+              <!-- X-Axis Title -->
+              <text x="310" y="342" fill="#94a3b8" font-size="9" font-weight="600" text-anchor="middle">Cross-Domain Lateral Connectivity — Bridge Ratio (Br)</text>
+            </svg>
+          </div>
+
+          <!-- Scatter Plot Legend & Threshold Status -->
+          <div class="mt-2.5 px-2 flex flex-wrap items-center justify-between text-[11px] font-mono text-slate-400 gap-2">
+            <div class="flex items-center gap-3">
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> Sovereign Gardener</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span> Siloed / Drifter</span>
+              <span class="inline-flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Hoarder Alert</span>
+            </div>
+            <div class="text-slate-500">
+              Threshold: Br &gt; 0.25 | D: 0.04–0.12
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Formative Triage Queue & Selected Student Inspector (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col justify-between space-y-3">
+          
+          <!-- Triage Intervention Queue -->
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-300 mb-2">
+              <span>Triage Intervention Queue</span>
+              <span class="text-[10px] text-slate-500 font-normal">Select to inspect</span>
+            </div>
+
+            <div class="space-y-1.5" id="triage-list">
+              <!-- Alex M. -->
+              <div onclick="selectStudent('alex')" id="triage-row-alex" class="triage-row flex items-center justify-between p-2 rounded-lg bg-[#070a0e] border border-[#21262d] hover:border-rose-500/60 cursor-pointer transition">
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-1.5">
+                    <span>Alex M.</span>
+                  </div>
+                  <div class="text-[10px] text-slate-400">The Hoarder (Collector's Fallacy)</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">Or = 0.48</span>
+              </div>
+
+              <!-- Elena R. -->
+              <div onclick="selectStudent('elena')" id="triage-row-elena" class="triage-row flex items-center justify-between p-2 rounded-lg bg-[#070a0e] border border-[#21262d] hover:border-rose-500/60 cursor-pointer transition">
+                <div>
+                  <div class="text-xs font-bold text-white">Elena R.</div>
+                  <div class="text-[10px] text-slate-400">The Hoarder (Verbatim Copy)</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">VDI = 0.18</span>
+              </div>
+
+              <!-- Marcus K. -->
+              <div onclick="selectStudent('marcus')" id="triage-row-marcus" class="triage-row flex items-center justify-between p-2 rounded-lg bg-[#070a0e] border border-[#21262d] hover:border-amber-500/60 cursor-pointer transition">
+                <div>
+                  <div class="text-xs font-bold text-white">Marcus K.</div>
+                  <div class="text-[10px] text-slate-400">The Siloed Filer (High Siloing)</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">Br = 0.00</span>
+              </div>
+
+              <!-- The Drifter -->
+              <div onclick="selectStudent('drifter')" id="triage-row-drifter" class="triage-row flex items-center justify-between p-2 rounded-lg bg-[#070a0e] border border-[#21262d] hover:border-slate-500 cursor-pointer transition">
+                <div>
+                  <div class="text-xs font-bold text-white">The Drifter</div>
+                  <div class="text-[10px] text-slate-400">Low Node Count, &gt;14d Stagnant</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-900/40 text-amber-300 border border-amber-600/40">&gt;14d Seedlings</span>
+              </div>
+
+              <!-- Sarah / David / Linh -->
+              <div onclick="selectStudent('sarah')" id="triage-row-sarah" class="triage-row flex items-center justify-between p-2 rounded-lg bg-[#070a0e] border border-[#21262d] hover:border-emerald-500/60 cursor-pointer transition">
+                <div>
+                  <div class="text-xs font-bold text-white">Sarah T., David L., Linh N.</div>
+                  <div class="text-[10px] text-slate-400">The Sovereign Gardener</div>
+                </div>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">#harvest-ready</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Student Inspector Card -->
+          <div id="student-inspector" class="p-3.5 rounded-xl bg-[#070a0e] border border-[#30363d] relative transition">
+            
+            <div class="flex items-center justify-between pb-2 border-b border-[#21262d]">
+              <div>
+                <span id="inspect-name" class="text-xs font-bold text-white font-mono">Alex M. &mdash; The Hoarder</span>
+              </div>
+              <span id="inspect-tag" class="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">
+                TRIAGE: HIGH ORPHAN RATIO
+              </span>
+            </div>
+
+            <!-- Student Metric Mini-Chips -->
+            <div class="grid grid-cols-4 gap-2 my-2.5 text-center">
+              <div class="bg-[#161b22] p-1.5 rounded border border-[#21262d]">
+                <div class="text-[9px] text-slate-400 font-mono">Or</div>
+                <div id="inspect-or" class="text-xs font-bold font-mono text-rose-400">0.48</div>
+              </div>
+              <div class="bg-[#161b22] p-1.5 rounded border border-[#21262d]">
+                <div class="text-[9px] text-slate-400 font-mono">VDI</div>
+                <div id="inspect-vdi" class="text-xs font-bold font-mono text-amber-400">0.54</div>
+              </div>
+              <div class="bg-[#161b22] p-1.5 rounded border border-[#21262d]">
+                <div class="text-[9px] text-slate-400 font-mono">Br</div>
+                <div id="inspect-br" class="text-xs font-bold font-mono text-rose-400">0.05</div>
+              </div>
+              <div class="bg-[#161b22] p-1.5 rounded border border-[#21262d]">
+                <div class="text-[9px] text-slate-400 font-mono">Dr</div>
+                <div id="inspect-dr" class="text-xs font-bold font-mono text-rose-400">1.8%</div>
+              </div>
+            </div>
+
+            <!-- Automated Socratic Probe Box -->
+            <div class="p-2.5 rounded-lg bg-[#0d1117] border border-[#21262d] text-[11px] leading-relaxed">
+              <div class="text-[9px] font-mono font-bold text-purple-400 uppercase tracking-wider mb-1 flex items-center justify-between">
+                <span>AUTOMATED SOVRAEGE SOCRATIC PROBE (EDGE TRIGGERED)</span>
+                <span class="text-slate-500">MEMBRANE SAFE</span>
+              </div>
+              <p id="inspect-probe" class="text-slate-300 italic font-sans">
+                "48% of your captured nodes have zero bi-directional links (Or = 0.48). Before clipping new sources, select 3 orphan seedlings and synthesize how they challenge or support your core Evergreen claim."
+              </p>
+            </div>
+
+            <!-- Action Buttons Row -->
+            <div class="mt-3 flex items-center justify-between gap-2 pt-2 border-t border-[#21262d]">
+              <button onclick="toggleTelemetryTweak()" class="px-2.5 py-1 text-[10px] font-mono font-semibold rounded bg-[#161b22] hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 transition flex items-center gap-1">
+                <span>⚡ Tweak Student Telemetry</span>
+              </button>
+
+              <button onclick="dispatchEphemeralProbe()" class="px-3 py-1 text-[10px] font-mono font-bold rounded bg-purple-600 hover:bg-purple-500 text-white transition shadow-md shadow-purple-900/30 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                <span>Dispatch Probe</span>
+              </button>
+            </div>
+
+            <!-- Collapsible Telemetry Tweak Controls Drawer -->
+            <div id="tweak-drawer" class="hidden mt-3 pt-3 border-t border-[#21262d] space-y-2 text-[10px] font-mono">
+              <div class="text-slate-400 font-bold uppercase tracking-wider">Live Telemetry Injection Simulator</div>
+              <div>
+                <div class="flex justify-between text-slate-300 mb-0.5">
+                  <span>Network Density (D):</span>
+                  <span id="slider-val-d" class="text-cyan-400 font-bold">0.03</span>
+                </div>
+                <input id="slider-d" type="range" min="0" max="16" value="3" oninput="onTweakInput()" class="w-full h-1.5 bg-slate-800 accent-cyan-400 rounded cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 mb-0.5">
+                  <span>Bridge Ratio (Br):</span>
+                  <span id="slider-val-br" class="text-cyan-400 font-bold">0.05</span>
+                </div>
+                <input id="slider-br" type="range" min="0" max="50" value="5" oninput="onTweakInput()" class="w-full h-1.5 bg-slate-800 accent-cyan-400 rounded cursor-pointer">
+              </div>
+
+              <div>
+                <div class="flex justify-between text-slate-300 mb-0.5">
+                  <span>Orphan Ratio (Or):</span>
+                  <span id="slider-val-or" class="text-cyan-400 font-bold">0.48</span>
+                </div>
+                <input id="slider-or" type="range" min="0" max="60" value="48" oninput="onTweakInput()" class="w-full h-1.5 bg-slate-800 accent-cyan-400 rounded cursor-pointer">
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- LAYER 3: EPISTEMOLOGY OF THE LEDGER & INFERENCE ENGINE GATE    -->
+    <!-- =============================================================== -->
+    <section class="cockpit-card p-4 sm:p-5">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#21262d] gap-2 mb-4">
+        <div class="flex items-center gap-2">
+          <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30">LAYER 3</span>
+          <h2 class="text-sm font-bold text-white uppercase tracking-wider font-mono">Epistemology of the Ledger: Normative Sequence (V1 &rarr; V2) &amp; Inference Engine Gate</h2>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono">
+          Pedagogical Validation (V1) must precede cryptographic Technical Verification (V2)
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- LEFT: 2x2 Normative Epistemic Matrix (5 Cols) -->
+        <div class="lg:col-span-5 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-300 mb-2">
+              <span>2x2 Normative Epistemic Matrix</span>
+              <span class="text-[10px] text-slate-500">V1 &times; V2 States</span>
+            </div>
+
+            <div class="border border-[#30363d] rounded-xl overflow-hidden bg-[#070a0e] text-xs font-mono">
+              <!-- Column Headers -->
+              <div class="grid grid-cols-3 bg-[#0d1117] border-b border-[#30363d] text-[10px] text-center font-bold text-slate-400 py-1.5">
+                <div class="text-slate-500"></div>
+                <div class="border-l border-[#21262d]">V2: Unverified</div>
+                <div class="border-l border-[#21262d]">V2: Verified</div>
+              </div>
+
+              <!-- Row 1: V1: Invalid -->
+              <div class="grid grid-cols-3 border-b border-[#21262d]">
+                <div class="p-2 bg-[#0d1117] border-r border-[#21262d] flex items-center justify-center text-[10px] font-bold text-rose-400">
+                  V1: Invalid
+                </div>
+                <!-- Cell 1: Noise -->
+                <div onclick="explainMatrixCell('noise')" class="p-2.5 border-r border-[#21262d] bg-[#161b22]/40 hover:bg-slate-800/60 cursor-pointer transition">
+                  <div class="text-[9px] font-bold text-slate-500 uppercase tracking-wider">INVALID + UNVERIFIED</div>
+                  <div class="text-xs font-bold text-slate-300 mt-0.5">Noise</div>
+                  <div class="text-[10px] text-slate-500 mt-0.5 leading-tight">Unlinked scratchings &amp; raw clippings</div>
+                </div>
+                <!-- Cell 2: Verified Junk -->
+                <div onclick="explainMatrixCell('junk')" class="p-2.5 bg-rose-950/20 hover:bg-rose-950/40 border-l border-rose-900/30 cursor-pointer transition">
+                  <div class="text-[9px] font-bold text-rose-400 uppercase tracking-wider">INVALID + VERIFIED</div>
+                  <div class="text-xs font-bold text-rose-300 mt-0.5">Verified Junk</div>
+                  <div class="text-[10px] text-rose-400/80 mt-0.5 leading-tight">On-chain credentials for unvalidated slop</div>
+                </div>
+              </div>
+
+              <!-- Row 2: V1: Valid -->
+              <div class="grid grid-cols-3">
+                <div class="p-2 bg-[#0d1117] border-r border-[#21262d] flex items-center justify-center text-[10px] font-bold text-emerald-400">
+                  V1: Valid
+                </div>
+                <!-- Cell 3: Vibes-Based Learning -->
+                <div onclick="explainMatrixCell('vibes')" class="p-2.5 border-r border-[#21262d] bg-amber-950/15 hover:bg-amber-950/30 cursor-pointer transition">
+                  <div class="text-[9px] font-bold text-amber-400 uppercase tracking-wider">VALID + UNVERIFIED</div>
+                  <div class="text-xs font-bold text-amber-300 mt-0.5">Vibes-Based Learning</div>
+                  <div class="text-[10px] text-amber-400/80 mt-0.5 leading-tight">Deep synthesis without portable proof</div>
+                </div>
+                <!-- Cell 4: Verified Mastery -->
+                <div onclick="explainMatrixCell('mastery')" class="p-2.5 bg-emerald-950/25 hover:bg-emerald-950/45 border-l border-emerald-900/30 cursor-pointer transition">
+                  <div class="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">VALID + VERIFIED</div>
+                  <div class="text-xs font-bold text-emerald-300 mt-0.5">Verified Mastery [TESS]</div>
+                  <div class="text-[10px] text-emerald-400/80 mt-0.5 leading-tight">Validated synthesis + W3C VC v2.0</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-2 text-[10px] font-mono text-slate-500">
+            *Click any matrix quadrant to inspect architectural defense rationale.
+          </div>
+        </div>
+
+        <!-- RIGHT: Normative Sequence Pipeline & Boolean Inference Gate (7 Cols) -->
+        <div class="lg:col-span-7 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between text-xs font-mono font-bold text-slate-300 mb-2">
+              <span>Normative Sequence Pipeline &amp; Boolean Inference Gate</span>
+              <span id="eval-target-badge" class="text-[10px] text-cyan-400">Evaluating: Cohort / #harvest-ready</span>
+            </div>
+
+            <!-- Pipeline Visual Steps -->
+            <div class="grid grid-cols-1 sm:grid-cols-5 gap-2 items-center text-center font-mono">
+              
+              <!-- Stage V1 -->
+              <div class="sm:col-span-2 p-2.5 rounded-lg bg-[#070a0e] border border-blue-500/30 text-left">
+                <div class="text-[9px] text-blue-400 font-bold uppercase tracking-wider">STAGE V1 · VALIDATION</div>
+                <div class="text-xs font-bold text-white mt-0.5">Pedagogical Validation</div>
+                <div class="text-[10px] text-slate-400 mt-1 leading-tight">
+                  Socratic AI + 3 Peer Reviews across the Cognitive Membrane
+                </div>
+              </div>
+
+              <!-- Transition Arrow -->
+              <div class="flex items-center justify-center text-slate-500 text-xs font-bold">
+                <span class="hidden sm:inline">&rarr;</span>
+                <span class="sm:hidden">&darr;</span>
+                <span class="text-[9px] ml-1 text-slate-400">V1-V2</span>
+              </div>
+
+              <!-- Stage V2 -->
+              <div class="sm:col-span-2 p-2.5 rounded-lg bg-[#070a0e] border border-purple-500/30 text-left">
+                <div class="text-[9px] text-purple-400 font-bold uppercase tracking-wider">STAGE V2 · VERIFICATION</div>
+                <div class="text-xs font-bold text-white mt-0.5">Inference Engine Gate</div>
+                <div class="text-[10px] text-slate-400 mt-1 leading-tight">
+                  Boolean threshold audit on local graph telemetry
+                </div>
+              </div>
+            </div>
+
+            <!-- Boolean Logic Gate Condition Box -->
+            <div class="mt-3 p-3 rounded-lg bg-[#070a0e] border border-[#21262d] font-mono text-[11px]">
+              <div class="text-slate-300">
+                <span class="text-cyan-400 font-bold">IF</span> (Capture &ge; 10) 
+                <span class="text-cyan-400 font-bold">AND</span> (5% &le; Dr &le; 15%) 
+                <span class="text-cyan-400 font-bold">AND</span> (Ci &ge; 5) 
+                <span class="text-cyan-400 font-bold">AND</span> (Peer_Reviews &ge; 3) 
+                <span class="text-cyan-400 font-bold">&rarr;</span> 
+                <span class="text-emerald-400 font-bold">Mint W3C VC v2.0 via LearnCard DID</span>
+              </div>
+            </div>
+
+            <!-- 4 Real-Time Logic Evaluation Tiles -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 font-mono">
+              <div id="gate-tile-capture" class="p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center">
+                <div class="text-[9px] text-slate-400">Capture &ge; 10</div>
+                <div id="gate-val-capture" class="text-xs font-bold text-emerald-400 mt-0.5">Cohort: 42 (PASS)</div>
+              </div>
+
+              <div id="gate-tile-dr" class="p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center">
+                <div class="text-[9px] text-slate-400">5% &le; Dr &le; 15%</div>
+                <div id="gate-val-dr" class="text-xs font-bold text-emerald-400 mt-0.5">Dr: 8.4% (PASS)</div>
+              </div>
+
+              <div id="gate-tile-ci" class="p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center">
+                <div class="text-[9px] text-slate-400">Ci &ge; 5</div>
+                <div id="gate-val-ci" class="text-xs font-bold text-emerald-400 mt-0.5">Ci: 6.2 (PASS)</div>
+              </div>
+
+              <div id="gate-tile-peers" class="p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center">
+                <div class="text-[9px] text-slate-400">Peer_Reviews &ge; 3</div>
+                <div id="gate-val-peers" class="text-xs font-bold text-emerald-400 mt-0.5">Peers: 3/3 (PASS)</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Minting Action Bar -->
+          <div class="mt-4 pt-3 border-t border-[#21262d] flex items-center justify-between">
+            <div class="text-xs">
+              <span id="gate-status-text" class="text-emerald-400 font-mono font-bold">● GATE UNLOCKED &mdash; Normative Sequence Satisfied</span>
+            </div>
+
+            <button id="btn-mint-vc" onclick="openVCModal()" class="px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-bold text-xs transition shadow-lg shadow-emerald-500/20">
+              Mint W3C Credential
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- FOOTER CITATIONS & SUMMARY                                      -->
+    <!-- =============================================================== -->
+    <footer class="pt-4 border-t border-[#21262d] text-xs text-slate-400 space-y-2">
+      <p class="leading-relaxed">
+        The Sovraege Cockpit monitors cohort health across the Cognitive Membrane without exposing private student text. Top layer: Seven edge-computed telemetry scorecards against mastery thresholds. Middle layer: Diagnostic archetype quadrant mapping students by Network Density and Cross-Domain Lateral Connectivity. Bottom layer: The Normative Sequence logic gate requiring Pedagogical Validation (V1) before cryptographic Technical Verification (V2).
+      </p>
+      <div class="text-[11px] text-slate-500 font-mono leading-relaxed">
+        <strong>Data sources:</strong> Andy Matuschak (Evergreen Note-Writing &amp; Link Density), Maggie Appleton (Digital Garden Ethos &amp; Growth Stages), Mueller &amp; Oppenheimer (2014, Verbatim Overlap vs. Generative Processing), Chi &amp; Wylie (2014, ICAP Cognitive Engagement Framework), Nesbit &amp; Adesope (2006, Concept &amp; Knowledge Map Networks), and Anne-Laure Le Cunff / Ness Labs (Mindframing &amp; PACT Experiments).
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: W3C VERIFIABLE CREDENTIAL JSON-LD VIEWER                  -->
+  <!-- ================================================================= -->
+  <div id="modal-vc" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-[#0d1117] border border-[#30363d] rounded-2xl max-w-2xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-[#21262d]">
+        <div class="flex items-center gap-2">
+          <div class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></div>
+          <h3 class="font-bold text-sm text-white font-mono uppercase tracking-wider">W3C Verifiable Credential v2.0 (Ed25519 Signed)</h3>
+        </div>
+        <button onclick="closeVCModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-xs">
+        <p class="text-slate-400">
+          This credential was minted directly to the Sovereign Learner's personal <strong>LearnCard DID</strong> after successfully clearing the Normative Sequence logic gate:
+        </p>
+
+        <div class="relative bg-[#070a0e] rounded-xl border border-[#21262d] p-3 text-[11px] font-mono text-slate-300 overflow-x-auto">
+          <button onclick="copyVCPayload()" class="absolute top-2 right-2 px-2 py-1 rounded bg-[#161b22] hover:bg-slate-700 text-cyan-300 text-[10px] border border-cyan-500/30">
+            Copy JSON
+          </button>
+          <pre id="vc-json-code" class="leading-relaxed"><code>{
+  "@context": [
+    "https://www.w3.org/2018/credentials/v1",
+    "https://w3id.org/skills/v1"
+  ],
+  "id": "urn:uuid:8f1e3140-5221-42cb-b7ad-9e12019b88f3",
+  "type": ["VerifiableCredential", "AchievementCredential"],
+  "issuer": "did:web:sanctum.sovraege.edu",
+  "issuanceDate": "2026-11-02T03:39:12Z",
+  "credentialSubject": {
+    "id": "did:key:z6MkhaXgBZDvotDkL5257faiz4898G8",
+    "competency": {
+      "name": "Networked Sense-Making: Dissipative Economics",
+      "alignment": "https://curriculum.open/econ-systems-601"
+    },
+    "evidence": {
+      "type": "xAPIStatement",
+      "id": "https://lrs.sovraege.edu/statements/c89d28e-f41",
+      "metrics": {
+        "distillationRatio": 0.084,
+        "connectivityIndex": 6.2,
+        "vernacularDelta": 0.68,
+        "peerEndorsements": 3
+      }
+    }
+  },
+  "proof": {
+    "type": "Ed25519Signature2020",
+    "created": "2026-11-02T03:39:14Z",
+    "verificationMethod": "did:web:sanctum.sovraege.edu#key-1",
+    "proofPurpose": "assertionMethod",
+    "jws": "eyJhbGciOiJFZERTQTE5IiwiY3J5cHQiOiJkZXRlcm1pbmlzdGljIn0...xV9QzL0"
+  }
+}</code></pre>
+        </div>
+
+        <div class="flex items-center justify-between pt-2 border-t border-[#21262d] text-[11px] font-mono">
+          <span class="text-slate-500">DID Resolution via Skyway Protocol: OK</span>
+          <button onclick="closeVCModal()" class="px-4 py-1.5 rounded-lg bg-[#161b22] hover:bg-slate-800 text-slate-200 border border-[#30363d]">
+            Done
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MODAL: MATRIX EXPLAINER                                          -->
+  <!-- ================================================================= -->
+  <div id="modal-matrix" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
+    <div class="bg-[#0d1117] border border-[#30363d] rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-[#21262d]">
+        <h3 id="matrix-modal-title" class="font-bold text-sm text-white font-mono uppercase tracking-wider">Epistemic Matrix State</h3>
+        <button onclick="closeMatrixModal()" class="text-slate-400 hover:text-white">&times;</button>
+      </div>
+
+      <div class="mt-4 space-y-3 text-xs leading-relaxed">
+        <div id="matrix-modal-body" class="text-slate-300"></div>
+        <div id="matrix-modal-remedy" class="p-3 rounded-lg bg-[#070a0e] border border-[#21262d] font-mono text-[11px] text-cyan-300"></div>
+        
+        <div class="flex justify-end pt-2 border-t border-[#21262d]">
+          <button onclick="closeMatrixModal()" class="px-4 py-1.5 rounded-lg bg-[#161b22] hover:bg-slate-800 text-slate-200 font-mono text-xs border border-[#30363d]">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- TOAST NOTIFICATION CONTAINER                                      -->
+  <!-- ================================================================= -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-purple-600 text-white px-4 py-2.5 rounded-lg shadow-xl font-mono text-xs flex items-center gap-2">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+    <span id="toast-message">Ephemeral Socratic Probe dispatched across Membrane!</span>
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- JAVASCRIPT STATE ENGINE & DATA ARCHITECTURE                       -->
+  <!-- ================================================================= -->
+  <script>
+    // -----------------------------------------------------------------
+    // STUDENT & COHORT DATA STRUCTURES
+    // -----------------------------------------------------------------
+    const cohortData = {
+      'phil-systems': {
+        name: "Grade 10 Philosophy & Systems",
+        mean: { br: 0.28, d: 0.082 },
+        scorecards: {
+          or: { val: "0.07", status: "Optimal", color: "emerald" },
+          d: { val: "0.082", status: "Optimal", color: "emerald" },
+          br: { val: "0.28", status: "Optimal", color: "emerald" },
+          vl: { val: "2.4/wk", status: "Optimal", color: "emerald" },
+          vdi: { val: "0.68", status: "Optimal", color: "emerald" },
+          dr: { val: "8.4%", status: "Optimal", color: "emerald" },
+          ci: { val: "6.2", status: "Optimal", color: "emerald" },
+        },
+        students: {
+          alex: {
+            id: 'alex',
+            name: "Alex M.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: HIGH ORPHAN RATIO",
+            color: "rose",
+            br: 0.08,
+            d: 0.025,
+            or: 0.48,
+            vdi: 0.54,
+            dr: 1.8,
+            ci: 2.1,
+            captures: 62,
+            peers: 0,
+            probe: `"48% of your captured nodes have zero bi-directional links (Or = 0.48). Before clipping new sources, select 3 orphan seedlings and synthesize how they challenge or support your core Evergreen claim."`
+          },
+          elena: {
+            id: 'elena',
+            name: "Elena R.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: VERBATIM COPY",
+            color: "rose",
+            br: 0.18,
+            d: 0.045,
+            or: 0.38,
+            vdi: 0.18,
+            dr: 34.0,
+            ci: 3.0,
+            captures: 45,
+            peers: 1,
+            probe: `"Your notes exhibit only 18% lexical divergence from the Seed Bank source (VDI = 0.18). Pay the Vernacular Tax: rephrase this theorem without textbook jargon, using an analogy from your everyday life."`
+          },
+          marcus: {
+            id: 'marcus',
+            name: "Marcus K.",
+            archetype: "The Siloed Filer",
+            tag: "TRIAGE: HIGH SILOING",
+            color: "amber",
+            br: 0.00,
+            d: 0.11,
+            or: 0.04,
+            vdi: 0.72,
+            dr: 9.1,
+            ci: 4.8,
+            captures: 28,
+            peers: 2,
+            probe: `"Your knowledge graph shows tight vertical clustering but zero lateral bridges (Br = 0.00). Discover a cross-domain mirror: connect your node on [[Algorithmic Bias]] to [[Confirmation Bias in Sociology]]."`
+          },
+          drifter: {
+            id: 'drifter',
+            name: "Drifter Cohort",
+            archetype: "The Drifter",
+            tag: "TRIAGE: STAGNANT SEEDLINGS",
+            color: "amber",
+            br: 0.38,
+            d: 0.03,
+            or: 0.22,
+            vdi: 0.65,
+            dr: 7.2,
+            ci: 2.4,
+            captures: 14,
+            peers: 1,
+            probe: `"You have 9 Seedlings untouched for over 14 days. Tending required: schedule a 15-minute Tillage session to promote 2 seeds into Sprouting nodes or delete obsolete fragments."`
+          },
+          sarah: {
+            id: 'sarah',
+            name: "Sarah T., David L., Linh N.",
+            archetype: "The Sovereign Gardener",
+            tag: "STATUS: #HARVEST-READY",
+            color: "cyan",
+            br: 0.36,
+            d: 0.10,
+            or: 0.05,
+            vdi: 0.79,
+            dr: 8.4,
+            ci: 6.2,
+            captures: 42,
+            peers: 3,
+            probe: `"All graph morphology thresholds met (Br > 0.25, D in target zone, Ci = 6.2). Your Evergreen constellation on [[Dissipative Economics]] is clear for publication into a SYNCZINE."`
+          }
+        }
+      },
+      'quantum-foundations': {
+        name: "Quantum Mechanics & Information",
+        mean: { br: 0.31, d: 0.091 },
+        scorecards: {
+          or: { val: "0.05", status: "Optimal", color: "emerald" },
+          d: { val: "0.091", status: "Optimal", color: "emerald" },
+          br: { val: "0.31", status: "Optimal", color: "emerald" },
+          vl: { val: "3.1/wk", status: "Optimal", color: "emerald" },
+          vdi: { val: "0.74", status: "Optimal", color: "emerald" },
+          dr: { val: "10.2%", status: "Optimal", color: "emerald" },
+          ci: { val: "7.1", status: "Optimal", color: "emerald" },
+        },
+        students: {
+          alex: {
+            id: 'alex',
+            name: "Alex M.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: HIGH ORPHAN RATIO",
+            color: "rose",
+            br: 0.10,
+            d: 0.030,
+            or: 0.44,
+            vdi: 0.58,
+            dr: 2.5,
+            ci: 2.8,
+            captures: 55,
+            peers: 1,
+            probe: `"Decoherence notes remain orphaned from Wave-Particle duality. Bridge these concepts."`
+          },
+          elena: {
+            id: 'elena',
+            name: "Elena R.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: VERBATIM COPY",
+            color: "rose",
+            br: 0.20,
+            d: 0.050,
+            or: 0.32,
+            vdi: 0.22,
+            dr: 28.0,
+            ci: 3.4,
+            captures: 38,
+            peers: 1,
+            probe: `"Equation definitions copied verbatim from syllabus. Explain Planck constant in your own words."`
+          },
+          marcus: {
+            id: 'marcus',
+            name: "Marcus K.",
+            archetype: "The Siloed Filer",
+            tag: "TRIAGE: HIGH SILOING",
+            color: "amber",
+            br: 0.04,
+            d: 0.12,
+            or: 0.03,
+            vdi: 0.70,
+            dr: 8.8,
+            ci: 5.2,
+            captures: 32,
+            peers: 2,
+            probe: `"Connect quantum measurement problem to information entropy."`
+          },
+          drifter: {
+            id: 'drifter',
+            name: "Drifter Cohort",
+            archetype: "The Drifter",
+            tag: "TRIAGE: STAGNANT SEEDLINGS",
+            color: "amber",
+            br: 0.32,
+            d: 0.035,
+            or: 0.18,
+            vdi: 0.62,
+            dr: 8.0,
+            ci: 2.9,
+            captures: 18,
+            peers: 2,
+            probe: `"Notes on Bell's Theorem are inactive. Re-activate or prune."`
+          },
+          sarah: {
+            id: 'sarah',
+            name: "Sarah T., David L., Linh N.",
+            archetype: "The Sovereign Gardener",
+            tag: "STATUS: #HARVEST-READY",
+            color: "cyan",
+            br: 0.42,
+            d: 0.105,
+            or: 0.03,
+            vdi: 0.82,
+            dr: 9.8,
+            ci: 7.2,
+            captures: 48,
+            peers: 3,
+            probe: `"Constellation on Quantum Darwinism is verified. Ready for SYNCZINE export."`
+          }
+        }
+      },
+      'macro-thermo': {
+        name: "Ecological Economics & Entropy",
+        mean: { br: 0.26, d: 0.078 },
+        scorecards: {
+          or: { val: "0.09", status: "Optimal", color: "emerald" },
+          d: { val: "0.078", status: "Optimal", color: "emerald" },
+          br: { val: "0.26", status: "Optimal", color: "emerald" },
+          vl: { val: "2.1/wk", status: "Optimal", color: "emerald" },
+          vdi: { val: "0.66", status: "Optimal", color: "emerald" },
+          dr: { val: "7.9%", status: "Optimal", color: "emerald" },
+          ci: { val: "5.8", status: "Optimal", color: "emerald" },
+        },
+        students: {
+          alex: {
+            id: 'alex',
+            name: "Alex M.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: HIGH ORPHAN RATIO",
+            color: "rose",
+            br: 0.06,
+            d: 0.020,
+            or: 0.52,
+            vdi: 0.49,
+            dr: 1.5,
+            ci: 1.8,
+            captures: 70,
+            peers: 0,
+            probe: `"Orphan ratio is critical (52%). Synthesize 3 cards before saving new content."`
+          },
+          elena: {
+            id: 'elena',
+            name: "Elena R.",
+            archetype: "The Hoarder",
+            tag: "TRIAGE: VERBATIM COPY",
+            color: "rose",
+            br: 0.16,
+            d: 0.040,
+            or: 0.40,
+            vdi: 0.15,
+            dr: 42.0,
+            ci: 2.8,
+            captures: 40,
+            peers: 1,
+            probe: `"Georgescu-Roegen quote copied verbatim without synthesis."`
+          },
+          marcus: {
+            id: 'marcus',
+            name: "Marcus K.",
+            archetype: "The Siloed Filer",
+            tag: "TRIAGE: HIGH SILOING",
+            color: "amber",
+            br: 0.02,
+            d: 0.105,
+            or: 0.05,
+            vdi: 0.68,
+            dr: 9.5,
+            ci: 4.5,
+            captures: 26,
+            peers: 2,
+            probe: `"Link thermodynamic entropy to monetary velocity."`
+          },
+          drifter: {
+            id: 'drifter',
+            name: "Drifter Cohort",
+            archetype: "The Drifter",
+            tag: "TRIAGE: STAGNANT SEEDLINGS",
+            color: "amber",
+            br: 0.35,
+            d: 0.028,
+            or: 0.25,
+            vdi: 0.60,
+            dr: 6.8,
+            ci: 2.2,
+            captures: 12,
+            peers: 1,
+            probe: `"14d inactivity detected on renewable cycle models."`
+          },
+          sarah: {
+            id: 'sarah',
+            name: "Sarah T., David L., Linh N.",
+            archetype: "The Sovereign Gardener",
+            tag: "STATUS: #HARVEST-READY",
+            color: "cyan",
+            br: 0.34,
+            d: 0.092,
+            or: 0.06,
+            vdi: 0.77,
+            dr: 8.1,
+            ci: 6.0,
+            captures: 39,
+            peers: 3,
+            probe: `"Thermodynamic economic limit portfolio validated for credential minting."`
+          }
+        }
+      }
+    };
+
+    let currentCohortKey = 'phil-systems';
+    let selectedStudentKey = 'alex';
+
+    // -----------------------------------------------------------------
+    // SVG COORDINATE TRANSFORMS
+    // X: Br in [0.00, 0.50] => SVG x in [55, 565] (width = 510)
+    // Y: D in [0.00, 0.16] => SVG y in [310, 30] (height = 280, inverted)
+    // -----------------------------------------------------------------
+    function getSvgCoords(br, d) {
+      const x = 55 + (br / 0.50) * 510;
+      const y = 310 - (d / 0.16) * 280;
+      return { x, y };
+    }
+
+    // -----------------------------------------------------------------
+    // RENDER SCATTER PLOT NODES
+    // -----------------------------------------------------------------
+    function renderQuadrantNodes() {
+      const cohort = cohortData[currentCohortKey];
+      const group = document.getElementById('svg-nodes-group');
+      group.innerHTML = '';
+
+      // 1. Render Cohort Mean Diamond
+      const meanCoords = getSvgCoords(cohort.mean.br, cohort.mean.d);
+      const meanG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+      meanG.innerHTML = `
+        <polygon points="${meanCoords.x},${meanCoords.y - 6} ${meanCoords.x + 6},${meanCoords.y} ${meanCoords.x},${meanCoords.y + 6} ${meanCoords.x - 6},${meanCoords.y}" fill="#38bdf8" stroke="#0ea5e9" stroke-width="1.5" opacity="0.9" />
+        <text x="${meanCoords.x + 9}" y="${meanCoords.y + 3}" fill="#38bdf8" font-size="8" font-weight="600">Cohort Mean (${cohort.mean.br}, ${cohort.mean.d})</text>
+      `;
+      group.appendChild(meanG);
+
+      // 2. Render Student Points
+      Object.keys(cohort.students).forEach(key => {
+        const s = cohort.students[key];
+        const { x, y } = getSvgCoords(s.br, s.d);
+        const isSelected = (key === selectedStudentKey);
+
+        const nodeG = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        nodeG.setAttribute("class", "cursor-pointer group");
+        nodeG.setAttribute("onclick", `selectStudent('${key}')`);
+
+        let fill = "#38bdf8";
+        let stroke = "#0284c7";
+        if (s.color === "rose") { fill = "#f43f5e"; stroke = "#e11d48"; }
+        if (s.color === "amber") { fill = "#fbbf24"; stroke = "#d97706"; }
+
+        let selectionHalo = "";
+        if (isSelected) {
+          selectionHalo = `
+            <circle cx="${x}" cy="${y}" r="12" fill="none" stroke="${fill}" stroke-width="1.5" stroke-dasharray="2,2" class="animate-spin" />
+            <circle cx="${x}" cy="${y}" r="8" fill="${fill}" opacity="0.3" />
+          `;
+        }
+
+        // Subtext positioning
+        let labelX = x + 10;
+        let labelY = y + 3;
+        let anchor = "start";
+        if (x > 450) {
+          labelX = x - 10;
+          anchor = "end";
+        }
+
+        nodeG.innerHTML = `
+          ${selectionHalo}
+          <circle cx="${x}" cy="${y}" r="5.5" fill="${fill}" stroke="#ffffff" stroke-width="1.5" filter="${isSelected ? 'url(#glow-filter)' : 'none'}" />
+          <text x="${labelX}" y="${labelY}" fill="#ffffff" font-size="9" font-weight="bold" text-anchor="${anchor}">${s.name}</text>
+          <text x="${labelX}" y="${labelY + 9}" fill="#8b949e" font-size="7.5" text-anchor="${anchor}">${s.id === 'alex' ? 'Or = ' + s.or : (s.id === 'elena' ? 'VDI = ' + s.vdi : (s.id === 'marcus' ? 'Br = ' + s.br.toFixed(2) : (s.id === 'drifter' ? '>14d Stagnant' : '')))}</text>
+        `;
+        group.appendChild(nodeG);
+      });
+
+      // Update Crosshairs
+      updateCrosshairs();
+    }
+
+    function updateCrosshairs() {
+      const cohort = cohortData[currentCohortKey];
+      const s = cohort.students[selectedStudentKey];
+      const crosshairs = document.getElementById('svg-crosshairs');
+      const lineX = document.getElementById('crosshair-x');
+      const lineY = document.getElementById('crosshair-y');
+
+      if (!s) {
+        crosshairs.setAttribute('opacity', '0');
+        return;
+      }
+
+      const { x, y } = getSvgCoords(s.br, s.d);
+      lineX.setAttribute('y1', y);
+      lineX.setAttribute('y2', y);
+      lineY.setAttribute('x1', x);
+      lineY.setAttribute('x2', x);
+      crosshairs.setAttribute('opacity', '1');
+    }
+
+    // -----------------------------------------------------------------
+    // SELECT STUDENT & UPDATE INSPECTOR + INFERENCE GATE
+    // -----------------------------------------------------------------
+    function selectStudent(key) {
+      selectedStudentKey = key;
+      const cohort = cohortData[currentCohortKey];
+      const s = cohort.students[key];
+
+      // Update queue visual selection
+      document.querySelectorAll('.triage-row').forEach(row => {
+        row.classList.remove('border-rose-500', 'border-amber-500', 'border-cyan-500', 'bg-slate-800/60');
+      });
+      const activeRow = document.getElementById(`triage-row-${key}`);
+      if (activeRow) {
+        activeRow.classList.add('bg-slate-800/60');
+        if (s.color === 'rose') activeRow.classList.add('border-rose-500');
+        else if (s.color === 'amber') activeRow.classList.add('border-amber-500');
+        else activeRow.classList.add('border-cyan-500');
+      }
+
+      // Update Inspector Card
+      document.getElementById('inspect-name').innerText = `${s.name} — ${s.archetype}`;
+      const inspectTag = document.getElementById('inspect-tag');
+      inspectTag.innerText = s.tag;
+      if (s.color === 'rose') {
+        inspectTag.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30';
+      } else if (s.color === 'amber') {
+        inspectTag.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30';
+      } else {
+        inspectTag.className = 'px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+      }
+
+      // Update chips
+      const elOr = document.getElementById('inspect-or');
+      elOr.innerText = s.or.toFixed(2);
+      elOr.className = s.or < 0.10 ? 'text-xs font-bold font-mono text-emerald-400' : 'text-xs font-bold font-mono text-rose-400';
+
+      const elVdi = document.getElementById('inspect-vdi');
+      elVdi.innerText = s.vdi.toFixed(2);
+      elVdi.className = s.vdi >= 0.60 ? 'text-xs font-bold font-mono text-emerald-400' : 'text-xs font-bold font-mono text-rose-400';
+
+      const elBr = document.getElementById('inspect-br');
+      elBr.innerText = s.br.toFixed(2);
+      elBr.className = s.br >= 0.25 ? 'text-xs font-bold font-mono text-emerald-400' : (s.br === 0 ? 'text-xs font-bold font-mono text-amber-400' : 'text-xs font-bold font-mono text-rose-400');
+
+      const elDr = document.getElementById('inspect-dr');
+      elDr.innerText = s.dr + '%';
+      elDr.className = (s.dr >= 5 && s.dr <= 15) ? 'text-xs font-bold font-mono text-emerald-400' : 'text-xs font-bold font-mono text-rose-400';
+
+      // Socratic Probe Text
+      document.getElementById('inspect-probe').innerText = s.probe;
+
+      // Update Tweak Sliders
+      document.getElementById('slider-d').value = Math.round(s.d * 100);
+      document.getElementById('slider-val-d').innerText = s.d.toFixed(3);
+      document.getElementById('slider-br').value = Math.round(s.br * 100);
+      document.getElementById('slider-val-br').innerText = s.br.toFixed(2);
+      document.getElementById('slider-or').value = Math.round(s.or * 100);
+      document.getElementById('slider-val-or').innerText = s.or.toFixed(2);
+
+      // Re-render SVG to show selection halo
+      renderQuadrantNodes();
+
+      // Update Layer 3 Boolean Inference Gate with this student's metrics
+      updateInferenceGate(s);
+    }
+
+    // -----------------------------------------------------------------
+    // LAYER 3 BOOLEAN INFERENCE GATE EVALUATION
+    // -----------------------------------------------------------------
+    function updateInferenceGate(student) {
+      document.getElementById('eval-target-badge').innerText = `Evaluating: ${student.name} (${student.archetype})`;
+
+      const passCapture = student.captures >= 10;
+      const passDr = (student.dr >= 5 && student.dr <= 15);
+      const passCi = student.ci >= 5.0;
+      const passPeers = student.peers >= 3;
+
+      // Capture Tile
+      const tileCapture = document.getElementById('gate-tile-capture');
+      const valCapture = document.getElementById('gate-val-capture');
+      valCapture.innerText = `Count: ${student.captures} (${passCapture ? 'PASS' : 'FAIL'})`;
+      tileCapture.className = passCapture ? 'p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center' : 'p-2 rounded bg-rose-950/20 border border-rose-500/30 text-center';
+      valCapture.className = passCapture ? 'text-xs font-bold text-emerald-400 mt-0.5' : 'text-xs font-bold text-rose-400 mt-0.5';
+
+      // Dr Tile
+      const tileDr = document.getElementById('gate-tile-dr');
+      const valDr = document.getElementById('gate-val-dr');
+      valDr.innerText = `Dr: ${student.dr}% (${passDr ? 'PASS' : 'FAIL'})`;
+      tileDr.className = passDr ? 'p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center' : 'p-2 rounded bg-rose-950/20 border border-rose-500/30 text-center';
+      valDr.className = passDr ? 'text-xs font-bold text-emerald-400 mt-0.5' : 'text-xs font-bold text-rose-400 mt-0.5';
+
+      // Ci Tile
+      const tileCi = document.getElementById('gate-tile-ci');
+      const valCi = document.getElementById('gate-val-ci');
+      valCi.innerText = `Ci: ${student.ci.toFixed(1)} (${passCi ? 'PASS' : 'FAIL'})`;
+      tileCi.className = passCi ? 'p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center' : 'p-2 rounded bg-rose-950/20 border border-rose-500/30 text-center';
+      valCi.className = passCi ? 'text-xs font-bold text-emerald-400 mt-0.5' : 'text-xs font-bold text-rose-400 mt-0.5';
+
+      // Peers Tile
+      const tilePeers = document.getElementById('gate-tile-peers');
+      const valPeers = document.getElementById('gate-val-peers');
+      valPeers.innerText = `Peers: ${student.peers}/3 (${passPeers ? 'PASS' : 'FAIL'})`;
+      tilePeers.className = passPeers ? 'p-2 rounded bg-emerald-950/20 border border-emerald-500/30 text-center' : 'p-2 rounded bg-rose-950/20 border border-rose-500/30 text-center';
+      valPeers.className = passPeers ? 'text-xs font-bold text-emerald-400 mt-0.5' : 'text-xs font-bold text-rose-400 mt-0.5';
+
+      // Master Gate Status & Mint Button
+      const allPassed = passCapture && passDr && passCi && passPeers;
+      const statusText = document.getElementById('gate-status-text');
+      const mintBtn = document.getElementById('btn-mint-vc');
+
+      if (allPassed) {
+        statusText.innerText = "● GATE UNLOCKED — Normative Sequence Satisfied";
+        statusText.className = "text-emerald-400 font-mono font-bold";
+        mintBtn.disabled = false;
+        mintBtn.className = "px-4 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-mono font-bold text-xs transition shadow-lg shadow-emerald-500/20 cursor-pointer";
+      } else {
+        statusText.innerText = "✕ GATE LOCKED — Missing Pedagogical Validation";
+        statusText.className = "text-rose-400 font-mono font-bold";
+        mintBtn.disabled = true;
+        mintBtn.className = "px-4 py-1.5 rounded-lg bg-[#21262d] text-slate-500 font-mono font-bold text-xs cursor-not-allowed border border-[#30363d]";
+      }
+    }
+
+    // -----------------------------------------------------------------
+    // TELEMETRY ADJUSTMENT SLIDERS (LIVE POINT MOVEMENT ON QUADRANT)
+    // -----------------------------------------------------------------
+    function toggleTelemetryTweak() {
+      const drawer = document.getElementById('tweak-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    function onTweakInput() {
+      const cohort = cohortData[currentCohortKey];
+      const s = cohort.students[selectedStudentKey];
+
+      const newD = parseFloat(document.getElementById('slider-d').value) / 100;
+      const newBr = parseFloat(document.getElementById('slider-br').value) / 100;
+      const newOr = parseFloat(document.getElementById('slider-or').value) / 100;
+
+      document.getElementById('slider-val-d').innerText = newD.toFixed(3);
+      document.getElementById('slider-val-br').innerText = newBr.toFixed(2);
+      document.getElementById('slider-val-or').innerText = newOr.toFixed(2);
+
+      // Mutate student state
+      s.d = newD;
+      s.br = newBr;
+      s.or = newOr;
+
+      // Heuristic recalculation of archetype
+      if (newBr >= 0.25 && newD >= 0.04 && newD <= 0.12 && newOr <= 0.10) {
+        s.archetype = "The Sovereign Gardener";
+        s.color = "cyan";
+        s.tag = "STATUS: #HARVEST-READY";
+        s.ci = 6.0;
+        s.dr = 8.4;
+        s.peers = 3;
+      } else if (newBr < 0.25 && newD > 0.08) {
+        s.archetype = "The Siloed Filer";
+        s.color = "amber";
+        s.tag = "TRIAGE: HIGH SILOING";
+      } else if (newOr > 0.25 || newBr < 0.15) {
+        s.archetype = "The Hoarder";
+        s.color = "rose";
+        s.tag = "TRIAGE: HIGH ORPHAN RATIO";
+      }
+
+      // Re-render
+      selectStudent(selectedStudentKey);
+    }
+
+    // -----------------------------------------------------------------
+    // COHORT SWITCHING & RADAR EDGE SWEEP
+    // -----------------------------------------------------------------
+    function switchCohort(cohortKey) {
+      currentCohortKey = cohortKey;
+      const cohort = cohortData[cohortKey];
+
+      // Update Layer 1 Cards
+      document.getElementById('card-val-or').innerText = cohort.scorecards.or.val;
+      document.getElementById('card-val-d').innerText = cohort.scorecards.d.val;
+      document.getElementById('card-val-br').innerText = cohort.scorecards.br.val;
+      document.getElementById('card-val-vl').innerText = cohort.scorecards.vl.val;
+      document.getElementById('card-val-vdi').innerText = cohort.scorecards.vdi.val;
+      document.getElementById('card-val-dr').innerText = cohort.scorecards.dr.val;
+      document.getElementById('card-val-ci').innerText = cohort.scorecards.ci.val;
+
+      // Select default student
+      selectStudent('alex');
+      showToast(`Switched active view to ${cohort.name}`);
+    }
+
+    function runEdgeSweep() {
+      const btn = document.getElementById('btn-sweep');
+      const label = document.getElementById('label-sweep');
+      const icon = document.getElementById('icon-sweep');
+
+      btn.disabled = true;
+      label.innerText = "Sweeping P2P Mesh...";
+      icon.classList.add('animate-spin');
+
+      setTimeout(() => {
+        btn.disabled = false;
+        label.innerText = "Run Edge Graph Sweep";
+        icon.classList.remove('animate-spin');
+        renderQuadrantNodes();
+        showToast("Edge sweep complete: 28 local nodes verified across Membrane.");
+      }, 1200);
+    }
+
+    function resetCohortData() {
+      // Re-seed default values
+      cohortData['phil-systems'].students.alex.d = 0.025;
+      cohortData['phil-systems'].students.alex.br = 0.08;
+      cohortData['phil-systems'].students.alex.or = 0.48;
+      cohortData['phil-systems'].students.alex.dr = 1.8;
+      cohortData['phil-systems'].students.alex.archetype = "The Hoarder";
+      cohortData['phil-systems'].students.alex.color = "rose";
+
+      selectStudent('alex');
+      showToast("Cohort telemetry recalibrated to initial state.");
+    }
+
+    // -----------------------------------------------------------------
+    // MATRIX EXPLAINER MODAL
+    // -----------------------------------------------------------------
+    const matrixExplanations = {
+      noise: {
+        title: "V1: Invalid + V2: Unverified — NOISE",
+        body: "<strong>Cognitive Reality:</strong> Raw fleeting notes, chaotic highlights, and unstructured clippings in the student's local scratchpad.<br><br><strong>System Status:</strong> Kept strictly client-side on the learner's device. No telemetry triggers sent across the Membrane. Zero educational or institutional risk.",
+        remedy: "Architectural Response: Safe sandbox state. No intervention required until notes rot (>14 days)."
+      },
+      junk: {
+        title: "V1: Invalid + V2: Verified — VERIFIED JUNK",
+        body: "<strong>Cognitive Reality:</strong> Verbatim slide transcripts, AI-generated spam, or un-translated textbook copy that has been stamped on-chain.<br><br><strong>System Hazard:</strong> The ultimate failure mode of legacy Web3 EdTech: credentialing hollow performative compliance.",
+        remedy: "Architectural Defense: The Normative Sequence permanently locks Stage V2 minting whenever VDI < 0.60 or Dr is out of bounds, preventing verified junk from ever existing."
+      },
+      vibes: {
+        title: "V1: Valid + V2: Unverified — VIBES-BASED LEARNING",
+        body: "<strong>Cognitive Reality:</strong> Genuine understanding, brilliant internal synthesis, and deep metacognitive connections, but zero immutable proof or cryptographic credentials to present to universities or employers.<br><br><strong>System Opportunity:</strong> High pedagogical value, but zero economic or career portability.",
+        remedy: "Architectural Response: The Inference Engine detects #harvest-ready status and prompts the learner to export a published SYNCZINE to unlock W3C VC minting."
+      },
+      mastery: {
+        title: "V1: Valid + V2: Verified — VERIFIED MASTERY [TESS]",
+        body: "<strong>Cognitive Reality:</strong> High vernacular translation (VDI > 0.60), optimal compression (5% ≤ Dr ≤ 15%), dense cross-domain connectivity (Ci ≥ 5, Br > 0.25), confirmed by 3 peer reviews.<br><br><strong>System State:</strong> Tangible Evidence of Sovereign Skills (TESS).",
+        remedy: "Architectural Fulfillment: Cryptographically signed W3C VC v2.0 issued to the learner's personal LearnCard DID."
+      }
+    };
+
+    function explainMatrixCell(type) {
+      const data = matrixExplanations[type];
+      document.getElementById('matrix-modal-title').innerText = data.title;
+      document.getElementById('matrix-modal-body').innerHTML = data.body;
+      document.getElementById('matrix-modal-remedy').innerText = data.remedy;
+      document.getElementById('modal-matrix').classList.remove('hidden');
+    }
+
+    function closeMatrixModal() {
+      document.getElementById('modal-matrix').classList.add('hidden');
+    }
+
+    // -----------------------------------------------------------------
+    // W3C VERIFIABLE CREDENTIAL MODAL & CLIPBOARD
+    // -----------------------------------------------------------------
+    function openVCModal() {
+      document.getElementById('modal-vc').classList.remove('hidden');
+    }
+
+    function closeVCModal() {
+      document.getElementById('modal-vc').classList.add('hidden');
+    }
+
+    function copyVCPayload() {
+      const code = document.getElementById('vc-json-code').innerText;
+      const el = document.createElement('textarea');
+      el.value = code;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+
+      showToast("W3C VC JSON-LD payload copied to clipboard!");
+    }
+
+    // -----------------------------------------------------------------
+    // EPHEMERAL PROBE DISPATCH (TOAST)
+    // -----------------------------------------------------------------
+    function dispatchEphemeralProbe() {
+      const cohort = cohortData[currentCohortKey];
+      const s = cohort.students[selectedStudentKey];
+      showToast(`Ephemeral Socratic probe dispatched to ${s.name}'s local workspace!`);
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const msg = document.getElementById('toast-message');
+      msg.innerText = message;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2800);
+    }
+
+    function filterByMetric(metricName) {
+      showToast(`Filtered cohort telemetry view by ${metricName.toUpperCase()}`);
+    }
+
+    // -----------------------------------------------------------------
+    // INITIALIZATION ON WINDOW LOAD
+    // -----------------------------------------------------------------
+    window.onload = function() {
+      selectStudent('alex');
+    };
+  </script>
+
+</body>
+</html>
