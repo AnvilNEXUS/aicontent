@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SYNCZINE Entitlement Architecture</title>
+    
+    <!-- Fonts: Inter for UI, Fira Code for technical terms/payloads -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        charcoal: '#1E2124',
+                        panel: '#282B30',
+                        gold: '#D4AF37',
+                        emerald: '#50C878',
+                        offwhite: '#E2E8F0',
+                        muted: '#64748B'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #1E2124;
+            color: #E2E8F0;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism utility for panels */
+        .glass-panel {
+            background: rgba(40, 43, 48, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Lifeline dashed line styling */
+        .lifeline-line {
+            border-left: 2px dashed #475569;
+            height: calc(100% - 60px); /* Adjust based on header */
+            position: absolute;
+            left: 50%;
+            top: 60px;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+
+        /* Generic Base Arrow Styles */
+        .diagram-arrow {
+            position: absolute;
+            height: 2px;
+            z-index: 10;
+            transition: all 0.4s ease-in-out;
+            opacity: 0.3;
+        }
+        .diagram-arrow.active {
+            opacity: 1;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        /* Arrow Heads using ::after */
+        .arrow-right::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: -5px;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-left: 10px solid currentColor;
+        }
+
+        .arrow-left::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: -5px;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 10px solid currentColor;
+        }
+
+        /* Self-referencing Loop Style */
+        .arrow-self {
+            position: absolute;
+            border: 2px solid currentColor;
+            border-left: none;
+            border-radius: 0 16px 16px 0;
+            height: 32px;
+            z-index: 10;
+            transition: all 0.4s ease-in-out;
+            opacity: 0.3;
+        }
+        .arrow-self::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            bottom: -6px; /* Position at the bottom of the loop */
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 10px solid currentColor;
+        }
+        .arrow-self.active {
+            opacity: 1;
+            box-shadow: 4px 0 8px -2px currentColor;
+        }
+
+        /* Draw Animations */
+        @keyframes drawRight {
+            from { width: 0; opacity: 0; }
+            to { opacity: 1; } /* Width handled by inline style */
+        }
+        @keyframes drawLeft {
+            from { width: 0; transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes drawSelf {
+            from { height: 0; opacity: 0; width: 0; }
+            to { height: 32px; opacity: 1; width: 40px; }
+        }
+
+        .animate-draw-right { animation: drawRight 0.5s ease-out forwards; }
+        .animate-draw-left { animation: drawLeft 0.5s ease-out forwards; }
+        .animate-draw-self { animation: drawSelf 0.5s ease-out forwards; }
+
+        /* Step Label above arrow */
+        .arrow-label {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 0.75rem;
+            font-family: 'Fira Code', monospace;
+            background-color: #1E2124;
+            padding: 0 4px;
+            border-radius: 4px;
+        }
+        
+        .arrow-self .arrow-label {
+            left: 50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #1E2124; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748B; }
+    </style>
+</head>
+<body class="p-4 md:p-8 font-sans">
+
+    <div class="max-w-6xl mx-auto w-full flex flex-col gap-6">
+        
+        <!-- Header -->
+        <header class="text-center md:text-left flex flex-col md:flex-row justify-between items-end gap-4 border-b border-gray-700 pb-4">
+            <div>
+                <h1 class="text-3xl font-bold text-white tracking-tight">SYNCZINE <span class="text-gold">Entitlement Architecture</span></h1>
+                <p class="text-muted text-sm mt-1 font-mono">4-Plane OID4VCI & OID4VP Fulfillment Flow (v1.0 Final)</p>
+            </div>
+            
+            <!-- Controls -->
+            <div class="flex items-center gap-3 bg-panel p-2 rounded-lg border border-gray-700 shadow-lg">
+                <button id="btn-prev" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition disabled:opacity-30 disabled:cursor-not-allowed" title="Previous Step">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+                <div class="text-sm font-mono font-medium min-w-[5rem] text-center" id="step-indicator">
+                    0 / 8
+                </div>
+                <button id="btn-next" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded transition disabled:opacity-30 disabled:cursor-not-allowed" title="Next Step">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+                <div class="w-px h-6 bg-gray-600 mx-1"></div>
+                <button id="btn-play" class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-emerald bg-emerald/10 hover:bg-emerald/20 rounded transition border border-emerald/20">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" id="icon-play"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                    <svg class="w-4 h-4 hidden" fill="currentColor" viewBox="0 0 20 20" id="icon-pause"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                    <span id="play-text">Auto-play</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Diagram Area -->
+        <div class="glass-panel rounded-xl p-6 relative overflow-x-auto">
+            <div class="min-w-[800px] relative h-[480px]" id="diagram-container">
+                
+                <!-- Lifelines (Actors) -->
+                <div class="absolute inset-0 flex justify-between z-0">
+                    <!-- Actor 0 -->
+                    <div class="flex-1 relative flex flex-col items-center">
+                        <div class="bg-charcoal border border-gray-600 rounded-lg py-2 px-4 shadow-lg text-center w-40 z-10 relative">
+                            <h3 class="font-bold text-sm">Learner</h3>
+                            <p class="text-[10px] text-muted font-mono">SOVRÆLEX / PASS</p>
+                        </div>
+                        <div class="lifeline-line"></div>
+                    </div>
+                    <!-- Actor 1 -->
+                    <div class="flex-1 relative flex flex-col items-center">
+                        <div class="bg-charcoal border border-emerald rounded-lg py-2 px-4 shadow-[0_0_15px_rgba(80,200,120,0.15)] text-center w-40 z-10 relative">
+                            <h3 class="font-bold text-sm text-emerald">VietQR Gateway</h3>
+                            <p class="text-[10px] text-muted font-mono">Plane 1: Retail</p>
+                        </div>
+                        <div class="lifeline-line"></div>
+                    </div>
+                    <!-- Actor 2 -->
+                    <div class="flex-1 relative flex flex-col items-center">
+                        <div class="bg-charcoal border border-gold rounded-lg py-2 px-4 shadow-[0_0_15px_rgba(212,175,55,0.15)] text-center w-40 z-10 relative">
+                            <h3 class="font-bold text-sm text-gold">SOVRÆG Issuance</h3>
+                            <p class="text-[10px] text-muted font-mono">Plane 2: Issuance</p>
+                        </div>
+                        <div class="lifeline-line"></div>
+                    </div>
+                    <!-- Actor 3 -->
+                    <div class="flex-1 relative flex flex-col items-center">
+                        <div class="bg-charcoal border border-blue-400 rounded-lg py-2 px-4 shadow-[0_0_15px_rgba(96,165,250,0.15)] text-center w-40 z-10 relative">
+                            <h3 class="font-bold text-sm text-blue-400">Canadian Edge</h3>
+                            <p class="text-[10px] text-muted font-mono">Plane 3: Fulfillment</p>
+                        </div>
+                        <div class="lifeline-line"></div>
+                    </div>
+                </div>
+
+                <!-- Arrows Overlay (Populated via JS) -->
+                <div id="arrows-container" class="absolute inset-0 pointer-events-none z-20"></div>
+
+            </div>
+        </div>
+
+        <!-- Information Panel -->
+        <div class="glass-panel rounded-xl p-6 border-l-4 border-l-gold transition-colors duration-300" id="info-panel">
+            <div class="flex flex-col md:flex-row gap-6">
+                <div class="flex-1">
+                    <div class="text-xs font-mono text-gold mb-2 tracking-wider uppercase" id="info-step-label">Initialization</div>
+                    <h2 class="text-xl font-bold text-white mb-3" id="info-title">System Ready</h2>
+                    <p class="text-offwhite leading-relaxed text-sm" id="info-desc">
+                        Press "Next Step" or "Auto-play" to begin the sequence simulation detailing the separation of domestic Vietnamese fiat rails and Canadian content fulfillment using W3C Verifiable Credentials.
+                    </p>
+                </div>
+                
+                <!-- Context/Payload Box -->
+                <div class="md:w-1/3 bg-charcoal/80 rounded-lg border border-gray-700 p-4 font-mono text-xs overflow-hidden flex flex-col relative group">
+                    <div class="text-gray-500 mb-2 border-b border-gray-700 pb-1">Context Payload</div>
+                    <div class="text-emerald-400 break-all whitespace-pre-wrap flex-1" id="info-payload">
+// Waiting for transaction initiation...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Data Definition
+        const sequenceSteps = [
+            {
+                from: 0, to: 1, 
+                color: '#50C878', // Emerald
+                title: "1. Initiate Purchase (Plane 1)",
+                desc: "The Learner scans a localized VietQR code to initiate a domestic retail transaction in VND. This securely anchors the financial interaction strictly within Plane 1 (Local Retail), entirely bypassing international payment rails.",
+                payload: "{\n  \"action\": \"pay\",\n  \"method\": \"VietQR\",\n  \"amount\": 250000,\n  \"currency\": \"VND\",\n  \"txn_id\": \"VQR-88A9\"\n}"
+            },
+            {
+                from: 1, to: 2, 
+                color: '#50C878',
+                title: "2. IPN Webhook (Plane 1 \u2192 Plane 2)",
+                desc: "Upon successful local clearing (BĐSD), the VietQR Gateway fires a real-time Instant Payment Notification (IPN) webhook to the SOVRÆG Issuance Server. This is the crucial bridge connecting fiat settlement to cryptographic entitlement.",
+                payload: "POST /webhook/vietqr-ipn\n{\n  \"status\": \"SUCCESS\",\n  \"txn_id\": \"VQR-88A9\",\n  \"user_did\": \"did:sov:123\"\n}"
+            },
+            {
+                from: 2, to: 2, 
+                color: '#D4AF37', // Gold
+                title: "3. Mint SD-JWT VC (Plane 2)",
+                desc: "The SOVRÆG Minting Engine leverages OID4VCI (Final v1.0) to craft the Entitlement Verifiable Credential. The credential payload uses SD-JWT (Selective Disclosure JWT) to ensure privacy, allowing the learner to reveal only necessary claims later.",
+                payload: "// OID4VCI Minting Phase\nHeader: { \"alg\": \"EdDSA\", \"typ\": \"vc+sd-jwt\" }\nPayload: {\n  \"iss\": \"did:web:sovrag.vn\",\n  \"sub\": \"did:sov:123\",\n  \"_sd\": [\"<salt~synczine_access>\"],\n  \"iat\": 1731924120\n}"
+            },
+            {
+                from: 2, to: 0, 
+                color: '#D4AF37',
+                title: "4. Receive Entitlement VC",
+                desc: "The freshly minted Entitlement VC is delivered securely to the Learner's SOVRÆPASS Wallet. The VC cryptographically represents the user's access rights completely independent of the original payment gateway.",
+                payload: "{\n  \"event\": \"credential_received\",\n  \"type\": \"SynczineEntitlement\",\n  \"wallet\": \"SOVR\u00C6PASS\",\n  \"status\": \"stored\"\n}"
+            },
+            {
+                from: 0, to: 3, 
+                color: '#60A5FA', // Blue
+                title: "5. Request SYNCZINE (Plane 3)",
+                desc: "The Learner's SOVRÆLEX runtime initiates Plane 3 (Fulfillment) by requesting the encrypted SYNCTESS content payload from the Canadian Edge Gateway (Cloudflare Worker).",
+                payload: "GET /content/synczine/vol-4\nHost: edge.sovrag.ca\nAccept: application/vnd.synczine+encrypted\nUser-Agent: SOVR\u00C6LEX/2.0"
+            },
+            {
+                from: 3, to: 0, 
+                color: '#60A5FA',
+                title: "6. Request OID4VP Presentation",
+                desc: "The Canadian Edge Gateway acts as the Verifier. Instead of a traditional login, it challenges the Learner for cryptographic proof of entitlement, leveraging the OID4VP (OpenID for Verifiable Presentations) standard.",
+                payload: "HTTP/1.1 401 Unauthorized\nWWW-Authenticate: OID4VP\n{\n  \"presentation_definition\": {\n    \"id\": \"synczine_access_req\",\n    \"input_descriptors\": [{...}]\n  }\n}"
+            },
+            {
+                from: 0, to: 3, 
+                color: '#D4AF37',
+                title: "7. Present Entitlement VC",
+                desc: "The SOVRÆLEX wallet responds to the OID4VP challenge. Using SD-JWT, it selectively discloses only the \"synczine_access\" claim and proves possession of the key, maintaining zero-knowledge of other wallet contents.",
+                payload: "POST /oid4vp/verify\n{\n  \"vp_token\": \"eyJhb...<SD-JWT-VP>...\",\n  \"presentation_submission\": {\n    \"definition_id\": \"synczine_access_req\"\n  }\n}"
+            },
+            {
+                from: 3, to: 0, 
+                color: '#50C878',
+                title: "8. Verify & Release Content",
+                desc: "The Cloudflare Worker cryptographically verifies the SD-JWT signatures at the edge. Upon success, it releases the decrypted SYNCZINE payload to the learner. Plane 4 (Settlement) happens asynchronously out-of-band.",
+                payload: "// Edge Verification Success\nHTTP/1.1 200 OK\nContent-Type: application/vnd.synczine\n\n<Encrypted SYNCTESS Payload binary stream>"
+            }
+        ];
+
+        // State Management
+        let currentStep = 0; // 0 is initial state, 1-8 are sequence steps
+        let isPlaying = false;
+        let playInterval;
+
+        // DOM Elements
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const btnPlay = document.getElementById('btn-play');
+        const stepIndicator = document.getElementById('step-indicator');
+        const arrowsContainer = document.getElementById('arrows-container');
+        const infoPanel = document.getElementById('info-panel');
+        const infoStepLabel = document.getElementById('info-step-label');
+        const infoTitle = document.getElementById('info-title');
+        const infoDesc = document.getElementById('info-desc');
+        const infoPayload = document.getElementById('info-payload');
+        const iconPlay = document.getElementById('icon-play');
+        const iconPause = document.getElementById('icon-pause');
+        const playText = document.getElementById('play-text');
+
+        // Center X coordinates for the 4 actor columns (percentages)
+        const actorCenters = [12.5, 37.5, 62.5, 87.5];
+        const rowHeight = 45; // Vertical space between steps
+        const topOffset = 100; // Starting Y position
+
+        function updateUI() {
+            // Update Controls
+            btnPrev.disabled = currentStep === 0;
+            btnNext.disabled = currentStep === sequenceSteps.length;
+            stepIndicator.textContent = `${currentStep} / ${sequenceSteps.length}`;
+
+            // Update Panel
+            if (currentStep === 0) {
+                infoStepLabel.textContent = "Initialization";
+                infoStepLabel.style.color = '#D4AF37'; // Gold
+                infoPanel.style.borderLeftColor = '#D4AF37';
+                infoTitle.textContent = "System Ready";
+                infoDesc.textContent = "Press \"Next Step\" or \"Auto-play\" to begin the sequence simulation detailing the separation of domestic Vietnamese fiat rails and Canadian content fulfillment using W3C Verifiable Credentials.";
+                infoPayload.textContent = "// Waiting for transaction initiation...";
+                infoPayload.style.color = '#64748B'; // muted
+            } else {
+                const stepData = sequenceSteps[currentStep - 1];
+                infoStepLabel.textContent = `Step ${currentStep} of ${sequenceSteps.length}`;
+                infoStepLabel.style.color = stepData.color;
+                infoPanel.style.borderLeftColor = stepData.color;
+                infoTitle.textContent = stepData.title;
+                infoDesc.textContent = stepData.desc;
+                infoPayload.textContent = stepData.payload;
+                infoPayload.style.color = stepData.color;
+            }
+
+            renderArrows();
+        }
+
+        function renderArrows() {
+            arrowsContainer.innerHTML = '';
+            
+            for (let i = 0; i < currentStep; i++) {
+                const step = sequenceSteps[i];
+                const isActive = (i === currentStep - 1);
+                const yPos = topOffset + (i * rowHeight);
+                const color = step.color;
+                
+                const arrowEl = document.createElement('div');
+                const labelEl = document.createElement('div');
+                labelEl.className = 'arrow-label text-gray-300';
+                labelEl.textContent = `Step ${i + 1}`;
+                if(isActive) {
+                    labelEl.style.color = color;
+                    labelEl.style.fontWeight = 'bold';
+                    labelEl.style.textShadow = `0 0 8px ${color}40`;
+                }
+
+                if (step.from === step.to) {
+                    // Self Loop
+                    arrowEl.className = `arrow-self ${isActive ? 'active animate-draw-self' : ''}`;
+                    arrowEl.style.top = `${yPos - 16}px`;
+                    arrowEl.style.left = `${actorCenters[step.from]}%`;
+                    arrowEl.style.color = isActive ? color : '#64748B';
+                    arrowEl.style.width = isActive ? '0px' : '40px'; // For animation
+                    
+                } else {
+                    // Horizontal Line
+                    const isForward = step.to > step.from;
+                    arrowEl.className = `diagram-arrow ${isForward ? 'arrow-right' : 'arrow-left'} ${isActive ? 'active' : ''}`;
+                    
+                    const leftCenter = actorCenters[Math.min(step.from, step.to)];
+                    const rightCenter = actorCenters[Math.max(step.from, step.to)];
+                    const widthPct = rightCenter - leftCenter;
+
+                    arrowEl.style.top = `${yPos}px`;
+                    arrowEl.style.left = `${leftCenter}%`;
+                    arrowEl.style.width = `${widthPct}%`;
+                    arrowEl.style.backgroundColor = isActive ? color : '#64748B';
+                    arrowEl.style.color = isActive ? color : '#64748B'; // for arrowhead
+
+                    // Animation classes
+                    if (isActive) {
+                        if (isForward) {
+                            arrowEl.classList.add('animate-draw-right');
+                        } else {
+                            arrowEl.classList.add('animate-draw-left');
+                            // For drawing left, we need to adjust transform origin theoretically, 
+                            // but the CSS keyframes handle it decently with transform: translateX.
+                        }
+                    }
+                }
+
+                arrowEl.appendChild(labelEl);
+                arrowsContainer.appendChild(arrowEl);
+            }
+        }
+
+        // Interaction Handlers
+        btnNext.addEventListener('click', () => {
+            if (currentStep < sequenceSteps.length) {
+                currentStep++;
+                updateUI();
+                if(isPlaying) stopAutoplay(); // Manual override pauses auto
+            }
+        });
+
+        btnPrev.addEventListener('click', () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateUI();
+                if(isPlaying) stopAutoplay();
+            }
+        });
+
+        function toggleAutoplay() {
+            if (isPlaying) {
+                stopAutoplay();
+            } else {
+                startAutoplay();
+            }
+        }
+
+        function startAutoplay() {
+            if(currentStep === sequenceSteps.length) currentStep = 0; // reset if at end
+            isPlaying = true;
+            iconPlay.classList.add('hidden');
+            iconPause.classList.remove('hidden');
+            playText.textContent = "Pause";
+            btnPlay.classList.replace('bg-emerald/10', 'bg-gold/10');
+            btnPlay.classList.replace('text-emerald', 'text-gold');
+            btnPlay.classList.replace('border-emerald/20', 'border-gold/20');
+            
+            // Immediately go to next step if starting from 0
+            if(currentStep === 0) {
+                currentStep++;
+                updateUI();
+            }
+
+            playInterval = setInterval(() => {
+                if (currentStep < sequenceSteps.length) {
+                    currentStep++;
+                    updateUI();
+                } else {
+                    stopAutoplay();
+                }
+            }, 3500); // 3.5 seconds per step
+        }
+
+        function stopAutoplay() {
+            isPlaying = false;
+            clearInterval(playInterval);
+            iconPause.classList.add('hidden');
+            iconPlay.classList.remove('hidden');
+            playText.textContent = "Auto-play";
+            btnPlay.classList.replace('bg-gold/10', 'bg-emerald/10');
+            btnPlay.classList.replace('text-gold', 'text-emerald');
+            btnPlay.classList.replace('border-gold/20', 'border-emerald/20');
+        }
+
+        btnPlay.addEventListener('click', toggleAutoplay);
+
+        // Initialize
+        updateUI();
+
+    </script>
+</body>
+</html>
