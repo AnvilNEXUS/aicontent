@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pipeline Isolation & Trigger Boundaries</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        slate: { 850: '#151e2e', 900: '#0f172a', 950: '#020617' },
+                        gold: { 400: '#facc15', 500: '#eab308' },
+                        emerald: { 400: '#34d399', 500: '#10b981', 900: '#064e3b' },
+                        danger: { 500: '#ef4444', 900: '#7f1d1d' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        code, .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(51, 65, 85, 0.8); }
+        .tab-btn { transition: all 0.2s ease; }
+        .tab-btn.active { background: #3b82f6; color: white; border-color: #60a5fa; box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39); }
+        .rule-cell div { display: none; }
+        .rule-cell div.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .glowing-danger { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.15); border-left: 2px solid #ef4444 !important; }
+        .glowing-safe { border-left: 2px solid #10b981 !important; }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-300 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto space-y-6">
+        <!-- Header -->
+        <header class="border-b border-slate-800 pb-4 mb-6">
+            <h1 class="text-2xl font-bold text-slate-100 mb-2">Securing the AI-Native Pipeline Requires <span class="text-blue-400">Session Isolation</span> and <span class="text-blue-400">Trigger Boundaries</span></h1>
+            <p class="text-slate-400 text-sm">Al-native SoloPreneurs manage two distinct compromise vectors across the 5-Tier account architecture: prompt and session telemetry leakage via shared cloud agents, and Remote Code Execution (RCE) via privileged GitHub Actions triggers.</p>
+        </header>
+
+        <!-- Tier Tabs Filter -->
+        <div class="bg-slate-900 border border-slate-800 rounded-lg p-3 flex flex-col md:flex-row md:items-center gap-4 mb-8 shadow-lg">
+            <div class="flex items-center text-xs font-semibold text-blue-400 uppercase tracking-wider whitespace-nowrap">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
+                Filter Controls by Tier
+            </div>
+            <div class="flex flex-wrap gap-2 flex-grow" id="tabs-container">
+                <button onclick="setTier('all')" class="tab-btn active px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 w-full md:w-auto">ALL TIERS<br><span class="font-normal text-[10px]">Overview</span></button>
+                <button onclick="setTier('t1')" class="tab-btn px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 flex-1">TIER 1<br><span class="font-normal text-[10px]">Sandbox / R&D</span></button>
+                <button onclick="setTier('t2')" class="tab-btn px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 flex-1">TIER 2<br><span class="font-normal text-[10px]">Internal IP</span></button>
+                <button onclick="setTier('t3')" class="tab-btn px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 flex-1">TIER 3<br><span class="font-normal text-[10px]">Client / Collab</span></button>
+                <button onclick="setTier('t4')" class="tab-btn px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 flex-1">TIER 4<br><span class="font-normal text-[10px]">Public Learn</span></button>
+                <button onclick="setTier('t5')" class="tab-btn px-4 py-2 rounded-md text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700 flex-1">TIER 5<br><span class="font-normal text-[10px]">Commons OSS</span></button>
+            </div>
+        </div>
+
+        <div id="tier-desc" class="text-sm px-4 py-2 bg-slate-850 rounded border border-slate-800 mb-6 text-slate-400 italic">
+            Showing full baseline governance matrix. Select Tier 1-5 above to highlight the exact instruction scopes, session visibility lockdowns, and CI trigger boundaries required for that operational level.
+        </div>
+
+        <!-- Layer 1: AI Context -->
+        <div class="mb-10">
+            <div class="flex items-center mb-4">
+                <span class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded mr-3">LAYER 1</span>
+                <h2 class="text-lg font-bold text-slate-200">AI Context Hierarchy & Session Data Visibility</h2>
+                <span class="ml-auto text-xs text-slate-500">Instruction File Precedence & Surface Storage Defaults</span>
+            </div>
+            
+            <div class="overflow-x-auto rounded-xl border border-slate-800 shadow-xl bg-slate-900">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-850 border-b border-slate-800">
+                            <th class="p-4 font-semibold text-slate-400 w-[20%]">SURFACE / LOCATION</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[25%]">PRECEDENCE & SCOPE</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[25%]">DEFAULT SHARING VISIBILITY</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[30%]">TIER GOVERNANCE RULE</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/50">
+                        <!-- IDE -->
+                        <tr class="hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1">IDE Sessions</div>
+                                <div class="text-xs text-blue-400 mb-2">VS Code / JetBrains / Neovim</div>
+                                <div class="text-xs text-slate-500">Storage & retention managed locally inside the specific IDE workspace.</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400 leading-relaxed">
+                                Combines repo-wide <code class="text-slate-300">copilot-instructions.md</code> + matching <code class="text-slate-300">*.instructions.md</code> globs + nearest <code class="text-slate-300">AGENTS.md</code>.<br><br>Content exclusions take up to 30 mins to propagate.
+                            </td>
+                            <td class="p-4 align-top">
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-emerald-900/30 border border-emerald-800 text-emerald-400 text-xs font-medium mb-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div>Unshared by Default</span>
+                                <div class="text-xs text-slate-500">Strictly local to IDE instance; indirect semantic context (types/hover) can still reach model.</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell" id="rule-ide">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above to view specific IDE instructions.</div>
+                                <div data-tiers="t1,t2,t3,t4,t5" class="text-xs text-slate-300 leading-relaxed">
+                                    <span class="font-bold text-gold-400 block mb-1">T1 T2 T3 T4 T5</span>
+                                    Configure org/repo Content Exclusions for <code class="text-red-400">**/*.env</code>, <code class="text-red-400">*.cfg</code>, and <code class="text-red-400">/scripts/**</code> in Tiers 2 & 3. Verify active instructions via Copilot Chat References list.
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- CLI -->
+                        <tr class="hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1">Copilot CLI & App (Local)</div>
+                                <div class="text-xs font-mono text-slate-500 mb-2">~/.copilot/session-state/</div>
+                                <div class="text-xs text-slate-500">Full log on disk + local SQLite DB supporting /chronicle queries.</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400 leading-relaxed">
+                                Reads repository instructions + nearest <code class="text-slate-300">AGENTS.md</code>. Checks identifiable file paths in commands/scripts against Content Exclusions before run.
+                            </td>
+                            <td class="p-4 align-top">
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-emerald-900/30 border border-emerald-800 text-emerald-400 text-xs font-medium mb-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div>Unshared by Default</span>
+                                <div class="text-xs text-slate-500">Synced to personal GitHub account via <code class="text-slate-400">remoteExport</code>; private to user (admins cannot read synced personal sessions).</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell" id="rule-cli">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above to view specific CLI instructions.</div>
+                                <div data-tiers="t1,t2,t4" class="text-xs text-slate-300 leading-relaxed">
+                                    <span class="font-bold text-gold-400 block mb-1">T1 T2 T4</span>
+                                    Disable cloud sync in Tier 2 via <code class="text-slate-400">remoteExport</code> or Enterprise "Store local sessions in the Cloud" policy. Purge sensitive local logs via <code class="text-slate-400">/session delete</code>.
+                                </div>
+                                <div data-tiers="t3,t5" class="text-xs text-slate-500 italic">No specific override required for this tier beyond base rules.</div>
+                            </td>
+                        </tr>
+                        <!-- Sandbox -->
+                        <tr class="hover:bg-slate-800/50 transition-colors">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1">Cloud Sessions (Sandbox)</div>
+                                <div class="text-xs text-slate-500 mb-2">github.com/copilot/agents</div>
+                                <div class="text-xs text-slate-500">Isolated GitHub-hosted environment; maintains state snapshot.</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400 leading-relaxed">
+                                Respects repo-wide + path-specific <code class="text-slate-300">*.instructions.md</code> (unless <code class="text-slate-400">excludeAgent: "cloud-agent"</code> is set) and org Content Exclusions.
+                            </td>
+                            <td class="p-4 align-top">
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-emerald-900/30 border border-emerald-800 text-emerald-400 text-xs font-medium mb-2"><div class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></div>Unshared by Default</span>
+                                <div class="text-xs text-slate-500">Isolated per-user cloud snapshot; in-progress files & prompts remain private unless explicitly shared.</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell" id="rule-sandbox">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above to view specific Sandbox instructions.</div>
+                                <div data-tiers="t1,t2,t5" class="text-xs text-slate-300 leading-relaxed">
+                                    <span class="font-bold text-gold-400 block mb-1">T1 T2 T5</span>
+                                    Preferred cloud surface for Tier 1 R&D and bootstrapping <code class="text-slate-400">.github/copilot-instructions.md</code> without exposing session logs to repo collaborators.
+                                </div>
+                                <div data-tiers="t3,t4" class="text-xs text-slate-500 italic">Acceptable to use, but Sandbox data is unshared so it is safe.</div>
+                            </td>
+                        </tr>
+                        <!-- Actions -->
+                        <tr class="hover:bg-slate-800/50 transition-colors" id="row-actions">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1">Cloud Sessions (Actions)</div>
+                                <div class="text-xs text-danger-400 font-semibold mb-2">Repo "Agents" Tab → "All sessions"</div>
+                                <div class="text-xs text-slate-500">Runs in ephemeral GitHub Actions runner; log persists on GitHub.com.</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400 leading-relaxed">
+                                Reads repo instructions unless blocked via YAML frontmatter <code class="text-slate-300">excludeAgent: "cloud-agent"</code> or <code class="text-slate-300">"code-review"</code> in <code class="text-slate-300">.github/instructions/*.instructions.md</code>
+                            </td>
+                            <td class="p-4 align-top">
+                                <span class="inline-flex items-center px-2 py-1 rounded bg-danger-900/30 border border-danger-800 text-danger-400 text-xs font-medium mb-2"><div class="w-1.5 h-1.5 rounded-full bg-danger-500 mr-1.5"></div>Shared by Default</span>
+                                <div class="text-xs text-slate-300 font-semibold">Visible to anyone with repository access under "Agents" → "All sessions" view.</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell" id="rule-actions">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above to view specific Actions instructions.</div>
+                                <div data-tiers="t2,t3,t4,t5" class="text-xs text-danger-300 leading-relaxed font-medium">
+                                    <span class="font-bold text-danger-400 block mb-1">T2 T3 T4 T5</span>
+                                    CRITICAL IN TIER 3 & 4: Every prompt, tool call, and file diff in Actions Cloud Sessions is readable by all repo collaborators. Set <code class="text-slate-200 bg-slate-800 px-1 rounded">excludeAgent: "cloud-agent"</code> on sensitive paths.
+                                </div>
+                                <div data-tiers="t1" class="text-xs text-slate-500 italic">Tier 1 is single-user private, so shared actions logs are low risk.</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Layer 2: Actions Triggers -->
+        <div>
+            <div class="flex items-center mb-4">
+                <span class="bg-amber-600 text-white text-xs font-bold px-2 py-1 rounded mr-3">LAYER 2</span>
+                <h2 class="text-lg font-bold text-slate-200">GitHub Actions Trigger Privilege & Pwn-Request Trust Matrix</h2>
+                <span class="ml-auto text-xs text-slate-500">Event Context, Token Permissions & Fork Code Execution</span>
+            </div>
+            
+            <div class="overflow-x-auto rounded-xl border border-slate-800 shadow-xl bg-slate-900">
+                <table class="w-full text-left text-sm border-collapse">
+                    <thead>
+                        <tr class="bg-slate-850 border-b border-slate-800">
+                            <th class="p-4 font-semibold text-slate-400 w-[20%]">WORKFLOW TRIGGER</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[25%]">EXECUTION CONTEXT</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[15%]">GITHUB_TOKEN & SECRETS</th>
+                            <th class="p-4 font-semibold text-slate-400 w-[40%]">PWN-REQUEST RISK & POLICY</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/50">
+                        <!-- pull_request -->
+                        <tr class="hover:bg-slate-800/50 transition-colors" id="row-pr">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1"><code class="text-blue-400 bg-blue-900/20 px-1.5 py-0.5 rounded">pull_request</code></div>
+                                <div class="text-xs text-slate-400 mb-2">Source: <span class="text-emerald-400">External Fork</span></div>
+                                <div class="text-[11px] text-slate-500">Unprivileged CI validation workflow for outside contributors.</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400">
+                                <span class="font-semibold text-slate-300">Fork Merge Commit Context</span><br>
+                                Safely checks out and executes untrusted contributor code (builds, tests, linters).
+                            </td>
+                            <td class="p-4 align-top">
+                                <div class="text-xs font-semibold text-emerald-400 mb-1">Read-Only</div>
+                                <div class="text-[10px] text-slate-500 mb-2">Forced <code class="text-slate-400">contents: read</code> maximum.</div>
+                                <div class="text-xs font-semibold text-emerald-400 mb-1">Secrets Blocked</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above.</div>
+                                <div data-tiers="t1,t2,t3" class="text-xs text-slate-500 italic">Not applicable for private non-forked repos.</div>
+                                <div data-tiers="t4,t5" class="text-xs text-emerald-300 leading-relaxed font-medium">
+                                    <span class="font-bold text-emerald-400 block mb-1">T4 T5</span>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-emerald-900/50 border border-emerald-800 text-emerald-400 text-[10px] mb-1">Safe by Design</span><br>
+                                    Mandatory trigger for all fork code execution (<code class="text-slate-300">npm install</code>, tests, make) in Tiers 4 & 5.
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- pull_request_target -->
+                        <tr class="hover:bg-slate-800/50 transition-colors" id="row-prt">
+                            <td class="p-4 align-top">
+                                <div class="font-bold text-white mb-1"><code class="text-danger-400 bg-danger-900/20 px-1.5 py-0.5 rounded">pull_request_target</code></div>
+                                <div class="text-xs text-slate-400 mb-2">Source: <span class="text-danger-400">External Fork</span></div>
+                                <div class="text-[11px] text-slate-500">Intended strictly for trusted metadata tasks (labeling, PR comments).</div>
+                            </td>
+                            <td class="p-4 align-top text-xs text-slate-400">
+                                <span class="font-semibold text-slate-300">Base Repository Context</span><br>
+                                Always runs from default branch (since Dec 8, 2025), not the fork branch.
+                            </td>
+                            <td class="p-4 align-top">
+                                <div class="text-xs font-semibold text-danger-400 mb-1">Read / Write Token</div>
+                                <div class="text-[10px] text-slate-500 mb-2">Can push code, create releases.</div>
+                                <div class="text-xs font-semibold text-danger-400 mb-1">Full Base Secrets</div>
+                            </td>
+                            <td class="p-4 align-top bg-slate-850/50 rule-cell">
+                                <div data-tiers="all" class="active text-xs text-slate-300">Select a Tier above.</div>
+                                <div data-tiers="t1,t2" class="text-xs text-slate-500 italic">Not applicable for private non-forked repos.</div>
+                                <div data-tiers="t3,t4,t5" class="text-xs text-danger-300 leading-relaxed font-medium">
+                                    <span class="font-bold text-danger-400 block mb-1">T3 T4 T5</span>
+                                    <span class="inline-flex items-center px-1.5 py-0.5 rounded bg-danger-900/50 border border-danger-800 text-danger-400 text-[10px] mb-1">Critical RCE if Head Checked Out</span><br>
+                                    NEVER checkout <code class="text-slate-300 bg-slate-800 px-1">ref: ${{ github.event.pull_request.head.sha }}</code> or run build scripts here ("Pwn Request" RCE). Metadata-only!
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const descriptions = {
+            'all': 'Showing full baseline governance matrix. Select Tier 1-5 above to highlight the exact instruction scopes, session visibility lockdowns, and CI trigger boundaries required for that operational level.',
+            't1': 'TIER 1 (Sandbox): Focus on bootstrapping cloud AI sessions privately without exposing keys or prototypes.',
+            't2': 'TIER 2 (Internal IP): Focus on disabling cloud syncs and enforcing strict repository token scopes for proprietary SaaS engines.',
+            't3': 'TIER 3 (Client): CRITICAL - Shared Action logs expose your prompts to clients. Block cloud-agent execution on sensitive paths.',
+            't4': 'TIER 4 (Public Learn): CRITICAL - Fork PRs introduce Pwn-Request RCE risk. Strictly separate PR triggers and block Actions cloud agents.',
+            't5': 'TIER 5 (Commons OSS): CRITICAL - High volume of untrusted community forks requires flawless trigger separation and VDP compliance.'
+        };
+
+        function setTier(tierId) {
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-400');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+            event.currentTarget.classList.remove('bg-slate-800', 'text-slate-400');
+            event.currentTarget.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-400');
+
+            // Update description
+            document.getElementById('tier-desc').textContent = descriptions[tierId];
+
+            // Update Rule Cells (Layer 1 & Layer 2)
+            document.querySelectorAll('.rule-cell div').forEach(div => {
+                div.classList.remove('active');
+                const tiers = div.getAttribute('data-tiers').split(',');
+                if (tiers.includes('all') && tierId === 'all') {
+                    div.classList.add('active');
+                } else if (tierId !== 'all' && tiers.includes(tierId)) {
+                    div.classList.add('active');
+                }
+            });
+
+            // Styling adjustments based on risk
+            const rowActions = document.getElementById('row-actions');
+            const rowPrt = document.getElementById('row-prt');
+            const rowPr = document.getElementById('row-pr');
+
+            rowActions.classList.remove('glowing-danger');
+            rowPrt.classList.remove('glowing-danger');
+            rowPr.classList.remove('glowing-safe');
+
+            if (['t3', 't4', 't5'].includes(tierId)) {
+                rowActions.classList.add('glowing-danger');
+            }
+            if (['t4', 't5'].includes(tierId)) {
+                rowPrt.classList.add('glowing-danger');
+                rowPr.classList.add('glowing-safe');
+            }
+        }
+    </script>
+</body>
+</html>
