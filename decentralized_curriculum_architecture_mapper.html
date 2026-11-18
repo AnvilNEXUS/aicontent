@@ -1,0 +1,2694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Decentralized Curriculum Architecture Mapper</title>
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & OBSIDIAN DARK THEME (Zero External Dependencies)
+       ========================================================================== */
+    :root {
+      --bg-base: #0b0c0e;
+      --bg-surface: #131519;
+      --bg-card: #181a1f;
+      --bg-subcard: #101216;
+      --bg-hover: #1e2128;
+
+      --border-subtle: #242830;
+      --border-default: #2c303a;
+      --border-node: #525763;
+      --border-node-hover: #747b8c;
+
+      --accent-blue: #7eb2ff;
+      --accent-blue-soft: rgba(126, 178, 255, 0.16);
+      --accent-blue-glow: rgba(126, 178, 255, 0.28);
+      --active-grad-start: #1b3163;
+      --active-grad-end: #213d7a;
+      --pill-active-bg: #1a253b;
+
+      --emerald: #34d399;
+      --emerald-bg: rgba(52, 211, 153, 0.12);
+      --emerald-border: rgba(52, 211, 153, 0.45);
+      --amber: #fbbf24;
+      --amber-bg: rgba(251, 191, 36, 0.12);
+      --amber-border: rgba(251, 191, 36, 0.42);
+      --rose: #fb7185;
+      --rose-bg: rgba(251, 113, 133, 0.12);
+      --rose-border: rgba(251, 113, 133, 0.42);
+      --violet: #a78bfa;
+
+      --text-primary: #f1f3f5;
+      --text-secondary: #c2c8d4;
+      --text-muted: #9aa0ab;
+      --text-dim: #6c7382;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      --radius-lg: 24px;
+      --radius-md: 16px;
+      --radius-sm: 10px;
+      --radius-pill: 999px;
+      --radius-node: 52px;
+
+      --transition-fast: 160ms cubic-bezier(0.22, 1, 0.36, 1);
+      --transition-med: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden;
+    }
+
+    body {
+      min-height: 100vh;
+      padding: 20px 16px 48px;
+      background-image:
+        radial-gradient(ellipse 80% 40% at 50% -10%, rgba(33, 61, 122, 0.16), transparent 70%);
+    }
+
+    .app-shell {
+      max-width: 1020px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ==========================================================================
+       HEADER BAR: PRESETS & EXPORT ACTIONS
+       ========================================================================== */
+    .utility-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 4px;
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      box-shadow: 0 0 12px var(--accent-blue);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .brand-kbd {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 2px 7px;
+      border-radius: 6px;
+    }
+
+    .presets-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .preset-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preset-btn, .action-btn {
+      appearance: none;
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 500;
+      padding: 6px 11px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .preset-btn:hover, .action-btn:hover {
+      color: var(--text-primary);
+      border-color: var(--border-node);
+      background: var(--bg-hover);
+    }
+
+    .preset-btn.active {
+      color: var(--accent-blue);
+      background: var(--pill-active-bg);
+      border-color: rgba(126, 178, 255, 0.55);
+      box-shadow: 0 0 10px rgba(126, 178, 255, 0.12);
+    }
+
+    .action-btn {
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      border-radius: 10px;
+      color: var(--text-secondary);
+    }
+
+    .action-btn.primary-action {
+      border-color: rgba(126, 178, 255, 0.35);
+      background: rgba(26, 37, 59, 0.55);
+      color: var(--accent-blue);
+    }
+
+    .action-btn.primary-action:hover {
+      background: var(--pill-active-bg);
+      border-color: var(--accent-blue);
+    }
+
+    /* ==========================================================================
+       SECTION 1: TOP CONTROL BAR & TELEMETRY
+       ========================================================================== */
+    .control-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .toggles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toggle-label {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding-left: 4px;
+    }
+
+    .segmented-pill {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #0d0e11;
+      border: 1px solid #1f222a;
+      border-radius: var(--radius-pill);
+      padding: 4px;
+      gap: 4px;
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: 1.5px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.86rem;
+      font-weight: 500;
+      padding: 10px 12px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      line-height: 1.25;
+      text-align: center;
+      min-height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .seg-btn:hover:not(.active) {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .seg-btn.active {
+      background: var(--pill-active-bg);
+      color: var(--text-primary);
+      border-color: var(--accent-blue);
+      box-shadow:
+        0 0 14px rgba(126, 178, 255, 0.22),
+        inset 0 0 12px rgba(126, 178, 255, 0.1);
+    }
+
+    /* Architecture Telemetry Strip */
+    .telemetry-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .meter-card {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .meter-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .meter-name {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .meter-val {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .meter-track {
+      height: 6px;
+      background: #0d0e11;
+      border: 1px solid #20242c;
+      border-radius: var(--radius-pill);
+      overflow: hidden;
+    }
+
+    .meter-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: var(--radius-pill);
+      transition: width 380ms cubic-bezier(0.22, 1, 0.36, 1), background-color 280ms ease;
+    }
+
+    /* ==========================================================================
+       SECTION 2: MAIN 4-NODE SNAKE FLOW DIAGRAM (2x2 + ANIMATED SVG)
+       ========================================================================== */
+    .diagram-stage {
+      position: relative;
+      padding: 16px 8px;
+    }
+
+    .connector-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .flow-path {
+      fill: none;
+      stroke: #8c95a6;
+      stroke-width: 1.65;
+      stroke-dasharray: 2.5 5.5;
+      stroke-linecap: round;
+      animation: dashFlow 18s linear infinite;
+      opacity: 0.85;
+      transition: stroke 250ms ease, opacity 250ms ease;
+    }
+
+    .flow-path.emphasized {
+      stroke: var(--accent-blue);
+      opacity: 1;
+    }
+
+    @keyframes dashFlow {
+      from { stroke-dashoffset: 160; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    .snake-grid {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr);
+      grid-template-rows: auto 66px auto;
+      align-items: center;
+    }
+
+    .node-slot-1 { grid-column: 1; grid-row: 1; }
+    .node-slot-2 { grid-column: 3; grid-row: 1; }
+    .flow-badge-slot {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .node-slot-3 { grid-column: 1; grid-row: 3; }
+    .node-slot-4 { grid-column: 3; grid-row: 3; }
+
+    /* Center dynamic flow pill badge */
+    .flow-pill {
+      position: relative;
+      z-index: 3;
+      background: #14171d;
+      border: 1px solid #262b35;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-style: italic;
+      font-size: 0.8rem;
+      padding: 6px 18px;
+      border-radius: var(--radius-pill);
+      letter-spacing: 0.01em;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      transition: all var(--transition-med);
+      white-space: nowrap;
+    }
+
+    .flow-pill.pulse {
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+      box-shadow: 0 0 18px rgba(126, 178, 255, 0.25);
+    }
+
+    /* Stadium/Capsule Architecture Nodes */
+    .arch-node {
+      width: 100%;
+      appearance: none;
+      background: var(--bg-card);
+      border: 1.5px solid var(--border-node);
+      border-radius: var(--radius-node);
+      padding: 24px 26px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      color: var(--text-primary);
+      transition:
+        transform var(--transition-fast),
+        border-color var(--transition-med),
+        background var(--transition-med),
+        box-shadow var(--transition-med);
+      position: relative;
+      outline: none;
+    }
+
+    .arch-node:hover:not(.active) {
+      border-color: var(--border-node-hover);
+      background: #1d2027;
+      transform: translateY(-1px);
+    }
+
+    .arch-node:focus-visible {
+      box-shadow: 0 0 0 3px rgba(126, 178, 255, 0.45);
+    }
+
+    .arch-node.active {
+      background: linear-gradient(145deg, var(--active-grad-start) 0%, var(--active-grad-end) 100%);
+      border-color: var(--accent-blue);
+      box-shadow:
+        0 0 28px var(--accent-blue-glow),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    }
+
+    .arch-node.updated {
+      animation: nodePulse 550ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes nodePulse {
+      0% { box-shadow: 0 0 0 0 rgba(126, 178, 255, 0.55); transform: scale(1); }
+      40% { box-shadow: 0 0 26px 4px rgba(126, 178, 255, 0.38); transform: scale(1.015); }
+      100% { box-shadow: 0 0 0 0 rgba(126, 178, 255, 0); transform: scale(1); }
+    }
+
+    .node-kicker {
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .arch-node.active .node-kicker {
+      color: #b7d2ff;
+    }
+
+    .node-title {
+      font-size: 1.12rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .node-artifact {
+      font-family: var(--font-mono);
+      font-style: italic;
+      font-size: 0.84rem;
+      color: #d6dde8;
+      margin-top: 1px;
+    }
+
+    .arch-node.active .node-artifact {
+      color: #e4efff;
+    }
+
+    .node-risk {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .arch-node.active .node-risk {
+      color: #a9c6f7;
+    }
+
+    /* Mobile vertical connector indicators (hidden on desktop) */
+    .mobile-arrow {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      height: 26px;
+      color: #7c8596;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+    }
+
+    /* ==========================================================================
+       SECTION 3: EXPANDED DETAIL INSPECTOR PANEL
+       ========================================================================== */
+    .inspector-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px 26px 26px;
+      box-shadow: 0 12px 34px rgba(0, 0, 0, 0.38);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+
+    .inspector-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .inspector-title-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .inspector-title {
+      font-size: 1.38rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .artifact-badge {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      background: #0d0e11;
+      border: 1px solid #242833;
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+    }
+
+    .inspector-tabs {
+      display: inline-flex;
+      background: #0d0e11;
+      border: 1px solid #222630;
+      border-radius: var(--radius-pill);
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tab-btn:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      background: var(--pill-active-bg);
+      color: var(--accent-blue);
+      border-color: rgba(126, 178, 255, 0.55);
+    }
+
+    .tab-badge {
+      font-family: var(--font-mono);
+      font-size: 0.66rem;
+      background: rgba(126, 178, 255, 0.14);
+      color: var(--accent-blue);
+      padding: 1px 6px;
+      border-radius: 6px;
+    }
+
+    /* Tab 1: Risk & Mitigation Grid */
+    .detail-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .sub-card {
+      background: var(--bg-subcard);
+      border: 1px solid #1d2028;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sub-card-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .sub-card-body {
+      font-size: 0.96rem;
+      color: var(--text-primary);
+      line-height: 1.55;
+    }
+
+    .sub-card.compact .sub-card-body {
+      font-size: 0.86rem;
+      color: var(--text-secondary);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .micro-tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 3px 9px;
+      border-radius: 7px;
+      background: #171a21;
+      border: 1px solid #282d38;
+      color: var(--text-secondary);
+    }
+
+    .lab-cta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 4px;
+    }
+
+    .lab-hint {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+    }
+
+    /* ==========================================================================
+       TAB 2: INTERACTIVE DEEP-DIVE LABS
+       ========================================================================== */
+    .lab-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .lab-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-subcard);
+      border: 1px solid #1f232c;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+    }
+
+    .lab-toolbar-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .lab-toolbar-sub {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mini-btn {
+      appearance: none;
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .mini-btn:hover {
+      border-color: var(--border-node-hover);
+      color: var(--text-primary);
+    }
+
+    .mini-btn.active {
+      background: var(--pill-active-bg);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* --- LAB 1: 10-NODE COMPETENCY DAG SIMULATOR --- */
+    .dag-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      align-items: center;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .dag-canvas-wrap {
+      background: #0d0e11;
+      border: 1px solid #1f232c;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      overflow-x: auto;
+    }
+
+    .dag-svg {
+      width: 100%;
+      min-width: 680px;
+      height: auto;
+      display: block;
+    }
+
+    .dag-node-group {
+      cursor: pointer;
+      transition: opacity 220ms ease;
+    }
+
+    .dag-node-group:hover .dag-rect {
+      filter: brightness(1.18);
+    }
+
+    .dag-info-bar {
+      background: var(--bg-subcard);
+      border: 1px solid #1f232c;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+      gap: 14px;
+      font-size: 0.82rem;
+    }
+
+    /* --- LAB 2: ATOMIC MODULE PREVIEWER --- */
+    .budget-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .budget-stat {
+      background: var(--bg-subcard);
+      border: 1px solid #1f232c;
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .budget-stat-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .budget-stat-val {
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: 3px;
+    }
+
+    .orientation-ribbon {
+      background: rgba(26, 37, 59, 0.4);
+      border: 1px solid rgba(126, 178, 255, 0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      font-size: 0.8rem;
+    }
+
+    .ribbon-col-label {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      color: var(--accent-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
+    }
+
+    .tier-panel {
+      background: var(--bg-subcard);
+      border: 1px solid #222631;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .code-viewer {
+      background: #090a0d;
+      border: 1px solid #222631;
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      line-height: 1.55;
+      color: #cdd5e3;
+      overflow-x: auto;
+      max-height: 300px;
+      white-space: pre;
+    }
+
+    /* --- LAB 3: CREDENTIAL COMPARATOR & BINARY RUBRIC --- */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid #1f232c;
+      border-radius: var(--radius-md);
+      background: var(--bg-subcard);
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+
+    table.data-table th,
+    table.data-table td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #1d2028;
+      vertical-align: top;
+    }
+
+    table.data-table th {
+      background: #14171d;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table td.col-highlight,
+    table.data-table th.col-highlight {
+      background: rgba(126, 178, 255, 0.08);
+      color: var(--text-primary);
+    }
+
+    .rubric-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .rubric-item {
+      background: var(--bg-subcard);
+      border: 1px solid #1f232c;
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .rubric-item.passed {
+      border-color: var(--emerald-border);
+      background: rgba(52, 211, 153, 0.04);
+    }
+
+    .rubric-top {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+
+    .rubric-check {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      accent-color: var(--emerald);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .rubric-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      padding-left: 32px;
+      font-size: 0.76rem;
+    }
+
+    .trap-box {
+      background: rgba(251, 113, 133, 0.07);
+      border: 1px solid rgba(251, 113, 133, 0.22);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #f3c4cc;
+    }
+
+    .remedy-box {
+      background: rgba(126, 178, 255, 0.07);
+      border: 1px solid rgba(126, 178, 255, 0.2);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #cad9f5;
+    }
+
+    .mint-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-subcard);
+      border: 1px solid #222631;
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+
+    .mint-btn {
+      appearance: none;
+      border: 1px solid var(--border-default);
+      background: #1a1d24;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 10px;
+      cursor: not-allowed;
+      transition: all var(--transition-fast);
+    }
+
+    .mint-btn.unlocked {
+      cursor: pointer;
+      background: linear-gradient(135deg, #105e45, #188360);
+      border-color: var(--emerald);
+      color: #ecfdf5;
+      box-shadow: 0 0 18px rgba(52, 211, 153, 0.25);
+    }
+
+    .mint-btn.unlocked:hover {
+      filter: brightness(1.1);
+    }
+
+    /* --- LAB 4: CARTOGRAPHER QA GATE CHECKER --- */
+    .qa-score-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .qa-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-default);
+      background: var(--bg-card);
+    }
+
+    .ci-console {
+      background: #08090b;
+      border: 1px solid #202530;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      line-height: 1.6;
+      color: #9ae6b4;
+      white-space: pre-wrap;
+    }
+
+    /* Toast Notification (Replaces alert) */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 999;
+      background: #192438;
+      border: 1px solid var(--accent-blue);
+      color: var(--text-primary);
+      font-size: 0.82rem;
+      padding: 10px 16px;
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       ========================================================================== */
+    @media (max-width: 820px) {
+      .toggles-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+      .telemetry-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .detail-grid-2,
+      .dag-info-bar,
+      .orientation-ribbon,
+      .rubric-meta {
+        grid-template-columns: 1fr;
+      }
+      .budget-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 680px) {
+      body {
+        padding: 12px 10px 36px;
+      }
+      .control-panel,
+      .inspector-card {
+        padding: 16px;
+        border-radius: 18px;
+      }
+      .connector-svg {
+        display: none;
+      }
+      .snake-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .mobile-arrow {
+        display: flex;
+      }
+      .arch-node {
+        border-radius: 32px;
+        padding: 18px 18px;
+      }
+      .flow-badge-slot {
+        padding: 6px 0;
+      }
+      .inspector-title {
+        font-size: 1.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell" aria-label="Decentralized Curriculum Architecture Mapper">
+
+    <!-- ====================================================================
+         UTILITY BAR: BRANDING, ARCHETYPE PRESETS & EXPORT TOOLS
+         ==================================================================== -->
+    <header class="utility-bar">
+      <div class="brand-cluster">
+        <span class="brand-dot" aria-hidden="true"></span>
+        <span class="brand-title">Decentralized Curriculum Architecture Mapper</span>
+        <span class="brand-kbd" title="Use number keys 1–4 to switch nodes">Keys 1–4</span>
+      </div>
+
+      <div class="presets-actions">
+        <div class="preset-group" role="group" aria-label="Architecture Archetype Presets">
+          <button class="preset-btn" data-preset="sovereign-commons" type="button">Sovereign Commons</button>
+          <button class="preset-btn" data-preset="solo-indie" type="button">Solo Indie Study</button>
+          <button class="preset-btn" data-preset="guided-cohort" type="button">Guided Cohort</button>
+          <button class="preset-btn" data-preset="credential-guild" type="button">Credential Guild</button>
+        </div>
+        <button class="action-btn" id="btn-copy-yaml" type="button" title="Copy current architecture configuration as YAML">Copy YAML</button>
+        <button class="action-btn primary-action" id="btn-export-md" type="button" title="Download Obsidian-ready Markdown blueprint">Export Blueprint (.md)</button>
+      </div>
+    </header>
+
+    <!-- ====================================================================
+         SECTION 1: TOP CONTROL BAR & LIVE ARCHITECTURE TELEMETRY
+         ==================================================================== -->
+    <section class="control-panel" aria-label="Environment Constraints">
+      <div class="toggles-grid">
+        <!-- Toggle 1: Learner Autonomy -->
+        <div class="toggle-group">
+          <span class="toggle-label" id="lbl-autonomy">Learner Autonomy</span>
+          <div class="segmented-pill" role="radiogroup" aria-labelledby="lbl-autonomy">
+            <button class="seg-btn" type="button" data-dim="autonomy" data-val="guided" aria-pressed="false">Guided</button>
+            <button class="seg-btn active" type="button" data-dim="autonomy" data-val="sovereign" aria-pressed="true">Sovereign</button>
+          </div>
+        </div>
+
+        <!-- Toggle 2: Social Mode -->
+        <div class="toggle-group">
+          <span class="toggle-label" id="lbl-social">Social Mode</span>
+          <div class="segmented-pill" role="radiogroup" aria-labelledby="lbl-social">
+            <button class="seg-btn" type="button" data-dim="social" data-val="solo" aria-pressed="false">Solo /<br>Async</button>
+            <button class="seg-btn active" type="button" data-dim="social" data-val="peer" aria-pressed="true">Peer<br>Cohort</button>
+          </div>
+        </div>
+
+        <!-- Toggle 3: Verification Model -->
+        <div class="toggle-group">
+          <span class="toggle-label" id="lbl-verification">Verification Model</span>
+          <div class="segmented-pill" role="radiogroup" aria-labelledby="lbl-verification">
+            <button class="seg-btn" type="button" data-dim="verification" data-val="self" aria-pressed="false">Self-<br>Assess</button>
+            <button class="seg-btn active" type="button" data-dim="verification" data-val="credentials" aria-pressed="true">Credentials</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Architecture Telemetry Strip -->
+      <div class="telemetry-strip" aria-label="Live Architecture Telemetry">
+        <div class="meter-card">
+          <div class="meter-header">
+            <span class="meter-name">Learner Agency</span>
+            <span class="meter-val" id="tel-agency-val">95%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="tel-agency-bar"></div></div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-header">
+            <span class="meter-name">Extraneous Load Risk</span>
+            <span class="meter-val" id="tel-load-val">72%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="tel-load-bar"></div></div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-header">
+            <span class="meter-name">Credential Portability</span>
+            <span class="meter-val" id="tel-port-val">96%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="tel-port-bar"></div></div>
+        </div>
+        <div class="meter-card">
+          <div class="meter-header">
+            <span class="meter-name">Maintenance Overhead</span>
+            <span class="meter-val" id="tel-maint-val">78%</span>
+          </div>
+          <div class="meter-track"><div class="meter-fill" id="tel-maint-bar"></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 2: MAIN 4-NODE SNAKE FLOW DIAGRAM
+         ==================================================================== -->
+    <section class="diagram-stage" id="diagram-stage" aria-label="4-Node Architecture Flow Diagram">
+      <!-- Dynamic SVG connector overlay recalculated cleanly via ResizeObserver -->
+      <svg class="connector-svg" id="connector-svg" aria-hidden="true">
+        <defs>
+          <marker id="arrow-muted" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 1.5 1.5 L 8.5 5 L 1.5 8.5" fill="none" stroke="#9aa3b5" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+          <marker id="arrow-blue" viewBox="0 0 10 10" refX="7.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 1.5 1.5 L 8.5 5 L 1.5 8.5" fill="none" stroke="#7eb2ff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+          </marker>
+        </defs>
+        <path id="path-1-2" class="flow-path" marker-end="url(#arrow-muted)" />
+        <path id="path-2-3" class="flow-path" marker-end="url(#arrow-muted)" />
+        <path id="path-3-4" class="flow-path" marker-end="url(#arrow-muted)" />
+      </svg>
+
+      <div class="snake-grid">
+        <!-- Node 01: Alignment -->
+        <div class="node-slot-1">
+          <button class="arch-node active" id="node-1" data-node="1" type="button" aria-selected="true">
+            <span class="node-kicker">01 &middot; Alignment</span>
+            <span class="node-title" id="n1-title">Open Competency DAG</span>
+            <span class="node-artifact" id="n1-artifact">Prerequisite Skill Graph</span>
+            <span class="node-risk" id="n1-risk">Risk: Learner disorientation</span>
+          </button>
+        </div>
+
+        <div class="mobile-arrow" aria-hidden="true">&darr;</div>
+
+        <!-- Node 02: Packaging -->
+        <div class="node-slot-2">
+          <button class="arch-node" id="node-2" data-node="2" type="button" aria-selected="false">
+            <span class="node-kicker">02 &middot; Packaging</span>
+            <span class="node-title" id="n2-title">Atomic Remixable Modules</span>
+            <span class="node-artifact" id="n2-artifact">Forkable Learning Objects</span>
+            <span class="node-risk" id="n2-risk">Risk: Fragmented voice</span>
+          </button>
+        </div>
+
+        <!-- Middle Dynamic Flow Label Pill -->
+        <div class="flow-badge-slot">
+          <span class="flow-pill" id="flow-pill">Peer Proof Flow</span>
+        </div>
+
+        <!-- Node 03: Evaluation -->
+        <div class="node-slot-3">
+          <button class="arch-node" id="node-3" data-node="3" type="button" aria-selected="false">
+            <span class="node-kicker">03 &middot; Evaluation</span>
+            <span class="node-title" id="n3-title">Peer-Attested Proof of Work</span>
+            <span class="node-artifact" id="n3-artifact">Signed Verifiable Credentials</span>
+            <span class="node-risk" id="n3-risk">Risk: Reviewer rigor variance</span>
+          </button>
+        </div>
+
+        <div class="mobile-arrow" aria-hidden="true">&darr;</div>
+
+        <!-- Node 04: Developer Role -->
+        <div class="node-slot-4">
+          <button class="arch-node" id="node-4" data-node="4" type="button" aria-selected="false">
+            <span class="node-kicker">04 &middot; Developer Role</span>
+            <span class="node-title" id="n4-title">Ecosystem Cartographer</span>
+            <span class="node-artifact" id="n4-artifact">Open Taxonomy &amp; Rubrics</span>
+            <span class="node-risk" id="n4-risk">Risk: Taxonomy drift</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         SECTION 3: EXPANDED DETAIL INSPECTOR PANEL + DEEP-DIVE LABS
+         ==================================================================== -->
+    <section class="inspector-card" aria-label="Node Detail Inspector">
+      <div class="inspector-header">
+        <div class="inspector-title-wrap">
+          <h2 class="inspector-title" id="insp-title">Alignment: Open Competency DAG</h2>
+          <span class="artifact-badge" id="insp-artifact">Prerequisite Skill Graph</span>
+        </div>
+
+        <div class="inspector-tabs" role="tablist" aria-label="Inspector Views">
+          <button class="tab-btn active" id="tab-btn-risk" data-tab="risk" role="tab" aria-selected="true" type="button">
+            Risk &amp; Mitigation
+          </button>
+          <button class="tab-btn" id="tab-btn-lab" data-tab="lab" role="tab" aria-selected="false" type="button">
+            Interactive Deep-Dive Lab
+            <span class="tab-badge" id="lab-tab-badge">DAG</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB 1: RISK & MITIGATION (Default, matching screenshot) -->
+      <div id="tab-panel-risk" role="tabpanel" aria-labelledby="tab-btn-risk">
+        <div class="detail-grid-2">
+          <article class="sub-card">
+            <div class="sub-card-label">Primary Risk</div>
+            <p class="sub-card-body" id="insp-risk"></p>
+          </article>
+          <article class="sub-card">
+            <div class="sub-card-label">Operational Mitigation</div>
+            <p class="sub-card-body" id="insp-mitigation"></p>
+          </article>
+        </div>
+
+        <div class="detail-grid-2" style="margin-top: 14px;">
+          <article class="sub-card compact">
+            <div class="sub-card-label">Core Deliverable &amp; Standards</div>
+            <p class="sub-card-body" id="insp-deliverable"></p>
+            <div class="tag-row" id="insp-standards-tags"></div>
+          </article>
+          <article class="sub-card compact">
+            <div class="sub-card-label">Cognitive Load Safeguards</div>
+            <p class="sub-card-body" id="insp-cogload"></p>
+            <div class="tag-row" id="insp-cogload-tags"></div>
+          </article>
+        </div>
+
+        <div class="lab-cta-row" style="margin-top: 14px;">
+          <span class="lab-hint" id="lab-cta-hint">Explore the interactive 10-node Competency DAG Simulator for this node.</span>
+          <button class="action-btn primary-action" id="btn-open-lab" type="button">Open Deep-Dive Lab &rarr;</button>
+        </div>
+      </div>
+
+      <!-- TAB 2: CONTEXTUAL INTERACTIVE DEEP-DIVE LAB -->
+      <div id="tab-panel-lab" class="hidden" role="tabpanel" aria-labelledby="tab-btn-lab">
+        <div id="lab-mount" class="lab-container"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      /* ========================================================================
+         1. COMPLETE 8-STATE COMBINATORIAL MATRIX & PRESET DEFINITIONS
+         ======================================================================== */
+      const PRESETS = {
+        'sovereign-commons': { autonomy: 'sovereign', social: 'peer', verification: 'credentials', label: 'Sovereign Commons' },
+        'solo-indie':        { autonomy: 'sovereign', social: 'solo', verification: 'self',        label: 'Solo Indie Study' },
+        'guided-cohort':     { autonomy: 'guided',    social: 'peer', verification: 'self',        label: 'Guided Cohort' },
+        'credential-guild':  { autonomy: 'guided',    social: 'peer', verification: 'credentials', label: 'Credential Guild' }
+      };
+
+      const LAB_META = {
+        1: { badge: 'DAG',    name: '10-Node Competency DAG Simulator',         hint: 'Click nodes to toggle Mastery, test AND/OR gates, and run Backward Goal Pruning.' },
+        2: { badge: 'MODULE', name: 'Atomic Module Previewer (sys-n07)',        hint: 'Switch Guided / Scaffolded / Sovereign tiers and inspect YAML cognitive budgets.' },
+        3: { badge: 'OBv3',   name: 'Credential Comparator & Binary Rubric',    hint: 'Compare OBv3/W3C VCs and test the 5/5 binary gate to mint a verifiable credential.' },
+        4: { badge: 'QA CI',  name: 'Cartographer QA Gate & Role Matrix',       hint: 'Run the 5 authoring QA gates, simulate CI cycle lint, and inspect role shifts.' }
+      };
+
+      /**
+       * Computes all 4 architecture nodes, the center flow pill label,
+       * and live telemetry metrics for any (autonomy, social, verification) state.
+       */
+      function computeArchitecture(state) {
+        const { autonomy, social, verification } = state;
+
+        // --- Node 01: Alignment ---
+        const node1 = autonomy === 'sovereign'
+          ? {
+              dimension: 'Alignment',
+              title: 'Open Competency DAG',
+              artifact: 'Prerequisite Skill Graph',
+              shortRisk: 'Learner disorientation',
+              fullRisk: 'Learner disorientation without waypoints',
+              mitigation: 'Publish diagnostic entry probes and visual dependency maps (Mastery Frontier / Fog of War + Backward Goal Pruning) so learners can locate their current frontier before branching.',
+              deliverable: 'Versioned Directed Acyclic Graph (YAML/JSON-LD) mapping atomic 2–12h capabilities with typed HARD (AND/OR), SOFT, and PARALLEL edges.',
+              standards: ['DAG Topology', 'SemVer Graph', 'Kahn Acyclicity'],
+              cogload: 'Neutralizes choice paralysis by collapsing 50+ nodes into a 3–5 node Mastery Frontier and isolating minimal prerequisite closures.',
+              cogloadTags: ['Fog of War', 'Backward Pruning', 'Semantic Zoom']
+            }
+          : {
+              dimension: 'Alignment',
+              title: 'Curated Pathway Tracks',
+              artifact: 'Milestone Roadmaps',
+              shortRisk: 'Rigid pacing ceiling',
+              fullRisk: 'Over-scaffolding slows experienced learners (Expertise Reversal Effect)',
+              mitigation: 'Embed 5-minute bypass challenges at every milestone and layer optional desire-path trails over an underlying non-linear skill graph.',
+              deliverable: 'Opinionated "Desire Path" tracks (Minimum Viable Practitioner, Deep Dive, Remediation) overlaid cleanly atop an open skill graph.',
+              standards: ['Desire Paths', 'Bypass Gates', 'WIP Limits (1–3)'],
+              cogload: 'Eliminates novice navigational extraneous load while letting advanced learners jump past automated fundamentals via entry diagnostics.',
+              cogloadTags: ['Entry Probes', 'Optional Rails', 'Expertise Reversal Guard']
+            };
+
+        // --- Node 02: Packaging ---
+        const node2 = social === 'peer'
+          ? {
+              dimension: 'Packaging',
+              title: 'Atomic Remixable Modules',
+              artifact: 'Forkable Learning Objects',
+              shortRisk: 'Fragmented voice',
+              fullRisk: 'Fragmented instructional voice and inconsistent depth across community-forked modules',
+              mitigation: 'Enforce a standardized YAML + Markdown atomic module schema with explicit cognitive load budgets, single-shift invariants, and CI frontmatter linting.',
+              deliverable: 'Plain-text Markdown + YAML learning units stored in Git with local ./assets/, CC-BY-SA licensing, and machine-parseable prerequisites.',
+              standards: ['Markdown + YAML', 'CC-BY-SA 4.0', 'CI Schema Lint'],
+              cogload: 'Caps every module to a single Core Mental Shift (<600-word invariant) and surfaces energy state + focus block budgets up front.',
+              cogloadTags: ['Single-Shift Rule', 'Focus Block Split', 'Orientation Ribbon']
+            }
+          : {
+              dimension: 'Packaging',
+              title: 'Self-Contained Interactive Units',
+              artifact: 'Offline-First Modules with Self-Checks',
+              shortRisk: 'Silent misconception drift',
+              fullRisk: 'Learners accumulate undetected mental model bugs without live instructor correction',
+              mitigation: 'Pair concise conceptual invariants with worked examples, 3-tier faded scaffolding (Guided -> Scaffolded -> Sovereign), and diagnostic Dunning-Kruger trap checklists.',
+              deliverable: 'Zero-dependency offline bundles (Markdown + runnable local sandboxes/HTML modules) passing the Airplane Test without LMS lock-in.',
+              standards: ['Offline-First', '3-Tier Scaffolding', 'Local Sandbox'],
+              cogload: 'Manages high element interactivity via progressive fading—worked examples for novices, completion exercises for intermediates, bare specs for experts.',
+              cogloadTags: ['Worked Examples', 'Completion Tasks', 'Faded Scaffolds']
+            };
+
+        // --- Node 03: Evaluation ---
+        let node3;
+        if (verification === 'credentials' && social === 'peer') {
+          node3 = {
+            dimension: 'Evaluation',
+            title: 'Peer-Attested Proof of Work',
+            artifact: 'Signed Verifiable Credentials',
+            shortRisk: 'Reviewer rigor variance',
+            fullRisk: 'Inconsistent reviewer rigor and cold-start trust gaps for independent issuers',
+            mitigation: 'Require binary all-criteria-pass rubrics anchored to inspectable proof-of-work commits, layered with OBv3 EndorsementCredentials and ESCO/CASE skill alignments.',
+            deliverable: 'Open Badges 3.0 assertions (W3C VCDM v2.0 JSON-LD) linking immutable repo commit hashes, test logs, and peer DID endorsements.',
+            standards: ['W3C VC v2.0', 'Open Badges 3.0', 'ESCO / CASE'],
+            cogload: 'Protects germane schema consolidation by anchoring evaluation to observable artifacts and synthesis capstones rather than rote memorization.',
+            cogloadTags: ['Binary Pass/Fail', 'Evidence-First', 'Transfer Prompt']
+          };
+        } else if (verification === 'credentials' && social === 'solo') {
+          node3 = {
+            dimension: 'Evaluation',
+            title: 'Automated & Rubric-Driven Audits',
+            artifact: 'Test-Verified OBv3 / W3C VCs',
+            shortRisk: 'Gaming automated checks',
+            fullRisk: 'Learners optimize for passing unit tests while missing deeper architectural judgment',
+            mitigation: 'Combine deterministic chaos/integration test harnesses with required failure-mode defense notes (ARCHITECTURE.md) packaged into CLR 2.0 portfolios.',
+            deliverable: 'CI-verified test harness output bundled with written failure-mode analysis into machine-verifiable OBv3 assertions & CLR 2.0 records.',
+            standards: ['OBv3 + CLR 2.0', 'Chaos Test Suite', 'ARCHITECTURE.md'],
+            cogload: 'Provides immediate, objective feedback loops for solo learners while requiring written causal explanations to force deep retrieval.',
+            cogloadTags: ['Deterministic Checks', 'Failure-Mode Note', 'CLR Portfolio']
+          };
+        } else if (verification === 'self' && social === 'peer') {
+          node3 = {
+            dimension: 'Evaluation',
+            title: 'Cohort Diagnostic Critiques',
+            artifact: 'Shared Mastery Rubrics',
+            shortRisk: 'Social conformity bias',
+            fullRisk: 'Peer feedback stays polite and superficial instead of catching real capability gaps',
+            mitigation: 'Use falsifiable, criterion-referenced rubrics with explicit "False Pass Signal" columns and anonymized critique calibration rounds.',
+            deliverable: 'Structured peer review templates with binary observable pass standards, false-pass indicators, and targeted remediation node links.',
+            standards: ['Criterion Rubrics', 'False Pass Signals', 'Calibration Rounds'],
+            cogload: 'Exposes blind spots through structured social comparison without imposing the extrinsic anxiety of norm-referenced grading curves.',
+            cogloadTags: ['Falsifiable Criteria', 'Friction Logs', 'Peer Calibration']
+          };
+        } else {
+          node3 = {
+            dimension: 'Evaluation',
+            title: 'Diagnostic Mastery Checklists',
+            artifact: 'Criterion-Referenced Rubrics',
+            shortRisk: 'Dunning-Kruger blind spots',
+            fullRisk: 'Self-assessing learners overestimate mastery without external falsification',
+            mitigation: 'Require observable evidence logs, explicit Dunning-Kruger trap callouts per criterion, and periodic cross-node synthesis capstones.',
+            deliverable: 'Self-audit checklists pairing every mastery criterion with concrete proof requirements, explicit self-deception traps, and upstream remediation links.',
+            standards: ['All-Criteria Pass', 'Dunning-Kruger Traps', 'Synthesis Gates'],
+            cogload: 'Prevents premature advancement into high-intrinsic-load downstream nodes by making self-evaluation falsifiable and concrete.',
+            cogloadTags: ['Metacognitive Closure', 'Zero Averaging', 'Synthesis Gate']
+          };
+        }
+
+        // --- Node 04: Developer Role ---
+        let node4;
+        if (autonomy === 'sovereign' && social === 'peer') {
+          node4 = {
+            dimension: 'Developer Role',
+            title: 'Ecosystem Cartographer',
+            artifact: 'Open Taxonomy & Rubrics',
+            shortRisk: 'Taxonomy drift',
+            fullRisk: 'Taxonomy drift, broken prerequisite edges, and orphaned nodes as the domain evolves',
+            mitigation: 'Version graph snapshots (SemVer), run automated Kahn\'s cycle-detection & out-degree chokepoint checks in CI, and maintain lightweight learner PR feedback loops.',
+            deliverable: 'Open curriculum repository with CI graph validation, skill taxonomy mappings, non-breaking delta upgrades, and community contribution guidelines.',
+            standards: ['CI Graph Linting', 'Out-Degree Audit', 'Open Commons PRs'],
+            cogload: 'Maintains structural integrity across the entire graph so self-directed learners never hit circular dependencies or undocumented prerequisite cliffs.',
+            cogloadTags: ['Chokepoint Splitting', 'Delta Upgrades', 'Taxonomy Hygiene']
+          };
+        } else if (autonomy === 'sovereign' && social === 'solo') {
+          node4 = {
+            dimension: 'Developer Role',
+            title: 'Self-Study Systems Architect',
+            artifact: 'Executable Knowledge Graph',
+            shortRisk: 'Maintenance burnout',
+            fullRisk: 'Solopreneur or small team struggles to keep offline sandboxes and links current',
+            mitigation: 'Prioritize curation over creation—link primary references, isolate durable mental models from ephemeral tooling, and apply half-life review dates.',
+            deliverable: 'Lean, durable personal/public knowledge graph emphasizing timeless invariants, curated primary sources, and half-life freshness metadata.',
+            standards: ['Curation > Creation', 'Half-Life Metadata', 'Durable Invariants'],
+            cogload: 'Strips instructional fluff to minimize maintenance surface area while keeping learner working memory locked on high-leverage conceptual shifts.',
+            cogloadTags: ['Zero-Fluff Links', 'Half-Life Audits', 'Local-First Vault']
+          };
+        } else if (autonomy === 'guided' && social === 'peer') {
+          node4 = {
+            dimension: 'Developer Role',
+            title: 'Pathway Mentor & Curator',
+            artifact: 'Cohort Expeditions & Guides',
+            shortRisk: 'Facilitator bottleneck',
+            fullRisk: 'Mentor becomes a centralized pacing choke point as cohort size scales',
+            mitigation: 'Train senior learners as certified peer reviewers using scoped W3C VCs and shift live sessions from lecturing to synthesis critiques.',
+            deliverable: 'Structured cohort expedition guides, reviewer onboarding credentials, and synchronous synthesis clinic protocols.',
+            standards: ['Scoped Reviewer VCs', 'Synthesis Clinics', 'Expedition Guides'],
+            cogload: 'Replaces passive lectures with active transfer discussions while delegating routine rubric checks to calibrated peer reviewers.',
+            cogloadTags: ['Active Transfer', 'Calibrated Peers', 'Cohort Rhythm']
+          };
+        } else {
+          node4 = {
+            dimension: 'Developer Role',
+            title: 'Asynchronous Learning Designer',
+            artifact: 'Adaptive Scaffolds & Probes',
+            shortRisk: 'Static linear lock-in',
+            fullRisk: 'Pre-baked guided paths fail to adapt to diverse learner entry baselines',
+            mitigation: 'Tag every unit with cognitive load & energy budgets, enforce WIP limits (1-3 active nodes), and wire diagnostic probes directly to upstream remediation nodes.',
+            deliverable: 'Branching asynchronous guidebooks combining readiness probes, bypass tracks, energy-matched session plans, and remediation routing.',
+            standards: ['Adaptive Routing', 'Energy Tagging', 'WIP Governance'],
+            cogload: 'Matches cognitive challenge dynamically to each solo learner\'s baseline and daily energy state without requiring live instructor intervention.',
+            cogloadTags: ['Energy Matching', 'WIP Cap 1–3', 'Remediation Loops']
+          };
+        }
+
+        // --- Dynamic Center Flow Pill ---
+        let flowLabel = 'Peer Proof Flow';
+        if (social === 'peer' && verification === 'credentials') flowLabel = 'Peer Proof Flow';
+        else if (social === 'solo' && verification === 'credentials') flowLabel = 'Automated Audit Flow';
+        else if (social === 'peer' && verification === 'self') flowLabel = 'Peer Calibration Flow';
+        else flowLabel = 'Self-Check Flow';
+
+        // --- Live Telemetry Calculation (smoothly unique across all 8 states) ---
+        const agency = (autonomy === 'sovereign' ? 70 : 40) + (social === 'solo' ? 20 : 15) + (verification === 'credentials' ? 10 : 5);
+        const loadRisk = (autonomy === 'sovereign' ? 56 : 28) + (social === 'solo' ? 22 : 12) + (verification === 'self' ? 12 : 4);
+        const portability = (verification === 'credentials' ? 76 : 26) + (social === 'peer' ? 14 : 8) + (autonomy === 'sovereign' ? 6 : 4);
+        const maintenance = (social === 'peer' ? 38 : 26) + (verification === 'credentials' ? 28 : 14) + (autonomy === 'sovereign' ? 12 : 18);
+
+        return {
+          nodes: { 1: node1, 2: node2, 3: node3, 4: node4 },
+          flowLabel,
+          telemetry: {
+            agency: Math.min(100, agency),
+            loadRisk: Math.min(100, loadRisk),
+            portability: Math.min(100, portability),
+            maintenance: Math.min(100, maintenance)
+          }
+        };
+      }
+
+      /* ========================================================================
+         2. DEEP-DIVE LAB DATA MODELS
+         ======================================================================== */
+
+      // LAB 1: 10-Node Resilient Web Systems Competency DAG
+      const DAG_NODES = [
+        { id: 'N01', name: 'HTTP Semantics',        tier: 0, x: 115, y: 52,  hardOp: 'NONE', hard: [], soft: [], threshold: 'Debug 5 malformed HTTP traces; classify status codes & idempotent verbs with 100% accuracy.', bypass: 'Pass 5-min HTTP trace diagnostic.' },
+        { id: 'N02', name: 'ACID & Data Modeling',  tier: 0, x: 375, y: 52,  hardOp: 'NONE', hard: [], soft: [], threshold: 'Normalize 6-entity schema to 3NF & demonstrate a reproducible isolation anomaly + fix.', bypass: 'Submit production migration PR.' },
+        { id: 'N03', name: 'Async & Concurrency',   tier: 0, x: 635, y: 52,  hardOp: 'NONE', hard: [], soft: [], threshold: 'Refactor blocking worker pool into bounded non-blocking pipeline with zero deadlocks.', bypass: 'Pass race-condition refactor check.' },
+
+        { id: 'N04', name: 'API Contracts',         tier: 1, x: 115, y: 158, hardOp: 'AND',  hard: ['N01'], soft: [], threshold: 'Author OpenAPI 3.1 spec with pagination, error envelopes & versioning; pass contract lint.', bypass: 'Submit linted OpenAPI 3.1 spec.' },
+        { id: 'N05', name: 'Indexing & Query Plans',tier: 1, x: 375, y: 158, hardOp: 'AND',  hard: ['N02'], soft: [], threshold: 'Cut p95 latency >=80% on 1M rows via composite/covering indexes with EXPLAIN ANALYZE.', bypass: 'Provide before/after query plan.' },
+        { id: 'N06', name: 'AuthN/Z & Tokens',      tier: 1, x: 635, y: 158, hardOp: 'AND',  hard: ['N01'], soft: ['N03'], threshold: 'Implement short-lived JWT/session rotation + RBAC; pass replay & tampering test suite.', bypass: 'Pass Auth security test harness.' },
+
+        { id: 'N09', name: 'Observability',         tier: 2, x: 115, y: 274, hardOp: 'AND',  hard: ['N04'], soft: ['N03'], threshold: 'Instrument multi-hop service with OTel traces, JSON logs & RED metrics; isolate latency <10m.', bypass: 'Isolate synthetic bottleneck trace.' },
+        { id: 'N08', name: 'Caching & Invalidation',tier: 2, x: 375, y: 274, hardOp: 'OR',   hard: ['N04', 'N05'], soft: ['N03'], threshold: 'Implement cache-aside or HTTP revalidation with TTL + SWR; survive cache stampede.', bypass: 'Demonstrate stampede mitigation.' },
+        { id: 'N07', name: 'Idempotency & Retries', tier: 2, x: 635, y: 274, hardOp: 'AND',  hard: ['N01', 'N02', 'N03'], soft: ['N04'], threshold: 'Enforce Idempotency-Key under 30% packet drop & 20 concurrent retries with zero double-writes.', bypass: 'Pass Chaos-Ledger diagnostic sandbox.' },
+
+        { id: 'N10', name: 'Fault-Tolerant Architecture', tier: 3, x: 375, y: 386, hardOp: 'AND', hard: ['N07', 'N08', 'N09'], soft: ['N06'], threshold: 'Sustain 500 RPS while surviving injected upstream outage via circuit breakers + post-mortem.', bypass: 'Capstone only (no bypass).' }
+      ];
+
+      // LAB 2: Atomic Module Tiers & Raw YAML
+      const MODULE_TIERS = {
+        guided: {
+          badge: 'Novice Scaffolding · High Guidance',
+          title: 'Tier 1 — Guided (Annotated Worked Example)',
+          guard: 'Prevents intrinsic overload by showing a complete, working 3-state transaction before asking the learner to build from scratch.',
+          artifact: './assets/worked-ledger-example/',
+          body: 'Study the annotated reference implementation showing a 3-state idempotency table (started, succeeded, failed) wrapped inside a single database transaction. Walk line-by-line through the crash log where the server terminates after debiting the ledger but before returning HTTP 201, and trace in 3 sentences how the retry recovers cleanly.'
+        },
+        scaffolded: {
+          badge: 'Intermediate Scaffolding · Completion Problem',
+          title: 'Tier 2 — Scaffolded (Targeted Bug Remediation)',
+          guard: 'Fades hand-holding into partial architectures so learners focus working memory purely on the two hardest concurrency invariants.',
+          artifact: './assets/broken-checkout-service/',
+          body: 'Clone the starter service where keys are already persisted, but 2 of 5 integration tests fail. Repair only the two deliberate gaps: (1) Concurrent identical POSTs arriving within 5ms create duplicate ledger rows; (2) Reusing an Idempotency-Key with a modified amount_cents silently returns the original receipt instead of HTTP 409/422.'
+        },
+        sovereign: {
+          badge: 'Advanced · Zero Hand-Holding (Expertise Reversal Guard)',
+          title: 'Tier 3 — Sovereign Proof-of-Work (Mastery Deliverable)',
+          guard: 'Removes all instructional rails so experienced engineers avoid the Expertise Reversal Effect and go straight to falsifiable proof.',
+          artifact: 'Standalone POST /v1/transfers + Chaos Harness',
+          body: 'Build a persistent POST /v1/transfers endpoint and automated chaos test proving all 4 invariants: (1) 5 sequential replays return identical status/body with 1 mutation; (2) 20 concurrent collisions yield exactly 1 mutation and zero 500s; (3) Payload mismatch on key reuse returns 409/422; (4) Companion client uses capped exponential backoff + jitter on 5xx and aborts on 4xx.'
+        }
+      };
+
+      const MODULE_RAW_YAML = `---
+id: "sys-n07-idempotency"
+version: "1.2.0"
+title: "Idempotent Writes & Retry Mechanics"
+domain: "resilient-web-systems"
+license: "CC-BY-SA-4.0"
+dag:
+  prerequisites:
+    hard:
+      operator: "AND"
+      nodes: ["sys-n01-http-semantics", "sys-n02-acid-modeling", "sys-n03-async-concurrency"]
+    soft: ["sys-n04-api-contracts"]
+  unlocks: ["sys-n10-fault-tolerant-arch"]
+cognitive_load:
+  intrinsic_complexity: "high"
+  element_interactivity: "high"
+  estimated_hours: [4, 8]
+  recommended_focus_blocks: "4 x 60m"
+  recommended_energy_state: "peak"
+  required_mental_models:
+    - "HTTP safe vs. idempotent methods"
+    - "Database unique constraints & row locks"
+    - "Race conditions under concurrent I/O"
+scaffolding:
+  available_tiers: ["guided", "scaffolded", "sovereign"]
+  offline_capable: true
+credential:
+  obv3_achievement_id: "urn:uuid:00000000-0000-4000-8000-000000000007"
+  passing_standard: "all_criteria_pass"
+  half_life_months: 36
+---`;
+
+      // LAB 3: Binary Self-Audit Rubric Criteria (C1-C5)
+      const RUBRIC_CRITERIA = [
+        {
+          id: 'C1',
+          name: 'Atomic State Guarantee',
+          pass: 'Ledger row and idempotency record commit atomically (or via durable lock); 20 concurrent duplicates produce exactly 1 balance mutation in test log.',
+          trap: 'Testing duplicates only sequentially via curl—completely hides TOCTOU race conditions.',
+          remedy: 'Review DB unique index constraints (sys-n02) + Tier 2 concurrency fix.'
+        },
+        {
+          id: 'C2',
+          name: 'Payload Fingerprint Validation',
+          pass: 'Request body hash is stored with the key; mismatched payload on key reuse deterministically returns 409 or 422.',
+          trap: 'Checking only whether the Idempotency-Key exists without hashing/comparing request parameters.',
+          remedy: 'Inspect request_fingerprint verification inside Tier 1 reference code.'
+        },
+        {
+          id: 'C3',
+          name: 'Deterministic Response Replay',
+          pass: 'Replayed requests return the original status code and JSON body without re-executing side effects.',
+          trap: 'Returning a generic "Already processed" 200 OK that breaks client parsers expecting the original resource ID.',
+          remedy: 'Serialize full response envelope in the idempotency record upon commit.'
+        },
+        {
+          id: 'C4',
+          name: 'Transient Retry Hygiene',
+          pass: 'Client implements capped exponential backoff + jitter on timeouts/5xx and zero retries on 4xx.',
+          trap: 'Using fixed sleep(1000) loops (triggers thundering herd) or blindly retrying 400/422 validation errors.',
+          remedy: 'Review full-jitter backoff formulas in sys-n03-async-concurrency.'
+        },
+        {
+          id: 'C5',
+          name: 'Failure-Mode Explanation',
+          pass: 'A 150–250 word ARCHITECTURE.md note explains crash behavior mid-transaction vs. after commit, before HTTP write.',
+          trap: 'Hand-waving ("the database handles it") without naming exact recovery states.',
+          remedy: 'Re-trace the Tier 1 crash-recovery sequence line by line.'
+        }
+      ];
+
+      // LAB 4: Cartographer QA Gates
+      const QA_GATES = [
+        { id: 'airplane',    title: 'The Airplane Test',                  desc: 'Raw Markdown + local ./assets/ folder opens and reaches mastery 100% offline with zero broken proprietary LMS embeds.' },
+        { id: 'singleshift', title: 'The Single-Shift Test',              desc: 'The module\'s Core Mental Shift fits in one crisp sentence. No compound "and also" topics bundled into one node.' },
+        { id: 'falsifiable', title: 'The Falsifiability Test',            desc: 'Two independent reviewers reach identical Pass/Fail verdicts. Zero subjective adjectives ("clean", "good", "well-structured").' },
+        { id: 'cilint',      title: 'CI Graph Lint & Cycle Detection',    desc: 'YAML frontmatter passes JSON Schema, all prerequisite IDs resolve, Kahn\'s algorithm confirms zero cycles, and OBv3 UUID is unique.' },
+        { id: 'chokepoint',  title: 'Out-Degree Chokepoint Audit',        desc: 'No single node blocks 6+ downstream skills without being split into finer units or offering an OR-gate alternative pathway.' }
+      ];
+
+      /* ========================================================================
+         3. APPLICATION STATE
+         ======================================================================== */
+      const appState = {
+        autonomy: 'sovereign',
+        social: 'peer',
+        verification: 'credentials',
+        selectedNode: 1,
+        activeTab: 'risk', // 'risk' | 'lab'
+        prevTitles: { 1: '', 2: '', 3: '', 4: '' },
+        prevFlowLabel: '',
+
+        // Sub-states for Deep-Dive Labs
+        dagMastered: new Set(['N01', 'N02']),
+        dagSelectedId: 'N07',
+        dagPruneTarget: 'none', // 'none' | 'N07' | 'N10'
+        moduleTier: 'guided',
+        showRawYaml: false,
+        credFocusCol: 'obv3', // 'trad' | 'vc' | 'obv3'
+        rubricChecks: { C1: true, C2: true, C3: false, C4: false, C5: false },
+        mintedPayloadVisible: false,
+        qaChecks: { airplane: true, singleshift: true, falsifiable: false, cilint: true, chokepoint: false },
+        ciOutputVisible: false
+      };
+
+      /* ========================================================================
+         4. DOM REFERENCES & UTILITIES
+         ======================================================================== */
+      const els = {
+        stage: document.getElementById('diagram-stage'),
+        svg: document.getElementById('connector-svg'),
+        path12: document.getElementById('path-1-2'),
+        path23: document.getElementById('path-2-3'),
+        path34: document.getElementById('path-3-4'),
+        flowPill: document.getElementById('flow-pill'),
+        inspTitle: document.getElementById('insp-title'),
+        inspArtifact: document.getElementById('insp-artifact'),
+        inspRisk: document.getElementById('insp-risk'),
+        inspMitigation: document.getElementById('insp-mitigation'),
+        inspDeliverable: document.getElementById('insp-deliverable'),
+        inspStandardsTags: document.getElementById('insp-standards-tags'),
+        inspCogload: document.getElementById('insp-cogload'),
+        inspCogloadTags: document.getElementById('insp-cogload-tags'),
+        labTabBadge: document.getElementById('lab-tab-badge'),
+        labCtaHint: document.getElementById('lab-cta-hint'),
+        tabRiskPanel: document.getElementById('tab-panel-risk'),
+        tabLabPanel: document.getElementById('tab-panel-lab'),
+        tabBtnRisk: document.getElementById('tab-btn-risk'),
+        tabBtnLab: document.getElementById('tab-btn-lab'),
+        labMount: document.getElementById('lab-mount'),
+        toast: document.getElementById('toast')
+      };
+
+      let toastTimer = null;
+      function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => els.toast.classList.remove('show'), 2600);
+      }
+
+      /** Safe clipboard copy compatible with Obsidian & sandboxed iframes */
+      function copyTextSafe(text, successMsg) {
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          document.body.appendChild(ta);
+          ta.select();
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+          if (ok) {
+            showToast(successMsg);
+            return;
+          }
+        } catch (err) {
+          // Fallback below
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text)
+            .then(() => showToast(successMsg))
+            .catch(() => showToast('Copy blocked by browser permissions.'));
+        } else {
+          showToast('Copy unavailable in this environment.');
+        }
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      /* ========================================================================
+         5. SVG CONNECTOR GEOMETRY (PIXEL-PERFECT SNAKE FLOW)
+         ======================================================================== */
+      function drawConnectors() {
+        try {
+          if (window.innerWidth <= 680) return;
+          const stageRect = els.stage.getBoundingClientRect();
+          const n1 = document.getElementById('node-1').getBoundingClientRect();
+          const n2 = document.getElementById('node-2').getBoundingClientRect();
+          const n3 = document.getElementById('node-3').getBoundingClientRect();
+          const n4 = document.getElementById('node-4').getBoundingClientRect();
+
+          const rel = (rect) => ({
+            left: rect.left - stageRect.left,
+            right: rect.right - stageRect.left,
+            top: rect.top - stageRect.top,
+            bottom: rect.bottom - stageRect.top,
+            cx: rect.left - stageRect.left + rect.width / 2,
+            cy: rect.top - stageRect.top + rect.height / 2
+          });
+
+          const r1 = rel(n1), r2 = rel(n2), r3 = rel(n3), r4 = rel(n4);
+          const pad = 8;
+
+          // Path 1 -> 2 (Horizontal straight dotted arrow)
+          const d12 = `M ${r1.right + pad} ${r1.cy} L ${r2.left - pad} ${r2.cy}`;
+          els.path12.setAttribute('d', d12);
+
+          // Path 2 -> 3 (Rounded S-elbow routing through center flow pill)
+          const midY = (r2.bottom + r3.top) / 2;
+          const rad = 16;
+          const xStart = r2.cx;
+          const yStart = r2.bottom + pad;
+          const xEnd = r3.cx;
+          const yEnd = r3.top - pad;
+          const d23 = [
+            `M ${xStart} ${yStart}`,
+            `L ${xStart} ${midY - rad}`,
+            `Q ${xStart} ${midY} ${xStart - rad} ${midY}`,
+            `L ${xEnd + rad} ${midY}`,
+            `Q ${xEnd} ${midY} ${xEnd} ${midY + rad}`,
+            `L ${xEnd} ${yEnd}`
+          ].join(' ');
+          els.path23.setAttribute('d', d23);
+
+          // Path 3 -> 4 (Horizontal straight dotted arrow)
+          const d34 = `M ${r3.right + pad} ${r3.cy} L ${r4.left - pad} ${r4.cy}`;
+          els.path34.setAttribute('d', d34);
+
+          // Highlight outgoing edge of currently selected node
+          const sel = appState.selectedNode;
+          setEdgeHighlight(els.path12, sel === 1);
+          setEdgeHighlight(els.path23, sel === 2);
+          setEdgeHighlight(els.path34, sel === 3);
+        } catch (err) {
+          console.error('Connector draw error:', err);
+        }
+      }
+
+      function setEdgeHighlight(pathEl, isActive) {
+        if (isActive) {
+          pathEl.classList.add('emphasized');
+          pathEl.setAttribute('marker-end', 'url(#arrow-blue)');
+        } else {
+          pathEl.classList.remove('emphasized');
+          pathEl.setAttribute('marker-end', 'url(#arrow-muted)');
+        }
+      }
+
+      /* ========================================================================
+         6. CORE UI RENDERER (CONTROLS, TELEMETRY, NODES, INSPECTOR)
+         ======================================================================== */
+      function renderAll(triggerPulse = false) {
+        const arch = computeArchitecture(appState);
+
+        // 1. Update segmented toggle buttons
+        document.querySelectorAll('.seg-btn').forEach((btn) => {
+          const dim = btn.dataset.dim;
+          const val = btn.dataset.val;
+          const isActive = appState[dim] === val;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', String(isActive));
+        });
+
+        // 2. Sync preset button active highlight
+        document.querySelectorAll('.preset-btn').forEach((btn) => {
+          const p = PRESETS[btn.dataset.preset];
+          const match = p && p.autonomy === appState.autonomy && p.social === appState.social && p.verification === appState.verification;
+          btn.classList.toggle('active', match);
+        });
+
+        // 3. Update Telemetry Meters
+        updateMeter('tel-agency', arch.telemetry.agency, '#7eb2ff');
+        updateMeter('tel-load', arch.telemetry.loadRisk, arch.telemetry.loadRisk >= 70 ? '#fb7185' : arch.telemetry.loadRisk >= 50 ? '#fbbf24' : '#34d399');
+        updateMeter('tel-port', arch.telemetry.portability, arch.telemetry.portability >= 75 ? '#34d399' : '#a78bfa');
+        updateMeter('tel-maint', arch.telemetry.maintenance, arch.telemetry.maintenance >= 75 ? '#fbbf24' : '#7eb2ff');
+
+        // 4. Update 4 Architecture Capsule Nodes
+        [1, 2, 3, 4].forEach((id) => {
+          const data = arch.nodes[id];
+          const nodeBtn = document.getElementById(`node-${id}`);
+          document.getElementById(`n${id}-title`).textContent = data.title;
+          document.getElementById(`n${id}-artifact`).textContent = data.artifact;
+          document.getElementById(`n${id}-risk`).textContent = `Risk: ${data.shortRisk}`;
+
+          const isSelected = appState.selectedNode === id;
+          nodeBtn.classList.toggle('active', isSelected);
+          nodeBtn.setAttribute('aria-selected', String(isSelected));
+
+          if (triggerPulse && appState.prevTitles[id] && appState.prevTitles[id] !== data.title) {
+            nodeBtn.classList.remove('updated');
+            void nodeBtn.offsetWidth;
+            nodeBtn.classList.add('updated');
+          }
+          appState.prevTitles[id] = data.title;
+        });
+
+        // 5. Update Dynamic Flow Badge
+        els.flowPill.textContent = arch.flowLabel;
+        if (triggerPulse && appState.prevFlowLabel && appState.prevFlowLabel !== arch.flowLabel) {
+          els.flowPill.classList.add('pulse');
+          setTimeout(() => els.flowPill.classList.remove('pulse'), 650);
+        }
+        appState.prevFlowLabel = arch.flowLabel;
+
+        // 6. Update Inspector Panel Header & Tab 1 Content
+        const activeData = arch.nodes[appState.selectedNode];
+        const labInfo = LAB_META[appState.selectedNode];
+
+        els.inspTitle.textContent = `${activeData.dimension}: ${activeData.title}`;
+        els.inspArtifact.textContent = activeData.artifact;
+        els.inspRisk.textContent = activeData.fullRisk;
+        els.inspMitigation.textContent = activeData.mitigation;
+        els.inspDeliverable.textContent = activeData.deliverable;
+        els.inspCogload.textContent = activeData.cogload;
+        els.labTabBadge.textContent = labInfo.badge;
+        els.labCtaHint.textContent = `${labInfo.name}: ${labInfo.hint}`;
+
+        els.inspStandardsTags.innerHTML = activeData.standards.map((s) => `<span class="micro-tag">${escapeHtml(s)}</span>`).join('');
+        els.inspCogloadTags.innerHTML = activeData.cogloadTags.map((s) => `<span class="micro-tag">${escapeHtml(s)}</span>`).join('');
+
+        // 7. Toggle Tabs
+        const isLab = appState.activeTab === 'lab';
+        els.tabBtnRisk.classList.toggle('active', !isLab);
+        els.tabBtnRisk.setAttribute('aria-selected', String(!isLab));
+        els.tabBtnLab.classList.toggle('active', isLab);
+        els.tabBtnLab.setAttribute('aria-selected', String(isLab));
+        els.tabRiskPanel.classList.toggle('hidden', isLab);
+        els.tabLabPanel.classList.toggle('hidden', !isLab);
+
+        if (isLab) {
+          renderActiveLab();
+        }
+
+        requestAnimationFrame(drawConnectors);
+      }
+
+      function updateMeter(prefix, value, color) {
+        const valEl = document.getElementById(`${prefix}-val`);
+        const barEl = document.getElementById(`${prefix}-bar`);
+        valEl.textContent = `${value}%`;
+        barEl.style.width = `${value}%`;
+        barEl.style.backgroundColor = color;
+      }
+
+      /* ========================================================================
+         7. INTERACTIVE DEEP-DIVE LABS (4 CONTEXTUAL MINI-TOOLS)
+         ======================================================================== */
+      function renderActiveLab() {
+        switch (appState.selectedNode) {
+          case 1: renderLab1DAG(); break;
+          case 2: renderLab2Module(); break;
+          case 3: renderLab3Evaluation(); break;
+          case 4: renderLab4Cartographer(); break;
+        }
+      }
+
+      /* --- LAB 1: 10-NODE COMPETENCY DAG SIMULATOR --- */
+      function computeDagStates() {
+        const mastered = appState.dagMastered;
+        const status = {};
+
+        const isHardMet = (node) => {
+          if (node.hard.length === 0) return true;
+          if (node.hardOp === 'OR') return node.hard.some((p) => mastered.has(p));
+          return node.hard.every((p) => mastered.has(p));
+        };
+
+        // Pass 1: Mastered and Frontier
+        DAG_NODES.forEach((n) => {
+          if (mastered.has(n.id)) status[n.id] = 'mastered';
+          else if (isHardMet(n)) status[n.id] = 'frontier';
+        });
+
+        // Pass 2: Horizon (1 hop beyond mastered/frontier) vs Shrouded
+        DAG_NODES.forEach((n) => {
+          if (status[n.id]) return;
+          const oneHop = n.hard.some((p) => status[p] === 'frontier' || status[p] === 'mastered');
+          status[n.id] = oneHop ? 'horizon' : 'shrouded';
+        });
+
+        // Compute Backward Goal Pruning minimal closure if active
+        let closure = null;
+        if (appState.dagPruneTarget !== 'none') {
+          closure = new Set();
+          const stack = [appState.dagPruneTarget];
+          while (stack.length > 0) {
+            const currId = stack.pop();
+            if (closure.has(currId)) continue;
+            closure.add(currId);
+            const node = DAG_NODES.find((d) => d.id === currId);
+            if (!node) continue;
+            // Include hard prerequisites needed to reach target
+            if (node.hardOp === 'OR') {
+              // If any branch is already mastered, include that mastered branch; otherwise include both viable options
+              const metBranch = node.hard.find((p) => mastered.has(p));
+              if (metBranch) stack.push(metBranch);
+              else node.hard.forEach((p) => stack.push(p));
+            } else {
+              node.hard.forEach((p) => stack.push(p));
+            }
+          }
+        }
+
+        return { status, closure };
+      }
+
+      function renderLab1DAG() {
+        const { status, closure } = computeDagStates();
+        const selected = DAG_NODES.find((n) => n.id === appState.dagSelectedId) || DAG_NODES[0];
+        const masteredCount = appState.dagMastered.size;
+        const frontierIds = DAG_NODES.filter((n) => status[n.id] === 'frontier').map((n) => n.id);
+        const remainingMission = closure ? [...closure].filter((id) => !appState.dagMastered.has(id)).length : (10 - masteredCount);
+
+        // Build SVG edges
+        let edgesSvg = '';
+        DAG_NODES.forEach((target) => {
+          const allDeps = [
+            ...target.hard.map((srcId) => ({ srcId, kind: 'hard' })),
+            ...target.soft.map((srcId) => ({ srcId, kind: 'soft' }))
+          ];
+          allDeps.forEach(({ srcId, kind }) => {
+            const src = DAG_NODES.find((n) => n.id === srcId);
+            if (!src) return;
+            const inClosure = !closure || (closure.has(src.id) && closure.has(target.id) && kind === 'hard');
+            const satisfied = appState.dagMastered.has(src.id);
+            const stroke = kind === 'soft'
+              ? '#4b5568'
+              : satisfied ? '#34d399' : '#647087';
+            const opacity = inClosure ? (kind === 'soft' ? 0.45 : 0.85) : 0.12;
+            const dash = kind === 'soft' ? 'stroke-dasharray="4 4"' : '';
+            const y1 = src.y + 24;
+            const y2 = target.y - 26;
+            const midY = (y1 + y2) / 2;
+            const d = `M ${src.x} ${y1} C ${src.x} ${midY}, ${target.x} ${midY}, ${target.x} ${y2}`;
+            edgesSvg += `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="${kind === 'hard' ? 1.8 : 1.2}" opacity="${opacity}" ${dash} marker-end="url(#dag-arrow)" />`;
+          });
+        });
+
+        // Build SVG nodes
+        let nodesSvg = '';
+        DAG_NODES.forEach((n) => {
+          const st = status[n.id];
+          const inClosure = !closure || closure.has(n.id);
+          const isSel = n.id === appState.dagSelectedId;
+
+          let fill = '#161920', stroke = '#383e4c', textCol = '#9aa0ab', badgeCol = '#6c7382';
+          if (st === 'mastered') {
+            fill = '#102b24'; stroke = '#34d399'; textCol = '#ecfdf5'; badgeCol = '#34d399';
+          } else if (st === 'frontier') {
+            fill = '#182b52'; stroke = '#7eb2ff'; textCol = '#f1f5ff'; badgeCol = '#7eb2ff';
+          } else if (st === 'horizon') {
+            fill = '#1d1c16'; stroke = '#b88f28'; textCol = '#e6d7b0'; badgeCol = '#fbbf24';
+          } else {
+            fill = '#111318'; stroke = '#252933'; textCol = '#5a6170'; badgeCol = '#484f5e';
+          }
+
+          const op = inClosure ? 1 : 0.2;
+          const gateTag = n.hard.length > 1 ? ` [${n.hardOp}]` : '';
+          const glow = st === 'frontier' && inClosure ? 'filter="url(#blue-glow)"' : '';
+          const selRing = isSel ? `<rect x="${n.x - 98}" y="${n.y - 28}" width="196" height="56" rx="16" fill="none" stroke="#ffffff" stroke-width="1.2" stroke-dasharray="3 3" opacity="0.7" />` : '';
+
+          nodesSvg += `
+            <g class="dag-node-group" data-dag-id="${n.id}" opacity="${op}" tabindex="0" role="button" aria-label="${n.id} ${n.name}, status ${st}">
+              ${selRing}
+              <rect class="dag-rect" x="${n.x - 94}" y="${n.y - 24}" width="188" height="48" rx="13" fill="${fill}" stroke="${stroke}" stroke-width="${st === 'frontier' || st === 'mastered' ? 1.8 : 1.2}" ${glow} />
+              <text x="${n.x - 82}" y="${n.y - 6}" fill="${badgeCol}" font-family="ui-monospace, monospace" font-size="10.5" font-weight="600">${n.id}${gateTag}</text>
+              <text x="${n.x + 82}" y="${n.y - 6}" text-anchor="end" fill="${badgeCol}" font-family="ui-monospace, monospace" font-size="9.5">${st.toUpperCase()}</text>
+              <text x="${n.x - 82}" y="${n.y + 13}" fill="${textCol}" font-family="system-ui, sans-serif" font-size="11.5" font-weight="600">${escapeHtml(n.name)}</text>
+            </g>
+          `;
+        });
+
+        const ruleStr = selected.hard.length === 0
+          ? 'None (Entry Node)'
+          : `${selected.hard.join(` ${selected.hardOp} `)}${selected.soft.length ? `  (Soft: ${selected.soft.join(', ')})` : ''}`;
+
+        els.labMount.innerHTML = `
+          <div class="lab-toolbar">
+            <div>
+              <div class="lab-toolbar-title">Resilient Web Systems — 10-Node Competency DAG Simulator</div>
+              <div class="lab-toolbar-sub">Click any node to toggle <strong>Mastered</strong> &middot; Frontier ready: <strong>${frontierIds.length ? frontierIds.join(', ') : 'All Mastered!'}</strong> &middot; Mission remaining: <strong>${remainingMission}</strong></div>
+            </div>
+            <div class="btn-group">
+              <button class="mini-btn ${appState.dagPruneTarget === 'none' ? 'active' : ''}" data-prune="none" type="button">Full Graph</button>
+              <button class="mini-btn ${appState.dagPruneTarget === 'N07' ? 'active' : ''}" data-prune="N07" type="button">Prune &rarr; N07</button>
+              <button class="mini-btn ${appState.dagPruneTarget === 'N10' ? 'active' : ''}" data-prune="N10" type="button">Prune &rarr; N10</button>
+              <button class="mini-btn" id="dag-reset-btn" type="button">Reset</button>
+            </div>
+          </div>
+
+          <div class="dag-legend">
+            <span class="legend-item"><span class="legend-swatch" style="background:#34d399"></span>Mastered (${masteredCount}/10)</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:#7eb2ff"></span>Frontier (Ready Now)</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:#fbbf24"></span>Horizon (1 Hop)</span>
+            <span class="legend-item"><span class="legend-swatch" style="background:#333947"></span>Shrouded (Fog of War)</span>
+            <span class="legend-item" style="margin-left:auto; font-family: var(--font-mono); font-size:0.7rem;">Solid = Hard Prereq &middot; Dashed = Soft</span>
+          </div>
+
+          <div class="dag-canvas-wrap">
+            <svg class="dag-svg" viewBox="0 0 750 432" role="img" aria-label="Interactive 10-node Competency DAG">
+              <defs>
+                <marker id="dag-arrow" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+                  <path d="M 1 2 L 8 5 L 1 8" fill="none" stroke="#8592a6" stroke-width="1.6" />
+                </marker>
+                <filter id="blue-glow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#7eb2ff" flood-opacity="0.38" />
+                </filter>
+              </defs>
+              ${edgesSvg}
+              ${nodesSvg}
+            </svg>
+          </div>
+
+          <div class="dag-info-bar">
+            <div>
+              <div style="font-family:var(--font-mono); font-size:0.74rem; color:var(--accent-blue); margin-bottom:4px;">
+                INSPECTING ${selected.id} &middot; ${escapeHtml(selected.name)} (${status[selected.id].toUpperCase()})
+              </div>
+              <div style="color:var(--text-secondary);"><strong>Mastery Threshold:</strong> ${escapeHtml(selected.threshold)}</div>
+            </div>
+            <div>
+              <div style="color:var(--text-secondary); margin-bottom:4px;"><strong>Prerequisite Rule:</strong> <span style="font-family:var(--font-mono); color:var(--text-primary);">${escapeHtml(ruleStr)}</span></div>
+              <div style="color:var(--text-muted);"><strong>Bypass Challenge:</strong> ${escapeHtml(selected.bypass)}</div>
+            </div>
+          </div>
+        `;
+
+        // Bind DAG interactions
+        els.labMount.querySelectorAll('.dag-node-group').forEach((g) => {
+          const toggleNode = () => {
+            const id = g.dataset.dagId;
+            appState.dagSelectedId = id;
+            if (appState.dagMastered.has(id)) appState.dagMastered.delete(id);
+            else appState.dagMastered.add(id);
+            renderLab1DAG();
+          };
+          g.addEventListener('click', toggleNode);
+          g.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleNode(); }
+          });
+        });
+
+        els.labMount.querySelectorAll('[data-prune]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            appState.dagPruneTarget = btn.dataset.prune;
+            renderLab1DAG();
+          });
+        });
+
+        document.getElementById('dag-reset-btn').addEventListener('click', () => {
+          appState.dagMastered = new Set();
+          appState.dagPruneTarget = 'none';
+          appState.dagSelectedId = 'N01';
+          renderLab1DAG();
+          showToast('DAG mastery state reset to entry frontier.');
+        });
+      }
+
+      /* --- LAB 2: ATOMIC MODULE PREVIEWER (sys-n07-idempotency) --- */
+      function renderLab2Module() {
+        const tier = MODULE_TIERS[appState.moduleTier];
+        els.labMount.innerHTML = `
+          <div class="lab-toolbar">
+            <div>
+              <div class="lab-toolbar-title">Atomic Module Previewer — <span style="font-family:var(--font-mono); color:var(--accent-blue);">sys-n07-idempotency</span></div>
+              <div class="lab-toolbar-sub">Toggle progressive scaffolding tiers to see how guidance fades and prevents the Expertise Reversal Effect.</div>
+            </div>
+            <div class="btn-group">
+              <button class="mini-btn ${appState.showRawYaml ? 'active' : ''}" id="btn-toggle-yaml" type="button">${appState.showRawYaml ? 'Hide' : 'Inspect'} Raw YAML</button>
+              <button class="mini-btn" id="btn-copy-mod-yaml" type="button">Copy Frontmatter</button>
+            </div>
+          </div>
+
+          <div class="orientation-ribbon">
+            <div>
+              <div class="ribbon-col-label">Built On (Prereqs)</div>
+              <div style="color:var(--text-secondary);">HTTP Semantics (N01), ACID Locks (N02), Async Concurrency (N03)</div>
+            </div>
+            <div>
+              <div class="ribbon-col-label">Core Mental Shift</div>
+              <div style="color:var(--text-primary);">Treat every network write as <em>"arrives 0, 1, or 10 times simultaneously"</em> rather than cleanly once.</div>
+            </div>
+            <div>
+              <div class="ribbon-col-label">Unlocks Downstream</div>
+              <div style="color:var(--text-secondary);">Fault-Tolerant Service Architecture Under Load (N10)</div>
+            </div>
+          </div>
+
+          <div class="budget-grid">
+            <div class="budget-stat">
+              <div class="budget-stat-label">Intrinsic Complexity</div>
+              <div class="budget-stat-val" style="color:var(--rose);">HIGH (3 Models)</div>
+            </div>
+            <div class="budget-stat">
+              <div class="budget-stat-label">Focus Block Plan</div>
+              <div class="budget-stat-val">4 &times; 60m Blocks</div>
+            </div>
+            <div class="budget-stat">
+              <div class="budget-stat-label">Energy State</div>
+              <div class="budget-stat-val" style="color:var(--amber);">Peak Focus</div>
+            </div>
+            <div class="budget-stat">
+              <div class="budget-stat-label">Estimated Scope</div>
+              <div class="budget-stat-val">4 – 8 Hours</div>
+            </div>
+          </div>
+
+          <div class="tier-panel">
+            <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px;">
+              <div class="btn-group" role="tablist" aria-label="Scaffolding Tiers">
+                <button class="mini-btn ${appState.moduleTier === 'guided' ? 'active' : ''}" data-tier="guided" type="button">Tier 1 &middot; Guided</button>
+                <button class="mini-btn ${appState.moduleTier === 'scaffolded' ? 'active' : ''}" data-tier="scaffolded" type="button">Tier 2 &middot; Scaffolded</button>
+                <button class="mini-btn ${appState.moduleTier === 'sovereign' ? 'active' : ''}" data-tier="sovereign" type="button">Tier 3 &middot; Sovereign</button>
+              </div>
+              <span class="micro-tag" style="color:var(--accent-blue); border-color:rgba(126,178,255,0.35);">${escapeHtml(tier.badge)}</span>
+            </div>
+
+            <div style="font-size:0.98rem; font-weight:600; color:var(--text-primary);">${escapeHtml(tier.title)}</div>
+            <div style="font-size:0.86rem; color:var(--text-secondary); line-height:1.58;">${escapeHtml(tier.body)}</div>
+
+            <div style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:10px; padding-top:8px; border-top:1px solid #1e222b; font-size:0.76rem;">
+              <span style="color:var(--text-muted);"><strong>Artifact:</strong> <span style="font-family:var(--font-mono); color:var(--text-primary);">${escapeHtml(tier.artifact)}</span></span>
+              <span style="color:var(--emerald);"><strong>Cognitive Guard:</strong> ${escapeHtml(tier.guard)}</span>
+            </div>
+          </div>
+
+          ${appState.showRawYaml ? `<pre class="code-viewer">${escapeHtml(MODULE_RAW_YAML)}</pre>` : ''}
+        `;
+
+        els.labMount.querySelectorAll('[data-tier]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            appState.moduleTier = btn.dataset.tier;
+            renderLab2Module();
+          });
+        });
+
+        document.getElementById('btn-toggle-yaml').addEventListener('click', () => {
+          appState.showRawYaml = !appState.showRawYaml;
+          renderLab2Module();
+        });
+
+        document.getElementById('btn-copy-mod-yaml').addEventListener('click', () => {
+          copyTextSafe(MODULE_RAW_YAML, 'Copied sys-n07-idempotency YAML frontmatter!');
+        });
+      }
+
+      /* --- LAB 3: CREDENTIAL COMPARATOR & BINARY RUBRIC --- */
+      function renderLab3Evaluation() {
+        const passedCount = RUBRIC_CRITERIA.filter((c) => appState.rubricChecks[c.id]).length;
+        const allPassed = passedCount === RUBRIC_CRITERIA.length;
+        const fc = appState.credFocusCol;
+
+        const rubricHtml = RUBRIC_CRITERIA.map((c) => {
+          const checked = !!appState.rubricChecks[c.id];
+          return `
+            <div class="rubric-item ${checked ? 'passed' : ''}">
+              <label class="rubric-top">
+                <input type="checkbox" class="rubric-check" data-crit="${c.id}" ${checked ? 'checked' : ''} />
+                <div>
+                  <div style="font-weight:600; font-size:0.86rem; color:var(--text-primary);">
+                    <span style="font-family:var(--font-mono); color:${checked ? 'var(--emerald)' : 'var(--accent-blue)'}; margin-right:6px;">${c.id}</span>
+                    ${escapeHtml(c.name)}
+                    <span class="micro-tag" style="margin-left:8px; color:${checked ? 'var(--emerald)' : 'var(--text-dim)'};">${checked ? 'PASS' : 'PENDING'}</span>
+                  </div>
+                  <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:3px;">${escapeHtml(c.pass)}</div>
+                </div>
+              </label>
+              <div class="rubric-meta">
+                <div class="trap-box"><strong>Dunning-Kruger Trap:</strong> ${escapeHtml(c.trap)}</div>
+                <div class="remedy-box"><strong>Remediation Path:</strong> ${escapeHtml(c.remedy)}</div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const mintedJson = JSON.stringify({
+          "@context": [
+            "https://www.w3.org/ns/credentials/v2",
+            "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+          ],
+          "id": "urn:uuid:7f2e9c10-4b88-4c1a-9d71-5a18c44e9021",
+          "type": ["VerifiableCredential", "OpenBadgeCredential"],
+          "issuer": { "id": "did:web:commons.sovraeg.org", "name": "Decentralized Learning Commons" },
+          "validFrom": new Date().toISOString(),
+          "credentialSubject": {
+            "id": "did:key:z6MkhaXgBZDvotDkL5257faiztiGiC2QtKLGpbnnEGta2doK",
+            "achievement": {
+              "id": "urn:uuid:00000000-0000-4000-8000-000000000007",
+              "name": "Idempotent Writes & Retry Mechanics (sys-n07)",
+              "criteria": { "narrative": "Binary 5/5 pass on C1–C5 atomic state, payload fingerprint, deterministic replay, retry hygiene & crash defense." }
+            }
+          },
+          "evidence": [
+            { "id": "https://git.example.org/learner/transfers-service/commit/9a8b7c6", "name": "Chaos Test Harness & ARCHITECTURE.md" }
+          ]
+        }, null, 2);
+
+        els.labMount.innerHTML = `
+          <div class="lab-toolbar">
+            <div>
+              <div class="lab-toolbar-title">Part A &middot; Portable Credential Standards Comparator</div>
+              <div class="lab-toolbar-sub">Highlight a column to inspect trade-offs across governance, custody, and verification.</div>
+            </div>
+            <div class="btn-group">
+              <button class="mini-btn ${fc === 'trad' ? 'active' : ''}" data-col="trad" type="button">Transcripts</button>
+              <button class="mini-btn ${fc === 'vc' ? 'active' : ''}" data-col="vc" type="button">W3C VCs</button>
+              <button class="mini-btn ${fc === 'obv3' ? 'active' : ''}" data-col="obv3" type="button">OBv3 + CLR 2.0</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Dimension</th>
+                  <th class="${fc === 'trad' ? 'col-highlight' : ''}">Traditional Transcripts</th>
+                  <th class="${fc === 'vc' ? 'col-highlight' : ''}">W3C Verifiable Credentials</th>
+                  <th class="${fc === 'obv3' ? 'col-highlight' : ''}">Open Badges 3.0 + CLR 2.0</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Data Format</strong></td>
+                  <td class="${fc === 'trad' ? 'col-highlight' : ''}">Registrar DB; flat static PDF or paper</td>
+                  <td class="${fc === 'vc' ? 'col-highlight' : ''}">JSON-LD (VCDM v2.0) + cryptographic proofs</td>
+                  <td class="${fc === 'obv3' ? 'col-highlight' : ''}">W3C VC-compliant JSON-LD for Skills &amp; Achievements</td>
+                </tr>
+                <tr>
+                  <td><strong>Verification</strong></td>
+                  <td class="${fc === 'trad' ? 'col-highlight' : ''}">Manual lookup / paid clearinghouse</td>
+                  <td class="${fc === 'vc' ? 'col-highlight' : ''}">Instant public-key / DID math without phoning home</td>
+                  <td class="${fc === 'obv3' ? 'col-highlight' : ''}">Cryptographic VC verification + OBv3 conformance</td>
+                </tr>
+                <tr>
+                  <td><strong>Evidence &amp; Trust</strong></td>
+                  <td class="${fc === 'trad' ? 'col-highlight' : ''}">Course titles &amp; letter grades (no artifacts)</td>
+                  <td class="${fc === 'vc' ? 'col-highlight' : ''}">Domain-neutral; custom schemas needed</td>
+                  <td class="${fc === 'obv3' ? 'col-highlight' : ''}">Proof-of-work links, EndorsementCredentials &amp; ESCO/CASE</td>
+                </tr>
+                <tr>
+                  <td><strong>Learner Custody</strong></td>
+                  <td class="${fc === 'trad' ? 'col-highlight' : ''}">Institution-held; pay per copy</td>
+                  <td class="${fc === 'vc' ? 'col-highlight' : ''}">Learner wallet; survives issuer shutdown</td>
+                  <td class="${fc === 'obv3' ? 'col-highlight' : ''}">Universal W3C wallet; selective disclosure &amp; CLR bundles</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lab-toolbar" style="margin-top:4px;">
+            <div>
+              <div class="lab-toolbar-title">Part B &middot; Binary Pass/Fail Self-Audit Rubric (<span style="font-family:var(--font-mono); color:var(--accent-blue);">sys-n07</span>)</div>
+              <div class="lab-toolbar-sub">Zero partial-credit averaging: 4/5 (80%) is still <strong>FAIL</strong>. Check all 5 observable criteria to unlock minting.</div>
+            </div>
+            <span class="qa-pill" style="color:${allPassed ? 'var(--emerald)' : 'var(--amber)'}; border-color:${allPassed ? 'var(--emerald-border)' : 'var(--amber-border)'};">
+              ${passedCount} / 5 PASSED ${allPassed ? '&middot; GATE OPEN' : '&middot; LOCKED'}
+            </span>
+          </div>
+
+          <div class="rubric-list">${rubricHtml}</div>
+
+          <div class="mint-bar">
+            <div style="font-size:0.8rem; color:var(--text-secondary);">
+              ${allPassed
+                ? '<strong style="color:var(--emerald);">All 5 invariants verified.</strong> Ready to issue a signed Open Badges 3.0 Verifiable Credential.'
+                : `<strong>Gate Locked:</strong> Fix the remaining ${5 - passedCount} criterion(s) before claiming mastery.`}
+            </div>
+            <button class="mint-btn ${allPassed ? 'unlocked' : ''}" id="btn-mint-obv3" type="button" ${allPassed ? '' : 'disabled'}>
+              ${allPassed ? 'Mint OBv3 Credential' : 'Locked (Requires 5/5 Pass)'}
+            </button>
+          </div>
+
+          ${allPassed && appState.mintedPayloadVisible ? `<pre class="code-viewer">${escapeHtml(mintedJson)}</pre>` : ''}
+        `;
+
+        els.labMount.querySelectorAll('[data-col]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            appState.credFocusCol = btn.dataset.col;
+            renderLab3Evaluation();
+          });
+        });
+
+        els.labMount.querySelectorAll('.rubric-check').forEach((chk) => {
+          chk.addEventListener('change', () => {
+            appState.rubricChecks[chk.dataset.crit] = chk.checked;
+            if (!chk.checked) appState.mintedPayloadVisible = false;
+            renderLab3Evaluation();
+          });
+        });
+
+        const mintBtn = document.getElementById('btn-mint-obv3');
+        if (mintBtn && allPassed) {
+          mintBtn.addEventListener('click', () => {
+            appState.mintedPayloadVisible = !appState.mintedPayloadVisible;
+            renderLab3Evaluation();
+            if (appState.mintedPayloadVisible) showToast('Signed OBv3 / W3C VC JSON-LD payload generated!');
+          });
+        }
+      }
+
+      /* --- LAB 4: CARTOGRAPHER QA GATE CHECKER & ROLE MATRIX --- */
+      function renderLab4Cartographer() {
+        const checkedCount = QA_GATES.filter((g) => appState.qaChecks[g.id]).length;
+        const pct = Math.round((checkedCount / QA_GATES.length) * 100);
+        const statusLabel = pct === 100 ? 'READY FOR COMMONS RELEASE' : pct >= 60 ? 'NEEDS FINAL AUDIT' : 'DRAFT ONLY';
+        const statusColor = pct === 100 ? 'var(--emerald)' : pct >= 60 ? 'var(--amber)' : 'var(--rose)';
+
+        const gatesHtml = QA_GATES.map((g) => {
+          const ok = !!appState.qaChecks[g.id];
+          return `
+            <div class="rubric-item ${ok ? 'passed' : ''}">
+              <label class="rubric-top">
+                <input type="checkbox" class="rubric-check" data-qa="${g.id}" ${ok ? 'checked' : ''} />
+                <div>
+                  <div style="font-weight:600; font-size:0.86rem; color:var(--text-primary);">${escapeHtml(g.title)}</div>
+                  <div style="font-size:0.79rem; color:var(--text-secondary); margin-top:2px;">${escapeHtml(g.desc)}</div>
+                </div>
+              </label>
+            </div>
+          `;
+        }).join('');
+
+        const ciLog = `$ dag-lint validate ./curriculum/resilient-web-systems/
+[OK] Parsed 10 atomic Markdown modules (YAML frontmatter schema v1.2)
+[OK] Kahn's Topological Sort: 0 cycles detected across 14 directed edges
+[OK] Reference Integrity: 100% of prerequisite & unlocks IDs resolved
+[OK] Out-Degree Chokepoint Audit: max out-degree = 3 (N01 -> N04, N06, N07) <= threshold 5
+[OK] OBv3 Achievement UUIDs: 10/10 unique URN identifiers confirmed
+-> GRAPH SNAPSHOT v1.2.0 PASSED ALL STRUCTURAL CHECKS`;
+
+        els.labMount.innerHTML = `
+          <div class="lab-toolbar">
+            <div>
+              <div class="lab-toolbar-title">Authoring QA Gate Checker (Pre-Commit Publication Audit)</div>
+              <div class="lab-toolbar-sub">Verify every atomic module and taxonomy change before merging into the open graph.</div>
+            </div>
+            <div class="qa-score-bar">
+              <span class="qa-pill" style="color:${statusColor};">${pct}% &middot; ${statusLabel}</span>
+              <button class="mini-btn ${appState.ciOutputVisible ? 'active' : ''}" id="btn-run-ci" type="button">Run CI Graph Lint</button>
+            </div>
+          </div>
+
+          <div class="meter-track" style="height:8px;">
+            <div class="meter-fill" style="width:${pct}%; background:${statusColor};"></div>
+          </div>
+
+          <div class="rubric-list">${gatesHtml}</div>
+
+          ${appState.ciOutputVisible ? `<pre class="ci-console">${escapeHtml(ciLog)}</pre>` : ''}
+
+          <div class="table-wrap" style="margin-top:4px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Process Dimension</th>
+                  <th>Traditional Curriculum Developer</th>
+                  <th class="col-highlight">Decentralized Ecosystem Cartographer</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Systemic Alignment</strong></td>
+                  <td>Linear 12-week syllabi, fixed semesters, institutional accreditation</td>
+                  <td class="col-highlight">Competency DAGs, prerequisite trees, open skill taxonomies</td>
+                </tr>
+                <tr>
+                  <td><strong>Pedagogical Integration</strong></td>
+                  <td>Monolithic LMS courses, instructor-paced lectures</td>
+                  <td class="col-highlight">Atomic remixable learning objects, local-first sandboxes</td>
+                </tr>
+                <tr>
+                  <td><strong>Evaluation &amp; Trust</strong></td>
+                  <td>Centralized exams, norm-referenced grades, seat time</td>
+                  <td class="col-highlight">Proof-of-work portfolios, binary rubrics, portable W3C VCs / OBv3</td>
+                </tr>
+                <tr>
+                  <td><strong>Primary Role</strong></td>
+                  <td>Content gatekeeper and pacing authority</td>
+                  <td class="col-highlight">Cartographer, taxonomy steward, curation lead &amp; rubric architect</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        `;
+
+        els.labMount.querySelectorAll('[data-qa]').forEach((chk) => {
+          chk.addEventListener('change', () => {
+            appState.qaChecks[chk.dataset.qa] = chk.checked;
+            renderLab4Cartographer();
+          });
+        });
+
+        document.getElementById('btn-run-ci').addEventListener('click', () => {
+          appState.ciOutputVisible = !appState.ciOutputVisible;
+          if (appState.ciOutputVisible) {
+            appState.qaChecks.cilint = true;
+            appState.qaChecks.chokepoint = true;
+            showToast('CI Graph Lint passed: 0 cycles, 0 chokepoints.');
+          }
+          renderLab4Cartographer();
+        });
+      }
+
+      /* ========================================================================
+         8. EXPORT GENERATORS (OBSIDIAN MARKDOWN BLUEPRINT & YAML CONFIG)
+         ======================================================================== */
+      function buildCurrentYaml() {
+        const arch = computeArchitecture(appState);
+        return `architecture_profile:
+  learner_autonomy: "${appState.autonomy}"
+  social_mode: "${appState.social}"
+  verification_model: "${appState.verification}"
+  flow_bridge: "${arch.flowLabel}"
+telemetry:
+  learner_agency_pct: ${arch.telemetry.agency}
+  extraneous_load_risk_pct: ${arch.telemetry.loadRisk}
+  credential_portability_pct: ${arch.telemetry.portability}
+  maintenance_overhead_pct: ${arch.telemetry.maintenance}
+pipeline:
+  01_alignment:
+    strategy: "${arch.nodes[1].title}"
+    artifact: "${arch.nodes[1].artifact}"
+    primary_risk: "${arch.nodes[1].fullRisk}"
+  02_packaging:
+    strategy: "${arch.nodes[2].title}"
+    artifact: "${arch.nodes[2].artifact}"
+    primary_risk: "${arch.nodes[2].fullRisk}"
+  03_evaluation:
+    strategy: "${arch.nodes[3].title}"
+    artifact: "${arch.nodes[3].artifact}"
+    primary_risk: "${arch.nodes[3].fullRisk}"
+  04_developer_role:
+    strategy: "${arch.nodes[4].title}"
+    artifact: "${arch.nodes[4].artifact}"
+    primary_risk: "${arch.nodes[4].fullRisk}"`;
+      }
+
+      function buildMarkdownBlueprint() {
+        const arch = computeArchitecture(appState);
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const nodeBlocks = [1, 2, 3, 4].map((i) => {
+          const n = arch.nodes[i];
+          return `## 0${i}. ${n.dimension}: ${n.title}
+- **Key Artifact:** \`${n.artifact}\`
+- **Primary Risk:** ${n.fullRisk}
+- **Operational Mitigation:** ${n.mitigation}
+- **Core Deliverable:** ${n.deliverable}
+- **Cognitive Load Safeguards:** ${n.cogload}`;
+        }).join('\n\n');
+
+        return `---
+title: "Decentralized Curriculum Architecture Blueprint"
+generated: "${dateStr}"
+autonomy: "${appState.autonomy}"
+social_mode: "${appState.social}"
+verification_model: "${appState.verification}"
+flow_bridge: "${arch.flowLabel}"
+---
+
+# Decentralized Curriculum Architecture Blueprint
+
+> [!INFO] Configuration Profile
+> - **Learner Autonomy:** ${appState.autonomy}
+> - **Social Mode:** ${appState.social}
+> - **Verification Model:** ${appState.verification}
+> - **Connector Flow:** *${arch.flowLabel}*
+
+## Architecture Telemetry
+| Metric | Score |
+|---|---|
+| Learner Agency | ${arch.telemetry.agency}% |
+| Extraneous Load Risk | ${arch.telemetry.loadRisk}% |
+| Credential Portability | ${arch.telemetry.portability}% |
+| Maintenance Overhead | ${arch.telemetry.maintenance}% |
+
+---
+
+${nodeBlocks}
+`;
+      }
+
+      function downloadMarkdownFile(filename, content) {
+        try {
+          const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+          showToast(`Exported ${filename}`);
+        } catch (err) {
+          copyTextSafe(content, 'Download blocked — blueprint copied to clipboard instead!');
+        }
+      }
+
+      /* ========================================================================
+         9. EVENT BINDINGS & INITIALIZATION
+         ======================================================================== */
+      function init() {
+        // Segmented toggle listeners
+        document.querySelectorAll('.seg-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const dim = btn.dataset.dim;
+            const val = btn.dataset.val;
+            if (appState[dim] !== val) {
+              appState[dim] = val;
+              renderAll(true);
+            }
+          });
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.preset-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const p = PRESETS[btn.dataset.preset];
+            if (!p) return;
+            appState.autonomy = p.autonomy;
+            appState.social = p.social;
+            appState.verification = p.verification;
+            renderAll(true);
+            showToast(`Applied "${p.label}" preset`);
+          });
+        });
+
+        // Architecture capsule node selection
+        document.querySelectorAll('.arch-node').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            appState.selectedNode = Number(btn.dataset.node);
+            renderAll(false);
+          });
+        });
+
+        // Inspector tabs
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            appState.activeTab = btn.dataset.tab;
+            renderAll(false);
+          });
+        });
+
+        document.getElementById('btn-open-lab').addEventListener('click', () => {
+          appState.activeTab = 'lab';
+          renderAll(false);
+        });
+
+        // Export & Copy buttons
+        document.getElementById('btn-copy-yaml').addEventListener('click', () => {
+          copyTextSafe(buildCurrentYaml(), 'Architecture YAML copied to clipboard!');
+        });
+
+        document.getElementById('btn-export-md').addEventListener('click', () => {
+          const slug = `curriculum-blueprint-${appState.autonomy}-${appState.social}-${appState.verification}.md`;
+          downloadMarkdownFile(slug, buildMarkdownBlueprint());
+        });
+
+        // Keyboard shortcuts 1–4
+        document.addEventListener('keydown', (e) => {
+          const tag = document.activeElement && document.activeElement.tagName;
+          if (tag === 'INPUT' || tag === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) return;
+          if (['1', '2', '3', '4'].includes(e.key)) {
+            appState.selectedNode = Number(e.key);
+            renderAll(false);
+          }
+        });
+
+        // Keep SVG connectors crisp across window/iframe resizing
+        window.addEventListener('resize', drawConnectors);
+        if (typeof ResizeObserver !== 'undefined') {
+          const ro = new ResizeObserver(() => requestAnimationFrame(drawConnectors));
+          ro.observe(els.stage);
+        }
+
+        // Initial paint
+        renderAll(false);
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+  </script>
+</body>
+</html>
