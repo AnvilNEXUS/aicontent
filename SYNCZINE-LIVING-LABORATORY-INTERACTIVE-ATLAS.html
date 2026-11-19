@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYNCZINE Living Laboratory — Catalog & Atlas</title>
+<meta name="description" content="SOVRAEG LABS UX Atlas: 30 Canvas archetypes, 36 SYNCMODZ, 24 SAEGEMODZ and 60 SYNCZ-SRLO patterns.">
+<style>
+:root{--bg:#fafbf9;--fg:#162932;--muted:#52636a;--panel:#fff;--accent:#087a8b;--line:#dbe4e5;--subtle:#edf5f5;--code:#f3f7f8;--fs:16px;--shadow:0 10px 32px rgba(12,37,47,.05)}
+[data-theme="dark"]{--bg:#0b141b;--fg:#e4edf1;--muted:#a6b8c1;--panel:#111f29;--accent:#7ddbdc;--line:#2a3b45;--subtle:#18313a;--code:#162c38;--shadow:0 12px 30px rgba(0,0,0,.25)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--fg);font:var(--fs)/1.65 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif} a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.layout{display:grid;grid-template-columns:250px minmax(0,1fr);min-height:100vh}
+nav{border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow:auto;padding:26px 18px;background:var(--panel)}
+nav .brand{font-size:15px;font-weight:850;letter-spacing:.06em;line-height:1.4;padding:0 10px 18px;color:var(--fg)}
+nav a{display:block;font-size:13px;color:var(--muted);padding:9px 11px;border-radius:9px;font-weight:550}nav a:hover,nav a.active{background:var(--subtle);color:var(--accent);text-decoration:none}
+main{min-width:0;max-width:1300px;width:100%;margin:0 auto;padding:34px clamp(17px,4vw,60px) 100px}
+.toolbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(15px);border-bottom:1px solid var(--line);padding:9px 0 13px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.toolbar input[type=search]{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:10px 12px;color:var(--fg);font:inherit;min-width:220px;flex:1;max-width:450px}
+.toolbar button,.toolbar select{border:1px solid var(--line);background:var(--panel);color:var(--fg);padding:10px 12px;border-radius:9px;font:inherit;cursor:pointer}.toolbar small{color:var(--muted);font-size:12px}
+label{font-size:12px;color:var(--muted)}input[type=range]{vertical-align:middle;max-width:90px;accent-color:var(--accent)}
+.hero{border-bottom:1px solid var(--line);padding:30px 0 24px}.eyebrow{font-size:12px;font-weight:800;letter-spacing:.15em;color:var(--accent)}
+h1{font-weight:850;font-size:clamp(28px,3.2vw,43px);line-height:1.15;letter-spacing:-.04em;margin:14px 0 20px}h2{font-size:clamp(22px,2.4vw,30px);line-height:1.2;letter-spacing:-.03em;border-top:1px solid var(--line);padding-top:45px;margin-top:62px}h3{font-size:19px;line-height:1.3;letter-spacing:-.014em;margin:33px 0 12px}h4{font-size:16px}h1,h2,h3,h4{scroll-margin-top:110px}
+p{margin:12px 0 16px}blockquote{margin:22px 0;padding:15px 20px;background:var(--subtle);border-left:3px solid var(--accent);border-radius:5px}blockquote p{margin:0 0 9px}blockquote p:last-child{margin-bottom:0}
+.table-wrap{overflow-x:auto;margin:17px 0 28px;border-radius:12px;border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow)}table{border-collapse:collapse;width:100%;min-width:710px;font-size:.9em;line-height:1.52}th,td{text-align:left;vertical-align:top;padding:12px 15px;border-bottom:1px solid var(--line)}th{background:var(--subtle);color:var(--fg);font-size:.83em;text-transform:uppercase;letter-spacing:.04em}tr:last-child td{border-bottom:0}tbody tr:hover{background:color-mix(in srgb,var(--subtle) 65%,transparent)}tbody td:first-child{font-weight:850;white-space:nowrap;color:var(--accent)}
+ul,ol{padding-left:24px}li{margin:6px 0}code{background:var(--code);padding:2px 5px;border-radius:5px}strong{font-weight:750}hr{border:0;border-top:1px solid var(--line)}
+.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:20px 0 8px}.count{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:14px 15px}.count b{display:block;color:var(--accent);font-size:27px;line-height:1.3}.count span{font-size:12px;color:var(--muted)}
+#searchInfo{padding-left:4px}.print{margin-left:auto}.hidden-row{display:none!important}
+@media(max-width:900px){.layout{display:block}nav{position:static;height:auto;max-height:160px;display:flex;overflow-x:auto;white-space:nowrap;padding:9px 12px;gap:2px;align-items:center;border-bottom:1px solid var(--line);border-right:0}.brand{display:none}nav a{flex:none}main{padding-top:10px}.counts{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{top:0}}
+@media print{nav,.toolbar{display:none!important}.layout{display:block}main{max-width:none;padding:0}body{color:#000;background:#fff;font-size:11px}.table-wrap{overflow:visible;box-shadow:none}table{min-width:0;break-inside:auto}tr{break-inside:avoid}h2{break-after:avoid}}
+</style></head><body><div class="layout"><nav aria-label="Sections"><div class="brand">SOVRAEG LABS<br>SYNCZINE EXPERIENCE ATLAS</div><a href="#synczine-living-laboratory-comprehensive-catalog-atlas">Overview</a>
+<a href="#1-why-five-catalogs-not-one">Five catalogs</a>
+<a href="#2-six-experience-modes">Six modes</a>
+<a href="#3-the-canvas-atlas-30-archetypes">30 Canvas types</a>
+<a href="#4-syncmodz-36-learner-instruments">36 SYNCMODZ</a>
+<a href="#5-saegemodz-24-guide-instruments">24 SAEGEMODZ</a>
+<a href="#6-syncz-srlo-library-60-activity-archetypes">60 SRLO</a>
+<a href="#7-reusable-experience-compositions">6 recipes</a>
+<a href="#8-the-integration-and-runtime-shelf">Integration shelf</a>
+<a href="#9-evidence-sovereignty-and-the-learner-owned-sovraezine">Evidence &amp; ownership</a>
+<a href="#10-catalog-metadata-and-quality-standard">Quality standard</a>
+<a href="#11-priorities-and-staged-implementation">Roadmap</a>
+<a href="#12-source-provenance-and-decisions-still-open">Sources &amp; decisions</a></nav>
+<main><div class="toolbar"><input type="search" id="search" aria-label="Search catalog entries" placeholder="Search catalog rows: voice, evidence, geometry…"><button type="button" id="clear">Clear</button><button type="button" id="theme" title="Toggle light or dark mode">Dark mode</button><label>Text <input type="range" min="14" max="21" value="16" id="fontsize" aria-label="Font size"></label><button class="print" id="print">Print / PDF</button><small id="searchInfo">150 catalog entries</small></div>
+<div class="hero"><div class="eyebrow">NOVEMBER 2026 · PROPOSED REFERENCE TAXONOMY</div><div class="counts"><div class="count"><b>30</b><span>Canvas environments</span></div><div class="count"><b>36</b><span>Learner SYNCMODZ</span></div><div class="count"><b>24</b><span>Guide SAEGEMODZ</span></div><div class="count"><b>60</b><span>SYNCZ-SRLO archetypes</span></div></div></div>
+<article id="content"><h1 id="synczine-living-laboratory-comprehensive-catalog-atlas">SYNCZINE LIVING LABORATORY — COMPREHENSIVE CATALOG &amp; ATLAS</h1>
+<blockquote>
+<p><strong>THE CENTRAL IDEA</strong>
+A <strong>SYNCZINE</strong> is a digital composable decentralized learning-path container capable of turning a page into a book, an instrument, an experiment, a studio, a collaboration room or a place to demonstrate mastery. <strong>Canvas</strong> describes the learning environment; <strong>SYNCZ-SRLO</strong> describes the learning activity; <strong>SYNCMODZ</strong> and <strong>SAEGEMODZ</strong> describe contextual learner and guide tools; <strong>SYNCTESS</strong> relates capability, pedagogy and evidence; <strong>SYNTHCRED</strong> records authorized verified mastery.</p>
+<p><strong>This atlas is a curated proposed product taxonomy</strong>, not an inventory of already-built software. It synthesizes six supplied working papers and extends their concepts. Source-derived foundations and recommended new catalog entries are distinguished below.</p>
+</blockquote>
+<h2 id="navigation">NAVIGATION</h2>
+<ul>
+<li><a class="internal-link" href="#1-why-five-catalogs-not-one">1 · Five distinct catalogs</a></li>
+<li><a class="internal-link" href="#2-six-experience-modes">2 · Six experience modes</a></li>
+<li><a class="internal-link" href="#3-the-canvas-atlas-30-archetypes">3 · CANVAS atlas — 30</a></li>
+<li><a class="internal-link" href="#4-syncmodz-36-learner-instruments">4 · SYNCMODZ — 36</a></li>
+<li><a class="internal-link" href="#5-saegemodz-24-guide-instruments">5 · SAEGEMODZ — 24</a></li>
+<li><a class="internal-link" href="#6-syncz-srlo-library-60-activity-archetypes">6 · SYNCZ-SRLO — 60</a></li>
+<li><a class="internal-link" href="#7-reusable-experience-compositions">7 · Experience recipes</a></li>
+<li><a class="internal-link" href="#8-the-integration-and-runtime-shelf">8 · Experience engines and integration shelf</a></li>
+<li><a class="internal-link" href="#9-evidence-sovereignty-and-the-learner-owned-sovraezine">9 · Evidence and sovereignty</a></li>
+<li><a class="internal-link" href="#10-catalog-metadata-and-quality-standard">10 · Catalog specifications</a></li>
+<li><a class="internal-link" href="#11-priorities-and-staged-implementation">11 · First releases</a></li>
+<li><a class="internal-link" href="#12-source-provenance-and-decisions-still-open">12 · Sources and decisions</a></li>
+</ul>
+<h2 id="1-why-five-catalogs-not-one">1. Why five catalogs, not one</h2>
+<div class="table-wrap"><table class="catalog-table" data-family="Layer Question it answers Example What it is NOT C">
+<thead>
+<tr>
+<th>Layer</th>
+<th>Question it answers</th>
+<th>Example</th>
+<th>What it is NOT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Canvas</strong></td>
+<td><strong>Where</strong> am I learning?</td>
+<td>Voice laboratory</td>
+<td>A fixed technology or merely a visual theme</td>
+</tr>
+<tr>
+<td><strong>SYNCZ-SRLO</strong></td>
+<td><strong>What</strong> am I doing to learn?</td>
+<td>Construct and speak an appropriate request</td>
+<td>The whole lesson or learning path</td>
+</tr>
+<tr>
+<td><strong>SYNCMODZ</strong></td>
+<td><strong>Which learner tool</strong> helps me act?</td>
+<td>Recording console, phrase bank, notebook</td>
+<td>The learning objective itself</td>
+</tr>
+<tr>
+<td><strong>SAEGEMODZ</strong></td>
+<td><strong>Which guide tool</strong> helps me mentor, assess or verify?</td>
+<td>Rubric assessor and feedback composer</td>
+<td>Permission to observe everyone automatically</td>
+</tr>
+<tr>
+<td><strong>Composition</strong></td>
+<td><strong>How</strong> are these combined into an experience?</td>
+<td>Read → construct → role-play → reflect → demonstrate</td>
+<td>A new siloed application</td>
+</tr>
+</tbody>
+</table></div>
+<p>A <strong>SYNCZINE</strong> organizes the designed pathway and its prerequisites. <strong>SOVRAELEX</strong> presents the learner's experience, and <strong>SOVRAEGIX</strong> presents authorized guide experiences. <strong>SYNCTESS</strong> should mean the mastery/evidence specification plus corresponding learner-specific evidence instances; an alternative infrastructure meaning appears in one source paper and needs an explicit renaming decision. <strong>SOVRAEZINE</strong> is the learner-controlled retained body of work and publication; <strong>SOVRAEPASS</strong> supplies identity, permissions and credential access. A <strong>SYNTHCRED</strong> is the separately authorized credential.</p>
+<blockquote>
+<p><strong>Keep the boundaries clear</strong>
+A Canvas is a <strong>presentation and working environment</strong>, an SRLO is an <strong>experience with pedagogical behavior</strong>, and a MODZ is a <strong>reusable instrument</strong>. An engine (Godot, audio, mapping, diagrams, etc.) is a possible implementation capability, <strong>not</strong> a type of learning objective. The 24 engines in the source Components paper should not turn into 24 mandatory app dependencies.</p>
+</blockquote>
+<h2 id="2-six-experience-modes">2. Six experience modes</h2>
+<div class="table-wrap"><table class="catalog-table" data-family="Mode Learner's question UX behavior Meaningful out">
+<thead>
+<tr>
+<th>Mode</th>
+<th>Learner's question</th>
+<th>UX behavior</th>
+<th>Meaningful outcomes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>READ</strong></td>
+<td>What should I understand?</td>
+<td>Accessible texts, translations, media, examples, context</td>
+<td>Notes, citations, conceptual understanding</td>
+</tr>
+<tr>
+<td><strong>EXPLORE</strong></td>
+<td>What can I notice or discover?</td>
+<td>Zoom, inspect, map, compare, navigate, reveal</td>
+<td>Observations, annotations, discoveries</td>
+</tr>
+<tr>
+<td><strong>EXPERIMENT</strong></td>
+<td>What happens if I change this?</td>
+<td>Control variables, predict, repeat, compare</td>
+<td>Hypotheses, trials, results, explanations</td>
+</tr>
+<tr>
+<td><strong>COLLABORATE</strong></td>
+<td>What can we solve or create together?</td>
+<td>Shared objects, roles, peer dialogue, local group session</td>
+<td>Group artifact plus individual contribution traces</td>
+</tr>
+<tr>
+<td><strong>REFLECT</strong></td>
+<td>What have I learned and how do I know?</td>
+<td>Review attempts, critique, journal, compare outcomes</td>
+<td>Revisions, reflections, evidence selection</td>
+</tr>
+<tr>
+<td><strong>DEMONSTRATE</strong></td>
+<td>Can I perform the capability independently?</td>
+<td>Authentic challenge with defined rubric and support policy</td>
+<td>Submitted performance, assessor judgment, verification</td>
+</tr>
+</tbody>
+</table></div>
+<p>A single Canvas archetype can support multiple modes. The mode changes the <strong>intent and allowed interaction</strong>, not necessarily the entire visual layout. Do not confuse mode, archetype, theme, subject matter or screen size.</p>
+<h2 id="3-the-canvas-atlas-30-archetypes">3. The CANVAS atlas — 30 archetypes</h2>
+<p>These are recommended UX archetypes. Each is a reproducible design pattern an author can fill with different content, SRLO and MODZ. The classification groups them by dominant learning purpose, not by mutually exclusive permissions.</p>
+<h3 id="a-reading-orientation-sensemaking">A. READING, ORIENTATION &amp; SENSEMAKING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C01</td>
+<td>Living Book</td>
+<td>Read a beautifully typeset explanation that can awaken charts, examples and controls in place.</td>
+<td>Annotated explanation and cited source trail</td>
+</tr>
+<tr>
+<td>C02</td>
+<td>Bilingual Reading Gallery</td>
+<td>Switch or align English/Vietnamese text, audio and cultural notes without losing reading position.</td>
+<td>Language comparisons and learner notes</td>
+</tr>
+<tr>
+<td>C03</td>
+<td>Interactive Media Theater</td>
+<td>Watch or listen, pause at meaningful decisions, replay demonstrations and question claims.</td>
+<td>Timestamped observations and response clips</td>
+</tr>
+<tr>
+<td>C04</td>
+<td>Concept Observatory</td>
+<td>See a big idea through diagrams, definitions, patterns and changing examples.</td>
+<td>Explained concept map and interpretation</td>
+</tr>
+<tr>
+<td>C05</td>
+<td>Learning Path Atlas</td>
+<td>See the competency route, alternative learning choices and reasons for recommended next steps.</td>
+<td>Learner-selected route and goal statement</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="b-discovery-inspection-fieldwork">B. DISCOVERY, INSPECTION &amp; FIELDWORK</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C06</td>
+<td>Object Inspector</td>
+<td>Turn, disassemble, magnify and label a physical, biological or virtual object.</td>
+<td>Annotated identification or explanation</td>
+</tr>
+<tr>
+<td>C07</td>
+<td>Panorama / Virtual Field Trip</td>
+<td>Walk through a location, inspect hotspots and collect context-specific information.</td>
+<td>Field notes, observations, task findings</td>
+</tr>
+<tr>
+<td>C08</td>
+<td>Living Map &amp; Community Atlas</td>
+<td>Compare places, routes, environmental layers and local knowledge within a geographic setting.</td>
+<td>Annotated spatial explanation or map</td>
+</tr>
+<tr>
+<td>C09</td>
+<td>Evidence Investigation Board</td>
+<td>Organize clues and sources, distinguish claims from evidence and build a defensible conclusion.</td>
+<td>Evidence chain, citation set and claim</td>
+</tr>
+<tr>
+<td>C10</td>
+<td>Timeline &amp; Historical Explorer</td>
+<td>Move through time and compare events, decisions, outcomes and alternative perspectives.</td>
+<td>Causal timeline and interpretation</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="c-experimental-quantitative-laboratories">C. EXPERIMENTAL &amp; QUANTITATIVE LABORATORIES</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C11</td>
+<td>Variable Control Workbench</td>
+<td>Change one or more parameters while graphs, explanations and a model respond together.</td>
+<td>Hypothesis, trial log and interpretation</td>
+</tr>
+<tr>
+<td>C12</td>
+<td>Cause-and-Effect Simulator</td>
+<td>Test consequential decisions in a changing system and compare outcomes.</td>
+<td>Scenario decision record and debrief</td>
+</tr>
+<tr>
+<td>C13</td>
+<td>Data Investigation Laboratory</td>
+<td>Filter datasets, visualize patterns and test claims with evidence.</td>
+<td>Analysis notebook and chart explanation</td>
+</tr>
+<tr>
+<td>C14</td>
+<td>Mathematics &amp; Geometry Laboratory</td>
+<td>Manipulate shapes, relationships and numerical models to discover or demonstrate rules.</td>
+<td>Construction, proof or worked reasoning</td>
+</tr>
+<tr>
+<td>C15</td>
+<td>Voice &amp; Prosody Laboratory</td>
+<td>Hear, speak, compare rhythm, stress, intonation and intelligibility with appropriate alternatives.</td>
+<td>Optional recordings and interpreted feedback</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="d-construction-design-expression">D. CONSTRUCTION, DESIGN &amp; EXPRESSION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C16</td>
+<td>Sentence Forge</td>
+<td>Combine words and constructions, hear alternatives and test what meaning changes.</td>
+<td>Constructed utterances and explanations</td>
+</tr>
+<tr>
+<td>C17</td>
+<td>Code &amp; Algorithm Atelier</td>
+<td>Build, run and debug procedures in an appropriately isolated practice setting.</td>
+<td>Working program and explanation</td>
+</tr>
+<tr>
+<td>C18</td>
+<td>Story &amp; Scenario Studio</td>
+<td>Author branching dialogue, cases, stories or responses to realistic dilemmas.</td>
+<td>Narrative, choices and rationale</td>
+</tr>
+<tr>
+<td>C19</td>
+<td>Maker &amp; Engineering Workshop</td>
+<td>Build, inspect and test artifacts, structures, circuits or prototypes.</td>
+<td>Design revision and test report</td>
+</tr>
+<tr>
+<td>C20</td>
+<td>SOVRAEZINE Publication Studio</td>
+<td>Curate and publish selected learner-owned notes, creations and achievements for an audience.</td>
+<td>Versioned portfolio, exhibit or export</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="e-collaboration-immersion-social-practice">E. COLLABORATION, IMMERSION &amp; SOCIAL PRACTICE</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C21</td>
+<td>Shared Construction Table</td>
+<td>Arrange components together in real time, with distinct personal contributions.</td>
+<td>Shared work plus individual explanations</td>
+</tr>
+<tr>
+<td>C22</td>
+<td>Role-Play Stage</td>
+<td>Practice customer, colleague, patient, teacher or other roles with realistic turn-taking.</td>
+<td>Role performance and self-review</td>
+</tr>
+<tr>
+<td>C23</td>
+<td>Peer Critique Gallery</td>
+<td>Exhibit drafts and give structured feedback against criteria.</td>
+<td>Peer feedback and revised work</td>
+</tr>
+<tr>
+<td>C24</td>
+<td>Cooperative Quest Space</td>
+<td>Complete a sequence of linked challenges where roles and teamwork matter.</td>
+<td>Team result and individual contribution evidence</td>
+</tr>
+<tr>
+<td>C25</td>
+<td>Collaborative Field Laboratory</td>
+<td>Gather observations in a classroom, local community or offline group investigation.</td>
+<td>Shared dataset and individual findings</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="f-reflection-demonstration-mastery">F. REFLECTION, DEMONSTRATION &amp; MASTERY</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C26</td>
+<td>Reflective Learning Journal</td>
+<td>Revisit attempts, compare thinking over time, and explain what changed.</td>
+<td>Reflection and revision history</td>
+</tr>
+<tr>
+<td>C27</td>
+<td>Authentic Performance Stage</td>
+<td>Complete a meaningful task with the agreed assessment conditions and rubric.</td>
+<td>Candidate mastery demonstration</td>
+</tr>
+<tr>
+<td>C28</td>
+<td>Evidence Assembly Desk</td>
+<td>Select qualifying artifacts, explain their relevance and submit them against a SYNCTESS.</td>
+<td>Curated submission with provenance</td>
+</tr>
+<tr>
+<td>C29</td>
+<td>Feedback &amp; Revision Chamber</td>
+<td>Inspect critique, discuss misconceptions and develop another version of work.</td>
+<td>Feedback response and improved artifact</td>
+</tr>
+<tr>
+<td>C30</td>
+<td>Credential &amp; Sharing Gallery</td>
+<td>Review authorized achievement and choose which claims and artifacts to share.</td>
+<td>Selective presentation via SOVRAEPASS / SOVRAEZINE</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="canvas-interpretation-rules">CANVAS interpretation rules</h3>
+<ol>
+<li><strong>One Canvas may contain multiple SRLO</strong>, just as one workbench may hold several experiments.</li>
+<li><strong>An SRLO may appear in multiple Canvas archetypes</strong>. Sentence Forge can be solo, collaborative or embedded in a role-play.</li>
+<li><strong>A Canvas should remain intelligible if a specialist visualization cannot run.</strong> Offer reading, simplified data, static images or other accessible alternatives.</li>
+<li><strong>The six modes may be exposed as tabs, progressive steps or context-dependent actions</strong>; not every page must show all six controls.</li>
+<li><strong>Visual skins are not new Canvas archetypes</strong>. Clean scientific and dark brass themes can present the same learning behavior.</li>
+</ol>
+<h2 id="4-syncmodz-36-learner-instruments">4. SYNCMODZ — 36 learner instruments</h2>
+<p>SYNCMODZ are reusable, context-sensitive tools available to a Sovereign Learner in <strong>SOVRAELEX</strong>. They typically appear in a left resource dock, right instrument dock, floating palette, mobile bottom tray or accessible full-screen sheet. They should be discoverable without permanently cluttering the Canvas.</p>
+<h3 id="l-navigation-orientation">L. NAVIGATION &amp; ORIENTATION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L01</td>
+<td>Path Navigator</td>
+<td>See destinations, prerequisites, progress and reasonable alternatives.</td>
+<td>Intentional next-step selection</td>
+</tr>
+<tr>
+<td>L02</td>
+<td>Learning Goal Card</td>
+<td>State a practical goal and connect it to the current mastery requirement.</td>
+<td>Personal goal</td>
+</tr>
+<tr>
+<td>L03</td>
+<td>Context &amp; Vocabulary Guide</td>
+<td>Reveal definitions, translation, pronunciation and local examples on demand.</td>
+<td>Clarifications and annotations</td>
+</tr>
+<tr>
+<td>L04</td>
+<td>Resource Shelf</td>
+<td>Open saved examples, source readings, media and prior materials.</td>
+<td>Curated references</td>
+</tr>
+<tr>
+<td>L05</td>
+<td>Activity Launcher</td>
+<td>Choose an available experiment, challenge or role-play without losing context.</td>
+<td>Selected activity session</td>
+</tr>
+<tr>
+<td>L06</td>
+<td>Accessibility &amp; Language Control</td>
+<td>Change language, text size, captions, motion or input method.</td>
+<td>Usable inclusive learning experience</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="m-manipulation-experiment">M. MANIPULATION &amp; EXPERIMENT</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L07</td>
+<td>Parameter Controller</td>
+<td>Adjust a meaningful variable with an understandable range and reset.</td>
+<td>Versioned trial setting</td>
+</tr>
+<tr>
+<td>L08</td>
+<td>Experiment Planner</td>
+<td>Write predictions, identify variables and plan a fair test.</td>
+<td>Hypothesis and procedure</td>
+</tr>
+<tr>
+<td>L09</td>
+<td>Measurement Console</td>
+<td>Inspect outcomes, units, uncertainty and before/after readings.</td>
+<td>Recorded measurements</td>
+</tr>
+<tr>
+<td>L10</td>
+<td>Compare &amp; Replay</td>
+<td>Replay a previous attempt and compare it with another version.</td>
+<td>Comparative observation</td>
+</tr>
+<tr>
+<td>L11</td>
+<td>Object Palette</td>
+<td>Select and place the words, components, shapes or objects used by the activity.</td>
+<td>Constructed state or draft</td>
+</tr>
+<tr>
+<td>L12</td>
+<td>Scenario Decision Dial</td>
+<td>Choose a response or condition and see consequences rather than just points.</td>
+<td>Decision and justification</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="n-language-multimodal-practice">N. LANGUAGE &amp; MULTIMODAL PRACTICE</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L13</td>
+<td>Voice Recorder</td>
+<td>Record only with visible consent and keep or discard selected clips.</td>
+<td>Selected oral performance</td>
+</tr>
+<tr>
+<td>L14</td>
+<td>Pronunciation &amp; Prosody Viewer</td>
+<td>See rhythm, stress, pitch contours or intelligibility cues with explanatory context.</td>
+<td>Interpretation and optional practice record</td>
+</tr>
+<tr>
+<td>L15</td>
+<td>Listen–Compare Player</td>
+<td>Replay source and learner audio with adjustable speed and captions.</td>
+<td>Self-comparison note</td>
+</tr>
+<tr>
+<td>L16</td>
+<td>Phrase &amp; Construction Bank</td>
+<td>Browse pattern examples, functional chunks and variations.</td>
+<td>Saved expression set</td>
+</tr>
+<tr>
+<td>L17</td>
+<td>Bilingual Lens</td>
+<td>Toggle, align or temporarily reveal translations and cultural notes.</td>
+<td>Translation comparison</td>
+</tr>
+<tr>
+<td>L18</td>
+<td>Turn-Taking Coach</td>
+<td>Help prepare questions, repairs, clarifications and appropriate responses.</td>
+<td>Practice choices and reflection</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="o-thinking-documentation-reflection">O. THINKING, DOCUMENTATION &amp; REFLECTION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L19</td>
+<td>Lab Notebook</td>
+<td>Record what happened, why it mattered and how the conclusion was reached.</td>
+<td>Dated observations</td>
+</tr>
+<tr>
+<td>L20</td>
+<td>Concept Mapper</td>
+<td>Draw relationships among ideas, causes, examples and evidence.</td>
+<td>Concept map</td>
+</tr>
+<tr>
+<td>L21</td>
+<td>Citation &amp; Source Basket</td>
+<td>Keep attributed sources, excerpts and contextual usage permissions.</td>
+<td>Curated bibliography</td>
+</tr>
+<tr>
+<td>L22</td>
+<td>Reflection Prompter</td>
+<td>Ask what changed, which strategy worked and what remains uncertain.</td>
+<td>Reflective writing</td>
+</tr>
+<tr>
+<td>L23</td>
+<td>Misconception Checker</td>
+<td>Compare a current explanation against contrasting cases without shaming.</td>
+<td>Revised explanation</td>
+</tr>
+<tr>
+<td>L24</td>
+<td>Progress &amp; Learning Velocity View</td>
+<td>Show meaningful improvement, retention checks and transfer tasks without reducing mastery to speed.</td>
+<td>Interpretable progress review</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="p-collaboration-social-learning">P. COLLABORATION &amp; SOCIAL LEARNING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L25</td>
+<td>Session Joiner</td>
+<td>Enter or leave an authorized local or remote group session.</td>
+<td>Visible session participation</td>
+</tr>
+<tr>
+<td>L26</td>
+<td>Shared Workspace Tray</td>
+<td>Place objects or notes into a jointly edited space.</td>
+<td>Co-authored work</td>
+</tr>
+<tr>
+<td>L27</td>
+<td>Role Selector</td>
+<td>Choose a conversational, research or project role with clear responsibilities.</td>
+<td>Individual role record</td>
+</tr>
+<tr>
+<td>L28</td>
+<td>Peer Feedback Composer</td>
+<td>Offer constructive feedback against criteria rather than unstructured approval.</td>
+<td>Attributable feedback</td>
+</tr>
+<tr>
+<td>L29</td>
+<td>Contribution Ledger</td>
+<td>See exactly which work was mine and which work was shared.</td>
+<td>Contribution description</td>
+</tr>
+<tr>
+<td>L30</td>
+<td>Help &amp; Mentor Request</td>
+<td>Invite a SOVRAEGE or peer to give a contextual hint or review.</td>
+<td>Authorized guidance exchange</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="q-evidence-ownership-sharing">Q. EVIDENCE, OWNERSHIP &amp; SHARING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>L31</td>
+<td>Evidence Collector</td>
+<td>Select meaningful work for potential assessment instead of recording every action.</td>
+<td>Candidate evidence item</td>
+</tr>
+<tr>
+<td>L32</td>
+<td>Mastery Checklist</td>
+<td>See expected performance, rubric and unresolved evidence gaps.</td>
+<td>Readiness assessment</td>
+</tr>
+<tr>
+<td>L33</td>
+<td>Submission Composer</td>
+<td>Prepare an evidence packet with explanation, versions and relevant work.</td>
+<td>Submitted evidence packet</td>
+</tr>
+<tr>
+<td>L34</td>
+<td>Consent &amp; Access Panel</td>
+<td>Choose who can view an activity, evidence or portfolio and for what purpose.</td>
+<td>Visible permissions record</td>
+</tr>
+<tr>
+<td>L35</td>
+<td>SOVRAEZINE Curator</td>
+<td>Move selected artifacts and resources into a learner-controlled publication.</td>
+<td>Versioned personal collection</td>
+</tr>
+<tr>
+<td>L36</td>
+<td>Credential &amp; Export Wallet</td>
+<td>Review SYNTHCREDS and export or share permitted claims.</td>
+<td>Learner-directed credential presentation</td>
+</tr>
+</tbody>
+</table></div>
+<h2 id="5-saegemodz-24-guide-instruments">5. SAEGEMODZ — 24 guide instruments</h2>
+<p><strong>SAEGEMODZ</strong> is the spelling used consistently in the supplied architecture; this atlas treats the user's <strong>SAGEMODZ</strong> as a likely shorthand/variant pending glossary approval. SAEGEMODZ extend <strong>SOVRAEGIX</strong> for SOVRAEGES (human or authorized AI-supported guides). They are designed to serve pedagogy and evidence, <em>not</em> continuous surveillance.</p>
+<h3 id="g-session-design-facilitation">G. SESSION DESIGN &amp; FACILITATION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G01</td>
+<td>Session Planner</td>
+<td>Choose the goal, Canvas, activities, grouping and acceptable support before a session.</td>
+<td>Facilitation plan</td>
+</tr>
+<tr>
+<td>G02</td>
+<td>Group Facilitator</td>
+<td>Assign roles, manage turn-taking, pause a collaboration and surface unvoiced contributions.</td>
+<td>Group facilitation record</td>
+</tr>
+<tr>
+<td>G03</td>
+<td>Activity Configuration</td>
+<td>Select an approved difficulty level and safe activity parameters within policy.</td>
+<td>Configured instructional session</td>
+</tr>
+<tr>
+<td>G04</td>
+<td>Local Session Coordinator</td>
+<td>Help participants join/rejoin a shared local session without losing their work.</td>
+<td>Session continuity report</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="h-observation-diagnosis">H. OBSERVATION &amp; DIAGNOSIS</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G05</td>
+<td>Permissioned Session Observer</td>
+<td>See only learner-authorized or policy-permitted current session information.</td>
+<td>Scoped observation</td>
+</tr>
+<tr>
+<td>G06</td>
+<td>Evidence Inspector</td>
+<td>Examine submitted artifacts, provenance and which rubric requirement each addresses.</td>
+<td>Assessment preparation</td>
+</tr>
+<tr>
+<td>G07</td>
+<td>Misconception Analyzer</td>
+<td>Identify recurring conceptual patterns from permitted work and suggest questions.</td>
+<td>Instructional hypothesis</td>
+</tr>
+<tr>
+<td>G08</td>
+<td>Learning Path Reviewer</td>
+<td>Inspect prerequisites and recommend an alternate learning route with a reason.</td>
+<td>Path intervention recommendation</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="i-guidance-formative-feedback">I. GUIDANCE &amp; FORMATIVE FEEDBACK</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G09</td>
+<td>Socratic Prompt Composer</td>
+<td>Send a question that encourages prediction, explanation or self-correction.</td>
+<td>Attributable prompt</td>
+</tr>
+<tr>
+<td>G10</td>
+<td>Hint &amp; Scaffold Designer</td>
+<td>Offer graded assistance without silently changing approved mastery thresholds.</td>
+<td>Documented scaffold</td>
+</tr>
+<tr>
+<td>G11</td>
+<td>Feedback Composer</td>
+<td>Write specific, actionable feedback tied to a learner attempt and goal.</td>
+<td>Attributable feedback</td>
+</tr>
+<tr>
+<td>G12</td>
+<td>Demonstration Annotator</td>
+<td>Comment on selected moments of speech, video, simulation or written performance.</td>
+<td>Timestamped annotations</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="j-assessment-authorized-verification">J. ASSESSMENT &amp; AUTHORIZED VERIFICATION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G13</td>
+<td>Rubric Assessor</td>
+<td>Evaluate evidence against the fixed version of agreed criteria.</td>
+<td>Criterion-level assessment</td>
+</tr>
+<tr>
+<td>G14</td>
+<td>Authenticity &amp; Provenance Checker</td>
+<td>Check origin, edits, assistance disclosures and submitted version history.</td>
+<td>Evidence provenance review</td>
+</tr>
+<tr>
+<td>G15</td>
+<td>Assessment Conference Desk</td>
+<td>Discuss ambiguous performance and request clarification or another demonstration.</td>
+<td>Assessment conference record</td>
+</tr>
+<tr>
+<td>G16</td>
+<td>Mastery Verification Console</td>
+<td>Record an authorized decision with reasons, limitations and appeal route.</td>
+<td>Verification decision</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="k-cohort-insight-pedagogical-quality">K. COHORT INSIGHT &amp; PEDAGOGICAL QUALITY</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G17</td>
+<td>Cohort Learning View</td>
+<td>See aggregated, appropriately consented progress patterns rather than private diaries.</td>
+<td>Teaching adjustment</td>
+</tr>
+<tr>
+<td>G18</td>
+<td>Learning Velocity Comparator</td>
+<td>Compare teaching approaches on mastery, retention and transfer using fair comparisons.</td>
+<td>Pedagogical evaluation</td>
+</tr>
+<tr>
+<td>G19</td>
+<td>Activity Quality Reviewer</td>
+<td>Flag confusing, inaccessible, unsafe or weakly aligned learning objects.</td>
+<td>Quality report</td>
+</tr>
+<tr>
+<td>G20</td>
+<td>Calibration Board</td>
+<td>Compare assessors’ interpretations and agree consistent rubric application.</td>
+<td>Calibration decision</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="l-stewardship-rights-publishing">L. STEWARDSHIP, RIGHTS &amp; PUBLISHING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>G21</td>
+<td>Consent &amp; Scope Manager</td>
+<td>Request narrower access and see what permissions have expired or been withdrawn.</td>
+<td>Auditable authorization request</td>
+</tr>
+<tr>
+<td>G22</td>
+<td>Content Adaptation Desk</td>
+<td>Suggest local-language and cultural examples within authorized authoring scope.</td>
+<td>Proposed adaptation</td>
+</tr>
+<tr>
+<td>G23</td>
+<td>Review &amp; Release Checklist</td>
+<td>Check accessibility, pedagogical quality, licensing and version before publication.</td>
+<td>Publication recommendation</td>
+</tr>
+<tr>
+<td>G24</td>
+<td>Credential Issuance Queue</td>
+<td>Forward verified claims to an authorized issuer; distinguish assessment from issuing.</td>
+<td>Issuer-ready attestation request</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="role-and-trust-principles-for-modz">Role and trust principles for MODZ</h3>
+<ul>
+<li>Learner and guide tools should have symmetrical vocabulary where useful (<strong>Lab Notebook</strong> ↔ <strong>Evidence Inspector</strong>), but not symmetrical access rights.</li>
+<li><strong>AI assistance is advisory</strong> unless there is an independently approved, explicit assessment policy. Human-authorized validation remains a separate act.</li>
+<li>Widgets are <strong>contextual</strong>, not permanently open, and their visibility is independent of whether underlying evidence exists.</li>
+<li>A tool may suggest a candidate evidence item, but it cannot claim mastery by itself.</li>
+<li>Permissioning must remain visible, scoped and auditable; previously exported copies cannot always be technically revoked.</li>
+</ul>
+<h2 id="6-syncz-srlo-library-60-activity-archetypes">6. SYNCZ-SRLO library — 60 activity archetypes</h2>
+<p>Each <strong>SYNCZ-SRLO</strong> is a reusable learning object with a clear learner action, feedback or consequence, and a possible learning outcome. The same archetype can be filled with many topics and levels. The catalog below is organized by <strong>pedagogical interaction family</strong>, not by a particular software engine.</p>
+<h3 id="r-discover-notice-retrieve">R. DISCOVER, NOTICE &amp; RETRIEVE</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S01</td>
+<td>Hotspot Discovery</td>
+<td>Find and explain meaningful features in a scene.</td>
+<td>Annotated discovery</td>
+</tr>
+<tr>
+<td>S02</td>
+<td>Observation Hunt</td>
+<td>Collect specific observations from a text, object or environment.</td>
+<td>Observation notes</td>
+</tr>
+<tr>
+<td>S03</td>
+<td>Contrast Finder</td>
+<td>Identify differences between two claims, patterns, images or sounds.</td>
+<td>Contrast explanation</td>
+</tr>
+<tr>
+<td>S04</td>
+<td>Memory Retrieval Challenge</td>
+<td>Recall ideas after a delay without simply re-reading the answer.</td>
+<td>Recall attempt and revision</td>
+</tr>
+<tr>
+<td>S05</td>
+<td>Classification Lab</td>
+<td>Sort examples into categories and explain the rule.</td>
+<td>Classification rationale</td>
+</tr>
+<tr>
+<td>S06</td>
+<td>Concept Match</td>
+<td>Connect ideas, meanings, images or actions and justify difficult matches.</td>
+<td>Explained connections</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="s-construct-order-transform">S. CONSTRUCT, ORDER &amp; TRANSFORM</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S07</td>
+<td>Sentence Builder</td>
+<td>Arrange words or phrases into meaningful, grammatical utterances.</td>
+<td>Sentence and explanation</td>
+</tr>
+<tr>
+<td>S08</td>
+<td>Paragraph Sequencer</td>
+<td>Reorder text so its meaning and coherence improve.</td>
+<td>Revised passage</td>
+</tr>
+<tr>
+<td>S09</td>
+<td>Process Assembler</td>
+<td>Put procedural stages into a logical or safe sequence.</td>
+<td>Process model</td>
+</tr>
+<tr>
+<td>S10</td>
+<td>Diagram Builder</td>
+<td>Position labeled pieces to make a meaningful visual explanation.</td>
+<td>Annotated diagram</td>
+</tr>
+<tr>
+<td>S11</td>
+<td>Rule Transformer</td>
+<td>Change a construction and observe how its meaning or function shifts.</td>
+<td>Before/after analysis</td>
+</tr>
+<tr>
+<td>S12</td>
+<td>Causal Chain Builder</td>
+<td>Connect conditions, events and results in defensible order.</td>
+<td>Causal explanation</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="t-experiment-measure-infer">T. EXPERIMENT, MEASURE &amp; INFER</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S13</td>
+<td>Predict–Test–Explain</td>
+<td>State a hypothesis, change a variable and explain the result.</td>
+<td>Hypothesis and trial report</td>
+</tr>
+<tr>
+<td>S14</td>
+<td>Parameter Sweep</td>
+<td>Run multiple settings and compare behavior systematically.</td>
+<td>Comparison table</td>
+</tr>
+<tr>
+<td>S15</td>
+<td>Controlled Comparison</td>
+<td>Keep relevant conditions constant while testing one difference.</td>
+<td>Fair-test explanation</td>
+</tr>
+<tr>
+<td>S16</td>
+<td>Simulation Replay</td>
+<td>Reproduce an experiment, inspect unexpected results and revise a claim.</td>
+<td>Reproducible observation</td>
+</tr>
+<tr>
+<td>S17</td>
+<td>Data Hypothesis Test</td>
+<td>Use a dataset to investigate a question and acknowledge uncertainty.</td>
+<td>Chart and reasoned finding</td>
+</tr>
+<tr>
+<td>S18</td>
+<td>Fault Diagnosis</td>
+<td>Find why a system failed by testing causes rather than guessing.</td>
+<td>Diagnostic reasoning</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="u-language-listening-speaking">U. LANGUAGE, LISTENING &amp; SPEAKING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S19</td>
+<td>Listen &amp; Distinguish</td>
+<td>Identify meaningful differences in sounds, words or connected speech.</td>
+<td>Comprehension attempt</td>
+</tr>
+<tr>
+<td>S20</td>
+<td>Stress Pulse</td>
+<td>Hear and represent word or sentence stress in meaningful context.</td>
+<td>Stress pattern demonstration</td>
+</tr>
+<tr>
+<td>S21</td>
+<td>Shadowing &amp; Rhythm</td>
+<td>Practice timing and phrasing against a model with self-review.</td>
+<td>Optional oral performance</td>
+</tr>
+<tr>
+<td>S22</td>
+<td>Pronunciation Repair</td>
+<td>Try and compare a target sound in words and authentic sentences.</td>
+<td>Selected recording and reflection</td>
+</tr>
+<tr>
+<td>S23</td>
+<td>Dialogue Turn-Taking</td>
+<td>Respond, clarify, repair misunderstandings and sustain a conversation.</td>
+<td>Role performance</td>
+</tr>
+<tr>
+<td>S24</td>
+<td>Meaningful Dictation</td>
+<td>Reconstruct an intelligible message and explain uncertain parts.</td>
+<td>Transcription and corrections</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="v-scenarios-decisions-social-practice">V. SCENARIOS, DECISIONS &amp; SOCIAL PRACTICE</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S25</td>
+<td>Branching Conversation</td>
+<td>Choose language or behavior and observe realistic consequences.</td>
+<td>Decision sequence and debrief</td>
+</tr>
+<tr>
+<td>S26</td>
+<td>Service Encounter Role-Play</td>
+<td>Complete an authentic customer service interaction.</td>
+<td>Recorded or observed performance</td>
+</tr>
+<tr>
+<td>S27</td>
+<td>Ethical Dilemma Simulator</td>
+<td>Weigh stakeholders and justify an action under conflicting values.</td>
+<td>Reasoned decision</td>
+</tr>
+<tr>
+<td>S28</td>
+<td>Emergency Procedure Rehearsal</td>
+<td>Practice safe procedural decisions in a controlled simulated context.</td>
+<td>Procedural performance</td>
+</tr>
+<tr>
+<td>S29</td>
+<td>Negotiation Challenge</td>
+<td>Find agreement through questions, trade-offs and clarification.</td>
+<td>Negotiation reflection</td>
+</tr>
+<tr>
+<td>S30</td>
+<td>Adaptive Case Investigation</td>
+<td>Revise decisions as new contextual evidence appears.</td>
+<td>Case rationale</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="w-spatial-science-engineering">W. SPATIAL, SCIENCE &amp; ENGINEERING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S31</td>
+<td>Tectonic Stress Lab</td>
+<td>Manipulate modeled stress, observe outcomes and explain what a model omits.</td>
+<td>Experiment notebook</td>
+</tr>
+<tr>
+<td>S32</td>
+<td>Motion &amp; Forces Micro-Lab</td>
+<td>Change forces and examine movement, with units and limitations.</td>
+<td>Measured explanation</td>
+</tr>
+<tr>
+<td>S33</td>
+<td>Circuit Constructor</td>
+<td>Build a virtual circuit, predict behavior and troubleshoot errors.</td>
+<td>Circuit and test report</td>
+</tr>
+<tr>
+<td>S34</td>
+<td>Molecular / Anatomy Inspection</td>
+<td>Inspect structures and connect observed features to function.</td>
+<td>Annotated structure explanation</td>
+</tr>
+<tr>
+<td>S35</td>
+<td>Geometric Construction</td>
+<td>Construct a property or proof by manipulating defined relationships.</td>
+<td>Construction and reasoning</td>
+</tr>
+<tr>
+<td>S36</td>
+<td>Design &amp; Tolerance Test</td>
+<td>Prototype a structure and compare revisions against constraints.</td>
+<td>Design iterations</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="x-data-computation-systems-thinking">X. DATA, COMPUTATION &amp; SYSTEMS THINKING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S37</td>
+<td>Chart Detective</td>
+<td>Explain what a visualization supports, hides or might mislead about.</td>
+<td>Evidence-based chart critique</td>
+</tr>
+<tr>
+<td>S38</td>
+<td>Dataset Query</td>
+<td>Ask and answer a precise question using a local dataset.</td>
+<td>Query and interpretation</td>
+</tr>
+<tr>
+<td>S39</td>
+<td>Algorithm Puzzle</td>
+<td>Arrange or modify logical steps until a procedure works.</td>
+<td>Working algorithm</td>
+</tr>
+<tr>
+<td>S40</td>
+<td>Debugging Quest</td>
+<td>Investigate and repair a controlled error with explanation.</td>
+<td>Fix and root-cause report</td>
+</tr>
+<tr>
+<td>S41</td>
+<td>System Dynamics Playground</td>
+<td>Change relationships in a simplified system and observe feedback loops.</td>
+<td>Systems explanation</td>
+</tr>
+<tr>
+<td>S42</td>
+<td>Model Critique</td>
+<td>Compare a simplified model with real observations and discuss limits.</td>
+<td>Qualified scientific conclusion</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="y-creative-making-authored-expression">Y. CREATIVE MAKING &amp; AUTHORED EXPRESSION</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S43</td>
+<td>Interactive Story Author</td>
+<td>Create a branching story whose outcomes follow meaningful choices.</td>
+<td>Story artifact</td>
+</tr>
+<tr>
+<td>S44</td>
+<td>Explainer Builder</td>
+<td>Make a small interactive explanation for another learner.</td>
+<td>Teach-back demonstration</td>
+</tr>
+<tr>
+<td>S45</td>
+<td>Concept Map Maker</td>
+<td>Build and revise a defensible relationship map.</td>
+<td>Versioned concept map</td>
+</tr>
+<tr>
+<td>S46</td>
+<td>Media Annotation Project</td>
+<td>Create commentary on audio, image or video with attribution.</td>
+<td>Annotated media asset</td>
+</tr>
+<tr>
+<td>S47</td>
+<td>Prototype Challenge</td>
+<td>Design an object, process or workflow against real constraints.</td>
+<td>Prototype and rationale</td>
+</tr>
+<tr>
+<td>S48</td>
+<td>Learner Zine Edition</td>
+<td>Publish selected original work and references with proper permissions.</td>
+<td>SOVRAEZINE edition</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="z-collaboration-peer-learning">Z. COLLABORATION &amp; PEER LEARNING</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S49</td>
+<td>Sentence Construction Relay</td>
+<td>Build shared utterances in turns and explain individual changes.</td>
+<td>Shared sentence and contributions</td>
+</tr>
+<tr>
+<td>S50</td>
+<td>Collaborative Concept Map</td>
+<td>Construct a group map without losing individual contributions.</td>
+<td>Merged map and personal reflection</td>
+</tr>
+<tr>
+<td>S51</td>
+<td>Peer Teaching Exchange</td>
+<td>Teach a concept to a partner and respond to a misunderstanding.</td>
+<td>Teach-back and feedback</td>
+</tr>
+<tr>
+<td>S52</td>
+<td>Team Investigation</td>
+<td>Allocate sources or roles and produce a jointly defended finding.</td>
+<td>Team report and individual contributions</td>
+</tr>
+<tr>
+<td>S53</td>
+<td>Cooperative Systems Challenge</td>
+<td>Coordinate controls in a system that requires complementary roles.</td>
+<td>Team outcome and role evidence</td>
+</tr>
+<tr>
+<td>S54</td>
+<td>Structured Peer Review</td>
+<td>Use rubric criteria to critique work and revise personal drafts.</td>
+<td>Feedback and revision</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="aa-reflection-transfer-mastery">AA. REFLECTION, TRANSFER &amp; MASTERY</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="ID Experience / instrument What the learner or gui">
+<thead>
+<tr>
+<th>ID</th>
+<th>Experience / instrument</th>
+<th>What the learner or guide sees and does</th>
+<th>Typical product or evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S55</td>
+<td>Learning Reflection</td>
+<td>Explain strategy choices, surprises and next improvements.</td>
+<td>Reflective artifact</td>
+</tr>
+<tr>
+<td>S56</td>
+<td>Error Analysis</td>
+<td>Analyze an error and produce a more reliable method.</td>
+<td>Error-correction narrative</td>
+</tr>
+<tr>
+<td>S57</td>
+<td>Novel Transfer Challenge</td>
+<td>Apply a learned skill to an unfamiliar but authentic context.</td>
+<td>Transfer performance</td>
+</tr>
+<tr>
+<td>S58</td>
+<td>Retention Check</td>
+<td>Demonstrate remembered skill after a meaningful interval.</td>
+<td>Delayed performance</td>
+</tr>
+<tr>
+<td>S59</td>
+<td>Authentic Mastery Demonstration</td>
+<td>Perform the required capability under agreed support and rubric conditions.</td>
+<td>Assessment-ready evidence</td>
+</tr>
+<tr>
+<td>S60</td>
+<td>Evidence Defense</td>
+<td>Explain and answer questions about work claimed as proof of capability.</td>
+<td>Defense and assessor review</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="why-this-library-can-scale">Why this library can scale</h3>
+<p>A <strong>Sentence Builder</strong> is an archetype, not one lesson. An author can configure it for polite requests, past-tense narratives, safety instructions or workplace communication without rebuilding the interaction. <strong>SRLO variations</strong> should change content, language, feedback, difficulty, collaborative arrangements and evidence expectations through published authoring settings, without multiplying the base library.</p>
+<h2 id="7-reusable-experience-compositions">7. Reusable experience compositions</h2>
+<p>A <strong>composition</strong> is a tested recipe linking Canvas archetypes, SRLO, MODZ and mastery outcomes. Authors should select a pattern and adapt it, rather than invent the pedagogical sequence from scratch.</p>
+<h3 id="recipe-01-zero-to-voice-sentence-forge">Recipe 01 — ZERO TO VOICE: SENTENCE FORGE</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Adult EFL learner in Vietnam; make an appropriate service request.</li>
+<li><strong>CANVAS:</strong> C01 Living Book → C16 Sentence Forge → C22 Role-Play Stage → C27 Performance Stage.</li>
+<li><strong>SRLO:</strong> S07 Sentence Builder → S11 Rule Transformer → S23 Dialogue Turn-Taking → S59 Mastery Demonstration.</li>
+<li><strong>SYNCMODZ:</strong> L16 Phrase Bank, L17 Bilingual Lens, L13 Recorder, L19 Notebook, L31 Evidence Collector.</li>
+<li><strong>SAEGEMODZ:</strong> G09 Socratic Prompt, G11 Feedback, G13 Rubric Assessor.</li>
+<li><strong>SYNCTESS:</strong> Performance should show appropriate request, intelligible response and responsive clarification across more than one context.</li>
+<li><strong>Learner keeps:</strong> Selected sentence revisions, recordings/observations, feedback and a SOVRAEZINE reflection.</li>
+</ul>
+<h3 id="recipe-02-gaea-core-seismic-pressure-lab">Recipe 02 — GAEA CORE: SEISMIC PRESSURE LAB</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Understand causal relationships in a simplified model of tectonic stress.</li>
+<li><strong>CANVAS:</strong> C04 Concept Observatory → C11 Variable Workbench → C13 Data Lab → C28 Evidence Desk.</li>
+<li><strong>SRLO:</strong> S13 Predict–Test–Explain → S14 Parameter Sweep → S31 Tectonic Stress Lab → S42 Model Critique.</li>
+<li><strong>SYNCMODZ:</strong> L07 Controller, L08 Experiment Planner, L09 Measurement Console, L10 Compare &amp; Replay, L19 Notebook.</li>
+<li><strong>SAEGEMODZ:</strong> G05 Observer (permissioned), G09 Socratic Prompt, G13 Rubric Assessor.</li>
+<li><strong>SYNCTESS:</strong> Explain predictions, measurements, sources of uncertainty and limits of model-based conclusions.</li>
+<li><strong>Learner keeps:</strong> Hypotheses, trial settings, results, annotated graphs and assessor feedback.</li>
+</ul>
+<h3 id="recipe-03-cooperative-service-counter">Recipe 03 — COOPERATIVE SERVICE COUNTER</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Handle a café order or workplace information exchange using respectful conversation.</li>
+<li><strong>CANVAS:</strong> C22 Role-Play Stage → C21 Shared Table → C29 Feedback &amp; Revision Chamber.</li>
+<li><strong>SRLO:</strong> S25 Branching Conversation, S26 Service Encounter, S51 Peer Teaching, S54 Peer Review.</li>
+<li><strong>SYNCMODZ:</strong> L27 Role Selector, L30 Mentor Request, L29 Contribution Ledger, L22 Reflection Prompter.</li>
+<li><strong>SAEGEMODZ:</strong> G02 Group Facilitator, G12 Demonstration Annotator.</li>
+<li><strong>Mastery condition:</strong> Group success is insufficient; each participant must independently demonstrate relevant individual capability.</li>
+</ul>
+<h3 id="recipe-04-data-detective">Recipe 04 — DATA DETECTIVE</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Challenge a claim with appropriate local data.</li>
+<li><strong>CANVAS:</strong> C09 Evidence Board → C13 Data Lab → C20 Publication Studio.</li>
+<li><strong>SRLO:</strong> S17 Data Hypothesis Test, S37 Chart Detective, S38 Dataset Query, S44 Explainer Builder.</li>
+<li><strong>SYNCMODZ:</strong> L21 Source Basket, L09 Measurement Console, L19 Notebook, L35 SOVRAEZINE Curator.</li>
+<li><strong>SAEGEMODZ:</strong> G07 Misconception Analyzer, G11 Feedback Composer, G14 Provenance Checker.</li>
+<li><strong>Learner keeps:</strong> Data citations, reproducible analysis, limitations and a published explanation.</li>
+</ul>
+<h3 id="recipe-05-design-test-atelier">Recipe 05 — DESIGN &amp; TEST ATELIER</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Create and validate a simple engineered prototype.</li>
+<li><strong>CANVAS:</strong> C19 Maker Workshop → C11 Workbench → C23 Peer Critique Gallery → C27 Performance Stage.</li>
+<li><strong>SRLO:</strong> S36 Design &amp; Tolerance Test, S18 Fault Diagnosis, S47 Prototype Challenge, S54 Structured Peer Review.</li>
+<li><strong>SYNCMODZ:</strong> L11 Object Palette, L10 Compare &amp; Replay, L19 Notebook, L31 Evidence Collector.</li>
+<li><strong>SAEGEMODZ:</strong> G03 Activity Configuration, G19 Quality Reviewer, G13 Rubric Assessor.</li>
+<li><strong>Learner keeps:</strong> Designs, revisions, test evidence and a defense of trade-offs.</li>
+</ul>
+<h3 id="recipe-06-sovereign-publication-credential-sharing">Recipe 06 — SOVEREIGN PUBLICATION &amp; CREDENTIAL SHARING</h3>
+<ul>
+<li><strong>Audience / goal:</strong> Demonstrate a previously learned skill to a particular audience without handing over an entire private learning record.</li>
+<li><strong>CANVAS:</strong> C28 Evidence Desk → C20 SOVRAEZINE Publication Studio → C30 Credential Gallery.</li>
+<li><strong>SRLO:</strong> S48 Learner Zine Edition, S59 Authentic Mastery Demonstration, S60 Evidence Defense.</li>
+<li><strong>SYNCMODZ:</strong> L31 Evidence Collector, L33 Submission Composer, L34 Access Panel, L35 SOVRAEZINE Curator, L36 Wallet.</li>
+<li><strong>SAEGEMODZ:</strong> G06 Evidence Inspector, G13 Rubric Assessor, G16 Verification Console, G24 Issuance Queue.</li>
+<li><strong>Learner keeps:</strong> Versioned selected artifacts, permission history and independently verifiable credentials (where issuer and verifier support it).</li>
+</ul>
+<h2 id="8-the-integration-and-runtime-shelf">8. The integration and runtime shelf</h2>
+<p><strong>Do not confuse the 60 learning-object archetypes with software packages.</strong> A Canvas or SRLO can be powered by a simple accessible web form, a richer 2D interaction, or a specialist simulation. The Components source proposes 24 specialized technologies; they should be treated as <strong>candidate implementation capabilities</strong>, subject to licensing, security, mobile-device tests, offline feasibility and maintenance review, not verified integrations.</p>
+<div class="table-wrap"><table class="catalog-table" data-family="What authors need Candidate families from the sour">
+<thead>
+<tr>
+<th>What authors need</th>
+<th>Candidate families from the source papers</th>
+<th>Typical Canvas / SRLO</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rich game-like scenes</td>
+<td>Godot; Bevy; Matter.js / PhET-style simulations</td>
+<td>C12 Cause-and-Effect; S31 Tectonic Lab</td>
+</tr>
+<tr>
+<td>3D and physical models</td>
+<td>Three.js / React Three Fiber; Rapier; OpenCascade.js</td>
+<td>C06 Object Inspector; C19 Maker Workshop</td>
+</tr>
+<tr>
+<td>Diagrams and interactive illustrations</td>
+<td>Rive; tldraw; Cytoscape.js</td>
+<td>C04 Concept Observatory; S45 Concept Map</td>
+</tr>
+<tr>
+<td>Visual programming</td>
+<td>Blockly; Monaco Editor / Tree-sitter</td>
+<td>C17 Code Atelier; S39 Algorithm Puzzle</td>
+</tr>
+<tr>
+<td>Data, statistical and mathematical exploration</td>
+<td>Pyodide; DuckDB-Wasm; GeoGebra / Desmos; Observable Plot</td>
+<td>C13 Data Lab; C14 Math Lab</td>
+</tr>
+<tr>
+<td>Voice and audio</td>
+<td>Sherpa-ONNX; WebPd / Faust; WaveSurfer.js / Meyda</td>
+<td>C15 Voice Lab; S20 Stress Pulse</td>
+</tr>
+<tr>
+<td>Explanatory motion graphics</td>
+<td>Motion Canvas</td>
+<td>C03 Interactive Media Theater</td>
+</tr>
+<tr>
+<td>Electronics and virtual computers</td>
+<td>Wokwi; v86; CircuitJS1</td>
+<td>C19 Maker Workshop; S33 Circuit Constructor</td>
+</tr>
+<tr>
+<td>Geographic information</td>
+<td>MapLibre GL JS / PMTiles</td>
+<td>C08 Living Map</td>
+</tr>
+<tr>
+<td>Narrative logic</td>
+<td>Ink / Twine</td>
+<td>C22 Role-Play; S25 Branching Conversation</td>
+</tr>
+<tr>
+<td>Medical and molecular views</td>
+<td>Cornerstone.js / Mol*</td>
+<td>C06 Object Inspector; S34 Anatomy Inspection</td>
+</tr>
+</tbody>
+</table></div>
+<p>The <strong>capabilities broker and wrapper</strong> concept is a controlled doorway for permitted outside learning content or tools. A wrapped asset should declare who made it, how it is licensed, what it needs to run, what it can read or write, and what is available offline. The supplied <strong>Components</strong> file begins the broker section but does <strong>not</strong> contain the promised detailed list of 24 external sources; do not misrepresent those external wrappers as already specified.</p>
+<h2 id="9-evidence-sovereignty-and-the-learner-owned-sovraezine">9. Evidence, sovereignty and the learner-owned SOVRAEZINE</h2>
+<h3 id="code-v-as-a-visible-learning-journey">CODE+V as a visible learning journey</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="Stage What the learner does in the UX Typical comp">
+<thead>
+<tr>
+<th>Stage</th>
+<th>What the learner does in the UX</th>
+<th>Typical components</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Curate</strong></td>
+<td>Collect trusted sources and relevant examples</td>
+<td>C09, L21, S02</td>
+</tr>
+<tr>
+<td><strong>Organize</strong></td>
+<td>Assemble a route or conceptual structure</td>
+<td>C05, L20, S45</td>
+</tr>
+<tr>
+<td><strong>Distill</strong></td>
+<td>Explain patterns and reduce noise</td>
+<td>C04, L19, S44</td>
+</tr>
+<tr>
+<td><strong>Express</strong></td>
+<td>Create an authentic artifact or perform</td>
+<td>C16/C19/C22, S47/S59</td>
+</tr>
+<tr>
+<td><strong>Verify</strong></td>
+<td>Receive feedback and an assessment tied to criteria</td>
+<td>C29, G11/G13, S60</td>
+</tr>
+<tr>
+<td><strong>Validate</strong></td>
+<td>Obtain a decision or claim from an authorized party</td>
+<td>C28/C30, G16/G24</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="evidence-maturity-ladder">Evidence maturity ladder</h3>
+<p><strong>Unrecorded exploration → personal practice record → learner-selected candidate evidence → submitted evidence packet → reviewed and verified mastery → separately issued SYNTHCRED.</strong></p>
+<p>These are distinct statuses. An activity can generate valuable observations without constituting qualifying proof. Automated success, total time or entertainment scores should not silently become a mastery claim.</p>
+<h3 id="where-things-belong">Where things belong</h3>
+<div class="table-wrap"><table class="catalog-table" data-family="Belongs to Responsibility SYNCZINE Published curri">
+<thead>
+<tr>
+<th>Belongs to</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SYNCZINE</strong></td>
+<td>Published curriculum, path dependencies, experience composition and versions</td>
+</tr>
+<tr>
+<td><strong>SYNCZ-SRLO</strong></td>
+<td>Activity behavior, inputs, feedback and candidate artifacts</td>
+</tr>
+<tr>
+<td><strong>SYNCTESS specification</strong></td>
+<td>Capability, rubric, evidence requirement, authorized verification policy</td>
+</tr>
+<tr>
+<td><strong>Learner-specific evidence instance</strong></td>
+<td>Actual candidate and submitted work with version context</td>
+</tr>
+<tr>
+<td><strong>SOVRAEZINE</strong></td>
+<td>Learner-controlled retained references, reflections, creations, work, feedback and directed publications</td>
+</tr>
+<tr>
+<td><strong>SLR / SOVRAEPASS</strong></td>
+<td>Learning record, identity, permissions and access to credentials</td>
+</tr>
+<tr>
+<td><strong>SYNTHCRED</strong></td>
+<td>Authorized, verifiable claim of mastery, not a substitute for all supporting work</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="guardrails">Guardrails</h3>
+<ol>
+<li>No hidden capture; learner can see what is recorded.</li>
+<li>No group result used as automatic individual mastery proof.</li>
+<li>No AI silently changing a rubric or issuing credentials without authorized policy.</li>
+<li>Reading and essential instruction remain usable without rich interactive engines.</li>
+<li>Solo learning is local-first; group network collaboration is additive.</li>
+<li>Accessibility, localization and reduced-motion alternatives are first-class.</li>
+<li>Guide access is purpose-limited and permissioned; revocation cannot undo copies already exported.</li>
+<li>Keep a meaningful version link between published activity, assessment rules and evidence.</li>
+<li>Protect assessment integrity without imposing surveillance on ordinary practice.</li>
+<li>Richer simulations must show better learning outcomes than simpler alternatives before being preferred.</li>
+</ol>
+<h2 id="10-catalog-metadata-and-quality-standard">10. Catalog metadata and quality standard</h2>
+<p>Every catalog entry should be inspectable in SYNCFORGE and reviewed in SYNCFOUNDRY through an author-friendly card. This is a <strong>plain-language metadata specification</strong>, not an implementation schema:</p>
+<div class="table-wrap"><table class="catalog-table" data-family="Field Why it matters Stable ID and public title Di">
+<thead>
+<tr>
+<th>Field</th>
+<th>Why it matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Stable ID and public title</td>
+<td>Distinguishes archetypes from local adaptations</td>
+</tr>
+<tr>
+<td>Catalog family and purpose</td>
+<td>Makes browsing and discovery intuitive</td>
+</tr>
+<tr>
+<td>What learner sees and does</td>
+<td>Explains the observable experience</td>
+</tr>
+<tr>
+<td>Intended learner and context</td>
+<td>Supports appropriate age, level, culture, language and device</td>
+</tr>
+<tr>
+<td>Learning objective and associated SYNCTESS</td>
+<td>Aligns experience to demonstrated capability</td>
+</tr>
+<tr>
+<td>Recommended Canvas and compatible experience modes</td>
+<td>Prevents poorly fitting combinations</td>
+</tr>
+<tr>
+<td>Required and optional MODZ</td>
+<td>Keeps the interface uncluttered</td>
+</tr>
+<tr>
+<td>Inputs, outputs and saved artifacts</td>
+<td>Makes evidence and data ownership clear</td>
+</tr>
+<tr>
+<td>Collaboration and assistive options</td>
+<td>Describes accessible individual or group use</td>
+</tr>
+<tr>
+<td>Accessibility, offline and device profile</td>
+<td>Avoids designing exclusively for expensive hardware</td>
+</tr>
+<tr>
+<td>Privacy, permissions and recordings policy</td>
+<td>Enables meaningful user consent</td>
+</tr>
+<tr>
+<td>Source, author, license, version and adaptation rights</td>
+<td>Protects provenance and legitimate reuse</td>
+</tr>
+<tr>
+<td>Complexity and performance footprint</td>
+<td>Helps choose the lightest viable technology</td>
+</tr>
+<tr>
+<td>Test results and maintenance owner</td>
+<td>Prevents abandoned plug-ins or misleading quality claims</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="three-levels-of-reuse">Three levels of reuse</h3>
+<ul>
+<li><strong>Archetype:</strong> the general learning pattern, for example <strong>S07 Sentence Builder</strong>.</li>
+<li><strong>Template:</strong> a reusable configured experience, for example <strong>polite requests in cafés</strong>.</li>
+<li><strong>Instance:</strong> a specific assigned session and the learner's resulting work and evidence.</li>
+</ul>
+<h3 id="quality-gate-for-publishing-an-entry">Quality gate for publishing an entry</h3>
+<p>An entry should be publishable only after a reviewer can answer: <em>What capability does it develop? Why is this interaction preferable to simpler alternatives? What can the learner change? What results are meaningful? What can be retained or submitted? Is it accessible and local-first where promised? Who owns the result? What version and rights are in force?</em></p>
+<h2 id="11-priorities-and-staged-implementation">11. Priorities and staged implementation</h2>
+<blockquote>
+<p><strong>Start with one complete path, not 150 partially implemented catalog entries</strong>
+The source viability plan recommends six proof-gated stages. This atlas creates an <strong>organizing vocabulary</strong> and an <strong>authoring backlog</strong>; it does not imply that SOVRAEG LABS should develop every Canvas, MODZ or SRLO at once.</p>
+</blockquote>
+<div class="table-wrap"><table class="catalog-table" data-family="Stage Deliverable Proof before expansion 1. Living">
+<thead>
+<tr>
+<th>Stage</th>
+<th>Deliverable</th>
+<th>Proof before expansion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>1. Living Canvas</strong></td>
+<td>C01 Living Book + C16 Sentence Forge, accessible in English/Vietnamese</td>
+<td>Reads and works offline on real target phones</td>
+</tr>
+<tr>
+<td><strong>2. Shared instrument layer</strong></td>
+<td>L07 Controller, L19 Notebook, L10 Compare &amp; Replay, C11 Gaea Workbench</td>
+<td>One action updates relevant visuals, explanation and journal consistently</td>
+</tr>
+<tr>
+<td><strong>3. Evidence loop</strong></td>
+<td>L31 Evidence Collector, L32 Mastery Checklist, G13 Rubric Assessor</td>
+<td>Learner understands records; guide can judge actual submitted work</td>
+</tr>
+<tr>
+<td><strong>4. Collaborative learning</strong></td>
+<td>C21 Shared Table, S49 Relay, G02 Group Facilitator</td>
+<td>Local session survives disconnection; individual work stays distinct</td>
+</tr>
+<tr>
+<td><strong>5. Creator pipeline</strong></td>
+<td>Author selection, configuration, review and publish through SYNCFORGE / SYNCSTUDIO / SYNCFOUNDRY</td>
+<td>Non-developer author produces an approved variant</td>
+</tr>
+<tr>
+<td><strong>6. Authorized credential lifecycle</strong></td>
+<td>C28 Evidence Desk + C30 Credential Gallery + G16/G24 and wallet</td>
+<td>Issued claim can be verified independently, with appropriate selective sharing</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Recommended beachhead:</strong> Zero-to-Voice adult EFL learners in Vietnam using <strong>Sentence Forge</strong> as the pedagogical flagship and <strong>Gaea Core</strong> as the cross-disciplinary instrument/simulation demonstration. The source paper proposes these as <strong>strategic choices</strong>, not validated market facts. Measure <strong>time to durable mastery, delayed retention and transfer to unfamiliar tasks</strong> against simpler learning designs.</p>
+<h3 id="suggested-curated-collections-for-syncforge">Suggested curated collections for SYNCFORGE</h3>
+<ul>
+<li><strong>STARTER LITERACY:</strong> C01, C02, C04 + S01–S12 + L03/L17/L19.</li>
+<li><strong>ZERO TO VOICE:</strong> C15, C16, C22 + S19–S26 + L13–L18.</li>
+<li><strong>SCIENCE LAB:</strong> C11–C14 + S13–S18 and S31–S42 + L07–L10.</li>
+<li><strong>MAKER ATELIER:</strong> C17/C19 + S33/S36/S39/S47 + L11/L19.</li>
+<li><strong>COHORT &amp; PEER:</strong> C21–C25 + S49–S54 + L25–L30 + G01–G04.</li>
+<li><strong>PROOF &amp; PORTABILITY:</strong> C26–C30 + S55–S60 + L31–L36 + G13–G16/G24.</li>
+</ul>
+<h2 id="12-source-provenance-and-decisions-still-open">12. Source provenance and decisions still open</h2>
+<h3 id="source-set-used-for-the-synthesis">Source set used for the synthesis</h3>
+<ol>
+<li><code>SYNCZINE LIVING LAB VIABLE STRATEGY AND ARCHITECTURE.md</code> — plain-language architecture, six proof stages, beachhead, guardrails and core experience engines.</li>
+<li><code>SOVRAEG - SYNCZINE LIVING LABORATORY - COMPREHENSIVE.md</code> — 24 architectural strategies, six UX modes, side docks, evidence and orchestration, H5P conversion and example Gaea/Café activities.</li>
+<li><code>SOVRAEG - SYNCZINE LIVING LABORATORY - COMPONENTS.md</code> — 24 proposed engine/framework candidates and beginning of wrapper/broker section; external-source details incomplete.</li>
+<li><code>SOVRAEG - SYNCZINE LIVING LABORATORY - BLUEPRINT.md</code> — sovereign experiential architecture, local-first collaboration, provenance and credentials.</li>
+<li><code>SOVRAEG LABS - THE INDISPENSIBLE.md</code> — creator integration strategy, ownership/provenance ambitions and interoperable packaging.</li>
+<li><code>SOVRAEZINE ARCHITECTURE AND STRATEGY.md</code> — learner-owned retained resources, portfolios, versioning, directed publications and separation from SYNCZINE execution.</li>
+</ol>
+<h3 id="recommended-decisions-to-ratify">Recommended decisions to ratify</h3>
+<ul>
+<li><strong>Name:</strong> standardize <strong>SAEGEMODZ</strong> in specifications, and accept <strong>SAGEMODZ</strong> as a transitional alias if useful.</li>
+<li><strong>SYNCTESS:</strong> reserve the term for the tangible mastery/evidence concept; rename its conflicting usage as an infrastructure/data-availability layer.</li>
+<li><strong>CANVAS vs mode:</strong> formally approve archetype, mode, layout/theme and implementation capability as separate descriptors.</li>
+<li><strong>SRLO scope:</strong> agree that the 60 entries are <strong>archetype definitions</strong>, not 60 independent engines.</li>
+<li><strong>SOVRAEZINE / SLR / wallet boundary:</strong> decide where originals, references, evidence, permissions and credential pointers are retained.</li>
+<li><strong>Recording policies:</strong> distinguish informal practice, explicit submission and formal evaluation.</li>
+<li><strong>Optional ownership economics:</strong> do not make blockchain royalty infrastructure a prerequisite for ordinary learning or publishing.</li>
+<li><strong>Evidence standard:</strong> define exactly what merits human review, and preserve the assessment rule version.</li>
+<li><strong>Catalog governance:</strong> require an owner, review state, maintenance plan and deprecation path for every reusable component.</li>
+</ul>
+<blockquote>
+<p><strong>Closing principle</strong>
+<strong>Build an atlas of learning behaviors before building an arsenal of software engines.</strong> A small set of excellent, composable experiences that reliably turn learning into defensible evidence will create a stronger foundation than hundreds of disconnected widgets.</p>
+</blockquote>
+</article><footer style="border-top:1px solid var(--line);margin-top:60px;padding-top:20px;color:var(--muted);font-size:12px">SOVRAEG LABS · Catalog proposal v0.1 · Based on six supplied project papers · Search only filters catalog rows; sections remain available.</footer></main></div>
+<script>
+(()=>{const root=document.documentElement;const search=document.getElementById('search');const info=document.getElementById('searchInfo');const rows=[...document.querySelectorAll('tbody tr')].filter(r=>/^[CLGS]\d\d$/.test(r.cells[0]?.textContent?.trim()||''));function filter(){const q=search.value.trim().toLocaleLowerCase();let found=0;for(const r of rows){const yes=!q||r.textContent.toLocaleLowerCase().includes(q);r.classList.toggle('hidden-row',!yes);if(yes)found++}info.textContent=found+' / '+rows.length+' catalog entries visible'}search.addEventListener('input',filter);document.getElementById('clear').onclick=()=>{search.value='';filter();search.focus()};document.getElementById('theme').onclick=()=>{const dark=root.dataset.theme!=='dark';root.dataset.theme=dark?'dark':'light';document.getElementById('theme').textContent=dark?'Light mode':'Dark mode'};document.getElementById('fontsize').oninput=e=>root.style.setProperty('--fs',e.target.value+'px');document.getElementById('print').onclick=()=>window.print();filter();const as=[...document.querySelectorAll('nav a')];const heads=[...document.querySelectorAll('h1[id],h2[id]')];if('IntersectionObserver' in window){const io=new IntersectionObserver((entries)=>{for(const ent of entries){if(ent.isIntersecting){as.forEach(a=>a.classList.toggle('active',a.getAttribute('href')==='#'+ent.target.id))}}},{rootMargin:'-90px 0px -70% 0px'});heads.forEach(h=>io.observe(h))}})();
+</script></body></html>
