@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SOVRAEG LABS · B2B Monetization Matrix</title>
+<style>
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  --scale: 1;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  /* Obsidian Dark Theme (Default) */
+  --bg-page: #0c0e12;
+  --bg-panel: #13161c;
+  --bg-card: #181c24;
+  --bg-card-hover: #1e232e;
+  --bg-inset: #101318;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #eef1f6;
+  --text-secondary: #a1aab8;
+  --text-muted: #6e7787;
+
+  --accent-blue: #60a5fa;
+  --accent-blue-bright: #93c5fd;
+  --accent-blue-bg: rgba(37, 99, 235, 0.24);
+  --accent-blue-bg-strong: rgba(30, 58, 138, 0.62);
+  --accent-blue-border: rgba(96, 165, 250, 0.78);
+  --accent-glow: 0 0 22px rgba(59, 130, 246, 0.24);
+
+  --accent-amber: #fbbf24;
+  --accent-amber-bg: rgba(245, 158, 11, 0.14);
+  --accent-amber-border: rgba(251, 191, 36, 0.45);
+
+  --accent-emerald: #34d399;
+  --accent-emerald-bg: rgba(16, 185, 129, 0.14);
+  --accent-emerald-border: rgba(52, 211, 153, 0.45);
+
+  --accent-red: #f87171;
+  --accent-red-text: #fecaca;
+  --accent-red-bg: rgba(127, 29, 29, 0.46);
+  --accent-red-border: rgba(248, 113, 113, 0.55);
+
+  --pilot-bar: #e5e9f0;
+  --ai-bar: #7cc4fa;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="parchment"] {
+  --bg-page: #f5efe2;
+  --bg-panel: #fbf7ee;
+  --bg-card: #f2ead9;
+  --bg-card-hover: #e9dec8;
+  --bg-inset: #ede4d1;
+  --border-subtle: rgba(74, 55, 32, 0.14);
+  --border-strong: rgba(74, 55, 32, 0.28);
+  --text-primary: #261e15;
+  --text-secondary: #564636;
+  --text-muted: #7c6a55;
+
+  --accent-blue: #1d4ed8;
+  --accent-blue-bright: #1e40af;
+  --accent-blue-bg: rgba(29, 78, 216, 0.10);
+  --accent-blue-bg-strong: rgba(29, 78, 216, 0.15);
+  --accent-blue-border: rgba(29, 78, 216, 0.72);
+  --accent-glow: 0 4px 16px rgba(29, 78, 216, 0.14);
+
+  --accent-amber: #b45309;
+  --accent-amber-bg: rgba(180, 83, 9, 0.10);
+  --accent-amber-border: rgba(180, 83, 9, 0.38);
+
+  --accent-emerald: #047857;
+  --accent-emerald-bg: rgba(4, 120, 87, 0.10);
+  --accent-emerald-border: rgba(4, 120, 87, 0.38);
+
+  --accent-red: #b91c1c;
+  --accent-red-text: #7f1d1d;
+  --accent-red-bg: rgba(185, 28, 28, 0.09);
+  --accent-red-border: rgba(185, 28, 28, 0.42);
+
+  --pilot-bar: #3d2e1e;
+  --ai-bar: #2563eb;
+  --shadow-card: 0 6px 20px rgba(68, 49, 25, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: calc(16px * var(--scale));
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 16px;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+body.embed-mode {
+  padding: 8px;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.brand-block h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.brand-block p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.utility-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  font-size: 0.74rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.util-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.font-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.font-control input[type="range"] {
+  width: 64px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.control-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  gap: 4px;
+}
+
+.seg-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.seg-btn:hover { color: var(--text-primary); }
+
+.seg-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.seg-btn.active-danger {
+  background: var(--accent-red-bg);
+  color: var(--accent-red-text);
+  border-color: var(--accent-red-border);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.step-btn:hover {
+  border-color: var(--accent-blue-border);
+  background: var(--bg-card-hover);
+}
+
+.step-counter {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: all 0.16s ease;
+}
+
+.chip-blue {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  color: var(--text-primary);
+}
+
+.chip-amber {
+  background: var(--accent-amber-bg);
+  border-color: var(--accent-amber-border);
+  color: var(--accent-amber);
+}
+
+.chip-emerald {
+  background: var(--accent-emerald-bg);
+  border-color: var(--accent-emerald-border);
+  color: var(--accent-emerald);
+}
+
+.chip-red {
+  background: var(--accent-red-bg);
+  border-color: var(--accent-red-border);
+  color: var(--accent-red-text);
+}
+
+.chip-clickable { cursor: pointer; }
+.chip-clickable:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+.toast {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-emerald-border);
+  color: var(--text-primary);
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.22s ease;
+  z-index: 999;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.footer-note {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 2px 4px;
+}
+
+@media (max-width: 640px) {
+  body { padding: 10px; }
+  .panel { padding: 12px; }
+}
+
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.kpi-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 13px 15px;
+}
+
+.kpi-value {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 4px;
+  line-height: 1.25;
+}
+
+.kpi-value.big-num {
+  font-size: 1.55rem;
+  font-family: var(--font-mono);
+  color: var(--accent-blue);
+}
+
+.kpi-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.presets-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.filter-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.filter-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.filter-pill.active {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  color: var(--text-primary);
+}
+
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 24px;
+  margin-bottom: 16px;
+}
+
+.slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.slider-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.slider-val {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--accent-blue);
+}
+
+.slider-item input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.filters-divider {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.table-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding: 0 4px;
+}
+
+.model-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.model-row {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.18s ease, background 0.18s ease;
+}
+
+.model-row:hover {
+  border-color: var(--border-strong);
+}
+
+.model-row.expanded {
+  border-color: var(--accent-blue-border);
+}
+
+.model-summary {
+  display: grid;
+  grid-template-columns: 32px 1fr 165px;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.rank-num {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.rank-top .rank-num {
+  color: var(--accent-blue);
+}
+
+.model-main h3 {
+  font-size: 0.94rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.model-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 3px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.mini-bars {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 7px;
+}
+
+.mini-bar-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+.mini-track {
+  width: 28px;
+  height: 4px;
+  border-radius: 3px;
+  background: var(--border-subtle);
+  overflow: hidden;
+}
+
+.mini-fill {
+  height: 100%;
+  background: var(--accent-blue);
+  border-radius: 3px;
+}
+
+.score-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.score-top {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.score-num {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.chev {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+}
+
+.model-row.expanded .chev {
+  transform: rotate(180deg);
+  color: var(--accent-blue);
+}
+
+.score-track {
+  width: 100%;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-bright));
+  transition: width 0.3s ease;
+}
+
+.model-drawer {
+  display: none;
+  padding: 0 14px 14px 58px;
+  border-top: 1px dashed var(--border-subtle);
+  background: var(--bg-inset);
+}
+
+.model-row.expanded .model-drawer {
+  display: block;
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.drawer-card {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.drawer-card p {
+  margin-top: 4px;
+  color: var(--text-primary);
+}
+
+.guardrail-callout {
+  margin-top: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  background: var(--accent-amber-bg);
+  border: 1px solid var(--accent-amber-border);
+  font-size: 0.8rem;
+}
+
+.guardrail-callout .eyebrow {
+  color: var(--accent-amber);
+  margin-bottom: 2px;
+}
+
+.playbook-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.phase-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 0.78rem;
+}
+
+.phase-box strong {
+  display: block;
+  color: var(--accent-blue);
+  margin-bottom: 4px;
+}
+
+@media (max-width: 720px) {
+  .kpi-grid, .sliders-grid, .drawer-grid, .playbook-grid { grid-template-columns: 1fr; }
+  .model-summary { grid-template-columns: 26px 1fr 90px; }
+  .model-drawer { padding-left: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-block">
+      <h1><span class="brand-dot"></span>SOVRAEG LABS · B2B Monetization Matrix</h1>
+      <p>Adjust solopreneur priority weights or filter by strategic tier &amp; rollout phase to rank all 12 B2B models.</p>
+    </div>
+    <div class="utility-bar">
+      <div class="font-control" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontScaleSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" oninput="setFontScale(this.value)" />
+        <span>A+</span>
+      </div>
+      <button id="themeBtn" class="util-pill" onclick="toggleTheme()">☀ Parchment Light</button>
+      <button class="util-pill" onclick="copyStackMarkdown()">⧉ Copy Ranked MD</button>
+    </div>
+  </header>
+
+  <section id="kpiGrid" class="kpi-grid"></section>
+
+  <section class="panel">
+    <div class="presets-row">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px;">STRATEGIC PRESETS</div>
+        <div class="pill-group">
+          <button class="filter-pill" onclick="applyPreset('cash')">Cash Now</button>
+          <button class="filter-pill" onclick="applyPreset('leverage')">Max Solodev Leverage</button>
+          <button class="filter-pill" onclick="applyPreset('moat')">Long-Term Protocol Moat</button>
+          <button class="filter-pill" onclick="applyPreset('multidomain')">Multi-Domain Foundry</button>
+        </div>
+      </div>
+      <button class="filter-pill" onclick="applyPreset('balanced')">Reset Balanced</button>
+    </div>
+
+    <div id="slidersGrid" class="sliders-grid"></div>
+
+    <div class="filters-divider">
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px;">STRATEGIC TIER FILTER</div>
+        <div id="tierFilters" class="pill-group"></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:6px;">SOLO ROLLOUT PHASE</div>
+        <div id="phaseFilters" class="pill-group"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="table-head">
+      <span class="eyebrow">RANKED MODELS (CLICK ANY ROW FOR SOLODEV GUARDRAIL &amp; APPENDIX A FIT)</span>
+      <span class="eyebrow">WEIGHTED SCORE</span>
+    </div>
+    <div id="modelList" class="model-list"></div>
+  </section>
+
+  <section class="panel">
+    <div class="eyebrow">3-PHASE SOLODEV STACKING PLAYBOOK &amp; NON-NEGOTIABLE GUARDRAILS</div>
+    <div class="playbook-grid">
+      <div class="phase-box">
+        <strong>Phase 1 · Months 1–4 (Cash + Templates)</strong>
+        Atelier Blueprint Sprints + Wholesale Bearer-Vouchers + Atelier-to-Commons Royalties. Fund R&amp;D with 2–3 founding partners.
+      </div>
+      <div class="phase-box">
+        <strong>Phase 2 · Months 5–12 (Recurring Baseline)</strong>
+        SOVRAEGIX Cockpit Licenses + Guild Accreditation + Gate 0 Reverse-Marketing Funnel. Build predictable B2B pull.
+      </div>
+      <div class="phase-box">
+        <strong>Phase 3 · Year 2+ (Protocol Moat + Equity)</strong>
+        SYNTHCREDS Tollbooth + SYNTHETARY Snapshots + IP-for-Equity Stakes + Corporate Outcome Bounties.
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <span>Guardrails: Zero-PII Wall · Config-Not-Code · Async Default · Local Partners Hold VND/Classroom Ops · Non-Monetary FLUX</span>
+    <span>Supports ?theme=parchment &amp; ?embed=1</span>
+  </footer>
+</div>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+
+(function initEnv() {
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const savedTheme = localStorage.getItem('sovraeg_theme');
+  const theme = urlTheme || savedTheme || 'dark';
+  if (theme === 'parchment' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+  }
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
+  const savedScale = localStorage.getItem('sovraeg_scale');
+  if (savedScale) {
+    document.documentElement.style.setProperty('--scale', savedScale);
+    const slider = document.getElementById('fontScaleSlider');
+    if (slider) slider.value = savedScale;
+  }
+})();
+
+function toggleTheme() {
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  if (isParchment) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sovraeg_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+    localStorage.setItem('sovraeg_theme', 'parchment');
+  }
+  updateThemeButton();
+  notifyHeight();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  btn.textContent = isParchment ? '☾ Obsidian Dark' : '☀ Parchment Light';
+}
+
+function setFontScale(val) {
+  document.documentElement.style.setProperty('--scale', val);
+  localStorage.setItem('sovraeg_scale', val);
+  notifyHeight();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast(msg);
+}
+
+function notifyHeight() {
+  try {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'sovraeg-resize', height: h, source: document.title }, '*');
+  } catch (e) {}
+}
+
+window.addEventListener('load', () => { updateThemeButton(); notifyHeight(); });
+window.addEventListener('resize', notifyHeight);
+
+
+const METRICS = [
+  { key: 'leverage', label: 'Solodev Leverage', short: 'L' },
+  { key: 'cash', label: 'Time-to-Cash', short: 'C' },
+  { key: 'recurring', label: 'Recurring Predictability', short: 'R' },
+  { key: 'compounding', label: 'Ecosystem Compounding', short: 'E' },
+  { key: 'ops', label: 'Zero-PII Ops Simplicity', short: 'O' }
+];
+
+const MODELS = [
+  {
+    id: 1,
+    name: 'Wholesale Bearer-Vouchers',
+    tier: 'Wholesale & Licensing',
+    phase: 'Phase 1',
+    revenueType: 'Prepaid Bulk Wholesale (35–50% Partner Margin)',
+    leverage: 9, cash: 8, recurring: 7, compounding: 6, ops: 10,
+    mechanism: 'SOVRAEGENCIES pre-purchase anonymous, cryptographically signed W3C VC bearer vouchers in bulk (25+ seats) and retail locally via VietQR/bank transfers for activation in SOVRAELEX.',
+    guardrail: 'Enforce 25+ voucher batch minimums and automated cryptographic minting scripts; zero B2C invoicing or student PII custody.',
+    multiDomain: 'Works identically for dojo rank packs, workshop restoration modules, university ESP cohorts, and serialized digital zine subscriptions.'
+  },
+  {
+    id: 2,
+    name: 'Open Core / SOVRAEGIX Licensing',
+    tier: 'Wholesale & Licensing',
+    phase: 'Phase 2',
+    revenueType: 'Annual / Monthly B2B Facilitator Node License',
+    leverage: 9, cash: 6, recurring: 9, compounding: 8, ops: 9,
+    mechanism: 'SOVRAELEX (learner player) and baseline ALCHEMOSAIC content stay free and sovereign; agencies pay B2B licenses for SOVRAEGIX cohort triage, batch SYNCTESS review, and SYNCFORGE.',
+    guardrail: 'Ship offline-capable signed UCAN/JWT license entitlements rather than fragile 24/7 license auth servers.',
+    multiDomain: 'Universities, master mechanics, senseis, and trade editors all pay for the same SOVRAEGIX facilitator & editorial cockpit.'
+  },
+  {
+    id: 3,
+    name: 'White-Label Vertical Franchising',
+    tier: 'Wholesale & Licensing',
+    phase: 'Phase 2',
+    revenueType: 'Annual Territory / Vertical Edition Fee',
+    leverage: 8, cash: 8, recurring: 8, compounding: 7, ops: 7,
+    mechanism: 'Vertical academies or institutions license branded ZERO TO VOICE or trade editions built on SOVRAEGOS with domain styling and specialized SYNCZINES.',
+    guardrail: 'Enforce a zero-code-fork rule: 100% of customization via declarative Domain Cartridge JSON/MDX config and CSS theme tokens.',
+    multiDomain: 'Directly powers branded hospitality faculties, classic motorcycle guilds, or regional VAR editions from one invariant codebase.'
+  },
+  {
+    id: 4,
+    name: 'Atelier Blueprint Sprints',
+    tier: 'Atelier Co-Creation',
+    phase: 'Phase 1',
+    revenueType: 'Fixed-Fee High-Ticket 3-Week Architecture Sprint',
+    leverage: 4, cash: 10, recurring: 3, compounding: 7, ops: 8,
+    mechanism: 'Time-boxed 3-week B2B sprint mapping partner SME bottlenecks onto SYNTHETARY and co-forging 1 flagship SYNCZINE + CODE+V SYNCTESS rubric.',
+    guardrail: 'Hard-cap intake to 1–2 Ateliers per quarter (max 4–6/year across all domains); hand bulk content authoring back to partner staff.',
+    multiDomain: 'Three Atelier tracks: Curriculum Foundry (trades/universities), Sovereign Publishing (zines/books), and Venture Co-Forge.'
+  },
+  {
+    id: 5,
+    name: 'IP-for-Equity Foundry Stakes',
+    tier: 'Atelier Co-Creation',
+    phase: 'Phase 3',
+    revenueType: '10–20% Non-Monetary IP Equity + Maintenance Retainer',
+    leverage: 7, cash: 2, recurring: 4, compounding: 9, ops: 6,
+    mechanism: 'SOVRAEG LABS contributes SOVRAEGOS IP, licenses, and Atelier architecture in lieu of cash for 10–15% stakes in local academies or up to 20% in cross-border SPVs/VARs.',
+    guardrail: 'Require full accounting/pricing visibility and performance-vested IP license reversion clauses if partner stalls.',
+    multiDomain: 'Ideal for high-conviction regional VARs, classic motorcycle training franchises, and specialized vocational incubators.'
+  },
+  {
+    id: 6,
+    name: 'Atelier-to-Commons Royalties',
+    tier: 'Atelier Co-Creation',
+    phase: 'Phase 1',
+    revenueType: 'Discounted Sprint (50% Off) + 15–20% Waterfall Royalty',
+    leverage: 6, cash: 7, recurring: 6, compounding: 10, ops: 7,
+    mechanism: 'Partner co-funds vertical SYNCZINE build at reduced fee; after a 6–12 month exclusivity window, generalized SYNCZ-SRLO modules enter the network with creator waterfall royalties.',
+    guardrail: 'Encode contributor attribution weights directly inside each SYNCZINE package manifest so quarterly royalty splits compute automatically.',
+    multiDomain: 'Core engine for the Sovereign Publishing Atelier—automating splits across authors, SMEs, illustrators, and translators.'
+  },
+  {
+    id: 7,
+    name: 'SYNTHCREDS Verification Tollbooth',
+    tier: 'Protocol & Data',
+    phase: 'Phase 3',
+    revenueType: 'Per-Credential Issuance & HR Verification API Fee',
+    leverage: 9, cash: 5, recurring: 8, compounding: 9, ops: 8,
+    mechanism: 'Monetize the cryptographic trust rail: agencies pay per audited W3C VC / Open Badge 3.0 proof-of-voice mint; corporate HR pays for instant verification APIs.',
+    guardrail: 'Automate 85–90% of pre-vetting via local/edge rubrics and delegate human sign-off to certified SOVRAEGENCY assessors.',
+    multiDomain: 'Extends seamlessly to Master Technician teardown credentials, Dojo lineage proofs, and OBE university competency badges.'
+  },
+  {
+    id: 8,
+    name: 'SYNTHETARY Graph Snapshots',
+    tier: 'Protocol & Data',
+    phase: 'Phase 3',
+    revenueType: 'Quarterly Immutable Data Bundle License',
+    leverage: 10, cash: 6, recurring: 8, compounding: 9, ops: 10,
+    mechanism: 'License versioned SQLite/SurrealDB + W3C OntoLex-Lemon / 1EdTech CASE v1.1 knowledge graph snapshots with GSE/sub-GSE and L1 transfer mappings.',
+    guardrail: 'Ship immutable quarterly snapshots via Cloudflare R2 / Forgejo releases instead of maintaining a 24/7 high-SLA live query API.',
+    multiDomain: 'Universities and STEM departments can license OBE/CDIO mathematical dependency graphs alongside EFL ontologies.'
+  },
+  {
+    id: 9,
+    name: 'Zero-Knowledge Sync Relay',
+    tier: 'Protocol & Data',
+    phase: 'Phase 2',
+    revenueType: 'Flat Monthly Encrypted Relay Tier per Agency Node',
+    leverage: 8, cash: 6, recurring: 9, compounding: 6, ops: 7,
+    mechanism: 'Optional client-side E2E encrypted Loro/Yjs CRDT sync relay, Cloudflare R2/Stream media delivery, and automated backup for agencies that do not self-host.',
+    guardrail: 'Serverless primitives with hard per-agency storage/bandwidth quotas; client-side encryption preserves strict Zero-PII blindness.',
+    multiDomain: 'Supports heavy biomechanical video loops, workshop schematics, and serialized media bundles cleanly across all verticals.'
+  },
+  {
+    id: 10,
+    name: 'SOVRAEGENCY Guild Accreditation',
+    tier: 'Ecosystem Flywheels',
+    phase: 'Phase 2',
+    revenueType: 'Certification Fee + Annual Guild Renewal Dues',
+    leverage: 7, cash: 8, recurring: 7, compounding: 8, ops: 8,
+    mechanism: 'Facilitators and agencies complete a meta-SYNCZINE ANVILOCITY Architect certification to earn official SOVRAEGENCY status, tooling drops, and FLUX directory trust.',
+    guardrail: 'Keep 85% asynchronous via peer-reviewed CODE+V SYNCTESS portfolios; reserve solo founder time strictly for 30-min capstones.',
+    multiDomain: 'Ensures trade instructors, university facilitators, and guild editors uphold CODE+V rigor and Glass-Box compliance.'
+  },
+  {
+    id: 11,
+    name: 'Reverse-Marketing Diagnostic Funnel',
+    tier: 'Ecosystem Flywheels',
+    phase: 'Phase 2',
+    revenueType: 'Automated Qualified-Learner Bounty / Routing Share',
+    leverage: 9, cash: 5, recurring: 7, compounding: 10, ops: 9,
+    mechanism: 'Free static Gate 0 diagnostic SYNCZINES inside ALCHEMOSAIC give learners instant clarity and opt-in routing to regional certified SOVRAEGENCIES.',
+    guardrail: 'Build once as an edge-hosted static experience with automated voucher intake—zero sales calls or ad-agency management.',
+    multiDomain: 'Adaptable to free diagnostic quizzes for PKM Second Brain readiness, university math placement, or workshop skill audits.'
+  },
+  {
+    id: 12,
+    name: 'Enterprise Outcome-Bounty Pools',
+    tier: 'Ecosystem Flywheels',
+    phase: 'Phase 3',
+    revenueType: 'Automated Protocol Split on Verified Exit',
+    leverage: 6, cash: 4, recurring: 6, compounding: 9, ops: 5,
+    mechanism: 'Corporate sponsors (IT BPOs, hospitality groups, employability funds) fund completion pools releasing bounties strictly when verified SYNTHCREDS are minted.',
+    guardrail: 'Local SOVRAEGENCY holds the corporate contract, escrow, and domestic invoicing; SOVRAEG LABS acts strictly as cryptographic oracle.',
+    multiDomain: 'Applies powerfully to vocational technician apprenticeships and university-to-industry Ready Talent incubation pipelines.'
+  }
+];
+
+const TIERS = ['All', 'Wholesale & Licensing', 'Atelier Co-Creation', 'Protocol & Data', 'Ecosystem Flywheels'];
+const PHASES = ['All', 'Phase 1', 'Phase 2', 'Phase 3'];
+
+const PRESETS = {
+  balanced:    { leverage: 5, cash: 3, recurring: 4, compounding: 4, ops: 4 },
+  cash:        { leverage: 3, cash: 5, recurring: 2, compounding: 2, ops: 4 },
+  leverage:    { leverage: 5, cash: 2, recurring: 4, compounding: 3, ops: 5 },
+  moat:        { leverage: 4, cash: 1, recurring: 4, compounding: 5, ops: 4 },
+  multidomain: { leverage: 5, cash: 2, recurring: 4, compounding: 5, ops: 5 }
+};
+
+let weights = { ...PRESETS.balanced };
+let activeTier = 'All';
+let activePhase = 'All';
+let expandedId = null;
+
+function computeScore(m) {
+  const totalW = Object.values(weights).reduce((a, b) => a + b, 0);
+  if (totalW === 0) return 0;
+  const sum = METRICS.reduce((acc, met) => acc + m[met.key] * weights[met.key], 0);
+  return Math.round((sum / (totalW * 10)) * 100);
+}
+
+function applyPreset(name) {
+  weights = { ...PRESETS[name] };
+  renderSliders();
+  renderAll();
+  showToast(`Applied "${name}" priority weights`);
+}
+
+function updateWeight(key, val) {
+  weights[key] = Number(val);
+  document.getElementById(`val_${key}`).textContent = val;
+  renderAll();
+}
+
+function setTier(t) { activeTier = t; renderAll(); }
+function setPhase(p) { activePhase = p; renderAll(); }
+function toggleExpand(id) { expandedId = expandedId === id ? null : id; renderList(); }
+
+function renderSliders() {
+  document.getElementById('slidersGrid').innerHTML = METRICS.map(met => `
+    <div class="slider-item">
+      <div class="slider-head">
+        <span>${met.label} (${met.short})</span>
+        <span id="val_${met.key}" class="slider-val">${weights[met.key]}</span>
+      </div>
+      <input type="range" min="0" max="5" step="1" value="${weights[met.key]}" oninput="updateWeight('${met.key}', this.value)" />
+    </div>
+  `).join('');
+}
+
+function getRanked() {
+  return MODELS
+    .filter(m => (activeTier === 'All' || m.tier === activeTier) && (activePhase === 'All' || m.phase === activePhase))
+    .map(m => ({ ...m, score: computeScore(m) }))
+    .sort((a, b) => b.score - a.score || b.leverage - a.leverage);
+}
+
+function renderFilters() {
+  document.getElementById('tierFilters').innerHTML = TIERS.map(t => {
+    const count = t === 'All' ? MODELS.length : MODELS.filter(m => m.tier === t).length;
+    return `<button class="filter-pill ${activeTier === t ? 'active' : ''}" onclick="setTier('${t}')">${t}${t === 'All' ? ` (${count})` : ''}</button>`;
+  }).join('');
+
+  document.getElementById('phaseFilters').innerHTML = PHASES.map(p => `
+    <button class="filter-pill ${activePhase === p ? 'active' : ''}" onclick="setPhase('${p}')">${p === 'All' ? 'All Phases' : p}</button>
+  `).join('');
+}
+
+function renderKpis(ranked) {
+  const top = ranked[0];
+  const top3 = ranked.slice(0, 3);
+  const top3Avg = top3.length ? Math.round(top3.reduce((a, b) => a + b.score, 0) / top3.length) : 0;
+  const bestCash = [...ranked].sort((a, b) => b.cash - a.cash || b.score - a.score)[0];
+
+  document.getElementById('kpiGrid').innerHTML = `
+    <div class="kpi-card">
+      <div class="eyebrow">#1 RANKED MODEL</div>
+      <div class="kpi-value">${top ? top.name : '—'}</div>
+      <div class="kpi-sub">${top ? `Score: ${top.score} / 100 · ${top.phase}` : 'No matching models'}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="eyebrow">TOP 3 STACK AVG</div>
+      <div class="kpi-value big-num">${top3Avg}</div>
+      <div class="kpi-sub">Across ${ranked.length} visible model${ranked.length === 1 ? '' : 's'}</div>
+    </div>
+    <div class="kpi-card">
+      <div class="eyebrow">HIGHEST CASH-FLOW</div>
+      <div class="kpi-value">${bestCash ? bestCash.name : '—'}</div>
+      <div class="kpi-sub">${bestCash ? `Time-to-Cash: ${bestCash.cash} / 10` : 'No matching models'}</div>
+    </div>
+  `;
+}
+
+function renderList(rankedInput) {
+  const ranked = rankedInput || getRanked();
+  const list = document.getElementById('modelList');
+  if (!ranked.length) {
+    list.innerHTML = `<div style="padding:18px;text-align:center;color:var(--text-muted);font-size:0.86rem;">No models match both the selected Tier and Phase filter.</div>`;
+    notifyHeight();
+    return;
+  }
+
+  list.innerHTML = ranked.map((m, idx) => {
+    const isExp = expandedId === m.id;
+    return `
+      <div class="model-row ${isExp ? 'expanded' : ''} ${idx < 3 ? 'rank-top' : ''}">
+        <div class="model-summary" onclick="toggleExpand(${m.id})">
+          <div class="rank-num">${idx + 1}</div>
+          <div class="model-main">
+            <h3>${m.name}</h3>
+            <div class="model-meta">
+              <span>${m.tier}</span>
+              <span>·</span>
+              <span>${m.phase}</span>
+              <span>·</span>
+              <span>${m.revenueType}</span>
+            </div>
+            <div class="mini-bars">
+              ${METRICS.map(met => `
+                <span class="mini-bar-item" title="${met.label}: ${m[met.key]}/10">
+                  <span>${met.short}</span>
+                  <span class="mini-track"><span class="mini-fill" style="width:${m[met.key]*10}%"></span></span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+          <div class="score-col">
+            <div class="score-top">
+              <span class="score-num">${m.score}</span>
+              <span class="chev">▾</span>
+            </div>
+            <div class="score-track">
+              <div class="score-fill" style="width:${m.score}%"></div>
+            </div>
+          </div>
+        </div>
+        <div class="model-drawer">
+          <div class="drawer-grid">
+            <div class="drawer-card">
+              <div class="eyebrow">MECHANISM &amp; ECOSYSTEM FIT</div>
+              <p>${m.mechanism}</p>
+            </div>
+            <div class="drawer-card">
+              <div class="eyebrow">APPENDIX A · MULTI-DOMAIN EXTENSION</div>
+              <p>${m.multiDomain}</p>
+            </div>
+          </div>
+          <div class="guardrail-callout">
+            <div class="eyebrow">SOLODEV GUARDRAIL</div>
+            <div>${m.guardrail}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+  notifyHeight();
+}
+
+function renderAll() {
+  const ranked = getRanked();
+  renderFilters();
+  renderKpis(ranked);
+  renderList(ranked);
+}
+
+function copyStackMarkdown() {
+  const ranked = getRanked();
+  const wStr = METRICS.map(m => `${m.short}=${weights[m.key]}`).join(', ');
+  let md = `### SOVRAEG LABS B2B Monetization Ranking (${wStr})\n\n`;
+  md += `| Rank | Model | Tier | Phase | Score | Solodev Guardrail |\n|---|---|---|---|---|---|\n`;
+  ranked.forEach((m, i) => {
+    md += `| ${i+1} | **${m.name}** | ${m.tier} | ${m.phase} | **${m.score}/100** | ${m.guardrail} |\n`;
+  });
+  copyText(md, 'Copied ranked Markdown table to clipboard');
+}
+
+renderSliders();
+renderAll();
+</script>
+</body>
+</html>

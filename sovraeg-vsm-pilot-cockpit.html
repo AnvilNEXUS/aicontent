@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SOVRÆG LABS · Cybernetic VSM Pilot Cockpit</title>
+<style>
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  --scale: 1;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  /* Obsidian Dark Theme (Default) */
+  --bg-page: #0c0e12;
+  --bg-panel: #13161c;
+  --bg-card: #181c24;
+  --bg-card-hover: #1e232e;
+  --bg-inset: #101318;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #eef1f6;
+  --text-secondary: #a1aab8;
+  --text-muted: #6e7787;
+
+  --accent-blue: #60a5fa;
+  --accent-blue-bright: #93c5fd;
+  --accent-blue-bg: rgba(37, 99, 235, 0.24);
+  --accent-blue-bg-strong: rgba(30, 58, 138, 0.62);
+  --accent-blue-border: rgba(96, 165, 250, 0.78);
+  --accent-glow: 0 0 22px rgba(59, 130, 246, 0.24);
+
+  --accent-amber: #fbbf24;
+  --accent-amber-bg: rgba(245, 158, 11, 0.14);
+  --accent-amber-border: rgba(251, 191, 36, 0.45);
+
+  --accent-emerald: #34d399;
+  --accent-emerald-bg: rgba(16, 185, 129, 0.14);
+  --accent-emerald-border: rgba(52, 211, 153, 0.45);
+
+  --accent-red: #f87171;
+  --accent-red-text: #fecaca;
+  --accent-red-bg: rgba(127, 29, 29, 0.46);
+  --accent-red-border: rgba(248, 113, 113, 0.55);
+
+  --pilot-bar: #e5e9f0;
+  --ai-bar: #7cc4fa;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="parchment"] {
+  --bg-page: #f5efe2;
+  --bg-panel: #fbf7ee;
+  --bg-card: #f2ead9;
+  --bg-card-hover: #e9dec8;
+  --bg-inset: #ede4d1;
+  --border-subtle: rgba(74, 55, 32, 0.14);
+  --border-strong: rgba(74, 55, 32, 0.28);
+  --text-primary: #261e15;
+  --text-secondary: #564636;
+  --text-muted: #7c6a55;
+
+  --accent-blue: #1d4ed8;
+  --accent-blue-bright: #1e40af;
+  --accent-blue-bg: rgba(29, 78, 216, 0.10);
+  --accent-blue-bg-strong: rgba(29, 78, 216, 0.15);
+  --accent-blue-border: rgba(29, 78, 216, 0.72);
+  --accent-glow: 0 4px 16px rgba(29, 78, 216, 0.14);
+
+  --accent-amber: #b45309;
+  --accent-amber-bg: rgba(180, 83, 9, 0.10);
+  --accent-amber-border: rgba(180, 83, 9, 0.38);
+
+  --accent-emerald: #047857;
+  --accent-emerald-bg: rgba(4, 120, 87, 0.10);
+  --accent-emerald-border: rgba(4, 120, 87, 0.38);
+
+  --accent-red: #b91c1c;
+  --accent-red-text: #7f1d1d;
+  --accent-red-bg: rgba(185, 28, 28, 0.09);
+  --accent-red-border: rgba(185, 28, 28, 0.42);
+
+  --pilot-bar: #3d2e1e;
+  --ai-bar: #2563eb;
+  --shadow-card: 0 6px 20px rgba(68, 49, 25, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: calc(16px * var(--scale));
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 16px;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+body.embed-mode {
+  padding: 8px;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.brand-block h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.brand-block p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.utility-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  font-size: 0.74rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.util-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.font-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.font-control input[type="range"] {
+  width: 64px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.control-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  gap: 4px;
+}
+
+.seg-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.seg-btn:hover { color: var(--text-primary); }
+
+.seg-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.seg-btn.active-danger {
+  background: var(--accent-red-bg);
+  color: var(--accent-red-text);
+  border-color: var(--accent-red-border);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.step-btn:hover {
+  border-color: var(--accent-blue-border);
+  background: var(--bg-card-hover);
+}
+
+.step-counter {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: all 0.16s ease;
+}
+
+.chip-blue {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  color: var(--text-primary);
+}
+
+.chip-amber {
+  background: var(--accent-amber-bg);
+  border-color: var(--accent-amber-border);
+  color: var(--accent-amber);
+}
+
+.chip-emerald {
+  background: var(--accent-emerald-bg);
+  border-color: var(--accent-emerald-border);
+  color: var(--accent-emerald);
+}
+
+.chip-red {
+  background: var(--accent-red-bg);
+  border-color: var(--accent-red-border);
+  color: var(--accent-red-text);
+}
+
+.chip-clickable { cursor: pointer; }
+.chip-clickable:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+.toast {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-emerald-border);
+  color: var(--text-primary);
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.22s ease;
+  z-index: 999;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.footer-note {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 2px 4px;
+}
+
+@media (max-width: 640px) {
+  body { padding: 10px; }
+  .panel { padding: 12px; }
+}
+
+
+.vsm-canvas {
+  display: grid;
+  grid-template-columns: 1fr 78px;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.vsm-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.vsm-node {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 12px 15px;
+  display: grid;
+  grid-template-columns: 44px 1fr 180px;
+  gap: 12px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vsm-node:hover {
+  border-color: var(--border-strong);
+  transform: translateX(2px);
+}
+
+.vsm-node.active {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.vsm-node.emergency-highlight {
+  border-color: var(--accent-red-border);
+  background: var(--accent-red-bg);
+}
+
+.sys-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.86rem;
+  color: var(--text-primary);
+}
+
+.vsm-node.active .sys-badge {
+  border-color: var(--accent-blue-border);
+  color: var(--accent-blue-bright);
+}
+
+.vsm-node.emergency-highlight .sys-badge {
+  border-color: var(--accent-red-border);
+  color: var(--accent-red-text);
+}
+
+.vsm-info h3 {
+  font-size: 0.94rem;
+  font-weight: 650;
+}
+
+.vsm-vols {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.vsm-node.active .vsm-vols { color: var(--accent-blue-bright); }
+
+.split-col {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.split-labels {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  color: var(--text-secondary);
+}
+
+.split-bar {
+  width: 100%;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--bg-inset);
+  overflow: hidden;
+  display: flex;
+  gap: 2px;
+}
+
+.bar-pilot {
+  background: var(--pilot-bar);
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.bar-ai {
+  background: var(--ai-bar);
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.3s ease;
+}
+
+.conduit-row {
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1;
+  padding: 2px 0;
+  user-select: none;
+}
+
+.conduit-row.active {
+  color: var(--accent-blue);
+}
+
+.algedonic-rail {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.algedonic-svg {
+  width: 100%;
+  height: 100%;
+  min-height: 360px;
+}
+
+.alg-line {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 4;
+  transition: all 0.25s ease;
+}
+
+.alg-line.active {
+  stroke: var(--accent-red);
+  stroke-width: 2.3;
+  stroke-dasharray: 5 4;
+  animation: algFlow 1s linear infinite;
+}
+
+@keyframes algFlow {
+  to { stroke-dashoffset: 18; }
+}
+
+.alg-tag {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 4px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.alg-tag.active {
+  background: var(--accent-red-bg);
+  border-color: var(--accent-red-border);
+  color: var(--accent-red-text);
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.28);
+}
+
+.legend-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.leg-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.leg-swatch {
+  width: 14px;
+  height: 5px;
+  border-radius: 99px;
+  display: inline-block;
+}
+
+.big-split-card {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  margin: 12px 0 14px;
+}
+
+.big-split-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  margin-bottom: 7px;
+}
+
+.detail-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.detail-two-col p {
+  font-size: 0.87rem;
+  margin-top: 4px;
+  color: var(--text-primary);
+}
+
+.sub-section {
+  margin-top: 12px;
+}
+
+.vol-preview {
+  margin-top: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-inset);
+  border: 1px solid var(--accent-blue-border);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+}
+
+.redtab-alert {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--accent-red-bg);
+  border: 1px solid var(--accent-red-border);
+}
+
+.redtab-alert .eyebrow {
+  color: var(--accent-red);
+  margin-bottom: 4px;
+}
+
+.redtab-alert p {
+  font-size: 0.86rem;
+  color: var(--accent-red-text);
+}
+
+.emergency-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.rt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--accent-red-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+
+.rt-card h4 {
+  font-size: 0.88rem;
+  color: var(--accent-red-text);
+  margin: 4px 0 6px;
+}
+
+.rt-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rt-steps label {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.rt-steps input:checked + span {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.domain-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 10px 0 14px;
+}
+
+.gate-checklist {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+}
+
+.gate-check-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.gate-checks {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+}
+
+.gate-checks label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .vsm-canvas { grid-template-columns: 1fr; }
+  .algedonic-rail { display: none; }
+  .vsm-node { grid-template-columns: 40px 1fr; }
+  .split-col { grid-column: 1 / -1; }
+  .detail-two-col, .emergency-grid { grid-template-columns: 1fr; }
+}
+
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+}
+
+.filter-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+
+.filter-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.filter-pill.active {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  color: var(--text-primary);
+}
+
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-block">
+      <h1><span class="brand-dot"></span>SOVRÆG LABS · Cybernetic VSM Pilot Cockpit</h1>
+      <p>POH Vol. 0–7 + Appendix A — Solo Founder (Robert) × AI Flight Crew Viable System Model.</p>
+    </div>
+    <div class="utility-bar">
+      <div class="font-control" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontScaleSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" oninput="setFontScale(this.value)" />
+        <span>A+</span>
+      </div>
+      <button id="themeBtn" class="util-pill" onclick="toggleTheme()">☀ Parchment Light</button>
+      <button class="util-pill" onclick="copyFlightBrief()">⧉ Copy Flight MD</button>
+    </div>
+  </header>
+
+  <section class="panel control-strip">
+    <div class="segmented" role="tablist">
+      <button id="modeNormal" class="seg-btn active" onclick="setMode('normal')">Normal Flight Ops</button>
+      <button id="modeEmergency" class="seg-btn" onclick="setMode('emergency')">Red-Tab Emergency</button>
+      <button id="modeMulti" class="seg-btn" onclick="setMode('multidomain')">Appendix A · Multi-Domain</button>
+    </div>
+    <div class="stepper">
+      <button class="step-btn" onclick="step(-1)">← Prev</button>
+      <span id="stepCounter" class="step-counter">1 / 5</span>
+      <button class="step-btn" onclick="step(1)">Next →</button>
+    </div>
+  </section>
+
+  <section id="vsmDiagramPanel" class="panel">
+    <div class="vsm-canvas">
+      <div id="vsmStack" class="vsm-stack"></div>
+      <div class="algedonic-rail">
+        <svg class="algedonic-svg" viewBox="0 0 78 400" preserveAspectRatio="none" aria-hidden="true">
+          <path id="algMain" class="alg-line" d="M 4 365 L 54 365 L 54 35 L 8 35" />
+          <path id="algBranch4" class="alg-line" d="M 4 118 L 54 118" />
+          <path id="algBranch3" class="alg-line" d="M 4 200 L 54 200" />
+          <path id="algBranch2" class="alg-line" d="M 4 282 L 54 282" />
+          <polyline id="algArrow" points="14,29 6,35 14,41" fill="none" stroke="var(--border-strong)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <button id="algTag" class="alg-tag" onclick="setMode(state.mode === 'emergency' ? 'normal' : 'emergency')" title="Toggle Red-Tab Algedonic Bypass">Algedonic</button>
+      </div>
+    </div>
+    <div class="legend-bar">
+      <span class="leg-item"><span class="leg-swatch" style="background:var(--pilot-bar)"></span>Solo Pilot Authority</span>
+      <span class="leg-item"><span class="leg-swatch" style="background:var(--ai-bar)"></span>AI Flight Crew &amp; Automation</span>
+      <span class="leg-item"><span class="leg-swatch" style="background:var(--accent-red)"></span>Algedonic Emergency Bypass (Vol. 7 + App. A)</span>
+    </div>
+  </section>
+
+  <section id="detailConsole" class="panel"></section>
+
+  <footer class="footer-note">
+    <span>SOVRÆG LABS PILOT OPERATING HANDBOOK · VSM SYSTEMS 5–1 · ONE INVARIANT AIRFRAME, INFINITE SWAPPABLE PAYLOADS</span>
+    <span>Keys: ← / → to step · ?theme=parchment &amp; ?embed=1</span>
+  </footer>
+</div>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+
+(function initEnv() {
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const savedTheme = localStorage.getItem('sovraeg_theme');
+  const theme = urlTheme || savedTheme || 'dark';
+  if (theme === 'parchment' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+  }
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
+  const savedScale = localStorage.getItem('sovraeg_scale');
+  if (savedScale) {
+    document.documentElement.style.setProperty('--scale', savedScale);
+    const slider = document.getElementById('fontScaleSlider');
+    if (slider) slider.value = savedScale;
+  }
+})();
+
+function toggleTheme() {
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  if (isParchment) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sovraeg_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+    localStorage.setItem('sovraeg_theme', 'parchment');
+  }
+  updateThemeButton();
+  notifyHeight();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  btn.textContent = isParchment ? '☾ Obsidian Dark' : '☀ Parchment Light';
+}
+
+function setFontScale(val) {
+  document.documentElement.style.setProperty('--scale', val);
+  localStorage.setItem('sovraeg_scale', val);
+  notifyHeight();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast(msg);
+}
+
+function notifyHeight() {
+  try {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'sovraeg-resize', height: h, source: document.title }, '*');
+  } catch (e) {}
+}
+
+window.addEventListener('load', () => { updateThemeButton(); notifyHeight(); });
+window.addEventListener('resize', notifyHeight);
+
+
+const VOLUMES = {
+  'Vol. 0': 'Vol. 0 — Flight Doctrine & Constitutional Codex: Immutable SOVEREIGNIZATION, CATALYZATION & SYNERGIZATION pillars, canonical nomenclature registry, and the 5 Hard No-Fly Zones (Zero-PII, Zero SCORM/LTI core, Zero crypto speculation, Config-Not-Code, Zero B2C classroom staffing).',
+  'Vol. 1': 'Vol. 1 — Sovereign Cockpit & AI Crew SOPs: Local-first MacBook Pro M2 Max deck, Obsidian + Zotero 10 + Forgejo pipeline, MLX local open-weight models + frontier reasoning, and 6 specialized AI Flight Crew roles with human-in-the-loop sign-off gates.',
+  'Vol. 2': 'Vol. 2 — Airframe & Technical Architecture: Rust/Tauri v2/WASM, Vite/React/TypeScript/Tailwind, SQLite + Loro/Yjs CRDTs, PayloadCMS v3/PostgreSQL/SurrealDB, Cloudflare Edge, W3C DIDs/VCs/OB 3.0/UCAN, and parchment/dark UI accessibility standards.',
+  'Vol. 3': 'Vol. 3 — Pedagogical & Curriculum Foundry: CODE+V (Curate, Organize, Distill, Express, Verify, Validate) SYNCTESS production spec, ANVILOCITY & ZERO TO VOICE methodology, SYNTHETARY GSE/OBE ontology ingestion, and dual-mode Pedagogical/Publishing SYNCZINES.',
+  'Vol. 4': 'Vol. 4 — SOVRAEGENCY & Atelier B2B Engine: Partner qualification matrix, repeatable 3-Week Atelier Blueprint Sprints (capped 1–2/quarter), Zero-PII wholesale bearer vouchers, SOVRAEGIX licensing, waterfall royalties, IP-for-Equity stakes, and reverse-marketing funnels.',
+  'Vol. 5': 'Vol. 5 — Dual-Jurisdiction Governance & Glass Box: Vietnam Cá nhân kinh doanh (ANVILOCITY LABS, Thủ Đức) + Canadian IP/SPV structure (SOVRÆG trademark, SOVRAELOCITY LABS, CRJ), Wise/MoR rails, VN-SafeOER Glass-Box compliance, and Appendix A safety/IP firewalls.',
+  'Vol. 6': 'Vol. 6 — Solo Cadence, Telemetry & Momentum: Daily Foundry/Atelier/Admin blocks, 30-min Weekly VSM System 3 telemetry, Monthly financial check, Quarterly Reset, 48-Hour ADR rule, and strict 1-Core + 1-Atelier global WIP cap.',
+  'Vol. 7': 'Vol. 7 — Red-Tab Emergency Checklists: Zero-panic algedonic recovery playbooks for scope creep, AI drift, partner default, key/device outage, VN-SafeOER flags, plus Appendix A Red-Tabs 6–8 (feature creep, clinical/safety violation, context-switch overload).'
+};
+
+const VSM_LAYERS = [
+  {
+    id: 'S5',
+    level: 'VSM SYSTEM 5',
+    cadence: 'QUARTERLY & TRIGGER-BASED ADRS',
+    name: 'Policy & Sovereign Identity',
+    tagline: 'Constitutional North Star, Hard No-Fly Zones & Cross-Border IP Stewardship',
+    vols: ['Vol. 0', 'Vol. 5'],
+    volTitles: ['Vol. 0: Flight Doctrine & Codex', 'Vol. 5: Dual-Jurisdiction & IP Governance'],
+    pilotPct: 85,
+    aiPct: 15,
+    pilotAuthority: '100% Sovereign Control — defines SOVEREIGNIZATION, CATALYZATION, SYNERGIZATION, trademark stewardship (SOVRÆG / ALCHEMOSAIC), Zero-PII wall, and non-monetary FLUX laws.',
+    aiRole: 'Compliance & Red-Team Auditor Agent — continuously checks specs and partner drafts against the Codex for nomenclature drift, PII leaks, or scope-of-practice violations.',
+    stack: ['Obsidian Constitutional Vault', 'CIPO / IP Vietnam Trademarks', 'VN-SafeOER Glass Box', 'LEF / LFDT Stewardship Path'],
+    guardrail: 'Immediate veto on any B2C classroom bloat, learner PII custody, speculative tokenomics, or custom client code forks.'
+  },
+  {
+    id: 'S4',
+    level: 'VSM SYSTEM 4',
+    cadence: 'WEEKLY ARCHITECTURE REVIEW · QUARTERLY RESET',
+    name: 'Intelligence & Strategic Architecture',
+    tagline: 'Horizon Scanning, Context-to-Code R&D & Multi-Domain Cartridge Selection',
+    vols: ['Vol. 1', 'Vol. 6'],
+    volTitles: ['Vol. 1: Sovereign Cockpit & AI Crew', 'Vol. 6: Quarterly Reset & Roadmap'],
+    pilotPct: 55,
+    aiPct: 45,
+    pilotAuthority: 'Chief Systems Architect — selects canonical Lego-brick stack, approves schemas/RFCs, runs the 80/20 Cartridge Gate on new domains, and directs Partner SME ingestion.',
+    aiRole: 'Systems Architect & Knowledge Librarian Agents — distill Zotero 10 research, draft RFCs/Mermaid specs, maintain Obsidian MOCs, and map SYNTHETARY ontologies.',
+    stack: ['Zotero 10', 'Obsidian Second Brain', 'LM Studio (MLX Local)', 'Frontier Reasoning Models', 'SME Ingestion Harness'],
+    guardrail: '48-Hour ADR Rule: time-box all architectural debates to 48 hours, log the ADR, and prove it via a working vertical slice.'
+  },
+  {
+    id: 'S3*',
+    level: 'VSM SYSTEM 3 / 3*',
+    cadence: 'DAILY DEEP-WORK BLOCKS · WEEKLY 30-MIN TELEMETRY',
+    name: 'Control, Telemetry & Audit',
+    tagline: 'WIP Caps, Quality Gates, Treasury Hygiene & Algedonic Incident Response',
+    vols: ['Vol. 5', 'Vol. 6', 'Vol. 7'],
+    volTitles: ['Vol. 5: Treasury & Compliance Audit', 'Vol. 6: Solo Cadence & WIP Limits', 'Vol. 7: Red-Tab Emergency Playbooks'],
+    pilotPct: 30,
+    aiPct: 70,
+    pilotAuthority: 'Flight Commander — enforces the Global Solo WIP Cap (max 1 active core release + max 1 active 3-week Atelier), signs off releases, and reviews cash/SYNTHCREDS telemetry.',
+    aiRole: 'CI/CD Automation, Red-Team QA & Telemetry Scripts — run deterministic tests, verify Glass-Box compliance manifests, monitor Uptime Kuma, and track voucher settlements.',
+    stack: ['Forgejo CI/CD', 'Wise Business / MoR', 'Uptime Kuma', 'Automated Schema Validators', 'Red-Tab Checklists 1–8'],
+    guardrail: 'Algedonic Halt: roll back to last clean Forgejo Git tag on AI drift; trigger 90-Day Domain Intake Freeze if switching >2 domains/week.'
+  },
+  {
+    id: 'S2',
+    level: 'VSM SYSTEM 2',
+    cadence: 'CONTINUOUS AUTOMATED SYNC & ASYNC BATCHES',
+    name: 'Coordination & Anti-Oscillation',
+    tagline: 'Shared Interop Protocols, Config-Not-Code Cartridges & Async Partner SLAs',
+    vols: ['Vol. 2', 'Vol. 4'],
+    volTitles: ['Vol. 2: Interop & Sync Standards', 'Vol. 4: Guild & Voucher Protocols'],
+    pilotPct: 15,
+    aiPct: 85,
+    pilotAuthority: 'Protocol Designer — defines immutable SYNCZINE manifests, Domain Cartridge adapters, UCAN offline entitlements, and asynchronous partner communication SLAs.',
+    aiRole: 'Packaging & Distribution Automation — mints wholesale bearer-voucher batches, computes manifest waterfall royalties, and runs zero-knowledge CRDT state relays.',
+    stack: ['Loro / Yjs CRDTs', 'W3C DIDs / VCs / UCAN', 'OntoLex-Lemon / CASE v1.1', 'Cloudflare Workers / R2', 'Domain Cartridge JSON'],
+    guardrail: 'Zero bespoke forks — all SOVRAEGENCY branding, taxonomy, and rubric customization happens strictly via declarative JSON/MDX.'
+  },
+  {
+    id: 'S1',
+    level: 'VSM SYSTEM 1',
+    cadence: 'DAILY FORGE SPRINTS · MAX 1–2 ATELIERS / QUARTER',
+    name: 'Operations — Foundry & Delivery',
+    tagline: 'Airframe Engineering, CODE+V Curriculum Forging & 3-Week B2B Ateliers',
+    vols: ['Vol. 2', 'Vol. 3', 'Vol. 4'],
+    volTitles: ['Vol. 2: Airframe Engineering', 'Vol. 3: CODE+V Curriculum Foundry', 'Vol. 4: 3-Week Atelier Sprints'],
+    pilotPct: 25,
+    aiPct: 75,
+    pilotAuthority: 'Lead Engineer & Atelier Principal — leads 3-week B2B Ateliers (ZTV + multi-domain), verifies SME pedagogy, and ships flagship SOVRAELEX/SOVRAEGIX & SYNCZINE releases.',
+    aiRole: 'Full-Stack Forge, Curriculum & Comms Agents — generate Rust/Tauri/React modules, draft CODE+V SYNCTESS exercises, synthesize Voicebox drills, and transcreate EN/VI partner docs.',
+    stack: ['Rust / Tauri v2 / Vite / React', 'PayloadCMS v3 / SurrealDB / SQLite', 'SOVRAELEX & SOVRAEGIX', 'SYNCZINES / SYNTHCREDS'],
+    guardrail: 'Partner Default Protocol: revoke SOVRAEGENCY guild key cleanly while learners retain 100% of local SOVRAEZINES & SYNTHCREDS vaults.'
+  }
+];
+
+const REDTABS = [
+  { id: 'RT-1', origin: 'Vol. 7 · S3*', title: 'Scope Creep / Perfectionism Spiral', steps: ['Freeze all new feature additions immediately', 'Strip back to smallest end-to-end vertical slice', 'Invoke Config-Not-Code boundary', 'Ship packaged artifact within 72 hours'] },
+  { id: 'RT-2', origin: 'Vol. 7 · S3*', title: 'AI Hallucination or Codebase Drift', steps: ['Halt AI code generation immediately', 'Revert repo to last clean Forgejo Git tag', 'Tighten TypeScript/Rust schema contract & prune prompt bloat', 'Run deterministic unit/integration tests before resuming'] },
+  { id: 'RT-3', origin: 'Vol. 7 · S1/S5', title: 'SOVRAEGENCY Partner Default / Dilution', steps: ['Issue formal contractual cure notice', 'Trigger performance-vested IP license reversion & revoke Guild key', 'Verify learners retain full local SOVRAEZINES & SYNTHCREDS intact'] },
+  { id: 'RT-4', origin: 'Vol. 7 · S2/S3*', title: 'Infrastructure, Device, or Key Incident', steps: ['Restore encrypted cold-storage backup (SanDisk SSD / Forgejo mirror)', 'Rotate compromised UCAN / DID signing keys', 'Redeploy Cloudflare edge workers via declarative config'] },
+  { id: 'RT-5', origin: 'Vol. 7 · S5', title: 'Content or Regulatory Flag (VN-SafeOER)', steps: ['Quarantine flagged module inside VN-SafeOER registry', 'Export immutable Glass-Box pre-vetting audit trail', 'Patch & re-verify cleanly without disrupting healthy nodes'] },
+  { id: 'RT-6', origin: 'App. A · S2', title: 'Multi-Domain Custom-Feature Creep Trap', steps: ['Invoke Config-Not-Code contract clause', 'Direct partner to external CRM/checkout via clean webhooks/URLs', 'Decline fork requests to protect single invariant Airframe'] },
+  { id: 'RT-7', origin: 'App. A · S5', title: 'Partner Safety, Clinical, or IP Violation', steps: ['Trigger immediate Glass-Box quarantine on cartridge', 'Suspend partner SYNTHCREDS issuer signing key', 'Issue 14-day remediation notice while preserving learner vaults'] },
+  { id: 'RT-8', origin: 'App. A · S3*', title: 'Multi-Domain Context-Switch Overload', steps: ['Audit VSM System 3 telemetry (>2 domains switched in 1 week)', 'Declare immediate 90-Day Domain Intake Freeze', 'Ship pending core SOVRAEGOS slice & automate top partner friction'] }
+];
+
+const DOMAINS = [
+  {
+    id: 'trades',
+    name: 'Vocational & Trade Craft',
+    tag: 'Trades & Restoration',
+    reuse: 85,
+    ventures: 'Classic motorcycle restoration (BMW boxer-twins, Cafe Racers), diagnostic technician training, artisan fabrication guilds.',
+    ontology: 'Modular task/tolerance trees, torque specifications & Concours d’Elegance inspection rubrics.',
+    media: 'Zoomable mechanical schematics, torque checklists & split-screen teardown steps.',
+    proof: 'Timestamped bench-test video + diagnostic log + verified shop checklist (CODE+V).',
+    cred: 'Master Technician / Trade Guild Co-Signed SYNTHCRED.',
+    track: 'Curriculum Foundry Atelier + Phygital Companion / Co-Venture Equity.',
+    firewall: 'Mechanical shop-floor safety disclaimer; local SOVRAEGENCY holds 100% physical supervision, insurance & fabrication.'
+  },
+  {
+    id: 'martial',
+    name: 'Martial & Somatic Lineage',
+    tag: 'Dojo & Healing',
+    reuse: 90,
+    ventures: 'Shotokan Karate kata lineages (Heian Shodan/Nidan, Bassai Dai), dojo certification, holistic healing & breathwork sanctuaries.',
+    ontology: 'Rank/kata Shu-Ha-Ri progression DAGs & somatic reflection protocols.',
+    media: 'Frame-by-frame biomechanical video loops & guided breathwork audio pacing.',
+    proof: 'Multi-angle kata execution reel + embodied CODE+V practice journal.',
+    cred: 'Sensei / Lineage Instructor Verification + Practice Provenance.',
+    track: 'Curriculum Foundry Atelier + Bulk Zero-PII Wholesale Vouchers.',
+    firewall: 'Non-clinical wellness & physical-training scope-of-practice firewall; zero medical/diagnostic claims.'
+  },
+  {
+    id: 'stem',
+    name: 'Academic STEM & Systems',
+    tag: 'University & OBE',
+    reuse: 92,
+    ventures: 'University math & statistics Obsidian vaults, OBE/CDIO engineering courseware, tourism & hospitality ESP.',
+    ontology: 'OBE / CDIO institutional outcome matrices & formal concept-dependency graphs.',
+    media: 'LaTeX derivation blocks, Mermaid knowledge maps & interactive computational sandboxes.',
+    proof: 'Worked derivation notebooks, interactive graph proofs & recorded oral defenses.',
+    cred: 'University Faculty Co-Issued Competency Badge (Open Badges 3.0).',
+    track: 'Institutional Pilot Atelier + Quarterly SYNTHETARY Graph Snapshots.',
+    firewall: 'Faculty retains academic grading authority & local campus data governance; zero student PII sent to Labs.'
+  },
+  {
+    id: 'publishing',
+    name: 'Sovereign Publishing',
+    tag: 'Living Media & Zines',
+    reuse: 88,
+    ventures: 'Interactive digital trade magazines, serialized living books, detective/escape-room puzzle zines, cultural archives.',
+    ontology: 'Editorial issue webs, cross-referenced concept indexes & archival provenance.',
+    media: 'Click-to-reveal investigative dossiers, interactive timelines, audio-text sync & puzzle nodes.',
+    proof: 'Reader-remixed annotations, solved case dossiers & peer-reviewed contributor dispatches.',
+    cred: 'Cryptographic Authorship, Edition Authenticity & Non-Monetary Commons FLUX.',
+    track: 'Sovereign Publishing Atelier + Manifest-Embedded Waterfall Royalties.',
+    firewall: 'Glass-Box third-party copyright clearance & contributor IP attribution logged before minting.'
+  },
+  {
+    id: 'venture',
+    name: 'Venture & Talent Incubation',
+    tag: 'BPaaS & Second Brain',
+    reuse: 86,
+    ventures: 'Second Brain / PKM onboarding (Ready Talent), university-to-industry applied apprenticeships, regional VAR studios.',
+    ontology: 'Role-readiness competency matrices & applied project deliverable milestone graphs.',
+    media: 'Interactive workflow canvases, ADR decision-log templates & audit scorecards.',
+    proof: 'Deployed real-world micro-projects, client audits & curated local Obsidian vaults.',
+    cred: 'Employer / Foundry Principal Outcome Endorsement.',
+    track: 'Foundry Co-Venture (10–20% Non-Monetary IP Equity + Performance Reversion Clause).',
+    firewall: 'Milestone-based service contracts; local operating partner owns client SLAs & domestic invoicing.'
+  }
+];
+
+const GATE_RULES = [
+  '80% Airframe Reuse Rule: ≥80% runs immediately on existing SOVRAELEX/SOVRAEGIX/SYNCZINE primitives via declarative config.',
+  'Rule of Two: Any new software capability requested generalizes into a reusable SYNCZ-SRLO block across ≥2 other domains.',
+  'Partner Distribution & SME Sovereignty: Partner already has domain credibility, SMEs, and an active learner/reader pipeline.',
+  'Zero-PII & Zero-Fulfillment Isolation: Partner handles all retail VND payments, physical goods, and student/customer support.',
+  'Global Solo WIP Cap Clear: Currently ≤1 active core Airframe release and 0 other active 3-Week Atelier Sprints.'
+];
+
+let state = {
+  mode: 'normal', // 'normal' | 'emergency' | 'multidomain'
+  layerIdx: 0,
+  selectedVol: null,
+  domainIdx: 0,
+  gateChecks: [true, true, true, true, true]
+};
+
+function setMode(mode) {
+  state.mode = mode;
+  render();
+}
+
+function step(delta) {
+  if (state.mode === 'multidomain') {
+    state.domainIdx = (state.domainIdx + delta + DOMAINS.length) % DOMAINS.length;
+  } else {
+    state.layerIdx = (state.layerIdx + delta + VSM_LAYERS.length) % VSM_LAYERS.length;
+    state.selectedVol = null;
+  }
+  render();
+}
+
+function selectLayer(idx) {
+  state.layerIdx = idx;
+  state.selectedVol = null;
+  if (state.mode === 'multidomain') state.mode = 'normal';
+  render();
+}
+
+function toggleVol(volKey) {
+  state.selectedVol = state.selectedVol === volKey ? null : volKey;
+  renderConsole();
+}
+
+function selectDomain(idx) {
+  state.domainIdx = idx;
+  renderConsole();
+}
+
+function toggleGateCheck(idx) {
+  state.gateChecks[idx] = !state.gateChecks[idx];
+  renderConsole();
+}
+
+function renderDiagram() {
+  const isEmergency = state.mode === 'emergency';
+  const vsmPanel = document.getElementById('vsmDiagramPanel');
+  vsmPanel.style.display = state.mode === 'multidomain' ? 'none' : 'block';
+
+  const stackEl = document.getElementById('vsmStack');
+  stackEl.innerHTML = VSM_LAYERS.map((l, idx) => {
+    const isAct = idx === state.layerIdx && !isEmergency;
+    const cls = isEmergency ? 'emergency-highlight' : (isAct ? 'active' : '');
+    const conduitAct = !isEmergency && (idx === state.layerIdx || idx + 1 === state.layerIdx);
+    return `
+      <div class="vsm-node ${cls}" onclick="selectLayer(${idx})" tabindex="0" role="button">
+        <div class="sys-badge">${l.id}</div>
+        <div class="vsm-info">
+          <h3>${l.name}</h3>
+          <div class="vsm-vols">${l.vols.join(' · ')}</div>
+        </div>
+        <div class="split-col">
+          <div class="split-labels">
+            <span>${l.pilotPct}% Pilot</span>
+            <span>${l.aiPct}% AI</span>
+          </div>
+          <div class="split-bar">
+            <div class="bar-pilot" style="width:${l.pilotPct}%"></div>
+            <div class="bar-ai" style="width:${l.aiPct}%"></div>
+          </div>
+        </div>
+      </div>
+      ${idx < VSM_LAYERS.length - 1 ? `<div class="conduit-row ${conduitAct ? 'active' : ''}"><span>↓</span><span>↑</span></div>` : ''}
+    `;
+  }).join('');
+
+  ['algMain', 'algBranch4', 'algBranch3', 'algBranch2'].forEach(id => {
+    document.getElementById(id).classList.toggle('active', isEmergency);
+  });
+  document.getElementById('algArrow').setAttribute('stroke', isEmergency ? 'var(--accent-red)' : 'var(--border-strong)');
+  document.getElementById('algTag').classList.toggle('active', isEmergency);
+}
+
+function renderConsole() {
+  const consoleEl = document.getElementById('detailConsole');
+
+  if (state.mode === 'normal') {
+    const l = VSM_LAYERS[state.layerIdx];
+    consoleEl.innerHTML = `
+      <div class="eyebrow">${l.level} · ${l.cadence}</div>
+      <h2 style="font-size:1.3rem;margin-top:3px;">${l.name}</h2>
+      <p style="font-size:0.85rem;color:var(--text-secondary);margin-top:2px;">${l.tagline}</p>
+
+      <div class="big-split-card">
+        <div class="big-split-head">
+          <span><strong>Human-Pilot Sovereign Control:</strong> ${l.pilotPct}%</span>
+          <span><strong>AI Flight Crew &amp; Automation:</strong> ${l.aiPct}%</span>
+        </div>
+        <div class="split-bar" style="height:10px;">
+          <div class="bar-pilot" style="width:${l.pilotPct}%"></div>
+          <div class="bar-ai" style="width:${l.aiPct}%"></div>
+        </div>
+      </div>
+
+      <div class="detail-two-col">
+        <div>
+          <div class="eyebrow">SOLO PILOT AUTHORITY (ROBERT)</div>
+          <p>${l.pilotAuthority}</p>
+        </div>
+        <div>
+          <div class="eyebrow">AI FLIGHT CREW ROLE</div>
+          <p>${l.aiRole}</p>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="eyebrow" style="margin-bottom:7px;">MAPPED HANDBOOK VOLUMES (CLICK TO INSPECT SCOPE)</div>
+        <div class="pill-group">
+          ${l.vols.map((vk, i) => `
+            <button class="chip chip-blue chip-clickable" onclick="toggleVol('${vk}')">${l.volTitles[i]}</button>
+          `).join('')}
+        </div>
+        ${state.selectedVol ? `<div class="vol-preview">${VOLUMES[state.selectedVol]}</div>` : ''}
+      </div>
+
+      <div class="sub-section">
+        <div class="eyebrow" style="margin-bottom:7px;">CORE STACK</div>
+        <div class="pill-group">
+          ${l.stack.map(st => `<span class="chip">${st}</span>`).join('')}
+        </div>
+      </div>
+
+      <div class="redtab-alert">
+        <div class="eyebrow">RED-TAB GUARDRAIL</div>
+        <p>${l.guardrail}</p>
+      </div>
+    `;
+  } else if (state.mode === 'emergency') {
+    consoleEl.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;">
+        <div>
+          <div class="eyebrow" style="color:var(--accent-red);">ALGEDONIC BYPASS ACTIVE · VOL. 7 + APPENDIX A</div>
+          <h2 style="font-size:1.22rem;margin-top:2px;">Red-Tab Emergency Checklists (Interactive Drill)</h2>
+        </div>
+        <span class="chip chip-red">8 Pre-Decided Failover Playbooks</span>
+      </div>
+      <div class="emergency-grid">
+        ${REDTABS.map(rt => `
+          <div class="rt-card">
+            <div class="eyebrow" style="color:var(--accent-red);">${rt.id} · ${rt.origin}</div>
+            <h4>${rt.title}</h4>
+            <ul class="rt-steps">
+              ${rt.steps.map(st => `
+                <li><label><input type="checkbox" /><span>${st}</span></label></li>
+              `).join('')}
+            </ul>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    const d = DOMAINS[state.domainIdx];
+    const passedAll = state.gateChecks.every(Boolean);
+    const passCount = state.gateChecks.filter(Boolean).length;
+    consoleEl.innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;">
+        <div>
+          <div class="eyebrow">APPENDIX A · ONE INVARIANT AIRFRAME, INFINITE SWAPPABLE PAYLOADS</div>
+          <h2 style="font-size:1.25rem;margin-top:2px;">Multi-Domain SOVRAEGENCY Cartridge Inspector</h2>
+        </div>
+        <span class="chip chip-emerald">Airframe Reuse: ${d.reuse}% (≥80% Gate)</span>
+      </div>
+
+      <div class="domain-tabs">
+        ${DOMAINS.map((dom, idx) => `
+          <button class="filter-pill ${idx === state.domainIdx ? 'active' : ''}" onclick="selectDomain(${idx})">${dom.tag} (${dom.reuse}%)</button>
+        `).join('')}
+      </div>
+
+      <div class="detail-two-col">
+        <div>
+          <div class="eyebrow">REPRESENTATIVE VENTURES</div>
+          <p>${d.ventures}</p>
+        </div>
+        <div>
+          <div class="eyebrow">ONTOLOGY SPINE ADAPTER</div>
+          <p>${d.ontology}</p>
+        </div>
+        <div>
+          <div class="eyebrow">INTERACTIVE MEDIA BLOCKS</div>
+          <p>${d.media}</p>
+        </div>
+        <div>
+          <div class="eyebrow">CODE+V SYNCTESS PROOF ARTIFACT</div>
+          <p>${d.proof}</p>
+        </div>
+        <div>
+          <div class="eyebrow">SYNTHCRED TRUST ANCHOR</div>
+          <p>${d.cred}</p>
+        </div>
+        <div>
+          <div class="eyebrow">ATELIER COMMERCIAL TRACK</div>
+          <p>${d.track}</p>
+        </div>
+      </div>
+
+      <div class="redtab-alert">
+        <div class="eyebrow">SAFETY, CLINICAL &amp; IP LIABILITY FIREWALL</div>
+        <p>${d.firewall}</p>
+      </div>
+
+      <div class="gate-checklist">
+        <div class="gate-check-head">
+          <div class="eyebrow">80/20 CARTRIDGE GATE QUALIFICATION SCORECARD (${passCount} / 5)</div>
+          <span class="chip ${passedAll ? 'chip-emerald' : 'chip-red'}">${passedAll ? 'GO FOR 3-WEEK ATELIER' : 'NO-GO / SCOPE RESET'}</span>
+        </div>
+        <div class="gate-checks">
+          ${GATE_RULES.map((rule, idx) => `
+            <label>
+              <input type="checkbox" ${state.gateChecks[idx] ? 'checked' : ''} onchange="toggleGateCheck(${idx})" />
+              <span>${rule}</span>
+            </label>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+  notifyHeight();
+}
+
+function render() {
+  document.getElementById('modeNormal').classList.toggle('active', state.mode === 'normal');
+  document.getElementById('modeEmergency').classList.toggle('active-danger', state.mode === 'emergency');
+  document.getElementById('modeMulti').classList.toggle('active', state.mode === 'multidomain');
+
+  const counter = document.getElementById('stepCounter');
+  if (state.mode === 'multidomain') {
+    counter.textContent = `${state.domainIdx + 1} / ${DOMAINS.length}`;
+  } else {
+    counter.textContent = `${state.layerIdx + 1} / ${VSM_LAYERS.length}`;
+  }
+
+  renderDiagram();
+  renderConsole();
+}
+
+function copyFlightBrief() {
+  let md = '';
+  if (state.mode === 'normal') {
+    const l = VSM_LAYERS[state.layerIdx];
+    md = `> [!NOTE] SOVRÆG LABS POH — ${l.level}: ${l.name}\n` +
+      `> - **Cadence:** ${l.cadence}\n` +
+      `> - **Delegation Split:** ${l.pilotPct}% Solo Pilot / ${l.aiPct}% AI Flight Crew\n` +
+      `> - **Pilot Authority:** ${l.pilotAuthority}\n` +
+      `> - **AI Flight Crew Role:** ${l.aiRole}\n` +
+      `> - **Mapped Volumes:** ${l.volTitles.join(', ')}\n` +
+      `> - **Red-Tab Guardrail:** ${l.guardrail}`;
+  } else if (state.mode === 'emergency') {
+    md = `> [!WARNING] SOVRÆG LABS Red-Tab Emergency Summary (Vol. 7 + App. A)\n` +
+      REDTABS.map(rt => `> - **${rt.id} (${rt.origin}) — ${rt.title}:** ${rt.steps.join(' → ')}`).join('\n');
+  } else {
+    const d = DOMAINS[state.domainIdx];
+    const passedAll = state.gateChecks.every(Boolean);
+    md = `> [!NOTE] Appendix A Cartridge — ${d.name} (Airframe Reuse: ${d.reuse}%)\n` +
+      `> - **Ontology Spine:** ${d.ontology}\n` +
+      `> - **CODE+V Proof:** ${d.proof}\n` +
+      `> - **SYNTHCRED Anchor:** ${d.cred}\n` +
+      `> - **Commercial Track:** ${d.track}\n` +
+      `> - **Liability Firewall:** ${d.firewall}\n` +
+      `> - **80/20 Gate Verdict:** ${passedAll ? 'GO FOR 3-WEEK ATELIER' : 'NO-GO / SCOPE RESET'}`;
+  }
+  copyText(md, 'Copied Obsidian flight brief to clipboard');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') step(1);
+  if (e.key === 'ArrowLeft') step(-1);
+});
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZERO TO VOICE · SOVRAEGIS Architecture Explorer</title>
+<style>
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  --scale: 1;
+  --radius-xl: 18px;
+  --radius-lg: 14px;
+  --radius-md: 10px;
+  --radius-pill: 999px;
+
+  /* Obsidian Dark Theme (Default) */
+  --bg-page: #0c0e12;
+  --bg-panel: #13161c;
+  --bg-card: #181c24;
+  --bg-card-hover: #1e232e;
+  --bg-inset: #101318;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --text-primary: #eef1f6;
+  --text-secondary: #a1aab8;
+  --text-muted: #6e7787;
+
+  --accent-blue: #60a5fa;
+  --accent-blue-bright: #93c5fd;
+  --accent-blue-bg: rgba(37, 99, 235, 0.24);
+  --accent-blue-bg-strong: rgba(30, 58, 138, 0.62);
+  --accent-blue-border: rgba(96, 165, 250, 0.78);
+  --accent-glow: 0 0 22px rgba(59, 130, 246, 0.24);
+
+  --accent-amber: #fbbf24;
+  --accent-amber-bg: rgba(245, 158, 11, 0.14);
+  --accent-amber-border: rgba(251, 191, 36, 0.45);
+
+  --accent-emerald: #34d399;
+  --accent-emerald-bg: rgba(16, 185, 129, 0.14);
+  --accent-emerald-border: rgba(52, 211, 153, 0.45);
+
+  --accent-red: #f87171;
+  --accent-red-text: #fecaca;
+  --accent-red-bg: rgba(127, 29, 29, 0.46);
+  --accent-red-border: rgba(248, 113, 113, 0.55);
+
+  --pilot-bar: #e5e9f0;
+  --ai-bar: #7cc4fa;
+  --shadow-card: 0 8px 28px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="parchment"] {
+  --bg-page: #f5efe2;
+  --bg-panel: #fbf7ee;
+  --bg-card: #f2ead9;
+  --bg-card-hover: #e9dec8;
+  --bg-inset: #ede4d1;
+  --border-subtle: rgba(74, 55, 32, 0.14);
+  --border-strong: rgba(74, 55, 32, 0.28);
+  --text-primary: #261e15;
+  --text-secondary: #564636;
+  --text-muted: #7c6a55;
+
+  --accent-blue: #1d4ed8;
+  --accent-blue-bright: #1e40af;
+  --accent-blue-bg: rgba(29, 78, 216, 0.10);
+  --accent-blue-bg-strong: rgba(29, 78, 216, 0.15);
+  --accent-blue-border: rgba(29, 78, 216, 0.72);
+  --accent-glow: 0 4px 16px rgba(29, 78, 216, 0.14);
+
+  --accent-amber: #b45309;
+  --accent-amber-bg: rgba(180, 83, 9, 0.10);
+  --accent-amber-border: rgba(180, 83, 9, 0.38);
+
+  --accent-emerald: #047857;
+  --accent-emerald-bg: rgba(4, 120, 87, 0.10);
+  --accent-emerald-border: rgba(4, 120, 87, 0.38);
+
+  --accent-red: #b91c1c;
+  --accent-red-text: #7f1d1d;
+  --accent-red-bg: rgba(185, 28, 28, 0.09);
+  --accent-red-border: rgba(185, 28, 28, 0.42);
+
+  --pilot-bar: #3d2e1e;
+  --ai-bar: #2563eb;
+  --shadow-card: 0 6px 20px rgba(68, 49, 25, 0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  font-size: calc(16px * var(--scale));
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 16px;
+  transition: background 0.22s ease, color 0.22s ease;
+}
+
+body.embed-mode {
+  padding: 8px;
+}
+
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.brand-block h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.brand-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--accent-blue);
+  box-shadow: 0 0 10px var(--accent-blue);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.brand-block p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.utility-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  font-size: 0.74rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.util-pill:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.font-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.font-control input[type="range"] {
+  width: 64px;
+  accent-color: var(--accent-blue);
+  cursor: pointer;
+}
+
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 16px;
+  box-shadow: var(--shadow-card);
+  transition: background 0.22s ease, border-color 0.22s ease;
+}
+
+.control-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px;
+  gap: 4px;
+}
+
+.seg-btn {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 7px 15px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.seg-btn:hover { color: var(--text-primary); }
+
+.seg-btn.active {
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.seg-btn.active-danger {
+  background: var(--accent-red-bg);
+  color: var(--accent-red-text);
+  border-color: var(--accent-red-border);
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.step-btn:hover {
+  border-color: var(--accent-blue-border);
+  background: var(--bg-card-hover);
+}
+
+.step-counter {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  transition: all 0.16s ease;
+}
+
+.chip-blue {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  color: var(--text-primary);
+}
+
+.chip-amber {
+  background: var(--accent-amber-bg);
+  border-color: var(--accent-amber-border);
+  color: var(--accent-amber);
+}
+
+.chip-emerald {
+  background: var(--accent-emerald-bg);
+  border-color: var(--accent-emerald-border);
+  color: var(--accent-emerald);
+}
+
+.chip-red {
+  background: var(--accent-red-bg);
+  border-color: var(--accent-red-border);
+  color: var(--accent-red-text);
+}
+
+.chip-clickable { cursor: pointer; }
+.chip-clickable:hover { transform: translateY(-1px); filter: brightness(1.1); }
+
+.toast {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--accent-emerald-border);
+  color: var(--text-primary);
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.22s ease;
+  z-index: 999;
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+
+.footer-note {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  padding: 2px 4px;
+}
+
+@media (max-width: 640px) {
+  body { padding: 10px; }
+  .panel { padding: 12px; }
+}
+
+
+.diagram-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gates-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  position: relative;
+}
+
+.gate-node {
+  position: relative;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 13px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 82px;
+}
+
+.gate-node:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-2px);
+}
+
+.gate-node.active {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.gate-node.dimmed {
+  opacity: 0.56;
+}
+
+.gate-phase {
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.gate-node.active .gate-phase {
+  color: var(--accent-blue-bright);
+}
+
+.gate-title {
+  font-size: 0.9rem;
+  font-weight: 650;
+  color: var(--text-primary);
+  line-height: 1.25;
+}
+
+.gate-arrow {
+  position: absolute;
+  right: -13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.bus-svg {
+  width: 100%;
+  height: 44px;
+  display: block;
+  overflow: visible;
+}
+
+.bus-line {
+  fill: none;
+  stroke: var(--border-strong);
+  stroke-width: 1.4;
+  stroke-dasharray: 3 4;
+  transition: stroke 0.25s ease, opacity 0.25s ease;
+}
+
+.bus-line.active {
+  stroke: var(--accent-blue);
+  stroke-width: 2;
+  stroke-dasharray: 5 4;
+  animation: dashFlow 1.4s linear infinite;
+}
+
+@keyframes dashFlow {
+  to { stroke-dashoffset: -18; }
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.stack-node {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 22px;
+  padding: 11px 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 64px;
+}
+
+.stack-node:hover {
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.stack-node.active {
+  background: var(--accent-blue-bg-strong);
+  border-color: var(--accent-blue-border);
+  box-shadow: var(--accent-glow);
+}
+
+.stack-node.selected-primary {
+  border-width: 2px;
+  box-shadow: 0 0 0 2px var(--accent-blue-bg), var(--accent-glow);
+}
+
+.stack-node.dimmed {
+  opacity: 0.54;
+}
+
+.stack-name {
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+
+.stack-role {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.stack-node.active .stack-role {
+  color: var(--accent-blue-bright);
+}
+
+.runtime-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 10px;
+  margin-top: 4px;
+  border-top: 1px dashed var(--border-subtle);
+  align-items: center;
+}
+
+.detail-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.detail-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 22px;
+}
+
+.detail-cell {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.detail-cell p {
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-top: 5px;
+}
+
+.codev-box {
+  margin-top: 14px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.codev-stages {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.codev-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 6px 7px;
+  text-align: center;
+  font-size: 0.7rem;
+}
+
+.codev-pill strong {
+  display: block;
+  font-family: var(--font-mono);
+  color: var(--accent-blue);
+  font-size: 0.66rem;
+  margin-bottom: 2px;
+}
+
+.codev-pill span {
+  color: var(--text-secondary);
+  line-height: 1.25;
+  display: block;
+}
+
+.b2b-box {
+  margin-top: 12px;
+  background: var(--accent-emerald-bg);
+  border: 1px solid var(--accent-emerald-border);
+  border-radius: var(--radius-md);
+  padding: 10px 13px;
+  font-size: 0.82rem;
+}
+
+.b2b-box .eyebrow {
+  color: var(--accent-emerald);
+  margin-bottom: 3px;
+}
+
+.active-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+@media (max-width: 760px) {
+  .gates-row, .stack-grid { grid-template-columns: repeat(2, 1fr); }
+  .gate-arrow, .bus-svg { display: none; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .codev-stages { grid-template-columns: repeat(3, 1fr); }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="topbar">
+    <div class="brand-block">
+      <h1><span class="brand-dot"></span>ZERO TO VOICE · Architecture Explorer</h1>
+      <p>Step through the four sovereign velocity gates or inspect each layer of the SOVRAEGIS ecosystem stack.</p>
+    </div>
+    <div class="utility-bar">
+      <div class="font-control" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontScaleSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" oninput="setFontScale(this.value)" />
+        <span>A+</span>
+      </div>
+      <button id="themeBtn" class="util-pill" onclick="toggleTheme()">☀ Parchment Light</button>
+      <button class="util-pill" onclick="copyMarkdownSnapshot()">⧉ Copy MD</button>
+    </div>
+  </header>
+
+  <section class="panel control-strip">
+    <div class="segmented" role="tablist">
+      <button id="modeVelocity" class="seg-btn active" onclick="setMode('velocity')">Velocity Path View</button>
+      <button id="modeStack" class="seg-btn" onclick="setMode('stack')">Ecosystem Stack View</button>
+    </div>
+    <div class="stepper">
+      <button class="step-btn" onclick="step(-1)">← Prev</button>
+      <span id="stepCounter" class="step-counter">1 / 4</span>
+      <button class="step-btn" onclick="step(1)">Next →</button>
+    </div>
+  </section>
+
+  <section class="panel diagram-wrap">
+    <div>
+      <div class="section-label">
+        <span>LEARNER VELOCITY PIPELINE (GATES 0–3)</span>
+        <span id="pipelineHint">Click any gate to trace active stack layers</span>
+      </div>
+      <div id="gatesRow" class="gates-row"></div>
+    </div>
+
+    <svg id="busSvg" class="bus-svg" viewBox="0 0 800 44" preserveAspectRatio="none" aria-hidden="true"></svg>
+
+    <div>
+      <div class="section-label">
+        <span>SOVRAEGIS ECOSYSTEM STACK</span>
+        <span>Click any component to inspect its mandate</span>
+      </div>
+      <div id="stackGrid" class="stack-grid"></div>
+    </div>
+
+    <div class="runtime-strip">
+      <span class="eyebrow">RUNTIME &amp; B2B RAIL:</span>
+      <span class="chip">SOVRAELEX · Learner Player</span>
+      <span class="chip">SOVRAEGIX · Facilitator Cockpit</span>
+      <span class="chip">SYNTHETARY · GSE Knowledge Graph</span>
+      <span class="chip chip-emerald">Zero-PII Bearer Vouchers</span>
+    </div>
+  </section>
+
+  <section id="detailPanel" class="panel"></section>
+
+  <footer class="footer-note">
+    <span>SOVRÆG LABS · ANVILOCITY LEARNING · ALCHEMOSAIC OPEN LEARNING COMMONS</span>
+    <span>Keys: ← / → to step · Supports ?theme=parchment &amp; ?embed=1</span>
+  </footer>
+</div>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+
+(function initEnv() {
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const savedTheme = localStorage.getItem('sovraeg_theme');
+  const theme = urlTheme || savedTheme || 'dark';
+  if (theme === 'parchment' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+  }
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
+  const savedScale = localStorage.getItem('sovraeg_scale');
+  if (savedScale) {
+    document.documentElement.style.setProperty('--scale', savedScale);
+    const slider = document.getElementById('fontScaleSlider');
+    if (slider) slider.value = savedScale;
+  }
+})();
+
+function toggleTheme() {
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  if (isParchment) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sovraeg_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+    localStorage.setItem('sovraeg_theme', 'parchment');
+  }
+  updateThemeButton();
+  notifyHeight();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  btn.textContent = isParchment ? '☾ Obsidian Dark' : '☀ Parchment Light';
+}
+
+function setFontScale(val) {
+  document.documentElement.style.setProperty('--scale', val);
+  localStorage.setItem('sovraeg_scale', val);
+  notifyHeight();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast(msg);
+}
+
+function notifyHeight() {
+  try {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'sovraeg-resize', height: h, source: document.title }, '*');
+  } catch (e) {}
+}
+
+window.addEventListener('load', () => { updateThemeButton(); notifyHeight(); });
+window.addEventListener('resize', notifyHeight);
+
+
+const GATES = [
+  {
+    id: 'gate-0',
+    shortPhase: 'Gate 0 · W1–2',
+    phase: 'Gate 0 · Weeks 1–2',
+    title: 'Break the Mute',
+    pillar: 'CATALYZATION · Acoustic Rewiring',
+    vietnamBottleneck: 'Tonal-to-stress-timed gap, dropped final consonants (-s, -ed, -st, -kt), and conditioned error paralysis (sợ sai).',
+    coreMechanism: 'Acoustic-first reprogramming, visual prosody shadowing, and high-volume private voice-AI reps before high-stakes rooms.',
+    exitProof: 'Shadow a 60-second natural-speed SYNCZINE clip with clear stress-timing, final consonant clarity, and intelligibility.',
+    conventionalComparison: 'Centers defer real speaking for months while drilling written grammar tables and childish dialogues.',
+    activeStack: ['sovraeg-labs', 'synczines', 'syncz'],
+    b2bRole: 'Delivered via free Reverse-Marketing Gate 0 Diagnostic SYNCZINE in SOVRAELEX; warms high-intent adults for local SOVRAEGENCY cohorts.',
+    codev: [
+      ['Curate', 'Select natural-speed L1 friction clips'],
+      ['Organize', 'Map dropped endings & stress peaks'],
+      ['Distill', 'Isolate prosody contours & schwa'],
+      ['Express', 'Private voice-AI shadowing reps'],
+      ['Verify', 'Automated acoustic latency check'],
+      ['Validate', '60s intelligible shadowing clip']
+    ]
+  },
+  {
+    id: 'gate-1',
+    shortPhase: 'Gate 1 · W3–6',
+    phase: 'Gate 1 · Weeks 3–6',
+    title: 'Functional Engine',
+    pillar: 'CATALYZATION · High-Frequency Chunks',
+    vietnamBottleneck: 'Memorizing isolated vocabulary lists and abstract tense rules without real-time spoken recall.',
+    coreMechanism: 'ANVILOCITY timed vocal sprints forging the top 1,500 core lemmas and 150 spoken frames into interlocking chunks via SYNCTESS.',
+    exitProof: 'Deliver a 3-minute unscripted spoken monologue on real work/life with under 3-second pause latency and zero Vietnamese fallback.',
+    conventionalComparison: 'Multi-semester textbook ladders (Starter to Pre-Int B) testing passive multiple-choice recognition.',
+    activeStack: ['anvilocity', 'synctess', 'sovraeg-labs'],
+    b2bRole: 'SOVRAEGENCY facilitators monitor chunk latency inside SOVRAEGIX and spend live class time strictly on oral coaching.',
+    codev: [
+      ['Curate', 'Top 1,500 adult lemmas + 150 frames'],
+      ['Organize', 'Cluster chunks by adult work intents'],
+      ['Distill', 'Strip 80% low-utility grammar trivia'],
+      ['Express', 'Sub-3s timed ANVILOCITY sprints'],
+      ['Verify', 'SYNCTESS active-recall micro-drills'],
+      ['Validate', '3-min unscripted audio SYNCTESS']
+    ]
+  },
+  {
+    id: 'gate-2',
+    shortPhase: 'Gate 2 · M2–4',
+    phase: 'Gate 2 · Months 2–4',
+    title: 'Contextual Velocity',
+    pillar: 'SYNERGIZATION · Living Domain Input',
+    vietnamBottleneck: 'Word-by-word mental translation from Vietnamese and collapsing when hearing natural-speed diverse accents.',
+    coreMechanism: 'Multimodal immersion via domain-matched SYNCZINES (tech, business, hospitality), ALCHEMOSAIC remixing, and rapid peer SYNCZ.',
+    exitProof: 'Absorb an unfamiliar 10-minute native briefing at 1.0x–1.2x speed and deliver a crisp 2-minute spoken synthesis plus live Q&A.',
+    conventionalComparison: 'Sterile scripted dialogues with slow studio British/American recordings detached from adult work.',
+    activeStack: ['synczines', 'alchemosaic', 'syncz', 'synctess'],
+    b2bRole: 'Bespoke vertical SYNCZINES co-forged in 3-Week SOVRAEGENCY ATELIERS calibrated to SYNTHETARY (GSE/sub-GSE) & OBE outcomes.',
+    codev: [
+      ['Curate', 'Domain SYNCZINES from ALCHEMOSAIC'],
+      ['Organize', 'Build personal idiom & tone mosaic'],
+      ['Distill', 'Extract pragmatic nuance & pushback'],
+      ['Express', 'Live & async peer SYNCZ sparring'],
+      ['Verify', 'Cross-accent comprehension drills'],
+      ['Validate', '2-min live synthesis + Q&A proof']
+    ]
+  },
+  {
+    id: 'gate-3',
+    shortPhase: 'Gate 3 · M4–6+',
+    phase: 'Gate 3 · Months 4–6+',
+    title: 'Sovereign Voice',
+    pillar: 'SOVEREIGNIZATION · Proof & Exit Velocity',
+    vietnamBottleneck: 'Memorized IELTS Part 2 templates that shatter during real negotiations, client pushback, or domain debates.',
+    coreMechanism: 'High-friction live crucibles, public employer-legible SYNTHCREDS dossiers, and authoring back into the ALCHEMOSAIC Commons.',
+    exitProof: 'Cryptographically verifiable SYNTHCRED proof-of-voice portfolio (W3C VC / OB 3.0) + published Commons artifact.',
+    conventionalComparison: 'Expiring 24-month test certificates that mask speaking weakness and lock records inside a center LMS.',
+    activeStack: ['syncz', 'synthcreds', 'alchemosaic', 'sovraegis'],
+    b2bRole: 'Graduates earn portable SOVRAEPASS credentials trusted by HR & corporate bounty sponsors; top alumni enter Guild peer networks.',
+    codev: [
+      ['Curate', 'Real negotiation & domain briefs'],
+      ['Organize', 'Structure persuasive argument frames'],
+      ['Distill', 'Sharpen humor, nuance & authority'],
+      ['Express', 'Live crucible debate & facilitation'],
+      ['Verify', 'Acoustic rubric + Guild assessor QA'],
+      ['Validate', 'Signed SYNTHCRED + Commons publish']
+    ]
+  }
+];
+
+const STACK = [
+  {
+    id: 'sovraegis',
+    name: 'Sovraegis',
+    shortRole: 'Doctrine & Governance',
+    layer: 'Philosophy & Constitutional Layer (VSM System 5)',
+    mandate: 'Establishes the Sovereign Learner doctrine: exit velocity over seat-time, adult dignity, zero credential theater, Zero-PII isolation, and learner-owned local-first vaults.',
+    primitives: 'SOVEREIGNIZATION · CATALYZATION · SYNERGIZATION · VN-SafeOER Glass Box · Non-monetary FLUX governance',
+    b2bBoundary: 'Protects ecosystem integrity across all SOVRAEGENCIES; enforces Config-Not-Code and learner data sovereignty.',
+    gates: ['gate-3']
+  },
+  {
+    id: 'sovraeg-labs',
+    name: 'Sovraeg Labs',
+    shortRole: 'R&D & Tooling Foundry',
+    layer: 'Solodev Infrastructure & AI Foundry',
+    mandate: 'Architects and ships the core open-protocol airframe: SOVRAELEX (learner player), SOVRAEGIX (facilitator cockpit), SYNTHETARY (GSE knowledge graph), and local voice-AI drills.',
+    primitives: 'Rust · Tauri v2 · Vite/React · WASM · SQLite · Loro/Yjs CRDTs · PayloadCMS v3 · SurrealDB · Cloudflare Edge',
+    b2bBoundary: 'Strictly B2B foundry; zero classroom staffing, zero B2C tuition chasing, zero student PII custody.',
+    gates: ['gate-0', 'gate-1']
+  },
+  {
+    id: 'anvilocity',
+    name: 'Anvilocity',
+    shortRole: 'Velocity Pedagogy',
+    layer: 'Pedagogical Engine (Anvil + Velocity)',
+    mandate: 'Combines high-intensity deliberate practice ("the anvil" — productive friction, active recall, sub-3s output) with directional speed ("velocity" — pruning low-utility grammar trivia).',
+    primitives: '4-Gate Output Progression · Acoustic-First Sequencing · Timed Vocal Sprints · ANVILOCITY Architect Guild Certification',
+    b2bBoundary: 'Licensed to certified SOVRAEGENCIES and adapted to partner verticals during 3-Week Atelier Blueprint Sprints.',
+    gates: ['gate-1']
+  },
+  {
+    id: 'alchemosaic',
+    name: 'Alchemosaic',
+    shortRole: 'Open Commons',
+    layer: 'Open Learning Commons Substrate',
+    mandate: 'Modular, community-curated repository of comprehensible adult inputs, Vietnamese-to-English cultural bridges, and remixable pathways — never paywalled behind franchise walls.',
+    primitives: 'Open Educational Resources · Atelier-to-Commons Upstream Royalties · Non-monetary FLUX Reputation · LFDT/LEF Stewardship Path',
+    b2bBoundary: 'Feeds free Gate 0 diagnostics for reverse-marketing and collects generalized modules after partner exclusivity windows.',
+    gates: ['gate-2', 'gate-3']
+  },
+  {
+    id: 'synczines',
+    name: 'Synczines',
+    shortRole: 'Interactive Path Containers',
+    layer: 'Dynamic Learning Path Media Container',
+    mandate: 'Composable, decentralized, media-rich digital learning path containers (never paper-folded printouts) pairing natural-speed synced audio, visual prosody cues, and interactive drills.',
+    primitives: 'MDX · Puck Editor · React Flow · Offline-Ready Local Playback · Declarative Domain Cartridges · Manifest Attribution Splits',
+    b2bBoundary: 'Co-forged in 3-Week SOVRAEGENCY ATELIERS and unlocked via anonymous Zero-PII wholesale bearer vouchers.',
+    gates: ['gate-0', 'gate-2']
+  },
+  {
+    id: 'synctess',
+    name: 'Synctess',
+    shortRole: 'CODE+V Mastery Proofs',
+    layer: 'Tangible Evidence of Sovereign Success',
+    mandate: 'Heptahexagonal structured pedagogical constructs executing the 6-stage CODE+V loop (Curate, Organize, Distill, Express, Verify, Validate) to bind input into verifiable output.',
+    primitives: 'CODE+V Framework · Signed xAPI / IEEE 9274.1.1-2023 Provenance · Active Recall Rubrics · Local SOVRAEZINE Vaults',
+    b2bBoundary: 'Automates 85% of formative verification so SOVRAEGENCY instructors focus purely on high-leverage human feedback.',
+    gates: ['gate-1', 'gate-2']
+  },
+  {
+    id: 'syncz',
+    name: 'Syncz',
+    shortRole: 'SRLO & Vocal Arena',
+    layer: 'Modular Action Units & Live/Async Vocal Arena',
+    mandate: 'Combines SYNCZ-SRLO (universal resilient bite-sized learning objects) with high-frequency vocal loops—shadowing rooms, async voice drops, and live peer debates.',
+    primitives: 'SYNCZ-SRLO Wrappers · Zero-Shame AI Reps + High-Stakes Human Sparring · Cross-Accent Listening Crucibles',
+    b2bBoundary: 'Local SOVRAEGENCIES monetize live human SYNCZ facilitation while SOVRAEG LABS provides reusable SRLO blocks.',
+    gates: ['gate-0', 'gate-2', 'gate-3']
+  },
+  {
+    id: 'synthcreds',
+    name: 'SynthCreds',
+    shortRole: 'Proof-of-Voice VCs',
+    layer: 'Cryptographic Trust & Proof-of-Voice Layer',
+    mandate: 'Portable, employer-legible W3C Verifiable Credentials & Open Badges 3.0 backed by unedited audio/video performance reels — replacing expiring exam theater.',
+    primitives: 'W3C DIDs / VCs · Open Badges 3.0 · SOVRAEPASS (LearnCard Fork) · UCAN Capabilities · HR Batch Verification API',
+    b2bBoundary: 'High-margin protocol issuance/verification rail and cryptographic oracle for sponsor-funded Corporate Outcome Bounties.',
+    gates: ['gate-3']
+  }
+];
+
+let state = {
+  mode: 'velocity', // 'velocity' | 'stack'
+  gateIdx: 0,
+  stackIdx: 0
+};
+
+function setMode(mode) {
+  state.mode = mode;
+  render();
+}
+
+function step(delta) {
+  if (state.mode === 'velocity') {
+    state.gateIdx = (state.gateIdx + delta + GATES.length) % GATES.length;
+  } else {
+    state.stackIdx = (state.stackIdx + delta + STACK.length) % STACK.length;
+  }
+  render();
+}
+
+function selectGate(idx) {
+  state.mode = 'velocity';
+  state.gateIdx = idx;
+  render();
+}
+
+function selectStack(idx) {
+  state.mode = 'stack';
+  state.stackIdx = idx;
+  render();
+}
+
+function selectStackById(id) {
+  const idx = STACK.findIndex(s => s.id === id);
+  if (idx >= 0) selectStack(idx);
+}
+
+function selectGateById(id) {
+  const idx = GATES.findIndex(g => g.id === id);
+  if (idx >= 0) selectGate(idx);
+}
+
+function renderBusSvg(activeGateIndices, activeStackIndices) {
+  const svg = document.getElementById('busSvg');
+  const gateXs = [100, 300, 500, 700];
+  const colXs = [100, 300, 500, 700];
+  const activeCols = new Set(activeStackIndices.map(i => i % 4));
+  let paths = '';
+
+  // Top stems from gates to bus line y=20
+  gateXs.forEach((x, idx) => {
+    const isAct = activeGateIndices.includes(idx);
+    paths += `<path class="bus-line ${isAct ? 'active' : ''}" d="M ${x} 0 L ${x} 20" />`;
+  });
+
+  // Horizontal bus spanning active range or full subtle backbone
+  paths += `<path class="bus-line" d="M 100 20 L 700 20" />`;
+  if (activeGateIndices.length && activeCols.size) {
+    const allX = [...activeGateIndices.map(i => gateXs[i]), ...[...activeCols].map(c => colXs[c])];
+    const minX = Math.min(...allX);
+    const maxX = Math.max(...allX);
+    paths += `<path class="bus-line active" d="M ${minX} 20 L ${maxX} 20" />`;
+  }
+
+  // Downward drops to ecosystem stack columns
+  colXs.forEach((x, colIdx) => {
+    const isAct = activeCols.has(colIdx);
+    paths += `<path class="bus-line ${isAct ? 'active' : ''}" d="M ${x} 20 L ${x} 41" />`;
+    const color = isAct ? 'var(--accent-blue)' : 'var(--border-strong)';
+    paths += `<polyline points="${x-5},35 ${x},42 ${x+5},35" fill="none" stroke="${color}" stroke-width="${isAct ? 2 : 1.3}" stroke-linecap="round" stroke-linejoin="round" />`;
+  });
+
+  svg.innerHTML = paths;
+}
+
+function render() {
+  document.getElementById('modeVelocity').classList.toggle('active', state.mode === 'velocity');
+  document.getElementById('modeStack').classList.toggle('active', state.mode === 'stack');
+
+  const counter = document.getElementById('stepCounter');
+  const hint = document.getElementById('pipelineHint');
+
+  let activeGateIndices = [];
+  let activeStackIndices = [];
+
+  if (state.mode === 'velocity') {
+    const gate = GATES[state.gateIdx];
+    counter.textContent = `${state.gateIdx + 1} / ${GATES.length}`;
+    hint.textContent = 'Active Gate illuminates triggered SOVRAEGIS stack layers';
+    activeGateIndices = [state.gateIdx];
+    activeStackIndices = gate.activeStack.map(id => STACK.findIndex(s => s.id === id)).filter(i => i >= 0);
+  } else {
+    const comp = STACK[state.stackIdx];
+    counter.textContent = `${state.stackIdx + 1} / ${STACK.length}`;
+    hint.textContent = 'Selected Stack component highlights every Gate where it fires';
+    activeStackIndices = [state.stackIdx];
+    activeGateIndices = comp.gates.map(id => GATES.findIndex(g => g.id === id)).filter(i => i >= 0);
+  }
+
+  // Render Gates
+  const gatesRow = document.getElementById('gatesRow');
+  gatesRow.innerHTML = GATES.map((g, idx) => {
+    const isActive = activeGateIndices.includes(idx);
+    const dimmed = !isActive;
+    return `
+      <div class="gate-node ${isActive ? 'active' : 'dimmed'}" onclick="selectGate(${idx})" tabindex="0" role="button">
+        <div class="gate-phase">${g.shortPhase}</div>
+        <div class="gate-title">${g.title}</div>
+        ${idx < GATES.length - 1 ? '<span class="gate-arrow">⋯→</span>' : ''}
+      </div>
+    `;
+  }).join('');
+
+  // Render Bus
+  renderBusSvg(activeGateIndices, activeStackIndices);
+
+  // Render Stack
+  const stackGrid = document.getElementById('stackGrid');
+  stackGrid.innerHTML = STACK.map((s, idx) => {
+    const isActive = activeStackIndices.includes(idx);
+    const isPrimary = state.mode === 'stack' && idx === state.stackIdx;
+    return `
+      <div class="stack-node ${isActive ? 'active' : 'dimmed'} ${isPrimary ? 'selected-primary' : ''}" onclick="selectStack(${idx})" tabindex="0" role="button">
+        <div class="stack-name">${s.name}</div>
+        <div class="stack-role">${s.shortRole}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Render Detail Panel
+  const detail = document.getElementById('detailPanel');
+  if (state.mode === 'velocity') {
+    const g = GATES[state.gateIdx];
+    detail.innerHTML = `
+      <div class="detail-header">
+        <div>
+          <div class="eyebrow">${g.phase}</div>
+          <h2 class="detail-title">${g.title}</h2>
+        </div>
+        <span class="chip chip-amber">${g.pillar}</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-cell">
+          <div class="eyebrow">VIETNAM EFL BOTTLENECK</div>
+          <p>${g.vietnamBottleneck}</p>
+        </div>
+        <div class="detail-cell">
+          <div class="eyebrow">CORE MECHANISM</div>
+          <p>${g.coreMechanism}</p>
+        </div>
+        <div class="detail-cell">
+          <div class="eyebrow">EXIT PROOF (NON-NEGOTIABLE)</div>
+          <p>${g.exitProof}</p>
+        </div>
+        <div class="detail-cell">
+          <div class="eyebrow">DISRUPTED CONVENTIONAL EFL</div>
+          <p>${g.conventionalComparison}</p>
+        </div>
+      </div>
+      <div class="codev-box">
+        <div class="eyebrow">SYNCTESS · CODE+V FORGE LOOP AT THIS GATE</div>
+        <div class="codev-stages">
+          ${g.codev.map(([stage, desc]) => `
+            <div class="codev-pill">
+              <strong>${stage}</strong>
+              <span>${desc}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="b2b-box">
+        <div class="eyebrow">B2B SOVRAEGENCY &amp; ATELIER DELIVERY</div>
+        <div>${g.b2bRole}</div>
+      </div>
+      <div class="active-chips-row">
+        <span class="eyebrow">ACTIVE STACK (CLICK TO INSPECT):</span>
+        ${g.activeStack.map(id => {
+          const comp = STACK.find(s => s.id === id);
+          return `<button class="chip chip-blue chip-clickable" onclick="selectStackById('${id}')">${comp.name}</button>`;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    const s = STACK[state.stackIdx];
+    detail.innerHTML = `
+      <div class="detail-header">
+        <div>
+          <div class="eyebrow">${s.layer}</div>
+          <h2 class="detail-title">${s.name} — ${s.shortRole}</h2>
+        </div>
+        <span class="chip chip-blue">SOVRAEGOS Layer</span>
+      </div>
+      <div class="detail-grid">
+        <div class="detail-cell">
+          <div class="eyebrow">NON-REDUNDANT MANDATE</div>
+          <p>${s.mandate}</p>
+        </div>
+        <div class="detail-cell">
+          <div class="eyebrow">TECHNICAL &amp; PEDAGOGICAL PRIMITIVES</div>
+          <p>${s.primitives}</p>
+        </div>
+      </div>
+      <div class="b2b-box">
+        <div class="eyebrow">SOLODEV &amp; B2B SOVRAEGENCY BOUNDARY</div>
+        <div>${s.b2bBoundary}</div>
+      </div>
+      <div class="active-chips-row">
+        <span class="eyebrow">FIRES AT VELOCITY GATES (CLICK TO TRACE):</span>
+        ${s.gates.map(gid => {
+          const g = GATES.find(x => x.id === gid);
+          return `<button class="chip chip-blue chip-clickable" onclick="selectGateById('${gid}')">${g.shortPhase} · ${g.title}</button>`;
+        }).join('')}
+      </div>
+    `;
+  }
+  notifyHeight();
+}
+
+function copyMarkdownSnapshot() {
+  let md = '';
+  if (state.mode === 'velocity') {
+    const g = GATES[state.gateIdx];
+    md = `> [!NOTE] ZERO TO VOICE — ${g.phase}: ${g.title}\n` +
+      `> - **Pillar:** ${g.pillar}\n` +
+      `> - **Vietnam EFL Bottleneck:** ${g.vietnamBottleneck}\n` +
+      `> - **Core Mechanism:** ${g.coreMechanism}\n` +
+      `> - **Exit Proof:** ${g.exitProof}\n` +
+      `> - **Disrupted Conventional EFL:** ${g.conventionalComparison}\n` +
+      `> - **Active Stack:** ${g.activeStack.map(id => STACK.find(s => s.id === id).name).join(', ')}\n` +
+      `> - **B2B SOVRAEGENCY Delivery:** ${g.b2bRole}`;
+  } else {
+    const s = STACK[state.stackIdx];
+    md = `> [!NOTE] SOVRAEGIS Stack — ${s.name} (${s.shortRole})\n` +
+      `> - **Layer:** ${s.layer}\n` +
+      `> - **Mandate:** ${s.mandate}\n` +
+      `> - **Primitives:** ${s.primitives}\n` +
+      `> - **B2B Solodev Boundary:** ${s.b2bBoundary}\n` +
+      `> - **Active Gates:** ${s.gates.map(gid => GATES.find(g => g.id === gid).title).join(', ')}`;
+  }
+  copyText(md, 'Copied Obsidian callout to clipboard');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') step(1);
+  if (e.key === 'ArrowLeft') step(-1);
+});
+
+render();
+</script>
+</body>
+</html>
