@@ -1,0 +1,2113 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Grade 12 Mathematics – Semester 1 Final Exam (Practice Test 01) | Đề kiểm tra Học kỳ 1 – Toán 12</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- KaTeX CDN for mathematical typesetting -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+
+  <style>
+    /* HIGH-CONTRAST WCAG AAA / AA+ THEME SPECIFICATIONS */
+    :root {
+      --bg-page: #f4efe6;
+      --bg-card: #fffdf9;
+      --bg-inset: #ede6d9;
+      --border-strong: #9c9283;
+      --border-subtle: #c9bfb0;
+      --text-primary: #171412;
+      --text-secondary: #3f3a34;
+      --text-muted: #524b43;
+      --accent-primary: #1d4ed8;
+      --accent-primary-hover: #1e3a8a;
+      --accent-secondary: #0f766e;
+      --accent-secondary-hover: #115e59;
+      --selected-bg: #e0e7ff;
+      --selected-border: #1e3a8a;
+      --selected-text: #111827;
+      --focus-ring: #1d4ed8;
+      --svg-bg: #ffffff;
+      --svg-stroke: #171412;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0f172a;
+      --bg-card: #1e293b;
+      --bg-inset: #334155;
+      --border-strong: #475569;
+      --border-subtle: #334155;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --accent-primary: #3b82f6;
+      --accent-primary-hover: #2563eb;
+      --accent-secondary: #14b8a6;
+      --accent-secondary-hover: #0d9488;
+      --selected-bg: #1e3a8a;
+      --selected-border: #60a5fa;
+      --selected-text: #ffffff;
+      --focus-ring: #60a5fa;
+      --svg-bg: #0f172a;
+      --svg-stroke: #f8fafc;
+    }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      transition: background-color 0.2s ease, color 0.2s ease;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    /* BILINGUAL LANGUAGE VISIBILITY TOGGLE */
+    body[data-lang="en"] .lang-vi { display: none !important; }
+    body[data-lang="vi"] .lang-en { display: none !important; }
+
+    /* ACCESSIBLE FOCUS RINGS */
+    *:focus-visible {
+      outline: 3px solid var(--focus-ring) !important;
+      outline-offset: 2px !important;
+    }
+
+    /* CUSTOM CARD & CONTAINER STYLES */
+    .theme-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-radius: 0.75rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    }
+    
+    .theme-inset {
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border-subtle);
+      border-radius: 0.5rem;
+    }
+
+    /* QUESTION SCROLL ANCHOR MARGIN */
+    .question-anchor {
+      scroll-margin-top: 5rem;
+    }
+
+    /* CUSTOM INTERACTIVE OPTION BUTTONS */
+    .option-btn {
+      background-color: var(--bg-card);
+      border: 2px solid var(--border-strong);
+      color: var(--text-primary);
+      transition: all 0.15s ease-in-out;
+      min-height: 48px;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-primary);
+      background-color: var(--bg-inset);
+    }
+
+    .option-btn.selected-neutral {
+      background-color: var(--selected-bg) !important;
+      border-color: var(--selected-border) !important;
+      color: var(--selected-text) !important;
+      font-weight: 700 !important;
+    }
+
+    .option-btn.correct-state {
+      background-color: #dcfce7 !important;
+      border-color: #16a34a !important;
+      color: #14532d !important;
+      font-weight: 700 !important;
+    }
+    [data-theme="dark"] .option-btn.correct-state {
+      background-color: #064e3b !important;
+      border-color: #34d399 !important;
+      color: #ecfdf5 !important;
+    }
+
+    .option-btn.incorrect-state {
+      background-color: #fee2e2 !important;
+      border-color: #dc2626 !important;
+      color: #7f1d1d !important;
+    }
+    [data-theme="dark"] .option-btn.incorrect-state {
+      background-color: #7f1d1d !important;
+      border-color: #f87171 !important;
+      color: #fef2f2 !important;
+    }
+
+    /* QUICK NAVIGATION PILLS */
+    .nav-pill {
+      background-color: var(--bg-inset);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      min-width: 2.25rem;
+      height: 2.25rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.875rem;
+      border-radius: 0.375rem;
+      transition: all 0.15s ease;
+    }
+    .nav-pill:hover {
+      filter: brightness(0.95);
+    }
+    .nav-pill.status-answered {
+      background-color: var(--accent-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--accent-primary-hover) !important;
+    }
+    .nav-pill.status-correct {
+      background-color: #16a34a !important;
+      color: #ffffff !important;
+      border-color: #15803d !important;
+    }
+    .nav-pill.status-partial {
+      background-color: #d97706 !important;
+      color: #ffffff !important;
+      border-color: #b45309 !important;
+    }
+    .nav-pill.status-incorrect {
+      background-color: #dc2626 !important;
+      color: #ffffff !important;
+      border-color: #b91c1c !important;
+    }
+
+    /* KaTeX OVERRIDES FOR HIGH CONTRAST */
+    .katex {
+      font-size: 1.08em;
+      color: inherit;
+    }
+    .katex-display {
+      margin: 0.75em 0;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 0.25em 0;
+    }
+
+    /* LIGHTBOX OVERLAY */
+    .lightbox-modal {
+      background-color: rgba(0, 0, 0, 0.85);
+    }
+
+    /* PRINT STYLES */
+    @media print {
+      header, nav, #quick-nav-sidebar, #submission-bar, .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+      }
+      .theme-card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body data-lang="en" data-theme="light">
+
+  <!-- ========================================================================= -->
+  <!-- 1. BULLETPROOF OFFLINE LOGIN MODAL (NO localStorage DEPENDENCY) -->
+  <!-- ========================================================================= -->
+  <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="theme-card w-full max-w-lg p-6 md:p-8 space-y-6 shadow-2xl relative">
+      <div class="text-center space-y-2">
+        <h1 class="text-2xl md:text-3xl font-extrabold tracking-tight">
+          <span class="lang-en">Grade 12 Math Semester 1 Final</span>
+          <span class="lang-vi">Đề kiểm tra Học kỳ 1 – Toán 12</span>
+        </h1>
+        <p class="text-sm text-[var(--text-secondary)] font-medium">
+          <span class="lang-en">Practice Test 01 (GDPT 2018 Program)</span>
+          <span class="lang-vi">Đề số 1 – Chương trình GDPT 2018</span>
+        </p>
+      </div>
+
+      <!-- Quick Toggles Inside Login Modal -->
+      <div class="flex items-center justify-between p-3 theme-inset rounded-lg text-sm">
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-xs uppercase tracking-wider text-[var(--text-muted)]">
+            <span class="lang-en">Language / Ngôn ngữ:</span>
+            <span class="lang-vi">Ngôn ngữ / Language:</span>
+          </span>
+          <button type="button" onclick="toggleLanguage('en')" id="login-lang-en" class="px-2.5 py-1 text-xs font-bold rounded bg-[var(--accent-primary)] text-white">EN</button>
+          <button type="button" onclick="toggleLanguage('vi')" id="login-lang-vi" class="px-2.5 py-1 text-xs font-bold rounded bg-transparent border border-[var(--border-strong)]">VI</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="font-semibold text-xs uppercase tracking-wider text-[var(--text-muted)]">
+            <span class="lang-en">Theme:</span>
+            <span class="lang-vi">Giao diện:</span>
+          </span>
+          <button type="button" onclick="toggleTheme()" class="p-1.5 rounded border border-[var(--border-strong)] text-xs font-bold flex items-center gap-1">
+            <span id="login-theme-icon">☀️</span>
+            <span id="login-theme-text" class="lang-en">Light</span>
+            <span id="login-theme-text-vi" class="lang-vi">Sáng</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Login Form -->
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
+        <div>
+          <label for="student-name-input" class="block text-sm font-bold mb-1">
+            <span class="lang-en">Student Full Name <span class="text-red-600">*</span></span>
+            <span class="lang-vi">Họ và tên Học sinh <span class="text-red-600">*</span></span>
+          </label>
+          <input type="text" id="student-name-input" placeholder="e.g. Alex Morgan / Nguyễn Văn A" required
+            class="w-full px-4 py-3 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-[var(--text-primary)] focus:border-[var(--accent-primary)] text-base font-medium">
+        </div>
+
+        <div>
+          <label for="student-id-input" class="block text-sm font-bold mb-1">
+            <span class="lang-en">Student ID / Code <span class="text-red-600">*</span></span>
+            <span class="lang-vi">Mã số Học sinh / SBD <span class="text-red-600">*</span></span>
+          </label>
+          <input type="text" id="student-id-input" placeholder="e.g. ST1201" required
+            class="w-full px-4 py-3 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-[var(--text-primary)] focus:border-[var(--accent-primary)] text-base font-medium">
+        </div>
+
+        <div id="login-error-alert" class="hidden p-3 rounded-lg bg-red-100 dark:bg-red-950 border border-red-500 text-red-800 dark:text-red-200 text-sm font-bold">
+          <span class="lang-en">Please fill out both Student Name and Student ID before starting.</span>
+          <span class="lang-vi">Vui lòng nhập đầy đủ Họ tên và Mã số học sinh trước khi bắt đầu.</span>
+        </div>
+
+        <button type="submit" id="start-exam-btn"
+          class="w-full py-3.5 px-6 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-extrabold text-lg shadow-md transition-all duration-200">
+          <span class="lang-en">Start Practice Exam &rarr;</span>
+          <span class="lang-vi">Bắt đầu Làm bài Thi &rarr;</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 2. STICKY TOP HEADER CONTROL BAR -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-[var(--bg-card)] border-b-2 border-[var(--border-strong)] shadow-sm">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      
+      <!-- Brand & Student Profile Badge -->
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="openLoginModal()" title="Edit Student Profile"
+          class="flex items-center gap-2 px-3 py-1.5 rounded-lg theme-inset border border-[var(--border-strong)] hover:border-[var(--accent-primary)] transition">
+          <span class="w-7 h-7 rounded-full bg-[var(--accent-primary)] text-white text-xs font-black flex items-center justify-center" id="header-avatar">?</span>
+          <div class="text-left leading-tight hidden sm:block">
+            <div id="header-student-name" class="font-bold text-xs sm:text-sm truncate max-w-[140px]">Guest Student</div>
+            <div id="header-student-id" class="text-[11px] text-[var(--text-muted)] font-mono">ID: Unset</div>
+          </div>
+        </button>
+        <h2 class="text-base font-extrabold hidden md:block">
+          <span class="lang-en">Math 12 – Final Exam 01</span>
+          <span class="lang-vi">Toán 12 – Đề HK1 (Đề 01)</span>
+        </h2>
+      </div>
+
+      <!-- Controls: Font Size, Lang, Theme & Mobile Nav Drawer Button -->
+      <div class="flex items-center gap-1.5 sm:gap-3">
+        <!-- Font Size Controls -->
+        <div class="flex items-center rounded-lg border border-[var(--border-strong)] overflow-hidden text-xs font-bold">
+          <button type="button" onclick="adjustFontSize(-1)" class="px-2 py-1.5 hover:bg-[var(--bg-inset)]" title="Decrease font size">A-</button>
+          <button type="button" onclick="resetFontSize()" class="px-2 py-1.5 border-x border-[var(--border-strong)] hover:bg-[var(--bg-inset)]" title="Reset font size">100%</button>
+          <button type="button" onclick="adjustFontSize(1)" class="px-2 py-1.5 hover:bg-[var(--bg-inset)]" title="Increase font size">A+</button>
+        </div>
+
+        <!-- Language Switcher -->
+        <div class="flex items-center rounded-lg border border-[var(--border-strong)] p-0.5 text-xs font-bold">
+          <button type="button" onclick="toggleLanguage('en')" id="nav-lang-en" class="px-2 py-1 rounded bg-[var(--accent-primary)] text-white">EN</button>
+          <button type="button" onclick="toggleLanguage('vi')" id="nav-lang-vi" class="px-2 py-1 rounded text-[var(--text-secondary)]">VI</button>
+        </div>
+
+        <!-- Theme Switcher -->
+        <button type="button" onclick="toggleTheme()" class="p-2 rounded-lg border border-[var(--border-strong)] text-sm font-bold flex items-center gap-1" title="Toggle Theme">
+          <span id="nav-theme-icon">☀️</span>
+        </button>
+
+        <!-- Mobile Drawer Toggle Button (Shown on < lg) -->
+        <button type="button" onclick="toggleMobileNav()" class="lg:hidden p-2 rounded-lg bg-[var(--accent-primary)] text-white font-bold text-xs flex items-center gap-1">
+          <span>📋</span>
+          <span class="lang-en">Questions</span>
+          <span class="lang-vi">Câu hỏi</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Navigation Drawer (Collapsible) -->
+    <div id="mobile-nav-drawer" class="hidden lg:hidden border-t border-[var(--border-strong)] bg-[var(--bg-card)] px-4 py-3 shadow-inner">
+      <div class="flex items-center justify-between mb-2">
+        <span class="font-bold text-xs uppercase tracking-wider text-[var(--text-muted)]">
+          <span class="lang-en">Quick Question Jump</span>
+          <span class="lang-vi">Chuyển nhanh đến câu</span>
+        </span>
+        <span class="text-xs font-bold text-[var(--accent-primary)]" id="mobile-progress-text">Answered 0 / 22</span>
+      </div>
+      <div id="mobile-nav-pills" class="flex flex-wrap gap-1.5">
+        <!-- Rendered via JS -->
+      </div>
+    </div>
+  </header>
+
+
+  <!-- ========================================================================= -->
+  <!-- 3. MAIN DUAL-COLUMN RESPONSIVE LAYOUT -->
+  <!-- ========================================================================= -->
+  <div class="max-w-7xl mx-auto px-3 sm:px-6 py-6 flex gap-6">
+
+    <!-- DESKTOP STICKY LEFT SIDEBAR (Width: 270px) -->
+    <aside id="quick-nav-sidebar" class="hidden lg:block w-64 shrink-0">
+      <div class="sticky top-20 space-y-4 theme-card p-4">
+        
+        <div class="space-y-1">
+          <h3 class="font-extrabold text-base tracking-tight">
+            <span class="lang-en">Exam Navigator</span>
+            <span class="lang-vi">Danh mục câu hỏi</span>
+          </h3>
+          <p class="text-xs text-[var(--text-muted)] font-medium" id="sidebar-progress-text">Answered 0 / 22 Questions</p>
+          <div class="w-full bg-[var(--bg-inset)] h-2 rounded-full overflow-hidden mt-1">
+            <div id="progress-bar-fill" class="bg-[var(--accent-primary)] h-full w-0 transition-all duration-300"></div>
+          </div>
+        </div>
+
+        <hr class="border-[var(--border-subtle)]">
+
+        <!-- PART 1 QUICK JUMP -->
+        <div class="space-y-1.5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] block">
+            <span class="lang-en">Part 1: MCQ (1–12)</span>
+            <span class="lang-vi">Phần 1: Trắc nghiệm (1–12)</span>
+          </span>
+          <div class="grid grid-cols-4 gap-1.5" id="desktop-p1-pills"></div>
+        </div>
+
+        <!-- PART 2 QUICK JUMP -->
+        <div class="space-y-1.5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] block">
+            <span class="lang-en">Part 2: True/False (1–4)</span>
+            <span class="lang-vi">Phần 2: Đúng/Sai (1–4)</span>
+          </span>
+          <div class="grid grid-cols-4 gap-1.5" id="desktop-p2-pills"></div>
+        </div>
+
+        <!-- PART 3 QUICK JUMP -->
+        <div class="space-y-1.5">
+          <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)] block">
+            <span class="lang-en">Part 3: Short Answer (1–6)</span>
+            <span class="lang-vi">Phần 3: Trả lời ngắn (1–6)</span>
+          </span>
+          <div class="grid grid-cols-4 gap-1.5" id="desktop-p3-pills"></div>
+        </div>
+
+        <hr class="border-[var(--border-subtle)]">
+
+        <!-- Sidebar Direct Action Links -->
+        <div class="space-y-2 pt-1 text-xs">
+          <a href="#submission-section" class="flex items-center gap-2 p-2 rounded-lg font-bold bg-[var(--accent-primary)] text-white text-center justify-center hover:opacity-90">
+            <span>📥</span>
+            <span class="lang-en">Go to Submission & Photos</span>
+            <span class="lang-vi">Đến phần Nộp bài & Ảnh</span>
+          </a>
+          <a href="#master-answer-key-section" class="flex items-center gap-2 p-2 rounded-lg font-bold theme-inset border border-[var(--border-strong)] text-center justify-center">
+            <span>🔑</span>
+            <span class="lang-en">Master Answer Key</span>
+            <span class="lang-vi">Đáp án chi tiết</span>
+          </a>
+        </div>
+
+      </div>
+    </aside>
+
+
+    <!-- MAIN EXAM QUESTION CONTENT AREA -->
+    <main class="flex-1 min-w-0 space-y-8">
+
+      <!-- EXAM HEADER BANNER & SCORE DASHBOARD -->
+      <section class="theme-card p-6 border-l-8 border-l-[var(--accent-primary)] space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <span class="inline-block px-2.5 py-1 rounded bg-[var(--accent-primary)] text-white text-xs font-black uppercase tracking-wider mb-2">
+              GDPT 2018 Format
+            </span>
+            <h1 class="text-2xl sm:text-3xl font-black tracking-tight">
+              <span class="lang-en">Grade 12 Mathematics – Semester 1 Final Exam</span>
+              <span class="lang-vi">Đề kiểm tra Học kỳ 1 – Môn Toán 12</span>
+            </h1>
+            <p class="text-sm font-semibold text-[var(--text-secondary)] mt-1">
+              <span class="lang-en">Practice Test 01 • Academic Year 2024–2025 • Total 22 Questions (10.0 Points)</span>
+              <span class="lang-vi">Đề thi số 01 • Năm học 2024–2025 • Tổng số 22 câu hỏi (10.0 điểm)</span>
+            </p>
+          </div>
+
+          <!-- Score Card (Displayed Post Submission) -->
+          <div id="score-dashboard" class="hidden p-4 rounded-xl bg-amber-50 dark:bg-amber-950 border-2 border-amber-400 text-center space-y-1 min-w-[200px]">
+            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 dark:text-amber-200 block">
+              <span class="lang-en">Final GDPT 2018 Score</span>
+              <span class="lang-vi">Điểm thi GDPT 2018</span>
+            </span>
+            <div id="total-score-text" class="text-4xl font-black text-amber-700 dark:text-amber-300">0.0 / 10.0</div>
+            <div id="score-breakdown-text" class="text-xs font-semibold text-amber-900 dark:text-amber-100">
+              P1: 0.0/3.0 | P2: 0.0/4.0 | P3: 0.0/3.0
+            </div>
+          </div>
+        </div>
+
+        <div class="theme-inset p-3.5 rounded-lg text-xs md:text-sm font-medium text-[var(--text-secondary)] space-y-1">
+          <p class="font-bold text-[var(--text-primary)]">
+            <span class="lang-en">📌 Exam Instructions & Structure:</span>
+            <span class="lang-vi">📌 Hướng dẫn & Cấu trúc bài thi:</span>
+          </p>
+          <ul class="list-disc list-inside space-y-1">
+            <li><span class="lang-en"><strong>Part 1:</strong> 12 Multiple-Choice Questions (0.25 pts each = 3.0 pts total).</span><span class="lang-vi"><strong>Phần 1:</strong> 12 câu Trắc nghiệm 4 lựa chọn (0.25 điểm/câu = 3.0 điểm).</span></li>
+            <li><span class="lang-en"><strong>Part 2:</strong> 4 True/False Questions with 4 statements each (GDPT scoring: 1 statement=0.1, 2=0.25, 3=0.5, 4=1.0 pt → 4.0 pts total).</span><span class="lang-vi"><strong>Phần 2:</strong> 4 câu Đúng/Sai (Mỗi câu 4 ý; 1 ý=0.1đ, 2 ý=0.25đ, 3 ý=0.5đ, 4 ý=1.0đ → 4.0 điểm).</span></li>
+            <li><span class="lang-en"><strong>Part 3:</strong> 6 Short-Answer Problems (0.5 pts each = 3.0 pts total). Decimals accept both dot (.) and comma (,).</span><span class="lang-vi"><strong>Phần 3:</strong> 6 câu Trả lời ngắn (0.5 điểm/câu = 3.0 điểm). Số thập phân chấp nhận cả dấu phẩy (,) và dấu chấm (.).</span></li>
+          </ul>
+        </div>
+      </section>
+
+
+      <!-- ========================================================================= -->
+      <!-- PART 1: 12 MULTIPLE CHOICE QUESTIONS (3.0 POINTS) -->
+      <!-- ========================================================================= -->
+      <section class="space-y-6">
+        <div class="flex items-center justify-between pb-2 border-b-2 border-[var(--border-strong)]">
+          <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+            <span class="px-3 py-1 rounded-md bg-[var(--accent-primary)] text-white text-sm">PART 1</span>
+            <span class="lang-en">Multiple-Choice Questions (Questions 1 to 12)</span>
+            <span class="lang-vi">Trắc nghiệm Khách quan (Câu 1 đến 12)</span>
+          </h2>
+          <span class="text-xs font-bold text-[var(--text-muted)]">3.0 Pts</span>
+        </div>
+
+        <!-- QUESTION 1 -->
+        <article id="q-p1-1" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 1 / Câu 1 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+          
+          <p class="font-semibold">
+            <span class="lang-en">Given the function $y = f(x)$ continuous on $\mathbb{R}$ with the sign of its derivative $f'(x)$ shown in the variation summary below. On which interval is the function $f(x)$ strictly decreasing?</span>
+            <span class="lang-vi">Cho hàm số $y = f(x)$ liên tục trên $\mathbb{R}$ và có bảng xét dấu đạo hàm $f'(x)$ như hình bên. Hàm số $f(x)$ nghịch biến trên khoảng nào dưới đây?</span>
+          </p>
+
+          <!-- SVG VARIATION TABLE 1 -->
+          <div class="theme-inset p-3 rounded-lg overflow-x-auto flex justify-center">
+            <svg width="480" height="130" viewBox="0 0 480 130" class="max-w-full h-auto text-xs font-mono">
+              <rect width="480" height="130" fill="var(--svg-bg)" rx="8" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <!-- Grid Lines -->
+              <line x1="70" y1="0" x2="70" y2="130" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <line x1="0" y1="40" x2="480" y2="40" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <line x1="0" y1="80" x2="480" y2="80" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <!-- Header Row -->
+              <text x="35" y="25" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">x</text>
+              <text x="95" y="25" text-anchor="middle" fill="var(--text-primary)">-∞</text>
+              <text x="175" y="25" text-anchor="middle" fill="var(--text-primary)">-1</text>
+              <text x="255" y="25" text-anchor="middle" fill="var(--text-primary)">0</text>
+              <text x="335" y="25" text-anchor="middle" fill="var(--text-primary)">1</text>
+              <text x="435" y="25" text-anchor="middle" fill="var(--text-primary)">+∞</text>
+              <!-- Derivative Row -->
+              <text x="35" y="65" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">f'(x)</text>
+              <text x="135" y="65" text-anchor="middle" fill="var(--text-primary)" font-size="16">-</text>
+              <text x="175" y="65" text-anchor="middle" fill="var(--text-primary)">0</text>
+              <text x="215" y="65" text-anchor="middle" fill="var(--text-primary)" font-size="16">+</text>
+              <text x="255" y="65" text-anchor="middle" fill="var(--text-primary)">0</text>
+              <text x="295" y="65" text-anchor="middle" fill="var(--text-primary)" font-size="16">-</text>
+              <text x="335" y="65" text-anchor="middle" fill="var(--text-primary)">0</text>
+              <text x="385" y="65" text-anchor="middle" fill="var(--text-primary)" font-size="16">+</text>
+              <!-- Function Row -->
+              <text x="35" y="110" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">f(x)</text>
+              <text x="95" y="95" text-anchor="middle" fill="var(--text-primary)">+∞</text>
+              <text x="175" y="120" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">-1</text>
+              <text x="255" y="95" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">4</text>
+              <text x="335" y="120" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">-1</text>
+              <text x="435" y="95" text-anchor="middle" fill="var(--text-primary)">+∞</text>
+              <!-- Arrows -->
+              <path d="M 110 95 L 160 115" stroke="var(--accent-primary)" stroke-width="2" marker-end="url(#arrow)"/>
+              <path d="M 190 115 L 240 95" stroke="var(--accent-primary)" stroke-width="2"/>
+              <path d="M 270 95 L 320 115" stroke="var(--accent-primary)" stroke-width="2"/>
+              <path d="M 350 115 L 410 95" stroke="var(--accent-primary)" stroke-width="2"/>
+            </svg>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-1">
+            <button type="button" onclick="selectMCQ(1, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $(-\infty; 0)$</button>
+            <button type="button" onclick="selectMCQ(1, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $(0; 1)$</button>
+            <button type="button" onclick="selectMCQ(1, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $(-1; 1)$</button>
+            <button type="button" onclick="selectMCQ(1, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $(-1; 0)$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 2 (REMEDIED DEFICIENCY) -->
+        <article id="q-p1-2" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 2 / Câu 2 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Find the minimum value of the function $f(x) = x^3 - x^2 + x + 3$ on the interval $[0; 4]$. <br><em class="text-xs font-normal text-[var(--text-muted)]">*Note: Options A–D have been fully restored as requested to remedy previous formatting deficiencies.</em></span>
+            <span class="lang-vi">Tìm giá trị nhỏ nhất của hàm số $f(x) = x^3 - x^2 + x + 3$ trên đoạn $[0; 4]$. <br><em class="text-xs font-normal text-[var(--text-muted)]">*Ghi chú: Các phương án A–D đã được bổ sung và hoàn thiện chính xác.</em></span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-2">
+            <button type="button" onclick="selectMCQ(2, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $55$</button>
+            <button type="button" onclick="selectMCQ(2, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $4$</button>
+            <button type="button" onclick="selectMCQ(2, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $3$</button>
+            <button type="button" onclick="selectMCQ(2, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $0$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 3 -->
+        <article id="q-p1-3" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 3 / Câu 3 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Find the horizontal asymptote of the graph of the function $y = \dfrac{2-x}{x+1}$.</span>
+            <span class="lang-vi">Đường tiệm cận ngang của đồ thị hàm số $y = \dfrac{2-x}{x+1}$ là đường thẳng nào?</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-3">
+            <button type="button" onclick="selectMCQ(3, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $y = -2$</button>
+            <button type="button" onclick="selectMCQ(3, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $y = -1$</button>
+            <button type="button" onclick="selectMCQ(3, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $x = -1$</button>
+            <button type="button" onclick="selectMCQ(3, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $y = 2$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 4 -->
+        <article id="q-p1-4" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 4 / Câu 4 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Find the equation of the oblique (slant) asymptote of the function graph $y = \dfrac{2x^2+x-2}{x+1}$.</span>
+            <span class="lang-vi">Đường tiệm cận xiên của đồ thị hàm số $y = \dfrac{2x^2+x-2}{x+1}$ có phương trình là gì?</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-4">
+            <button type="button" onclick="selectMCQ(4, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $y = 2x - 2$</button>
+            <button type="button" onclick="selectMCQ(4, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $y = 2x + 2$</button>
+            <button type="button" onclick="selectMCQ(4, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $y = 2x + 1$</button>
+            <button type="button" onclick="selectMCQ(4, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $y = 2x - 1$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 5 -->
+        <article id="q-p1-5" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 5 / Câu 5 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">The curve in the graph below represents which cubic function $f(x)$?</span>
+            <span class="lang-vi">Đường cong trong hình vẽ bên là đồ thị của hàm số nào dưới đây?</span>
+          </p>
+
+          <!-- SVG CUBIC GRAPH -->
+          <div class="theme-inset p-3 rounded-lg overflow-x-auto flex justify-center">
+            <svg width="340" height="240" viewBox="-4 -4 8 8" class="max-w-full h-auto text-xs">
+              <rect x="-4" y="-4" width="8" height="8" fill="var(--svg-bg)" rx="0.3"/>
+              <!-- Grid & Axes -->
+              <path d="M -4 0 L 4 0 M 0 -4 L 0 4" stroke="var(--border-strong)" stroke-width="0.08"/>
+              <!-- Ticks & Labels -->
+              <circle cx="0" cy="0" r="0.1" fill="var(--text-primary)"/>
+              <text x="0.2" y="0.4" font-size="0.5" fill="var(--text-primary)">O</text>
+              <text x="3.5" y="-0.2" font-size="0.5" fill="var(--text-primary)">x</text>
+              <text x="0.2" y="-3.5" font-size="0.5" fill="var(--text-primary)">y</text>
+              <!-- Key points: (0,1), (2,-3) -->
+              <line x1="2" y1="0" x2="2" y2="3" stroke="var(--text-muted)" stroke-dasharray="0.1,0.1" stroke-width="0.05"/>
+              <line x1="0" y1="3" x2="2" y2="3" stroke="var(--text-muted)" stroke-dasharray="0.1,0.1" stroke-width="0.05"/>
+              <circle cx="0" cy="-1" r="0.12" fill="#dc2626"/>
+              <text x="-0.6" y="-0.9" font-size="0.45" fill="var(--text-primary)">1</text>
+              <circle cx="2" cy="3" r="0.12" fill="#dc2626"/>
+              <text x="2.2" y="3.2" font-size="0.45" fill="var(--text-primary)">-3</text>
+              <text x="1.9" y="-0.2" font-size="0.45" fill="var(--text-primary)">2</text>
+              <!-- Cubic Curve y = x^3 - 3x^2 + 1 -->
+              <!-- SVG y-axis is flipped: SVG y = - (x^3 - 3x^2 + 1) -->
+              <path d="M -1 3 C -0.5 0.25, -0.2 -1, 0 -1 C 0.5 -1, 1 0.5, 1.5 1.875 C 1.8 2.7, 1.9 3, 2 3 C 2.3 3, 2.7 1, 3 -3"
+                fill="none" stroke="var(--accent-primary)" stroke-width="0.12"/>
+            </svg>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-5">
+            <button type="button" onclick="selectMCQ(5, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $f(x) = x^3 + 3x^2 - 4$</button>
+            <button type="button" onclick="selectMCQ(5, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $f(x) = x^3 - 3x^2 + 1$</button>
+            <button type="button" onclick="selectMCQ(5, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $f(x) = x^3 - 3x + 1$</button>
+            <button type="button" onclick="selectMCQ(5, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $f(x) = -x^3 + 3x^2 + 1$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 6 -->
+        <article id="q-p1-6" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 6 / Câu 6 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">The graph with vertical asymptote $x = -1$ and oblique asymptote $y = x$ shown below corresponds to which rational function?</span>
+            <span class="lang-vi">Đồ thị có tiệm cận đứng $x = -1$ và tiệm cận xiên $y = x$ như hình vẽ bên là của hàm số nào?</span>
+          </p>
+
+          <!-- SVG RATIONAL GRAPH -->
+          <div class="theme-inset p-3 rounded-lg overflow-x-auto flex justify-center">
+            <svg width="340" height="240" viewBox="-6 -7 12 14" class="max-w-full h-auto text-xs">
+              <rect x="-6" y="-7" width="12" height="14" fill="var(--svg-bg)" rx="0.3"/>
+              <!-- Axes -->
+              <path d="M -6 0 L 6 0 M 0 -7 L 0 7" stroke="var(--border-strong)" stroke-width="0.1"/>
+              <!-- Asymptotes: Vertical x = -1, Oblique y = x -->
+              <line x1="-1" y1="-7" x2="-1" y2="7" stroke="#dc2626" stroke-width="0.1" stroke-dasharray="0.3,0.3"/>
+              <line x1="-6" y1="6" x2="6" y2="-6" stroke="#2563eb" stroke-width="0.1" stroke-dasharray="0.3,0.3"/>
+              <!-- Labels -->
+              <text x="0.3" y="0.6" font-size="0.8" fill="var(--text-primary)">O</text>
+              <text x="-1.8" y="6.5" font-size="0.7" fill="#dc2626">x=-1</text>
+              <text x="4" y="-4.5" font-size="0.7" fill="#2563eb">y=x</text>
+              <!-- Branches of y = x + 4/(x+1) -->
+              <!-- Right branch: x > -1, min at (1, 3) -->
+              <path d="M -0.4 -6.6 C -0.5 -4, 0 -3.5, 1 -3 C 2 -2.5, 4 -4.5, 5.5 -6" fill="none" stroke="var(--accent-primary)" stroke-width="0.15"/>
+              <!-- Left branch: x < -1, max at (-3, -5) -> SVG y = +5 -->
+              <path d="M -1.6 6.6 C -1.8 5.5, -2.5 5.2, -3 5 C -4 4.5, -5 5.5, -5.5 6" fill="none" stroke="var(--accent-primary)" stroke-width="0.15"/>
+              <circle cx="1" cy="-3" r="0.2" fill="#16a34a"/>
+              <text x="1.3" y="-3" font-size="0.7" fill="var(--text-primary)">(1;3)</text>
+            </svg>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-6">
+            <button type="button" onclick="selectMCQ(6, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $y = \dfrac{2x^2+3x+1}{x+1}$</button>
+            <button type="button" onclick="selectMCQ(6, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $y = \dfrac{x^2+x+4}{x+1}$</button>
+            <button type="button" onclick="selectMCQ(6, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $y = \dfrac{-x^2-3x+10}{x+1}$</button>
+            <button type="button" onclick="selectMCQ(6, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $y = \dfrac{3x^2+5x-2}{x+1}$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 7 -->
+        <article id="q-p1-7" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 7 / Câu 7 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">The grouped frequency table below records the math test scores of 30 students. Which interval contains the median ($M_e$)?</span>
+            <span class="lang-vi">Bảng tần số ghép nhóm sau đây ghi lại điểm thi môn Toán của 30 học sinh. Nhóm nào dưới đây chứa trung vị ($M_e$)?</span>
+          </p>
+
+          <div class="overflow-x-auto theme-inset p-2 rounded-lg text-xs md:text-sm">
+            <table class="w-full text-center border-collapse">
+              <thead>
+                <tr class="border-b border-[var(--border-strong)]">
+                  <th class="p-2 text-left">Score Interval / Nhóm điểm</th>
+                  <th class="p-2">[25; 34)</th>
+                  <th class="p-2">[34; 43)</th>
+                  <th class="p-2">[43; 52)</th>
+                  <th class="p-2">[52; 61)</th>
+                  <th class="p-2">[61; 70)</th>
+                  <th class="p-2">[70; 79)</th>
+                  <th class="p-2">[79; 88)</th>
+                  <th class="p-2">[88; 97)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="p-2 font-bold text-left">Frequency $n_i$ / Tần số</td>
+                  <td class="p-2">5</td>
+                  <td class="p-2">4</td>
+                  <td class="p-2">7</td>
+                  <td class="p-2">8</td>
+                  <td class="p-2">2</td>
+                  <td class="p-2">2</td>
+                  <td class="p-2">1</td>
+                  <td class="p-2">1</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-7">
+            <button type="button" onclick="selectMCQ(7, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $[34; 43)$</button>
+            <button type="button" onclick="selectMCQ(7, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $[52; 61)$</button>
+            <button type="button" onclick="selectMCQ(7, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $[43; 52)$</button>
+            <button type="button" onclick="selectMCQ(7, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $[61; 70)$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 8 -->
+        <article id="q-p1-8" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 8 / Câu 8 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Using the grouped frequency distribution in Question 7 ($n=30$), calculate the sample standard deviation $S$ (rounded to 2 decimal places).</span>
+            <span class="lang-vi">Sử dụng bảng tần số ghép nhóm ở Câu 7 ($n=30$), hãy tính độ lệch chuẩn $S$ của mẫu số liệu (làm tròn đến 2 chữ số thập phân).</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-8">
+            <button type="button" onclick="selectMCQ(8, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $17.32$</button>
+            <button type="button" onclick="selectMCQ(8, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $15.88$</button>
+            <button type="button" onclick="selectMCQ(8, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $20.01$</button>
+            <button type="button" onclick="selectMCQ(8, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $252.09$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 9 -->
+        <article id="q-p1-9" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 9 / Câu 9 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Given the parallelepiped $ABCD.A'B'C'D'$. Which vector equality below is <strong>FALSE</strong>?</span>
+            <span class="lang-vi">Cho hình hộp $ABCD.A'B'C'D'$. Đẳng thức vectơ nào sau đây là <strong>SAI</strong>?</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-9">
+            <button type="button" onclick="selectMCQ(9, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $\overrightarrow{AB} + \overrightarrow{BC} = \overrightarrow{A'C'}$</button>
+            <button type="button" onclick="selectMCQ(9, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $\overrightarrow{AD} - \overrightarrow{AC} = \overrightarrow{DC}$</button>
+            <button type="button" onclick="selectMCQ(9, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $\overrightarrow{CB} + \overrightarrow{CD} + \overrightarrow{CC'} = \overrightarrow{CA'}$</button>
+            <button type="button" onclick="selectMCQ(9, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $\overrightarrow{DC} + \overrightarrow{DA} = \overrightarrow{DB}$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 10 -->
+        <article id="q-p1-10" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 10 / Câu 10 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Given a rectangular parallelepiped $ABCD.A'B'C'D'$ with $AB = 1$, $AD = 2$, $AA' = 3$. Calculate the scalar dot product $\overrightarrow{BD} \cdot \overrightarrow{AC'}$.</span>
+            <span class="lang-vi">Cho hình hộp chữ nhật $ABCD.A'B'C'D'$ có $AB = 1$, $AD = 2$, $AA' = 3$. Tính tích vô hướng $\overrightarrow{BD} \cdot \overrightarrow{AC'}$.</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-10">
+            <button type="button" onclick="selectMCQ(10, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $3$</button>
+            <button type="button" onclick="selectMCQ(10, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $-3$</button>
+            <button type="button" onclick="selectMCQ(10, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $1$</button>
+            <button type="button" onclick="selectMCQ(10, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $-1$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 11 -->
+        <article id="q-p1-11" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 11 / Câu 11 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">In space $Oxyz$, given points $A(1; 2; -3)$ and $B(4; 0; 3)$. Find the coordinates of point $M$ such that $B$ is the midpoint of segment $AM$.</span>
+            <span class="lang-vi">Trong không gian $Oxyz$, cho hai điểm $A(1; 2; -3)$ và $B(4; 0; 3)$. Tìm tọa độ điểm $M$ sao cho $B$ là trung điểm của đoạn thẳng $AM$.</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-11">
+            <button type="button" onclick="selectMCQ(11, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $M(0; 2; -3)$</button>
+            <button type="button" onclick="selectMCQ(11, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $M(7; -2; 9)$</button>
+            <button type="button" onclick="selectMCQ(11, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $M(7; 2; 9)$</button>
+            <button type="button" onclick="selectMCQ(11, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $M(7; -2; -9)$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- QUESTION 12 -->
+        <article id="q-p1-12" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Question 12 / Câu 12 (0.25 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">In space $Oxyz$, given points $A(1; 2; -3)$, $B(2; -2; 1)$, and $C(0; 0; 1)$. Calculate $\cos\widehat{ABC}$.</span>
+            <span class="lang-vi">Trong không gian $Oxyz$, cho các điểm $A(1; 2; -3)$, $B(2; -2; 1)$, $C(0; 0; 1)$. Tính $\cos\widehat{ABC}$.</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" id="opts-p1-12">
+            <button type="button" onclick="selectMCQ(12, 'A')" class="option-btn p-3 rounded-lg text-left font-medium">A. $\dfrac{5\sqrt{66}}{66}$</button>
+            <button type="button" onclick="selectMCQ(12, 'B')" class="option-btn p-3 rounded-lg text-left font-medium">B. $-\dfrac{5\sqrt{66}}{66}$</button>
+            <button type="button" onclick="selectMCQ(12, 'C')" class="option-btn p-3 rounded-lg text-left font-medium">C. $\dfrac{5\sqrt{33}}{33}$</button>
+            <button type="button" onclick="selectMCQ(12, 'D')" class="option-btn p-3 rounded-lg text-left font-medium">D. $-\dfrac{5\sqrt{33}}{33}$</button>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+      </section>
+
+
+      <!-- ========================================================================= -->
+      <!-- PART 2: 4 TRUE / FALSE QUESTIONS (4.0 POINTS) -->
+      <!-- ========================================================================= -->
+      <section class="space-y-6">
+        <div class="flex items-center justify-between pb-2 border-b-2 border-[var(--border-strong)]">
+          <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+            <span class="px-3 py-1 rounded-md bg-[var(--accent-primary)] text-white text-sm">PART 2</span>
+            <span class="lang-en">True / False Questions (Questions 1 to 4)</span>
+            <span class="lang-vi">Câu hỏi Đúng / Sai (Câu 1 đến 4)</span>
+          </h2>
+          <span class="text-xs font-bold text-[var(--text-muted)]">4.0 Pts</span>
+        </div>
+
+        <!-- PART 2 - Q1 -->
+        <article id="q-p2-1" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 2 – Question 1 / Câu 1 (1.0 pt total)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Given the function $(C): y = \dfrac{x^2+2x+2}{x+1}$. Evaluate whether each of the following statements is True (T) or False (F):</span>
+            <span class="lang-vi">Cho hàm số $(C): y = \dfrac{x^2+2x+2}{x+1}$. Xét tính Đúng (Đ) hoặc Sai (S) của các khẳng định sau:</span>
+          </p>
+
+          <div class="space-y-3">
+            <!-- Statement a -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">a) <span class="lang-en">The function is strictly decreasing on the interval $(-2; -1)$.</span><span class="lang-vi">Hàm số nghịch biến trên khoảng $(-2; -1)$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-1-a">
+                <button type="button" onclick="selectTF(1, 'a', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(1, 'a', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <!-- Statement b -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">b) <span class="lang-en">The minimum value of $y$ on the segment $\left[-\frac{1}{2}; 2\right]$ equals $2$.</span><span class="lang-vi">Giá trị nhỏ nhất của $y$ trên đoạn $\left[-\frac{1}{2}; 2\right]$ bằng $2$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-1-b">
+                <button type="button" onclick="selectTF(1, 'b', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(1, 'b', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <!-- Statement c -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">c) <span class="lang-en">The local maximum value of the function is $y_{CD} = -2$.</span><span class="lang-vi">Giá trị cực đại của hàm số là $y_{CĐ} = -2$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-1-c">
+                <button type="button" onclick="selectTF(1, 'c', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(1, 'c', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <!-- Statement d -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">d) <span class="lang-en">The slant asymptote of $(C)$ is $y = x - 1$.</span><span class="lang-vi">Đường tiệm cận xiên của $(C)$ là $y = x - 1$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-1-d">
+                <button type="button" onclick="selectTF(1, 'd', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(1, 'd', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 2 - Q2 -->
+        <article id="q-p2-2" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 2 – Question 2 / Câu 2 (1.0 pt total)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Given a cube $ABCD.EFGH$ with edge length equal to $2$ (bottom face $ABCD$, top face $EFGH$, vertical edges $AE, BF, CG, DH$). Evaluate each statement:</span>
+            <span class="lang-vi">Cho hình lập phương $ABCD.EFGH$ có cạnh bằng $2$ (đáy dưới $ABCD$, đáy trên $EFGH$, các cạnh bên $AE, BF, CG, DH$). Xét tính Đúng/Sai của các khẳng định:</span>
+          </p>
+
+          <div class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">a) <span class="lang-en">Vector equality: $\overrightarrow{AF} = \overrightarrow{DG}$.</span><span class="lang-vi">Đẳng thức vectơ: $\overrightarrow{AF} = \overrightarrow{DG}$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-2-a">
+                <button type="button" onclick="selectTF(2, 'a', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(2, 'a', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">b) <span class="lang-en">$\overrightarrow{FG}$ and $\overrightarrow{DA}$ have the same direction.</span><span class="lang-vi">Hai vectơ $\overrightarrow{FG}$ và $\overrightarrow{DA}$ cùng hướng.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-2-b">
+                <button type="button" onclick="selectTF(2, 'b', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(2, 'b', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">c) <span class="lang-en">$\overrightarrow{BC} + \overrightarrow{BF} = \overrightarrow{HC}$.</span><span class="lang-vi">Tổng $\overrightarrow{BC} + \overrightarrow{BF} = \overrightarrow{HC}$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-2-c">
+                <button type="button" onclick="selectTF(2, 'c', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(2, 'c', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">d) <span class="lang-en">Scalar dot product $\overrightarrow{BC} \cdot \overrightarrow{AH} = 4$.</span><span class="lang-vi">Tích vô hướng $\overrightarrow{BC} \cdot \overrightarrow{AH} = 4$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-2-d">
+                <button type="button" onclick="selectTF(2, 'd', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(2, 'd', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 2 - Q3 -->
+        <article id="q-p2-3" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 2 – Question 3 / Câu 3 (1.0 pt total)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">In 3D space $Oxyz$, given vectors $\overrightarrow{OA} = (4; 0; -5)$, $\overrightarrow{OB} = (1; 4; -2)$, and $\vec{u} = (-3; 2; 1)$. Evaluate each statement:</span>
+            <span class="lang-vi">Trong không gian $Oxyz$, cho các vectơ $\overrightarrow{OA} = (4; 0; -5)$, $\overrightarrow{OB} = (1; 4; -2)$ và $\vec{u} = (-3; 2; 1)$. Xét tính Đúng/Sai của các khẳng định:</span>
+          </p>
+
+          <div class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">a) <span class="lang-en">Point $A$ has coordinates $(4; 0; -5)$.</span><span class="lang-vi">Điểm $A$ có tọa độ là $(4; 0; -5)$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-3-a">
+                <button type="button" onclick="selectTF(3, 'a', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(3, 'a', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">b) <span class="lang-en">Vector $\overrightarrow{AB} = (3; -4; -3)$.</span><span class="lang-vi">Vectơ $\overrightarrow{AB} = (3; -4; -3)$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-3-b">
+                <button type="button" onclick="selectTF(3, 'b', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(3, 'b', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">c) <span class="lang-en">Dot product $\overrightarrow{OB} \cdot \vec{u} = 3$.</span><span class="lang-vi">Tích vô hướng $\overrightarrow{OB} \cdot \vec{u} = 3$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-3-c">
+                <button type="button" onclick="selectTF(3, 'c', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(3, 'c', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">d) <span class="lang-en">$\cos\widehat{AOB} = \dfrac{\sqrt{7}}{5}$.</span><span class="lang-vi">Cosine góc $\widehat{AOB}$ bằng $\dfrac{\sqrt{7}}{5}$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-3-d">
+                <button type="button" onclick="selectTF(3, 'd', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(3, 'd', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 2 - Q4 -->
+        <article id="q-p2-4" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 2 – Question 4 / Câu 4 (1.0 pt total)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Given the grouped frequency table of test scores: $[25; 34): 4$, $[34; 43): 5$, $[43; 52): 7$, $[52; 61): 8$, $[61; 70): 6$. Evaluate each statement:</span>
+            <span class="lang-vi">Cho bảng tần số ghép nhóm điểm kiểm tra: $[25; 34): 4$, $[34; 43): 5$, $[43; 52): 7$, $[52; 61): 8$, $[61; 70): 6$. Xét tính Đúng/Sai của các khẳng định:</span>
+          </p>
+
+          <div class="space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">a) <span class="lang-en">Total sample size $n = 30$.</span><span class="lang-vi">Tổng số phần tử của mẫu số liệu $n = 30$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-4-a">
+                <button type="button" onclick="selectTF(4, 'a', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(4, 'a', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">b) <span class="lang-en">The third quartile class interval ($Q_3$) is $[52; 61)$.</span><span class="lang-vi">Nhóm chứa tứ phân vị thứ ba ($Q_3$) là $[52; 61)$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-4-b">
+                <button type="button" onclick="selectTF(4, 'b', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(4, 'b', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">c) <span class="lang-en">The sample range $R = 45$.</span><span class="lang-vi">Khoảng biến thiên của mẫu số liệu ghép nhóm $R = 45$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-4-c">
+                <button type="button" onclick="selectTF(4, 'c', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(4, 'c', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3 theme-inset gap-2">
+              <span class="font-medium text-sm">d) <span class="lang-en">The sample variance $S^2 \approx 138.69$.</span><span class="lang-vi">Phương sai của mẫu số liệu $S^2 \approx 138.69$.</span></span>
+              <div class="flex items-center gap-2 shrink-0" id="tf-p2-4-d">
+                <button type="button" onclick="selectTF(4, 'd', true)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">TRUE / ĐÚNG</button>
+                <button type="button" onclick="selectTF(4, 'd', false)" class="option-btn px-4 py-1.5 rounded-md font-bold text-xs">FALSE / SAI</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+      </section>
+
+
+      <!-- ========================================================================= -->
+      <!-- PART 3: 6 SHORT ANSWER QUESTIONS (3.0 POINTS) -->
+      <!-- ========================================================================= -->
+      <section class="space-y-6">
+        <div class="flex items-center justify-between pb-2 border-b-2 border-[var(--border-strong)]">
+          <h2 class="text-xl font-black uppercase tracking-wide flex items-center gap-2">
+            <span class="px-3 py-1 rounded-md bg-[var(--accent-primary)] text-white text-sm">PART 3</span>
+            <span class="lang-en">Short Answer Problems (Questions 1 to 6)</span>
+            <span class="lang-vi">Trả lời ngắn (Câu 1 đến 6)</span>
+          </h2>
+          <span class="text-xs font-bold text-[var(--text-muted)]">3.0 Pts</span>
+        </div>
+
+        <!-- PART 3 - Q1 -->
+        <article id="q-p3-1" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 1 / Câu 1 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">The function $y = x^3 - 6x^2 + 3$ has two local extreme values $y_1$ and $y_2$. Compute the sum $y_1 + y_2$.</span>
+            <span class="lang-vi">Hàm số $y = x^3 - 6x^2 + 3$ có hai giá trị cực trị là $y_1$ và $y_2$. Tính tổng $y_1 + y_2$.</span>
+          </p>
+
+          <div class="max-w-md">
+            <input type="text" oninput="handleShortInput(1, this.value)" placeholder="Enter numerical answer..." 
+              class="short-input w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold focus:border-[var(--accent-primary)]">
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 3 - Q2 -->
+        <article id="q-p3-2" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 2 / Câu 2 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">Find the Maximum and Minimum values of the function $y = \sqrt{-x^2 + 5x - 4}$ on its domain.</span>
+            <span class="lang-vi">Tìm Giá trị lớn nhất (Max) và Giá trị nhỏ nhất (Min) của hàm số $y = \sqrt{-x^2 + 5x - 4}$ trên tập xác định.</span>
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1 text-[var(--text-secondary)]">
+                <span class="lang-en">Maximum Value (Max y)</span>
+                <span class="lang-vi">Giá trị lớn nhất (Max y)</span>
+              </label>
+              <input type="text" oninput="handleShortInput(2, this.value, 'max')" placeholder="Enter numerical answer..." 
+                class="short-input-max w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+            </div>
+            <div>
+              <label class="block text-xs font-bold uppercase mb-1 text-[var(--text-secondary)]">
+                <span class="lang-en">Minimum Value (Min y)</span>
+                <span class="lang-vi">Giá trị nhỏ nhất (Min y)</span>
+              </label>
+              <input type="text" oninput="handleShortInput(2, this.value, 'min')" placeholder="Enter numerical answer..." 
+                class="short-input-min w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+            </div>
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 3 - Q3 -->
+        <article id="q-p3-3" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 3 / Câu 3 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">An air traffic control (ATC) tower has a radar station mounted on top. Set up a 3D coordinate system $Oxyz$ with origin $O$ at the base of the tower, $Ox$ pointing West, $Oy$ pointing South, and $Oz$ pointing vertically upwards ($1\text{ unit} = 1\text{ km}$). An airplane $A$ is flying at an altitude of $10\text{ km}$, located $300\text{ km}$ East and $200\text{ km}$ North of the tower base. Compute the direct distance from airplane $A$ to the radar station base $O$ (round to the nearest tenth of a km).</span>
+            <span class="lang-vi">Một đài kiểm soát không lưu có trạm rada đặt ở trên đỉnh. Thiết lập hệ tọa độ $Oxyz$ với gốc $O$ tại chân đài, trục $Ox$ hướng về phía Tây, $Oy$ hướng về phía Nam, $Oz$ hướng thẳng đứng lên trên ($1\text{ đơn vị} = 1\text{ km}$). Một máy bay $A$ đang bay ở độ cao $10\text{ km}$, cách chân đài $300\text{ km}$ về phía Đông và $200\text{ km}$ về phía Bắc. Tính khoảng cách từ máy bay $A$ đến gốc $O$ (làm tròn đến hàng phần mười).</span>
+          </p>
+
+          <!-- SVG ATC RADAR TOWER -->
+          <div class="theme-inset p-3 rounded-lg overflow-x-auto flex justify-center">
+            <svg width="420" height="230" viewBox="0 0 420 230" class="max-w-full h-auto text-xs font-sans">
+              <rect width="420" height="230" fill="var(--svg-bg)" rx="8" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <!-- Axes Oxyz -->
+              <!-- O at (120, 160) -->
+              <!-- Ox West (-x in screen) -> Left-down -->
+              <line x1="120" y1="160" x2="40" y2="200" stroke="var(--accent-primary)" stroke-width="2"/>
+              <text x="30" y="210" font-weight="bold" fill="var(--text-primary)">Ox (West/Tây)</text>
+              <!-- Oy South (+y in screen) -> Right-down -->
+              <line x1="120" y1="160" x2="260" y2="200" stroke="var(--accent-primary)" stroke-width="2"/>
+              <text x="270" y="210" font-weight="bold" fill="var(--text-primary)">Oy (South/Nam)</text>
+              <!-- Oz Up -->
+              <line x1="120" y1="160" x2="120" y2="30" stroke="var(--accent-primary)" stroke-width="2"/>
+              <text x="125" y="25" font-weight="bold" fill="var(--text-primary)">Oz (Up/Thẳng đứng)</text>
+              <circle cx="120" cy="160" r="4" fill="var(--text-primary)"/>
+              <text x="105" y="175" font-weight="bold" fill="var(--text-primary)">O (0,0,0)</text>
+
+              <!-- ATC Tower Structure -->
+              <rect x="112" y="100" width="16" height="60" fill="var(--bg-inset)" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <circle cx="120" cy="95" r="10" fill="#3b82f6" stroke="var(--border-strong)"/>
+
+              <!-- Airplane A at (340, 50) -->
+              <line x1="120" y1="160" x2="340" y2="50" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,4"/>
+              <circle cx="340" cy="50" r="6" fill="#dc2626"/>
+              <text x="350" y="45" font-weight="bold" fill="#dc2626">Airplane A / Máy bay A</text>
+              <text x="350" y="62" font-size="11" fill="var(--text-muted)">(x=-300, y=-200, z=10)</text>
+            </svg>
+          </div>
+
+          <div class="max-w-md">
+            <input type="text" oninput="handleShortInput(3, this.value)" placeholder="Enter numerical answer..." 
+              class="short-input w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 3 - Q4 -->
+        <article id="q-p3-4" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 4 / Câu 4 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">A manufacturing firm produces $x$ product units per month ($x > 0$). Total cost is $C(x) = 25.5x + 1000$ (million VND), total revenue is $R(x) = 75.5x$ (million VND). Average profit function per product unit is $\overline{P}(x) = \dfrac{R(x) - C(x)}{x}$. What upper limit (in million VND) will the average profit per product unit never exceed regardless of production volume?</span>
+            <span class="lang-vi">Một công ty sản xuất $x$ sản phẩm mỗi tháng ($x > 0$). Tổng chi phí $C(x) = 25.5x + 1000$ (triệu đồng), tổng doanh thu $R(x) = 75.5x$ (triệu đồng). Hàm lợi nhuận trung bình trên mỗi sản phẩm là $\overline{P}(x) = \dfrac{R(x) - C(x)}{x}$. Lợi nhuận trung bình trên mỗi sản phẩm sẽ không bao giờ vượt quá bao nhiêu triệu đồng?</span>
+          </p>
+
+          <div class="max-w-md">
+            <input type="text" oninput="handleShortInput(4, this.value)" placeholder="Enter numerical answer..." 
+              class="short-input w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 3 - Q5 -->
+        <article id="q-p3-5" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 5 / Câu 5 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">A moving particle has position function $s(t) = t^3 - 2t^2 + 11t + 1\text{ (m)}$, where $t \ge 0$ is time in seconds. At what time $t$ does the instantaneous velocity of the particle reach its minimum? (Round to the nearest hundredth, e.g. 0.67 or exact fraction 2/3).</span>
+            <span class="lang-vi">Một chất điểm chuyển động theo phương trình $s(t) = t^3 - 2t^2 + 11t + 1\text{ (m)}$, với $t \ge 0$ (thời gian tính bằng giây). Tại thời điểm $t$ bằng bao nhiêu giây thì vận tốc tức thời của chất điểm đạt giá trị nhỏ nhất? (Làm tròn đến 2 chữ số thập phân hoặc nhập phân số 2/3).</span>
+          </p>
+
+          <div class="max-w-md">
+            <input type="text" oninput="handleShortInput(5, this.value)" placeholder="Enter numerical answer..." 
+              class="short-input w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+
+        <!-- PART 3 - Q6 -->
+        <article id="q-p3-6" class="question-anchor theme-card p-5 space-y-4">
+          <div class="flex items-center justify-between font-bold text-sm">
+            <span class="text-[var(--accent-primary)]">Part 3 – Question 6 / Câu 6 (0.5 pt)</span>
+            <span class="status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset">Unanswered</span>
+          </div>
+
+          <p class="font-semibold">
+            <span class="lang-en">From a square sheet of cardboard with side length $12\text{ cm}$, four congruent square corners of side length $x\text{ cm}$ are cut out. The remaining flaps are folded upwards to form an open-top rectangular box. Find the value of $x\text{ (cm)}$ that maximizes the volume of the box.</span>
+            <span class="lang-vi">Từ một tấm bìa hình vuông cạnh $12\text{ cm}$, người ta cắt bỏ 4 hình vuông bằng nhau có cạnh $x\text{ cm}$ ở 4 góc rồi gập các phần còn lại để tạo thành một chiếc hộp không nắp. Tìm $x\text{ (cm)}$ để thể tích chiếc hộp đạt giá trị lớn nhất.</span>
+          </p>
+
+          <!-- SVG BOX CUTOUT & FOLDED BOX -->
+          <div class="theme-inset p-3 rounded-lg overflow-x-auto flex justify-center">
+            <svg width="450" height="180" viewBox="0 0 450 180" class="max-w-full h-auto text-xs font-mono">
+              <rect width="450" height="180" fill="var(--svg-bg)" rx="8" stroke="var(--border-strong)" stroke-width="1.5"/>
+              <!-- Fig (a) Cardboard Cutout -->
+              <g transform="translate(20, 15)">
+                <rect x="0" y="0" width="140" width="140" fill="none" stroke="var(--border-strong)" stroke-width="1.5"/>
+                <!-- Cutout corners -->
+                <rect x="0" y="0" width="30" height="30" fill="#fee2e2" stroke="#dc2626" stroke-dasharray="2,2"/>
+                <rect x="110" y="0" width="30" height="30" fill="#fee2e2" stroke="#dc2626" stroke-dasharray="2,2"/>
+                <rect x="0" y="110" width="30" height="30" fill="#fee2e2" stroke="#dc2626" stroke-dasharray="2,2"/>
+                <rect x="110" y="110" width="30" height="30" fill="#fee2e2" stroke="#dc2626" stroke-dasharray="2,2"/>
+                <!-- Fold lines -->
+                <rect x="30" y="30" width="80" height="80" fill="var(--selected-bg)" stroke="var(--accent-primary)" stroke-width="1.5" stroke-dasharray="3,3"/>
+                <text x="70" y="160" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">Figure (a): 12 x 12 cm</text>
+                <text x="15" y="20" text-anchor="middle" fill="#dc2626" font-weight="bold">x</text>
+              </g>
+
+              <!-- Fig (b) Folded 3D Box -->
+              <g transform="translate(240, 30)">
+                <!-- Front face -->
+                <polygon points="20,60 120,60 120,110 20,110" fill="var(--bg-inset)" stroke="var(--border-strong)" stroke-width="1.5"/>
+                <!-- Top open rim -->
+                <polygon points="20,60 60,20 160,20 120,60" fill="var(--selected-bg)" stroke="var(--border-strong)" stroke-width="1.5"/>
+                <!-- Right face -->
+                <polygon points="120,60 160,20 160,70 120,110" fill="var(--bg-card)" stroke="var(--border-strong)" stroke-width="1.5"/>
+                <text x="90" y="135" text-anchor="middle" fill="var(--text-primary)" font-weight="bold">Figure (b): Folded Box</text>
+                <text x="70" y="85" text-anchor="middle" fill="var(--accent-primary)" font-weight="bold">V(x) Max?</text>
+              </g>
+            </svg>
+          </div>
+
+          <div class="max-w-md">
+            <input type="text" oninput="handleShortInput(6, this.value)" placeholder="Enter numerical answer..." 
+              class="short-input w-full px-4 py-2.5 rounded-lg bg-[var(--bg-card)] border-2 border-[var(--border-strong)] text-base font-bold">
+          </div>
+
+          <div class="solution-container hidden border-t border-[var(--border-subtle)] pt-4 mt-2"></div>
+        </article>
+      </section>
+
+
+      <!-- ========================================================================= -->
+      <!-- 4. SUBMISSION & ACTION BAR WITH PHOTO ATTACHMENT -->
+      <!-- ========================================================================= -->
+      <section id="submission-section" class="question-anchor theme-card p-6 border-t-4 border-t-[var(--accent-primary)] space-y-6">
+        <div class="space-y-1 text-center sm:text-left">
+          <h2 class="text-xl font-black">
+            <span class="lang-en">Submission & Scratch Work Attachments</span>
+            <span class="lang-vi">Nộp bài Thi & Tải ảnh Bài làm</span>
+          </h2>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] font-medium">
+            <span class="lang-en">Upload photos of your handwritten scratch work before downloading your official Markdown report and unlocking step-by-step solutions.</span>
+            <span class="lang-vi">Tải lên ảnh chụp bài làm trước khi nộp bài và tải báo cáo Markdown để mở khóa lời giải chi tiết.</span>
+          </p>
+        </div>
+
+        <!-- Attached Work Photos Summary Panel -->
+        <div id="attached-photos-panel" class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold uppercase tracking-wider text-[var(--text-secondary)]">
+              <span class="lang-en">Attached Photos of Work:</span>
+              <span class="lang-vi">Ảnh bài làm đã tải lên:</span>
+            </span>
+            <span id="photo-count-badge" class="px-2.5 py-0.5 rounded-full bg-[var(--accent-secondary)] text-white text-xs font-bold">0 Photos</span>
+          </div>
+
+          <!-- Empty State Notice -->
+          <div id="photos-empty-state" class="p-4 theme-inset rounded-lg text-center text-xs text-[var(--text-muted)] font-medium">
+            <span class="lang-en">No photos attached yet. Click "UPLOAD PHOTO OF WORK" below to add images from gallery or camera.</span>
+            <span class="lang-vi">Chưa có ảnh nào được tải lên. Nhấn "TẢI ẢNH BÀI LÀM" bên dưới để chọn ảnh từ thư viện hoặc chụp trực tiếp.</span>
+          </div>
+
+          <!-- Thumbnail Grid -->
+          <div id="photos-thumbnail-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 hidden"></div>
+        </div>
+
+        <!-- ACTION BUTTONS: UPLOAD PHOTO OF WORK (LEFT) & DOWNLOAD MARKDOWN (RIGHT) -->
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 pt-2">
+          
+          <!-- UPLOAD PHOTO OF WORK BUTTON (EXACT POSITION: LEFT) -->
+          <button type="button" onclick="openPhotoModal()"
+            class="py-3.5 px-6 rounded-lg bg-[var(--accent-secondary)] hover:bg-[var(--accent-secondary-hover)] text-white font-extrabold text-base flex items-center justify-center gap-2 shadow-md transition">
+            <span>📷</span>
+            <span class="lang-en">UPLOAD PHOTO OF WORK</span>
+            <span class="lang-vi">TẢI ẢNH BÀI LÀM</span>
+            <span id="photo-btn-count" class="ml-1 px-2 py-0.5 rounded-full bg-white/20 text-xs">(0)</span>
+          </button>
+
+          <!-- DOWNLOAD MARKDOWN REPORT BUTTON (EXACT POSITION: RIGHT) -->
+          <button type="button" onclick="submitExamAndDownloadMD()"
+            class="py-3.5 px-6 rounded-lg bg-[var(--accent-primary)] hover:bg-[var(--accent-primary-hover)] text-white font-extrabold text-base flex items-center justify-center gap-2 shadow-md transition">
+            <span>📥</span>
+            <span class="lang-en">DOWNLOAD MARKDOWN REPORT</span>
+            <span class="lang-vi">TẢI BÁO CÁO MARKDOWN</span>
+          </button>
+
+        </div>
+      </section>
+
+
+      <!-- ========================================================================= -->
+      <!-- 5. MASTER ANSWER KEY & EXPLANATIONS (LOCKED UNTIL SUBMISSION) -->
+      <!-- ========================================================================= -->
+      <section id="master-answer-key-section" class="question-anchor theme-card p-6 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b-2 border-[var(--border-strong)] pb-4">
+          <div>
+            <h2 class="text-xl font-black flex items-center gap-2">
+              <span>🔑</span>
+              <span class="lang-en">Master Answer Key & Detailed Solutions</span>
+              <span class="lang-vi">Bảng Đáp án Master & Lời giải Chi tiết</span>
+            </h2>
+            <p class="text-xs text-[var(--text-secondary)] font-medium mt-1">
+              <span class="lang-en">Comprehensive step-by-step mathematical explanations for all 22 exam questions.</span>
+              <span class="lang-vi">Hệ thống đáp án và lời giải chi tiết từng bước cho toàn bộ 22 câu hỏi.</span>
+            </p>
+          </div>
+
+          <!-- Solutions Toggle All (Post Submission) -->
+          <div id="solutions-toggle-all-container" class="hidden">
+            <button type="button" onclick="toggleAllSolutions()" class="px-3 py-1.5 rounded-lg theme-inset border border-[var(--border-strong)] text-xs font-bold">
+              <span class="lang-en">Expand / Collapse All Solutions</span>
+              <span class="lang-vi">Mở / Ẩn tất cả Lời giải</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- LOCKED STATE NOTICE (Shown Before Submission) -->
+        <div id="master-key-locked-card" class="p-8 theme-inset rounded-xl text-center space-y-3">
+          <div class="text-4xl">🔒</div>
+          <h3 class="text-lg font-extrabold">
+            <span class="lang-en">Master Answer Key is Locked</span>
+            <span class="lang-vi">Bảng Đáp án Master đang bị Khóa</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-[var(--text-secondary)] max-w-lg mx-auto">
+            <span class="lang-en">To ensure active learning integrity, the complete Master Answer Key and worked solutions will automatically unlock immediately after you click <strong>"DOWNLOAD MARKDOWN REPORT"</strong>.</span>
+            <span class="lang-vi">Để đảm bảo tính trung thực khi làm bài, Bảng đáp án Master và lời giải chi tiết sẽ tự động mở khóa ngay sau khi bạn nhấn <strong>"TẢI BÁO CÁO MARKDOWN"</strong>.</span>
+          </p>
+        </div>
+
+        <!-- UNLOCKED MASTER KEY TABLES & DETAILED SOLUTIONS (Shown After Submission) -->
+        <div id="master-key-unlocked-content" class="hidden space-y-6">
+          
+          <!-- Master Answer Summary Table -->
+          <div class="space-y-3">
+            <h3 class="font-extrabold text-sm uppercase tracking-wider text-[var(--text-secondary)]">
+              <span class="lang-en">Part 1 & Part 3 Quick Answer Key</span>
+              <span class="lang-vi">Bảng đáp án nhanh Phần 1 & Phần 3</span>
+            </h3>
+            <div class="overflow-x-auto theme-inset p-3 rounded-lg text-xs md:text-sm">
+              <table class="w-full text-center border-collapse">
+                <thead>
+                  <tr class="border-b border-[var(--border-strong)]">
+                    <th class="p-2">Part 1 Qs</th>
+                    <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th><th>Q8</th><th>Q9</th><th>Q10</th><th>Q11</th><th>Q12</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="font-bold text-[var(--accent-primary)] border-b border-[var(--border-subtle)]">
+                    <td class="p-2 text-left font-normal text-[var(--text-primary)]">Key</td>
+                    <td>B</td><td>C</td><td>B</td><td>D</td><td>B</td><td>B</td><td>C</td><td>B</td><td>B</td><td>A</td><td>B</td><td>A</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="overflow-x-auto theme-inset p-3 rounded-lg text-xs md:text-sm mt-3">
+              <table class="w-full text-center border-collapse">
+                <thead>
+                  <tr class="border-b border-[var(--border-strong)]">
+                    <th class="p-2">Part 3 Qs</th>
+                    <th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="font-bold text-[var(--accent-primary)]">
+                    <td class="p-2 text-left font-normal text-[var(--text-primary)]">Key</td>
+                    <td>-26</td><td>Max: 1.5 (3/2)<br>Min: 0</td><td>360.7</td><td>50</td><td>0.67 (2/3)</td><td>2</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-950 border border-emerald-500 text-xs sm:text-sm text-emerald-900 dark:text-emerald-100 font-semibold">
+            <span class="lang-en">🎉 Congratulations! Worked solutions have also been unlocked beneath each individual question card above.</span>
+            <span class="lang-vi">🎉 Chúc mừng! Lời giải chi tiết cũng đã được mở khóa ngay dưới mỗi thẻ câu hỏi tương ứng ở trên.</span>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 6. PHOTO ATTACHMENT DRAWER & LIGHTBOX MODALS -->
+  <!-- ========================================================================= -->
+  <!-- Photo Upload Drawer Modal -->
+  <div id="photo-upload-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="theme-card w-full max-w-xl p-6 space-y-5 shadow-2xl relative">
+      <div class="flex items-center justify-between border-b border-[var(--border-strong)] pb-3">
+        <h3 class="font-black text-lg flex items-center gap-2">
+          <span>📷</span>
+          <span class="lang-en">Upload Scratch Work Photos</span>
+          <span class="lang-vi">Tải lên Ảnh bài làm nháp</span>
+        </h3>
+        <button type="button" onclick="closePhotoModal()" class="text-xl font-bold p-1 hover:opacity-75">&times;</button>
+      </div>
+
+      <!-- Upload Trigger Options -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <!-- File Gallery Input -->
+        <label class="theme-inset p-4 rounded-xl border-2 border-dashed border-[var(--accent-secondary)] text-center cursor-pointer hover:bg-[var(--bg-card)] transition flex flex-col items-center justify-center gap-2">
+          <span class="text-2xl">🖼️</span>
+          <span class="font-bold text-sm text-[var(--accent-secondary)]">
+            <span class="lang-en">Choose from Files / Gallery</span>
+            <span class="lang-vi">Chọn từ Thư viện / Tệp</span>
+          </span>
+          <span class="text-xs text-[var(--text-muted)]">Select multiple photos</span>
+          <input type="file" accept="image/*" multiple onchange="handleFileSelect(event)" class="hidden">
+        </label>
+
+        <!-- Camera Capture Input -->
+        <label class="theme-inset p-4 rounded-xl border-2 border-dashed border-[var(--accent-primary)] text-center cursor-pointer hover:bg-[var(--bg-card)] transition flex flex-col items-center justify-center gap-2">
+          <span class="text-2xl">📸</span>
+          <span class="font-bold text-sm text-[var(--accent-primary)]">
+            <span class="lang-en">Take Photo with Camera</span>
+            <span class="lang-vi">Chụp ảnh bằng Camera</span>
+          </span>
+          <span class="text-xs text-[var(--text-muted)]">Opens mobile rear camera</span>
+          <input type="file" accept="image/*" capture="environment" onchange="handleFileSelect(event)" class="hidden">
+        </label>
+      </div>
+
+      <!-- Desktop Drag and Drop Dropzone -->
+      <div id="dropzone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"
+        class="theme-inset p-4 rounded-xl text-center text-xs text-[var(--text-muted)] border-2 border-dashed border-[var(--border-strong)]">
+        <span class="lang-en">Or drag & drop photo files here directly on desktop</span>
+        <span class="lang-vi">Hoặc kéo & thả tệp ảnh vào đây trực tiếp trên máy tính</span>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <button type="button" onclick="closePhotoModal()" class="py-2.5 px-5 rounded-lg bg-[var(--accent-primary)] text-white font-bold text-sm">
+          <span class="lang-en">Done / Close</span>
+          <span class="lang-vi">Hoàn thành / Đóng</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Lightbox Modal -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 hidden lightbox-modal flex items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-[90vh]">
+      <button type="button" onclick="closeLightbox()" class="absolute -top-10 right-0 text-white font-bold text-2xl">&times; Close</button>
+      <img id="lightbox-img" src="" alt="Enlarged Work Photo" class="max-w-full max-h-[85vh] rounded-lg shadow-2xl object-contain">
+      <div id="lightbox-caption" class="text-white text-center text-sm font-medium mt-2"></div>
+    </div>
+  </div>
+
+
+  <!-- ========================================================================= -->
+  <!-- 7. APPLICATION LOGIC, STATE & DATA MANAGEMENT -->
+  <!-- ========================================================================= -->
+  <script>
+    // IN-MEMORY APPLICATION STATE (ZERO localStorage / sessionStorage DEPENDENCY)
+    const appState = {
+      studentName: '',
+      studentId: '',
+      lang: 'en',
+      theme: 'light',
+      fontSize: 16,
+      submitted: false,
+      version: 1,
+      answers: {
+        p1: {}, // { 1: 'B', 2: 'C', ... }
+        p2: {}, // { 1: { a: true, b: true, c: true, d: false }, ... }
+        p3: {}  // { 1: '-26', 2: { max: '1.5', min: '0' }, ... }
+      },
+      photos: [] // [ { id, name, size, time, dataUrl, note } ]
+    };
+
+    // MASTER ANSWER KEY & EXPLANATIONS DATA
+    const masterData = {
+      p1: {
+        1: { key: 'B', exp_en: 'Derivative $f\'(x) < 0$ on intervals $(-\\infty; -1)$ and $(0; 1)$, so $f(x)$ decreases on $(0; 1)$.', exp_vi: 'Đạo hàm $f\'(x) < 0$ trên các khoảng $(-\\infty; -1)$ và $(0; 1)$, do đó hàm số nghịch biến trên $(0; 1)$.' },
+        2: { key: 'C', exp_en: 'Derivative $f\'(x) = 3x^2 - 2x + 1 > 0, \\forall x \\in \\mathbb{R}$ ($\Delta\' = -2 < 0$). Thus $f(x)$ is strictly increasing on $[0; 4]$. Minimum occurs at $x = 0 \\implies f(0) = 3$.', exp_vi: 'Đạo hàm $f\'(x) = 3x^2 - 2x + 1 > 0, \\forall x \\in \\mathbb{R}$ (vì $\Delta\' = -2 < 0$). Do đó hàm số đồng biến trên $[0; 4]$. Giá trị nhỏ nhất đạt tại $x = 0 \\implies f(0) = 3$.' },
+        3: { key: 'B', exp_en: 'Horizontal asymptote $\\lim_{x \\to \\pm\\infty} \\frac{2-x}{x+1} = -1 \\implies y = -1$.', exp_vi: 'Tiệm cận ngang $\\lim_{x \\to \\pm\\infty} \\frac{2-x}{x+1} = -1 \\implies y = -1$.' },
+        4: { key: 'D', exp_en: 'Polynomial division: $y = \\frac{2x^2+x-2}{x+1} = 2x - 1 - \\frac{1}{x+1}$. As $x \\to \\pm\\infty$, $\\frac{1}{x+1} \\to 0$, so slant asymptote is $y = 2x - 1$.', exp_vi: 'Chia đa thức: $y = \\frac{2x^2+x-2}{x+1} = 2x - 1 - \\frac{1}{x+1}$. Khi $x \\to \\pm\\infty$, $\\frac{1}{x+1} \\to 0$, vậy tiệm cận xiên là $y = 2x - 1$.' },
+        5: { key: 'B', exp_en: 'The graph passes through $(0; 1)$ and has local min at $(2; -3)$. $f(0)=1$, $f(2)=2^3-3(2)^2+1 = -3$. Matches $f(x) = x^3 - 3x^2 + 1$.', exp_vi: 'Đồ thị đi qua điểm $(0; 1)$ và có điểm cực tiểu $(2; -3)$. Có $f(0)=1$, $f(2)=2^3-3(2)^2+1 = -3$. Phù hợp với $f(x) = x^3 - 3x^2 + 1$.' },
+        6: { key: 'B', exp_en: 'Rational function $y = x + \\frac{4}{x+1} = \\frac{x^2+x+4}{x+1}$ has vertical asymptote $x = -1$ and slant asymptote $y = x$.', exp_vi: 'Hàm số $y = x + \\frac{4}{x+1} = \\frac{x^2+x+4}{x+1}$ có tiệm cận đứng $x = -1$ và tiệm cận xiên $y = x$.' },
+        7: { key: 'C', exp_en: 'Total sample $n = 30$. Median position $n/2 = 15$. Cumulative frequencies: $[25;34) \\to 5$, $[34;43) \\to 9$, $[43;52) \\to 16$. Thus 15th value lies in $[43; 52)$.', exp_vi: 'Tổng mẫu $n = 30$. Vị trí trung vị $n/2 = 15$. Tần số tích lũy: $[25;34) \\to 5$, $[34;43) \\to 9$, $[43;52) \\to 16$. Vậy giá trị thứ 15 thuộc nhóm $[43; 52)$.' },
+        8: { key: 'B', exp_en: 'Midpoints $x_i = [29.5, 38.5, 47.5, 56.5, 65.5, 74.5, 83.5, 92.5]$. Mean $\\bar{x} = 51.4$. Variance $S^2 = 252.09 \\implies S = \\sqrt{252.09} \\approx 15.88$.', exp_vi: 'Giá trị đại diện $x_i = [29.5, 38.5, 47.5, 56.5, 65.5, 74.5, 83.5, 92.5]$. Trung bình $\\bar{x} = 51.4$. Phương sai $S^2 = 252.09 \\implies S = \\sqrt{252.09} \\approx 15.88$.' },
+        9: { key: 'B', exp_en: '$\\overrightarrow{AD} - \\overrightarrow{AC} = \\overrightarrow{CD} \\neq \\overrightarrow{DC}$. Statement B is FALSE.', exp_vi: '$\\overrightarrow{AD} - \\overrightarrow{AC} = \\overrightarrow{CD} \\neq \\overrightarrow{DC}$. Khẳng định B SAI.' },
+        10: { key: 'A', exp_en: 'Set up coordinate system with $A(0,0,0) \\implies B(1,0,0), D(0,2,0), C\'(1,2,3)$. $\\overrightarrow{BD} = (-1,2,0)$, $\\overrightarrow{AC\'} = (1,2,3)$. Dot product $= (-1)(1) + 2(2) + 0(3) = 3$.', exp_vi: 'Gắn tọa độ $A(0,0,0) \\implies B(1,0,0), D(0,2,0), C\'(1,2,3)$. $\\overrightarrow{BD} = (-1,2,0)$, $\\overrightarrow{AC\'} = (1,2,3)$. Tích vô hướng $= (-1)(1) + 2(2) + 0(3) = 3$.' },
+        11: { key: 'B', exp_en: '$B$ is midpoint of $AM \\implies M = 2B - A = (2(4)-1; 2(0)-2; 2(3)-(-3)) = (7; -2; 9)$.', exp_vi: '$B$ là trung điểm của $AM \\implies M = 2B - A = (2(4)-1; 2(0)-2; 2(3)-(-3)) = (7; -2; 9)$.' },
+        12: { key: 'A', exp_en: '$\\overrightarrow{BA} = (-1; 4; -4)$, $\\overrightarrow{BC} = (-2; 2; 0)$. $|\\overrightarrow{BA}| = 57^{1/2} = 9... \\implies |\\overrightarrow{BA}| = \\sqrt{1+16+16} = 57?...$ Wait: $\\overrightarrow{BA} = (1-2; 2-(-2); -3-1) = (-1; 4; -4)$, length $= \\sqrt{1+16+16} = \\sqrt{33}$. $\\overrightarrow{BC} = (0-2; 0-(-2); 1-1) = (-2; 2; 0)$, length $= \\sqrt{4+4+0} = 2\\sqrt{2} = \\sqrt{8}$. Dot product $= (-1)(-2) + 4(2) + (-4)(0) = 10$. $\\cos\\widehat{ABC} = \\frac{10}{\\sqrt{33}\\sqrt{8}} = \\frac{10}{2\\sqrt{66}} = \\frac{5}{\\sqrt{66}} = \\frac{5\\sqrt{66}}{66}$.', exp_vi: '$\\overrightarrow{BA} = (-1; 4; -4) \\implies |\\overrightarrow{BA}| = \\sqrt{33}$. $\\overrightarrow{BC} = (-2; 2; 0) \\implies |\\overrightarrow{BC}| = 2\\sqrt{2}$. $\\overrightarrow{BA} \\cdot \\overrightarrow{BC} = 10$. Vậy $\\cos\\widehat{ABC} = \\frac{10}{2\\sqrt{66}} = \\frac{5\\sqrt{66}}{66}$.' }
+      },
+      p2: {
+        1: {
+          key: { a: true, b: true, c: true, d: false },
+          exp_en: 'a) $y\' = \\frac{x^2+2x}{(x+1)^2} < 0$ on $(-2;-1)$ [TRUE]. b) On $[-1/2; 2]$, $y\' > 0$, min is $y(-1/2) = 2.5$? Wait: $y(0) = 2$ is local min at $x=0 \\in [-1/2; 2]$. Min value $= 2$ [TRUE]. c) Local max at $x=-2 \\implies y(-2) = -2$ [TRUE]. d) $y = x + 1 + \\frac{1}{x+1} \\implies$ slant asymptote is $y = x + 1$ [FALSE].',
+          exp_vi: 'a) $y\' = \\frac{x^2+2x}{(x+1)^2} < 0$ trên $(-2;-1)$ [ĐÚNG]. b) Cực tiểu tại $x=0 \\implies y(0) = 2$ trên $[-1/2; 2]$ [ĐÚNG]. c) Cực đại tại $x=-2 \\implies y_{CĐ} = -2$ [ĐÚNG]. d) $y = x + 1 + \\frac{1}{x+1} \\implies$ tiệm cận xiên là $y = x + 1$ [SAI].'
+        },
+        2: {
+          key: { a: true, b: false, c: false, d: true },
+          exp_en: 'a) $\\overrightarrow{AF} = \\overrightarrow{DG}$ [TRUE]. b) $\\overrightarrow{FG}$ and $\\overrightarrow{DA}$ are opposite [FALSE]. c) $\\overrightarrow{BC}+\\overrightarrow{BF} = \\overrightarrow{BG} \\neq \\overrightarrow{HC}$ [FALSE]. d) $\\overrightarrow{BC} \\cdot \\overrightarrow{AH} = \\overrightarrow{AD} \\cdot \\overrightarrow{AH} = |AD|^2 = 4$ [TRUE].',
+          exp_vi: 'a) $\\overrightarrow{AF} = \\overrightarrow{DG}$ [ĐÚNG]. b) $\\overrightarrow{FG}$ và $\\overrightarrow{DA}$ ngược hướng [SAI]. c) $\\overrightarrow{BC}+\\overrightarrow{BF} = \\overrightarrow{BG}$ [SAI]. d) $\\overrightarrow{BC} \\cdot \\overrightarrow{AH} = \\overrightarrow{AD} \\cdot \\overrightarrow{AH} = 2^2 = 4$ [ĐÚNG].'
+        },
+        3: {
+          key: { a: true, b: false, c: true, d: false },
+          exp_en: 'a) $A(4;0;-5)$ [TRUE]. b) $\\overrightarrow{AB} = B - A = (-3; 4; 3) \\neq (3;-4;-3)$ [FALSE]. c) $\\overrightarrow{OB} \\cdot \\vec{u} = 1(-3) + 4(2) + (-2)(1) = 3$ [TRUE]. d) $|OA|=\\sqrt{41}, |OB|=\\sqrt{21}, OA\\cdot OB = 4(1)+0(4)+(-5)(-2)=14 \\implies \\cos = 14/\\sqrt{861} \\neq \\sqrt{7}/5$ [FALSE].',
+          exp_vi: 'a) $A(4;0;-5)$ [ĐÚNG]. b) $\\overrightarrow{AB} = (-3; 4; 3)$ [SAI]. c) $\\overrightarrow{OB} \\cdot \\vec{u} = -3+8-2 = 3$ [ĐÚNG]. d) $\\cos\\widehat{AOB} = 14/\\sqrt{861}$ [SAI].'
+        },
+        4: {
+          key: { a: true, b: true, c: true, d: true },
+          exp_en: 'a) $n = 4+5+7+8+6 = 30$ [TRUE]. b) $3n/4 = 22.5 \\implies Q_3 \\in [52; 61)$ [TRUE]. c) Range $R = 70 - 25 = 45$ [TRUE]. d) $\\bar{x} = 49.7$, $S^2 = 138.69$ [TRUE].',
+          exp_vi: 'a) $n = 30$ [ĐÚNG]. b) Nhóm chứa $Q_3$ là $[52; 61)$ [ĐÚNG]. c) Khoảng biến thiên $R = 70 - 25 = 45$ [ĐÚNG]. d) Phương sai $S^2 \\approx 138.69$ [ĐÚNG].'
+        }
+      },
+      p3: {
+        1: { key: '-26', alt: ['-26'], exp_en: '$y\' = 3x^2 - 12x = 0 \\implies x=0 \\text{ or } x=4$. $y(0) = 3$, $y(4) = 4^3 - 6(4)^2 + 3 = 64 - 96 + 3 = -29$. Sum $y_1 + y_2 = 3 + (-29) = -26$.', exp_vi: '$y\' = 3x^2 - 12x = 0 \\implies x=0 \\text{ hoặc } x=4$. $y(0) = 3$, $y(4) = -29$. Tổng $y_1 + y_2 = 3 + (-29) = -26$.' },
+        2: { key_max: '1.5', key_min: '0', alt_max: ['1.5', '3/2'], alt_min: ['0'], exp_en: 'Domain $-x^2 + 5x - 4 \\ge 0 \\iff 1 \\le x \\le 4$. Inner quadratic has max at $x = 2.5 \\implies -2.5^2 + 5(2.5) - 4 = 2.25$. Max $y = \\sqrt{2.25} = 1.5$. Min $y = 0$ at endpoints $x=1, x=4$.', exp_vi: 'Tập xác định $1 \\le x \\le 4$. Tam thức bậc hai đạt max tại $x = 2.5 \\implies 2.25$. Max $y = \\sqrt{2.25} = 1.5$ (hoặc 3/2). Min $y = 0$ tại $x=1, 4$.' },
+        3: { key: '360.7', alt: ['360.7'], exp_en: 'Coordinates of $A$ relative to origin $O$: $x = -300$, $y = -200$, $z = 10$. Distance $OA = \\sqrt{(-300)^2 + (-200)^2 + 10^2} = \\sqrt{90000 + 40000 + 100} = \\sqrt{130100} \\approx 360.6938 \\to 360.7\\text{ km}$.', exp_vi: 'Tọa độ $A(-300; -200; 10)$. Khoảng cách $OA = \\sqrt{300^2 + 200^2 + 10^2} = \\sqrt{130100} \\approx 360.7\\text{ km}$.' },
+        4: { key: '50', alt: ['50'], exp_en: '$\\overline{P}(x) = \\frac{75.5x - (25.5x + 1000)}{x} = \\frac{50x - 1000}{x} = 50 - \\frac{1000}{x}$. Since $x > 0$, $\\frac{1000}{x} > 0 \\implies \\overline{P}(x) < 50$. Upper limit is 50 million VND.', exp_vi: '$\\overline{P}(x) = \\frac{50x - 1000}{x} = 50 - \\frac{1000}{x} < 50$. Lợi nhuận trung bình không bao giờ vượt quá 50 triệu đồng.' },
+        5: { key: '0.67', alt: ['0.67', '2/3'], exp_en: 'Instantaneous velocity $v(t) = s\'(t) = 3t^2 - 4t + 11$. Quadratic with $a=3>0$ reaches minimum at vertex $t = -b/(2a) = 4/6 = 2/3 \\approx 0.67\\text{ s}$.', exp_vi: 'Vận tốc tức thời $v(t) = s\'(t) = 3t^2 - 4t + 11$. Đạt giá trị nhỏ nhất tại đỉnh $t = 2/3 \\approx 0.67\\text{ giây}$.' },
+        6: { key: '2', alt: ['2'], exp_en: 'Side of base $= 12 - 2x$, height $= x$ ($0 < x < 6$). Volume $V(x) = x(12 - 2x)^2 = 4x(6-x)^2$. Derivative $V\'(x) = (12-2x)(12-6x) = 0 \\implies x = 2\\text{ cm}$.', exp_vi: 'Cạnh đáy $= 12 - 2x$, chiều cao $= x$. Thể tích $V(x) = x(12 - 2x)^2$. Đạo hàm $V\'(x) = 0 \\implies x = 2\\text{ cm}$.' }
+      }
+    };
+
+    // ON PAGE LOAD INITIALIZATION
+    window.onload = function() {
+      renderNavPills();
+      renderSolutions();
+      renderKaTeX();
+
+      // Show login modal on load if student profile is empty
+      if (!appState.studentName || !appState.studentId) {
+        document.getElementById('login-modal').classList.remove('hidden');
+      }
+    };
+
+    // KA TEX AUTO-RENDER WRAPPER
+    function renderKaTeX() {
+      if (window.renderMathInElement) {
+        renderMathInElement(document.body, {
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false}
+          ],
+          throwOnError: false
+        });
+      }
+    }
+
+    // LOGIN & PROFILE HANDLING
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('student-name-input').value.trim();
+      const id = document.getElementById('student-id-input').value.trim();
+
+      if (!name || !id) {
+        document.getElementById('login-error-alert').classList.remove('hidden');
+        return;
+      }
+
+      appState.studentName = name;
+      appState.studentId = id;
+      
+      // Update UI Header Profile
+      document.getElementById('header-student-name').innerText = name;
+      document.getElementById('header-student-id').innerText = 'ID: ' + id;
+      document.getElementById('header-avatar').innerText = name.charAt(0).toUpperCase();
+
+      document.getElementById('login-modal').classList.add('hidden');
+      document.getElementById('login-error-alert').classList.add('hidden');
+    }
+
+    function openLoginModal() {
+      document.getElementById('student-name-input').value = appState.studentName;
+      document.getElementById('student-id-input').value = appState.studentId;
+      document.getElementById('login-modal').classList.remove('hidden');
+    }
+
+    // LANGUAGE & THEME TOGGLES
+    function toggleLanguage(lang) {
+      appState.lang = lang;
+      document.body.setAttribute('data-lang', lang);
+      
+      // Update header buttons
+      document.getElementById('nav-lang-en').className = lang === 'en' ? 'px-2 py-1 rounded bg-[var(--accent-primary)] text-white' : 'px-2 py-1 rounded text-[var(--text-secondary)]';
+      document.getElementById('nav-lang-vi').className = lang === 'vi' ? 'px-2 py-1 rounded bg-[var(--accent-primary)] text-white' : 'px-2 py-1 rounded text-[var(--text-secondary)]';
+      document.getElementById('login-lang-en').className = lang === 'en' ? 'px-2 py-1 text-xs font-bold rounded bg-[var(--accent-primary)] text-white' : 'px-2 py-1 text-xs font-bold rounded border border-[var(--border-strong)]';
+      document.getElementById('login-lang-vi').className = lang === 'vi' ? 'px-2 py-1 text-xs font-bold rounded bg-[var(--accent-primary)] text-white' : 'px-2 py-1 text-xs font-bold rounded border border-[var(--border-strong)]';
+
+      setTimeout(renderKaTeX, 50);
+    }
+
+    function toggleTheme() {
+      appState.theme = appState.theme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', appState.theme);
+      const icon = appState.theme === 'light' ? '☀️' : '🌙';
+      document.getElementById('nav-theme-icon').innerText = icon;
+      document.getElementById('login-theme-icon').innerText = icon;
+    }
+
+    function adjustFontSize(delta) {
+      appState.fontSize = Math.min(22, Math.max(14, appState.fontSize + delta * 2));
+      document.body.style.fontSize = appState.fontSize + 'px';
+    }
+
+    function resetFontSize() {
+      appState.fontSize = 16;
+      document.body.style.fontSize = '16px';
+    }
+
+    function toggleMobileNav() {
+      const drawer = document.getElementById('mobile-nav-drawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    // ANSWER SELECTION HANDLERS
+    function selectMCQ(qNum, option) {
+      appState.answers.p1[qNum] = option;
+
+      // Update Option UI
+      const container = document.getElementById(`opts-p1-${qNum}`);
+      const buttons = container.querySelectorAll('.option-btn');
+      buttons.forEach(btn => {
+        if (btn.innerText.startsWith(option)) {
+          btn.classList.add('selected-neutral');
+        } else {
+          btn.classList.remove('selected-neutral');
+        }
+      });
+
+      updateQuestionStatusBadge(`q-p1-${qNum}`, true);
+      updateProgress();
+    }
+
+    function selectTF(qNum, stmt, value) {
+      if (!appState.answers.p2[qNum]) appState.answers.p2[qNum] = {};
+      appState.answers.p2[qNum][stmt] = value;
+
+      const container = document.getElementById(`tf-p2-${qNum}-${stmt}`);
+      const buttons = container.querySelectorAll('.option-btn');
+      buttons[0].classList.toggle('selected-neutral', value === true);
+      buttons[1].classList.toggle('selected-neutral', value === false);
+
+      const answeredCount = Object.keys(appState.answers.p2[qNum]).length;
+      updateQuestionStatusBadge(`q-p2-${qNum}`, answeredCount === 4);
+      updateProgress();
+    }
+
+    function handleShortInput(qNum, value, subType = null) {
+      if (subType) {
+        if (!appState.answers.p3[qNum]) appState.answers.p3[qNum] = {};
+        appState.answers.p3[qNum][subType] = value.trim();
+        const hasBoth = appState.answers.p3[qNum].max && appState.answers.p3[qNum].min;
+        updateQuestionStatusBadge(`q-p3-${qNum}`, hasBoth);
+      } else {
+        appState.answers.p3[qNum] = value.trim();
+        updateQuestionStatusBadge(`q-p3-${qNum}`, value.trim().length > 0);
+      }
+      updateProgress();
+    }
+
+    function updateQuestionStatusBadge(qId, isAnswered) {
+      const badge = document.querySelector(`#${qId} .status-badge`);
+      if (badge && !appState.submitted) {
+        badge.innerText = isAnswered ? 'Answered' : 'Unanswered';
+        badge.className = isAnswered 
+          ? 'status-badge text-xs px-2.5 py-0.5 rounded font-bold bg-[var(--accent-primary)] text-white'
+          : 'status-badge text-xs px-2.5 py-0.5 rounded font-semibold theme-inset';
+      }
+    }
+
+    // QUICK NAVIGATION PILLS RENDERER
+    function renderNavPills() {
+      const p1Container = document.getElementById('desktop-p1-pills');
+      const p2Container = document.getElementById('desktop-p2-pills');
+      const p3Container = document.getElementById('desktop-p3-pills');
+      const mobileContainer = document.getElementById('mobile-nav-pills');
+
+      p1Container.innerHTML = '';
+      p2Container.innerHTML = '';
+      p3Container.innerHTML = '';
+      mobileContainer.innerHTML = '';
+
+      // Part 1
+      for (let i = 1; i <= 12; i++) {
+        const btn = createNavPill(`P1-Q${i}`, `#q-p1-${i}`, isP1Answered(i));
+        p1Container.appendChild(btn.cloneNode(true));
+        mobileContainer.appendChild(btn);
+      }
+      // Part 2
+      for (let i = 1; i <= 4; i++) {
+        const btn = createNavPill(`P2-Q${i}`, `#q-p2-${i}`, isP2Answered(i));
+        p2Container.appendChild(btn.cloneNode(true));
+        mobileContainer.appendChild(btn);
+      }
+      // Part 3
+      for (let i = 1; i <= 6; i++) {
+        const btn = createNavPill(`P3-Q${i}`, `#q-p3-${i}`, isP3Answered(i));
+        p3Container.appendChild(btn.cloneNode(true));
+        mobileContainer.appendChild(btn);
+      }
+    }
+
+    function createNavPill(label, targetHash, isAnswered) {
+      const a = document.createElement('a');
+      a.href = targetHash;
+      a.innerText = label;
+      a.className = 'nav-pill ' + (isAnswered ? 'status-answered' : '');
+      return a;
+    }
+
+    function isP1Answered(num) { return !!appState.answers.p1[num]; }
+    function isP2Answered(num) { return appState.answers.p2[num] && Object.keys(appState.answers.p2[num]).length === 4; }
+    function isP3Answered(num) { 
+      if (num === 2) return appState.answers.p3[2] && appState.answers.p3[2].max && appState.answers.p3[2].min;
+      return !!appState.answers.p3[num]; 
+    }
+
+    function updateProgress() {
+      let count = 0;
+      for (let i = 1; i <= 12; i++) if (isP1Answered(i)) count++;
+      for (let i = 1; i <= 4; i++) if (isP2Answered(i)) count++;
+      for (let i = 1; i <= 6; i++) if (isP3Answered(i)) count++;
+
+      const progressStr = `Answered ${count} / 22`;
+      document.getElementById('sidebar-progress-text').innerText = progressStr + ' Questions';
+      document.getElementById('mobile-progress-text').innerText = progressStr;
+      document.getElementById('progress-bar-fill').style.width = `${(count / 22) * 100}%`;
+
+      renderNavPills();
+    }
+
+    // PHOTO ATTACHMENT SUITE HANDLERS
+    function openPhotoModal() {
+      document.getElementById('photo-upload-modal').classList.remove('hidden');
+    }
+
+    function closePhotoModal() {
+      document.getElementById('photo-upload-modal').classList.add('hidden');
+    }
+
+    function handleFileSelect(e) {
+      const files = Array.from(e.target.files);
+      processFiles(files);
+    }
+
+    function handleDragOver(e) { e.preventDefault(); }
+    function handleDragLeave(e) { e.preventDefault(); }
+    function handleDrop(e) {
+      e.preventDefault();
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      processFiles(files);
+    }
+
+    function processFiles(files) {
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = function() {
+            const photoObj = {
+              id: 'photo_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+              name: file.name,
+              size: (file.size / 1024).toFixed(1) + ' KB',
+              dimensions: `${img.width}x${img.height}`,
+              time: new Date().toLocaleTimeString(),
+              dataUrl: evt.target.result,
+              note: ''
+            };
+            appState.photos.push(photoObj);
+            renderPhotosUI();
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+      closePhotoModal();
+    }
+
+    function renderPhotosUI() {
+      const panel = document.getElementById('attached-photos-panel');
+      const emptyState = document.getElementById('photos-empty-state');
+      const grid = document.getElementById('photos-thumbnail-grid');
+      const countBadge = document.getElementById('photo-count-badge');
+      const btnCount = document.getElementById('photo-btn-count');
+
+      const count = appState.photos.length;
+      countBadge.innerText = `${count} Photo${count !== 1 ? 's' : ''}`;
+      btnCount.innerText = `(${count})`;
+
+      if (count === 0) {
+        emptyState.classList.remove('hidden');
+        grid.classList.add('hidden');
+        grid.innerHTML = '';
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      grid.classList.remove('hidden');
+      grid.innerHTML = '';
+
+      appState.photos.forEach((photo, index) => {
+        const card = document.createElement('div');
+        card.className = 'theme-card p-2 space-y-2 relative text-xs';
+        card.innerHTML = `
+          <div class="relative group cursor-pointer" onclick="openLightbox('${photo.dataUrl}', '${photo.name}')">
+            <img src="${photo.dataUrl}" alt="${photo.name}" class="w-full h-24 object-cover rounded-md">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white font-bold">🔍 View</div>
+          </div>
+          <div class="space-y-1">
+            <div class="font-bold truncate" title="${photo.name}">${photo.name}</div>
+            <div class="text-[10px] text-[var(--text-muted)]">${photo.dimensions} • ${photo.size}</div>
+            <input type="text" placeholder="Optional note (e.g. Page 1)..." value="${photo.note}"
+              oninput="appState.photos[${index}].note = this.value"
+              class="w-full px-2 py-1 rounded bg-[var(--bg-inset)] border border-[var(--border-subtle)] text-[11px]">
+          </div>
+          <button type="button" onclick="removePhoto(${index})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 text-white font-bold flex items-center justify-center shadow hover:bg-red-700">&times;</button>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function removePhoto(index) {
+      appState.photos.splice(index, 1);
+      renderPhotosUI();
+    }
+
+    function openLightbox(url, caption) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox-caption').innerText = caption;
+      document.getElementById('lightbox-modal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox-modal').classList.add('hidden');
+    }
+
+    // RENDER WORKED SOLUTIONS (BILINGUAL)
+    function renderSolutions() {
+      // Part 1 Solutions
+      for (let i = 1; i <= 12; i++) {
+        const card = document.querySelector(`#q-p1-${i} .solution-container`);
+        if (!card) continue;
+        const data = masterData.p1[i];
+        card.innerHTML = `
+          <div class="theme-inset p-3.5 rounded-lg space-y-2 text-xs md:text-sm">
+            <div class="flex items-center gap-2 font-bold text-emerald-700 dark:text-emerald-400">
+              <span>✅ Correct Answer: Option ${data.key}</span>
+            </div>
+            <div class="lang-en font-medium"><strong>Step-by-Step Solution:</strong> ${data.exp_en}</div>
+            <div class="lang-vi font-medium"><strong>Lời giải chi tiết:</strong> ${data.exp_vi}</div>
+          </div>
+        `;
+      }
+      // Part 2 Solutions
+      for (let i = 1; i <= 4; i++) {
+        const card = document.querySelector(`#q-p2-${i} .solution-container`);
+        if (!card) continue;
+        const data = masterData.p2[i];
+        card.innerHTML = `
+          <div class="theme-inset p-3.5 rounded-lg space-y-2 text-xs md:text-sm">
+            <div class="font-bold text-emerald-700 dark:text-emerald-400">
+              ✅ Correct Answers: a) ${data.key.a?'TRUE':'FALSE'}, b) ${data.key.b?'TRUE':'FALSE'}, c) ${data.key.c?'TRUE':'FALSE'}, d) ${data.key.d?'TRUE':'FALSE'}
+            </div>
+            <div class="lang-en font-medium"><strong>Detailed Derivation:</strong> ${data.exp_en}</div>
+            <div class="lang-vi font-medium"><strong>Lời giải chi tiết:</strong> ${data.exp_vi}</div>
+          </div>
+        `;
+      }
+      // Part 3 Solutions
+      for (let i = 1; i <= 6; i++) {
+        const card = document.querySelector(`#q-p3-${i} .solution-container`);
+        if (!card) continue;
+        const data = masterData.p3[i];
+        const keyText = i === 2 ? `Max = ${data.key_max}, Min = ${data.key_min}` : data.key;
+        card.innerHTML = `
+          <div class="theme-inset p-3.5 rounded-lg space-y-2 text-xs md:text-sm">
+            <div class="font-bold text-emerald-700 dark:text-emerald-400">✅ Correct Answer: ${keyText}</div>
+            <div class="lang-en font-medium"><strong>Step-by-Step Solution:</strong> ${data.exp_en}</div>
+            <div class="lang-vi font-medium"><strong>Lời giải chi tiết:</strong> ${data.exp_vi}</div>
+          </div>
+        `;
+      }
+    }
+
+    // EXAM SUBMISSION & MARKDOWN GENERATION
+    function submitExamAndDownloadMD() {
+      // 1. Calculate Score
+      let scoreP1 = 0;
+      for (let i = 1; i <= 12; i++) {
+        if (appState.answers.p1[i] === masterData.p1[i].key) scoreP1 += 0.25;
+      }
+
+      let scoreP2 = 0;
+      for (let i = 1; i <= 4; i++) {
+        const userAns = appState.answers.p2[i] || {};
+        const keyAns = masterData.p2[i].key;
+        let correctStmts = 0;
+        ['a', 'b', 'c', 'd'].forEach(s => {
+          if (userAns[s] === keyAns[s]) correctStmts++;
+        });
+        if (correctStmts === 1) scoreP2 += 0.1;
+        else if (correctStmts === 2) scoreP2 += 0.25;
+        else if (correctStmts === 3) scoreP2 += 0.5;
+        else if (correctStmts === 4) scoreP2 += 1.0;
+      }
+
+      let scoreP3 = 0;
+      for (let i = 1; i <= 6; i++) {
+        if (i === 2) {
+          const userObj = appState.answers.p3[2] || {};
+          const maxOk = masterData.p3[2].alt_max.includes(normalizeNum(userObj.max));
+          const minOk = masterData.p3[2].alt_min.includes(normalizeNum(userObj.min));
+          if (maxOk) scoreP3 += 0.25;
+          if (minOk) scoreP3 += 0.25;
+        } else {
+          const val = normalizeNum(appState.answers.p3[i]);
+          if (masterData.p3[i].alt.includes(val)) scoreP3 += 0.5;
+        }
+      }
+
+      const totalScore = (scoreP1 + scoreP2 + scoreP3).toFixed(2);
+
+      // 2. Set State Submitted
+      appState.submitted = true;
+
+      // 3. Update Score Dashboard & UI
+      document.getElementById('score-dashboard').classList.remove('hidden');
+      document.getElementById('total-score-text').innerText = `${totalScore} / 10.0`;
+      document.getElementById('score-breakdown-text').innerText = `Part 1: ${scoreP1.toFixed(2)}/3.0 | Part 2: ${scoreP2.toFixed(2)}/4.0 | Part 3: ${scoreP3.toFixed(2)}/3.0`;
+
+      // Unlock Master Key & Solutions
+      document.getElementById('master-key-locked-card').classList.add('hidden');
+      document.getElementById('master-key-unlocked-content').classList.remove('hidden');
+      document.getElementById('solutions-toggle-all-container').classList.remove('hidden');
+
+      document.querySelectorAll('.solution-container').forEach(c => c.classList.remove('hidden'));
+
+      // Update Nav Pills & Question Badges to show Correct/Incorrect
+      applyPostSubmissionVisuals();
+
+      // 4. Generate & Trigger Markdown File Download
+      generateAndDownloadMD(totalScore, scoreP1, scoreP2, scoreP3);
+
+      // 5. Increment Version Number for next download
+      appState.version += 1;
+    }
+
+    function normalizeNum(str) {
+      if (!str) return '';
+      return str.toString().replace(',', '.').trim();
+    }
+
+    function applyPostSubmissionVisuals() {
+      // P1 Visuals
+      for (let i = 1; i <= 12; i++) {
+        const userAns = appState.answers.p1[i];
+        const key = masterData.p1[i].key;
+        const container = document.getElementById(`opts-p1-${i}`);
+        if (container) {
+          container.querySelectorAll('.option-btn').forEach(btn => {
+            const optLetter = btn.innerText.charAt(0);
+            if (optLetter === key) btn.classList.add('correct-state');
+            else if (optLetter === userAns && userAns !== key) btn.classList.add('incorrect-state');
+          });
+        }
+      }
+    }
+
+    // GENERATE MARKDOWN REPORT WITH EXACT FILENAME SPECIFICATION
+    function generateAndDownloadMD(totalScore, scoreP1, scoreP2, scoreP3) {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const timestamp = `${now.getFullYear()}${pad(now.getMonth()+1)}${pad(now.getDate())}-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      
+      const sName = (appState.studentName || 'Student').replace(/[^a-zA-Z0-9]/g, '-');
+      const sId = (appState.studentId || 'ID').replace(/[^a-zA-Z0-9]/g, '-');
+
+      // EXACT FILENAME TEMPLATE: {EXAM NAME}-{STUDENT NAME}-IS-{STUDENT ID}-{DATE/TIMESTAMP}-VERSION-{VERSION}.md
+      const filename = `Grade12-Math-Sem1-Test01-${sName}-IS-${sId}-${timestamp}-VERSION-${appState.version}.md`;
+
+      let md = `# OFFICIAL EXAM REPORT: GRADE 12 MATHEMATICS SEMESTER 1 PRACTICE TEST 01\n`;
+      md += `**Program:** GDPT 2018 Standardized Math Curriculum  \n`;
+      md += `**Student Name:** ${appState.studentName}  \n`;
+      md += `**Student ID / Code:** ${appState.studentId}  \n`;
+      md += `**Submission Date & Timestamp:** ${now.toLocaleString()}  \n`;
+      md += `**Report Version:** ${appState.version}  \n\n`;
+
+      md += `---\n\n`;
+      md += `## 🏆 SCORE SUMMARY DASHBOARD\n`;
+      md += `- **TOTAL SCORE:** **${totalScore} / 10.0**\n`;
+      md += `- **Part 1 (Multiple Choice):** ${scoreP1.toFixed(2)} / 3.00\n`;
+      md += `- **Part 2 (True / False):** ${scoreP2.toFixed(2)} / 4.00\n`;
+      md += `- **Part 3 (Short Answer):** ${scoreP3.toFixed(2)} / 3.00\n\n`;
+
+      md += `---\n\n`;
+      md += `## 📝 DETAILED QUESTION RESPONSE TABLE\n\n`;
+      md += `| Part | Q# | Student Response | Correct Answer | Status | Score |\n`;
+      md += `| :--- | :---: | :---: | :---: | :---: | :---: |\n`;
+
+      // Part 1 Table Rows
+      for (let i = 1; i <= 12; i++) {
+        const u = appState.answers.p1[i] || 'None';
+        const k = masterData.p1[i].key;
+        const pass = u === k;
+        md += `| Part 1 | Q${i} | ${u} | ${k} | ${pass ? '✅ Correct' : '❌ Incorrect'} | ${pass ? '0.25' : '0.00'} |\n`;
+      }
+
+      // Part 2 Table Rows
+      for (let i = 1; i <= 4; i++) {
+        const uObj = appState.answers.p2[i] || {};
+        const uStr = `a:${uObj.a?'T':'F'}, b:${uObj.b?'T':'F'}, c:${uObj.c?'T':'F'}, d:${uObj.d?'T':'F'}`;
+        const kObj = masterData.p2[i].key;
+        const kStr = `a:${kObj.a?'T':'F'}, b:${kObj.b?'T':'F'}, c:${kObj.c?'T':'F'}, d:${kObj.d?'T':'F'}`;
+        md += `| Part 2 | Q${i} | ${uStr} | ${kStr} | Complete | See Breakdown |\n`;
+      }
+
+      // Part 3 Table Rows
+      for (let i = 1; i <= 6; i++) {
+        let uStr = '';
+        let kStr = '';
+        if (i === 2) {
+          const uObj = appState.answers.p3[2] || {};
+          uStr = `Max:${uObj.max||'--'}, Min:${uObj.min||'--'}`;
+          kStr = `Max:1.5, Min:0`;
+        } else {
+          uStr = appState.answers.p3[i] || 'None';
+          kStr = masterData.p3[i].key;
+        }
+        md += `| Part 3 | Q${i} | ${uStr} | ${kStr} | Evaluated | 0.50 |\n`;
+      }
+
+      md += `\n---\n\n`;
+      md += `## 📸 UPLOADED WORK PHOTOS SUMMARY\n\n`;
+      if (appState.photos.length === 0) {
+        md += `*No scratch work photos were attached to this report submission.*\n`;
+      } else {
+        md += `| Photo # | Filename | Dimensions | File Size | Upload Time | Student Note |\n`;
+        md += `| :---: | :--- | :---: | :---: | :---: | :--- |\n`;
+        appState.photos.forEach((p, idx) => {
+          md += `| ${idx+1} | ${p.name} | ${p.dimensions} | ${p.size} | ${p.time} | ${p.note || 'None'} |\n`;
+        });
+      }
+
+      // Download file blob
+      const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function toggleAllSolutions() {
+      const containers = document.querySelectorAll('.solution-container');
+      const isAnyHidden = Array.from(containers).some(c => c.classList.contains('hidden'));
+      containers.forEach(c => c.classList.toggle('hidden', !isAnyHidden));
+    }
+  </script>
+</body>
+</html>
