@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SOVRÆG LABS · VSM Cybernetic Governance &amp; Capacity Envelope</title>
+<style>
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  --scale: 1;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 9px;
+  --radius-pill: 999px;
+
+  /* Obsidian Dark Console Theme (Default) */
+  --bg-page: #111317;
+  --bg-panel: #17191e;
+  --bg-card: #1d2027;
+  --bg-card-hover: #242831;
+  --bg-inset: #13151a;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --grid-line: rgba(255, 255, 255, 0.06);
+
+  --text-primary: #f1f3f7;
+  --text-secondary: #a1a9b8;
+  --text-muted: #6f7888;
+
+  --blue: #3b82f6;
+  --blue-bright: #60a5fa;
+  --blue-soft: #93c5fd;
+  --blue-deep: #2563eb;
+  --blue-bg: rgba(59, 130, 246, 0.16);
+  --blue-border: rgba(96, 165, 250, 0.55);
+
+  --slate-bar: #4b5563;
+  --slate-bar-text: #f3f4f6;
+
+  --orange: #fb923c;
+  --orange-solid: #f97316;
+  --orange-bg: rgba(249, 115, 22, 0.15);
+  --orange-border: rgba(251, 146, 60, 0.45);
+
+  --emerald: #6ee7b7;
+  --emerald-solid: #34d399;
+  --emerald-bg: rgba(52, 211, 153, 0.14);
+  --emerald-border: rgba(52, 211, 153, 0.45);
+
+  --cyan: #22d3ee;
+  --cyan-solid: #06b6d4;
+  --cyan-bg: rgba(6, 182, 212, 0.14);
+  --cyan-border: rgba(34, 211, 238, 0.45);
+
+  --amber: #f59e0b;
+  --amber-bright: #fbbf24;
+  --amber-bg: rgba(245, 158, 11, 0.14);
+  --amber-border: rgba(251, 191, 36, 0.45);
+
+  --red: #f87171;
+  --red-solid: #ef4444;
+  --red-text: #fecaca;
+  --red-bg: rgba(153, 27, 27, 0.28);
+  --red-border: rgba(248, 113, 113, 0.5);
+
+  --pill-active-bg: #f1f3f7;
+  --pill-active-text: #111317;
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="parchment"] {
+  --bg-page: #f5efe2;
+  --bg-panel: #fbf7ee;
+  --bg-card: #f2ead9;
+  --bg-card-hover: #e9dec8;
+  --bg-inset: #ede4d1;
+  --border-subtle: rgba(74, 55, 32, 0.14);
+  --border-strong: rgba(74, 55, 32, 0.28);
+  --grid-line: rgba(74, 55, 32, 0.09);
+
+  --text-primary: #241c13;
+  --text-secondary: #584836;
+  --text-muted: #7d6b55;
+
+  --blue: #2563eb;
+  --blue-bright: #1d4ed8;
+  --blue-soft: #60a5fa;
+  --blue-deep: #1e40af;
+  --blue-bg: rgba(37, 99, 235, 0.11);
+  --blue-border: rgba(29, 78, 216, 0.52);
+
+  --slate-bar: #5c5346;
+  --slate-bar-text: #fbf7ee;
+
+  --orange: #ea580c;
+  --orange-solid: #ea580c;
+  --orange-bg: rgba(234, 88, 12, 0.11);
+  --orange-border: rgba(234, 88, 12, 0.38);
+
+  --emerald: #059669;
+  --emerald-solid: #059669;
+  --emerald-bg: rgba(5, 150, 105, 0.11);
+  --emerald-border: rgba(5, 150, 105, 0.38);
+
+  --cyan: #0891b2;
+  --cyan-solid: #0891b2;
+  --cyan-bg: rgba(8, 145, 178, 0.10);
+  --cyan-border: rgba(8, 145, 178, 0.42);
+
+  --amber: #b45309;
+  --amber-bright: #d97706;
+  --amber-bg: rgba(180, 83, 9, 0.10);
+  --amber-border: rgba(180, 83, 9, 0.38);
+
+  --red: #dc2626;
+  --red-solid: #dc2626;
+  --red-text: #7f1d1d;
+  --red-bg: rgba(220, 38, 38, 0.09);
+  --red-border: rgba(220, 38, 38, 0.42);
+
+  --pill-active-bg: #241c13;
+  --pill-active-text: #fbf7ee;
+  --shadow-card: 0 6px 20px rgba(68, 49, 25, 0.09);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: calc(15px * var(--scale)); -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 20px 16px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+body.embed-mode { padding: 8px; }
+.shell {
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 24px 26px 22px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.title-wrap { flex: 1; min-width: 260px; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+h1.main-title {
+  font-size: 1.48rem;
+  font-weight: 750;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+.utility-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  font-size: 0.72rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.util-pill:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.font-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.font-control input[type="range"] { width: 58px; accent-color: var(--blue); cursor: pointer; }
+.caption-block {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.caption-text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.caption-text strong { color: var(--text-primary); font-weight: 650; }
+.sources-line {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+}
+.sources-line span.src-ref { color: var(--blue-bright); }
+.toast {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--emerald-border);
+  color: var(--text-primary);
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+@media (max-width: 680px) {
+  body { padding: 8px; }
+  .shell { padding: 16px 14px; }
+  h1.main-title { font-size: 1.2rem; }
+}
+
+
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 13px 15px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2.5px;
+}
+.kpi-card.k-slate::before { background: var(--slate-bar); }
+.kpi-card.k-blue::before { background: var(--blue); }
+.kpi-card.k-orange::before { background: var(--orange); }
+.kpi-card.k-emerald::before { background: var(--emerald-solid); }
+.kpi-num {
+  font-family: var(--font-mono);
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+.kpi-label {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: var(--text-primary);
+  margin-top: 6px;
+}
+.kpi-sub {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.section-title {
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.section-sub {
+  font-size: 0.78rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+.leg-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.leg-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
+/* VSM Stack + Algedonic Rail */
+.vsm-layout {
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: 10px;
+  align-items: stretch;
+}
+.vsm-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.vsm-row {
+  display: grid;
+  grid-template-columns: 225px 1fr 96px;
+  gap: 14px;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--bg-inset);
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.vsm-row:hover {
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+}
+.vsm-row.active {
+  background: var(--bg-card);
+  border-color: var(--border-strong);
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+.vsm-row.algedonic-lit {
+  border-color: var(--red-border);
+  background: var(--red-bg);
+}
+.vsm-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.vsm-name-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.vsm-tag {
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: var(--bg-card-hover);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+}
+.vsm-row.active .vsm-tag {
+  border-color: var(--blue-border);
+  color: var(--blue-bright);
+}
+.vsm-title {
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+.vsm-vol {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  color: var(--text-muted);
+}
+.split-track {
+  width: 100%;
+  height: 24px;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+  background: var(--bg-page);
+}
+.bar-seg-pilot {
+  background: var(--slate-bar);
+  color: var(--slate-bar-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 650;
+  transition: width 0.25s ease;
+}
+.bar-seg-ai {
+  background: var(--blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 650;
+  transition: width 0.25s ease;
+}
+.vsm-ratio {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-align: right;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.vsm-ratio strong { color: var(--text-primary); }
+
+.algedonic-rail {
+  background: var(--red-bg);
+  border: 1.5px solid var(--red-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 4px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+}
+.algedonic-rail:hover, .algedonic-rail.active {
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.28);
+  border-color: var(--red);
+}
+.alg-arrow {
+  color: var(--red);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+.alg-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  color: var(--red);
+  text-transform: uppercase;
+}
+.alg-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+/* VSM Inspector Card */
+.inspector-card {
+  margin-top: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 15px 17px;
+}
+.inspector-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 11px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.inspector-title-group {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.inspector-title-group h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+.meta-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.meta-pill {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+.inspector-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+}
+.insp-col-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 650;
+  margin-bottom: 5px;
+}
+.insp-col p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.hint-line {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* Red-Tab Drawer (when Algedonic Rail clicked) */
+.redtab-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+.rt-item {
+  background: var(--bg-inset);
+  border: 1px solid var(--red-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+}
+.rt-item strong {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--red-text);
+  margin-bottom: 3px;
+}
+.rt-item span {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
+  line-height: 1.42;
+}
+
+/* Annual Capacity Envelope */
+.capacity-section {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+}
+.cap-axis-row {
+  display: grid;
+  grid-template-columns: 188px 1fr;
+  gap: 14px;
+  margin-bottom: 6px;
+}
+.cap-axis {
+  position: relative;
+  height: 18px;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+.cap-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  top: 0;
+}
+.cap-tick.t0 { left: 0%; transform: translateX(0); }
+.cap-tick.t25 { left: 25%; }
+.cap-tick.t375 { left: 37.5%; color: var(--red); font-weight: 700; }
+.cap-tick.t50 { left: 50%; }
+.cap-tick.t75 { left: 75%; }
+.cap-tick.t100 { left: 100%; transform: translateX(-100%); }
+
+.cap-rows-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cap-row {
+  display: grid;
+  grid-template-columns: 188px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 8px 10px;
+  margin: 0 -10px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.cap-row:hover, .cap-row.active {
+  background: var(--bg-card);
+  border-color: var(--border-strong);
+}
+.cap-label-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.86rem;
+  font-weight: 650;
+  color: var(--text-primary);
+}
+.ceiling-pill {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+.cap-label-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.cap-bar-area {
+  position: relative;
+  height: 30px;
+}
+.cap-bar-track {
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  display: flex;
+}
+.cap-seg-atelier {
+  background: var(--orange);
+  color: #1a120b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 6px;
+}
+.cap-seg-core {
+  background: var(--emerald);
+  color: #0b2219;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 0 6px;
+}
+[data-theme="parchment"] .cap-seg-atelier { color: #ffffff; }
+[data-theme="parchment"] .cap-seg-core { color: #ffffff; }
+
+.cap-line-375 {
+  position: absolute;
+  left: 37.5%;
+  top: -6px;
+  bottom: -6px;
+  border-left: 1.5px dashed var(--red);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.buffer-readout {
+  margin-top: 12px;
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.buffer-top {
+  font-size: 0.81rem;
+  color: var(--text-secondary);
+}
+.buffer-top strong { color: var(--text-primary); }
+.buffer-detail {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  align-items: center;
+}
+.buffer-detail b { color: var(--text-primary); }
+.buffer-detail .c-or { color: var(--orange); }
+.buffer-detail .c-em { color: var(--emerald); }
+.buffer-detail .c-bl { color: var(--blue-bright); }
+
+@media (max-width: 780px) {
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .vsm-layout { grid-template-columns: 1fr; }
+  .algedonic-rail {
+    flex-direction: row;
+    padding: 8px 14px;
+  }
+  .alg-label { writing-mode: horizontal-tb; transform: none; }
+  .vsm-row { grid-template-columns: 1fr; gap: 7px; }
+  .vsm-ratio { text-align: left; }
+  .inspector-cols, .redtab-grid { grid-template-columns: 1fr; }
+  .cap-axis-row, .cap-row { grid-template-columns: 1fr; gap: 6px; }
+  .cap-axis-row .empty-col { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="header-row">
+    <div class="title-wrap">
+      <div class="eyebrow">CYBERNETIC GOVERNANCE &amp; CAPACITY ENVELOPE · SOVRÆG LABS</div>
+      <h1 class="main-title">Solo Pilot Sovereignty Concentrates in Policy While AI Absorbs Routine Operations</h1>
+    </div>
+    <div class="utility-bar">
+      <div class="font-control" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontScaleSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" oninput="setFontScale(this.value)" />
+        <span>A+</span>
+      </div>
+      <button id="themeBtn" class="util-pill" onclick="toggleTheme()">☀ Parchment</button>
+      <button class="util-pill" onclick="copyGovernanceMd()">⧉ Copy MD</button>
+    </div>
+  </header>
+
+  <section class="kpi-grid">
+    <div class="kpi-card k-slate">
+      <div class="kpi-num">1</div>
+      <div class="kpi-label">Solo Pilot</div>
+      <div class="kpi-sub">Sovereign S5–S1 Command</div>
+    </div>
+    <div class="kpi-card k-blue">
+      <div class="kpi-num">6</div>
+      <div class="kpi-label">AI Crew Roles</div>
+      <div class="kpi-sub">Delegated Flight Execution</div>
+    </div>
+    <div class="kpi-card k-orange">
+      <div class="kpi-num">1 + 1</div>
+      <div class="kpi-label">1 Core + 1 Atelier WIP Cap</div>
+      <div class="kpi-sub">Strict Parallelism Limit</div>
+    </div>
+    <div class="kpi-card k-emerald">
+      <div class="kpi-num">0</div>
+      <div class="kpi-label">Learner PII Stored</div>
+      <div class="kpi-sub">Architectural Privacy Floor</div>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <div class="section-title">VSM Cybernetic Authority Split (S5 → S1)</div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-dot" style="background:var(--slate-bar)"></span>Solo Pilot Authority (%)</span>
+        <span class="leg-item"><span class="leg-dot" style="background:var(--blue)"></span>AI Flight Crew &amp; Automation (%)</span>
+      </div>
+    </div>
+
+    <div class="vsm-layout">
+      <div id="vsmRows" class="vsm-rows"></div>
+      <div id="algedonicRail" class="algedonic-rail" onclick="toggleAlgedonic()" role="button" tabindex="0" title="Click to toggle Red-Tab Algedonic Bypass (Vol. 7 + App. A)">
+        <span class="alg-arrow">▲</span>
+        <span class="alg-label">ALGEDONIC BYPASS (S1 → S5)</span>
+        <span class="alg-dot"></span>
+      </div>
+    </div>
+
+    <div id="inspectorCard" class="inspector-card"></div>
+    <div class="hint-line">Select any VSM layer above to inspect Solo Pilot authority, AI Flight Crew delegation, and Algedonic Red-Tab guardrails — or click the red Algedonic Bypass rail to open all 8 emergency triggers.</div>
+  </section>
+
+  <section class="capacity-section">
+    <div class="section-head">
+      <div class="section-title">
+        <span>Annual Solo Capacity Envelope</span>
+        <span class="section-sub">48 Active Weeks / Year (+ 4 Quarterly Reset Weeks)</span>
+      </div>
+      <div class="legend">
+        <span class="leg-item"><span class="leg-dot" style="background:var(--orange)"></span>3-Week Ateliers</span>
+        <span class="leg-item"><span class="leg-dot" style="background:var(--emerald)"></span>Core Airframe &amp; Async Ops</span>
+      </div>
+    </div>
+
+    <div class="cap-axis-row">
+      <div class="empty-col"></div>
+      <div class="cap-axis">
+        <span class="cap-tick t0">0%</span>
+        <span class="cap-tick t25">25%</span>
+        <span class="cap-tick t375">37.5% Cap</span>
+        <span class="cap-tick t50">50%</span>
+        <span class="cap-tick t75">75%</span>
+        <span class="cap-tick t100">100%</span>
+      </div>
+    </div>
+
+    <div id="capRows" class="cap-rows-wrap"></div>
+
+    <div id="bufferReadout" class="buffer-readout"></div>
+  </section>
+
+  <footer class="caption-block">
+    <p class="caption-text">
+      Authority across <strong>SOVRÆG LABS</strong> inverts cleanly down the cybernetic stack: the Solo Pilot retains 85% command over constitutional identity (S5) while delegating up to 85% of repetitive coordination and packaging (S2) to deterministic scripts and AI agents. Capping B2B delivery at <strong>4–6 Ateliers per year</strong> (12–18 weeks out of 48 active operating weeks, excluding 4 quarterly reset weeks) preserves 62.5%–75.0% of annual founder bandwidth for invariant airframe engineering.
+    </p>
+    <div class="sources-line">
+      Data sources: <span class="src-ref">Stafford Beer — Viable System Model</span>; SOVRÆG LABS Pilot Operating Handbook (Rev 1.0 Draft, Vol. 0–7 &amp; App. A) &amp; Solo Annual Capacity Model.
+    </div>
+  </footer>
+</main>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+
+(function initEnv() {
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const savedTheme = localStorage.getItem('sovraeg_poh_theme');
+  const theme = urlTheme || savedTheme || 'dark';
+  if (theme === 'parchment' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+  }
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
+  const savedScale = localStorage.getItem('sovraeg_poh_scale');
+  if (savedScale) {
+    document.documentElement.style.setProperty('--scale', savedScale);
+    const slider = document.getElementById('fontScaleSlider');
+    if (slider) slider.value = savedScale;
+  }
+})();
+
+function toggleTheme() {
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  if (isParchment) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sovraeg_poh_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+    localStorage.setItem('sovraeg_poh_theme', 'parchment');
+  }
+  updateThemeButton();
+  notifyHeight();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  btn.textContent = isParchment ? '☾ Dark' : '☀ Parchment';
+}
+
+function setFontScale(val) {
+  document.documentElement.style.setProperty('--scale', val);
+  localStorage.setItem('sovraeg_poh_scale', val);
+  notifyHeight();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast(msg);
+}
+
+function notifyHeight() {
+  try {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'sovraeg-resize', height: h, source: document.title }, '*');
+  } catch (e) {}
+}
+
+window.addEventListener('load', () => { updateThemeButton(); notifyHeight(); });
+window.addEventListener('resize', notifyHeight);
+
+
+const VSM_DATA = [
+  {
+    id: 'S5',
+    name: 'Policy & Identity',
+    volShort: 'POH Vol. 0 & 5 · Constitution',
+    cadence: 'Quarterly / Red-Tab',
+    pilot: 85,
+    ai: 15,
+    pilotText: 'Holds exclusive sovereign command over constitutional identity, the 5 Hard No-Fly Zones (Zero-PII, Config-Not-Code, non-monetary FLUX), cross-border trademark stewardship, and resolving S3–S4 resource tensions.',
+    aiText: 'Red-Team & Compliance Auditor synthesizes policy memos, tracks MADR precedent logs, and surfaces cross-volume nomenclature, VN-SafeOER, or Vietnam AI Law drift for Solo Pilot ratification.',
+    guardrail: 'No AI agent may alter constitutional invariants, sign binding agreements, custody learner PII, or override S5 identity boundaries (triggers RT-5 / RT-7).'
+  },
+  {
+    id: 'S4',
+    name: 'Intelligence & Strategy',
+    volShort: 'POH Vol. 1 & 6 · Intelligence',
+    cadence: 'Weekly / Quarterly Reset',
+    pilot: 55,
+    ai: 45,
+    pilotText: 'Chief Systems Architect — selects canonical Lego-brick stack, ratifies MADR 4.0.0 records, executes the 5-Gate 80/20 Cartridge Filter on new domains, and directs Partner SME ingestion.',
+    aiText: 'Systems Architect & Knowledge Librarian Agents distill Zotero 8.x research, draft RFCs and Mermaid specs, maintain Obsidian MOCs, and map SYNTHETARY CASE v1.1 / OntoLex ontologies.',
+    guardrail: '48-Hour MADR Rule: time-box all architectural debates to 48 hours, log rejected alternatives immutably, and validate via a working vertical slice (triggers RT-1).'
+  },
+  {
+    id: 'S3/3*',
+    name: 'Control, Ops & Audit',
+    volShort: 'POH Vol. 5, 6 & 7 · Flight Control',
+    cadence: 'Daily / Weekly 30-Min',
+    pilot: 30,
+    ai: 70,
+    pilotText: 'Flight Commander — enforces Global Solo WIP Cap (1 Core + 1 Atelier, max 4–6/yr), signs off releases, and runs unfiltered System 3* spot-checks on raw Git diffs, audio proofs, and tax/treasury ledgers.',
+    aiText: 'Forgejo CI/CD, Red-Team QA & telemetry scripts run deterministic test suites, validate Glass-Box manifests, monitor Uptime Kuma & Cloudflare 50%/80%/100% spend alerts, and reconcile voucher batches.',
+    guardrail: 'Algedonic Halt: revert immediately to last signed Forgejo tag on AI codebase drift (RT-2); declare 90-Day Domain Intake Freeze if switching >2 domains/week (RT-8).'
+  },
+  {
+    id: 'S2',
+    name: 'Coordination & Stability',
+    volShort: 'POH Vol. 2 & 4 · Coordination',
+    cadence: 'Continuous / 48h Async SLA',
+    pilot: 15,
+    ai: 85,
+    pilotText: 'Protocol Designer — defines immutable SYNCZINE manifests, Domain Cartridge JSON contracts, UCAN v1.0 offline entitlements (max_depth ≤ 3), and asynchronous partner SLAs.',
+    aiText: 'Packaging & distribution automation batch-mints anonymous W3C VC bearer vouchers (25+ seat minimums), computes manifest waterfall royalties, and runs E2E-encrypted Loro CRDT sync relays.',
+    guardrail: 'Strict Config-Not-Code enforcement: zero bespoke client code forks; route custom CRM/checkout requests to external partner webhooks (triggers RT-6).'
+  },
+  {
+    id: 'S1',
+    name: 'Operations & Delivery',
+    volShort: 'POH Vol. 2, 3 & 4 · Airframe & Atelier',
+    cadence: 'Daily Forge / 3-Wk Ateliers',
+    pilot: 25,
+    ai: 75,
+    pilotText: 'Lead Engineer & Atelier Principal — leads 3-Week B2B Ateliers (ZTV + Appendix A), validates Partner SME pedagogy, runs 30-min Guild capstone defenses, and tags flagship SOVRAELEX/SOVRAEGIX releases.',
+    aiText: 'Full-Stack Forge, Curriculum & Commercial Agents generate Rust/Tauri v2/React modules, draft CODE+V SYNCTESS drills, run Qwen3-TTS/dual-ASR audio checks, and transcreate EN/VI partner docs.',
+    guardrail: 'Partner Default Protocol (RT-3): issue formal cure notice and revoke issuer key via W3C Bitstring Status List while learners retain 100% of local SOVRAEZINES & SYNTHCREDS vaults.'
+  }
+];
+
+const REDTABS = [
+  ['RT-1 · Scope Creep / Perfectionism', 'FREEZE features → STRIP to smallest vertical slice → INVOKE Config-Not-Code → SHIP within 72h.'],
+  ['RT-2 · AI Hallucination / Drift', 'HALT generation → REVERT to last clean Forgejo tag → TIGHTEN Rust/TS schema → RUN deterministic CI.'],
+  ['RT-3 · Partner Default / Dilution', 'ISSUE cure notice → REVOKE issuer key via W3C Bitstring Status List → VERIFY local learner vaults intact.'],
+  ['RT-4 · Infra / Device / Key Incident', 'ROTATE UCAN/DID keys → RESTORE encrypted SanDisk SSD / Forgejo mirror → REDEPLOY Cloudflare IaC.'],
+  ['RT-5 · Regulatory / VN-SafeOER Flag', 'QUARANTINE module → EXPORT Glass-Box audit manifest → CHECK 24h Cybersecurity / AI Portal clock.'],
+  ['RT-6 · Custom-Feature Creep (App. A)', 'DECLINE fork citing Config-Not-Code → ROUTE partner to external tools via clean webhooks/URLs.'],
+  ['RT-7 · Safety / Clinical / IP Breach (App. A)', 'QUARANTINE cartridge → SUSPEND partner SYNTHCREDS issuer key → ISSUE 14-day cure notice.'],
+  ['RT-8 · Context-Switch Overload (App. A)', 'CONFIRM >2 domains/wk → DECLARE 90-Day Domain Intake Freeze → SHIP core slice & automate top friction.']
+];
+
+const CAPACITY_SCENARIOS = [
+  {
+    ateliers: 4,
+    atelierWks: 12,
+    coreWks: 36,
+    atelierPct: 25.0,
+    corePct: 75.0,
+    isCeiling: false,
+    profile: 'Standard Cruise (High R&D Margin)',
+    note: 'Leaves a full 36 active weeks (69.2% of the 52-week calendar) for core SOVRAEGOS airframe engineering, SYNTHETARY releases, and Async Cruise automation.'
+  },
+  {
+    ateliers: 5,
+    atelierWks: 15,
+    coreWks: 33,
+    atelierPct: 31.2,
+    corePct: 68.8,
+    isCeiling: false,
+    profile: 'Balanced Cruise (Target Envelope)',
+    note: 'Optimal solo balance between B2B Atelier cash-flow + multi-domain cartridge proof and steady quarterly airframe releases (63.5% of the 52-week calendar on core R&D).'
+  },
+  {
+    ateliers: 6,
+    atelierWks: 18,
+    coreWks: 30,
+    atelierPct: 37.5,
+    corePct: 62.5,
+    isCeiling: true,
+    profile: 'Absolute Hard Ceiling (Zero Turbulence Margin)',
+    note: 'GAMA redline: zero built-in margin for partner delays or technical turbulence. Exceeding 6 Ateliers/year automatically triggers Red-Tab 8 (90-Day Domain Intake Freeze).'
+  }
+];
+
+let selectedVsmIdx = 0;
+let algedonicOpen = false;
+let activeCapIdx = null;
+
+function selectVsm(idx) {
+  selectedVsmIdx = idx;
+  algedonicOpen = false;
+  renderVsm();
+}
+
+function toggleAlgedonic() {
+  algedonicOpen = !algedonicOpen;
+  renderVsm();
+}
+
+function renderVsm() {
+  const rowsEl = document.getElementById('vsmRows');
+  rowsEl.innerHTML = VSM_DATA.map((d, idx) => {
+    const isActive = !algedonicOpen && idx === selectedVsmIdx;
+    return `
+      <div class="vsm-row ${isActive ? 'active' : ''} ${algedonicOpen ? 'algedonic-lit' : ''}"
+           onclick="selectVsm(${idx})" role="button" tabindex="0">
+        <div class="vsm-meta">
+          <div class="vsm-name-line">
+            <span class="vsm-tag">${d.id}</span>
+            <span class="vsm-title">${d.name}</span>
+          </div>
+          <span class="vsm-vol">${d.volShort}</span>
+        </div>
+        <div class="split-track">
+          <div class="bar-seg-pilot" style="width:${d.pilot}%">${d.pilot}%</div>
+          <div class="bar-seg-ai" style="width:${d.ai}%">${d.ai}%</div>
+        </div>
+        <div class="vsm-ratio"><strong>${d.pilot}%</strong> / ${d.ai}%</div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('algedonicRail').classList.toggle('active', algedonicOpen);
+
+  const insp = document.getElementById('inspectorCard');
+  if (algedonicOpen) {
+    insp.innerHTML = `
+      <div class="inspector-head">
+        <div class="inspector-title-group">
+          <span class="vsm-tag" style="border-color:var(--red-border);color:var(--red);">ALGEDONIC</span>
+          <h3>Red-Tab Emergency Bypass Active (Vol. 7 + Appendix A)</h3>
+        </div>
+        <div class="meta-pills">
+          <span class="meta-pill" style="color:var(--red);border-color:var(--red-border);">S1 → S5 Direct Escalation</span>
+          <button class="util-pill" onclick="toggleAlgedonic()">Return to VSM Layer</button>
+        </div>
+      </div>
+      <div class="redtab-grid">
+        ${REDTABS.map(([t, desc]) => `
+          <div class="rt-item">
+            <strong>${t}</strong>
+            <span>${desc}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    const d = VSM_DATA[selectedVsmIdx];
+    insp.innerHTML = `
+      <div class="inspector-head">
+        <div class="inspector-title-group">
+          <span class="vsm-tag" style="border-color:var(--blue-border);color:var(--blue-bright);">${d.id}</span>
+          <h3>${d.name}</h3>
+        </div>
+        <div class="meta-pills">
+          <span class="meta-pill">${d.pilot}% Pilot / ${d.ai}% AI</span>
+          <span class="meta-pill">${d.cadence}</span>
+          <span class="meta-pill">${d.volShort}</span>
+        </div>
+      </div>
+      <div class="inspector-cols">
+        <div class="insp-col">
+          <div class="insp-col-head" style="color:var(--text-secondary);">
+            <span class="leg-dot" style="background:var(--slate-bar)"></span>SOLO PILOT AUTHORITY
+          </div>
+          <p>${d.pilotText}</p>
+        </div>
+        <div class="insp-col">
+          <div class="insp-col-head" style="color:var(--blue-bright);">
+            <span class="leg-dot" style="background:var(--blue)"></span>AI FLIGHT CREW &amp; AUTOMATION
+          </div>
+          <p>${d.aiText}</p>
+        </div>
+        <div class="insp-col">
+          <div class="insp-col-head" style="color:var(--red);">
+            <span class="leg-dot" style="background:var(--red)"></span>ALGEDONIC RED-TAB GUARDRAIL
+          </div>
+          <p>${d.guardrail}</p>
+        </div>
+      </div>
+    `;
+  }
+  notifyHeight();
+}
+
+function renderCapacity() {
+  const container = document.getElementById('capRows');
+  container.innerHTML = CAPACITY_SCENARIOS.map((s, idx) => `
+    <div class="cap-row ${activeCapIdx === idx ? 'active' : ''}"
+         onmouseenter="inspectCap(${idx})"
+         onclick="inspectCap(${idx})"
+         role="button" tabindex="0">
+      <div>
+        <div class="cap-label-top">
+          <span>${s.ateliers} Ateliers / Yr</span>
+          ${s.isCeiling ? '<span class="ceiling-pill">Hard Ceiling</span>' : ''}
+        </div>
+        <div class="cap-label-sub">${s.atelierWks} wks Atelier · ${s.coreWks} wks Core</div>
+      </div>
+      <div class="cap-bar-area">
+        <div class="cap-line-375"></div>
+        <div class="cap-bar-track">
+          <div class="cap-seg-atelier" style="width:${s.atelierPct}%">${s.atelierWks} wks (${s.atelierPct.toFixed(1)}%)</div>
+          <div class="cap-seg-core" style="width:${s.corePct}%">${s.coreWks} wks (${s.corePct.toFixed(1)}%)</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  renderBufferReadout();
+}
+
+function inspectCap(idx) {
+  activeCapIdx = idx;
+  document.querySelectorAll('.cap-row').forEach((el, i) => el.classList.toggle('active', i === idx));
+  renderBufferReadout();
+}
+
+function renderBufferReadout() {
+  const box = document.getElementById('bufferReadout');
+  if (activeCapIdx === null) {
+    box.innerHTML = `
+      <div class="buffer-top"><strong>52-Week Calendar Buffer:</strong> 48 Active Operating Weeks + 4 Quarterly Reset Weeks (excluded from Atelier allocation).</div>
+      <div class="buffer-detail">Hover or tap a scenario row above to inspect the full 52-week calendar split and GAMA flight-margin guidance.</div>
+    `;
+  } else {
+    const s = CAPACITY_SCENARIOS[activeCapIdx];
+    const at52 = ((s.atelierWks / 52) * 100).toFixed(1);
+    const core52 = ((s.coreWks / 52) * 100).toFixed(1);
+    const reset52 = ((4 / 52) * 100).toFixed(1);
+    box.innerHTML = `
+      <div class="buffer-top"><strong>${s.ateliers} Ateliers / Yr — ${s.profile}:</strong> ${s.note}</div>
+      <div class="buffer-detail">
+        <span>Full 52-Wk Split: <b class="c-or">${s.atelierWks} wks Atelier (${at52}%)</b></span>
+        <span>+ <b class="c-em">${s.coreWks} wks Core Airframe (${core52}%)</b></span>
+        <span>+ <b class="c-bl">4 wks Quarterly Reset (${reset52}%)</b></span>
+        <span>= <b>52 wks (100%)</b></span>
+      </div>
+    `;
+  }
+  notifyHeight();
+}
+
+function copyGovernanceMd() {
+  const d = VSM_DATA[selectedVsmIdx];
+  const md = `> [!NOTE] SOVRÆG LABS VSM Governance — ${d.id} ${d.name} (${d.pilot}% Pilot / ${d.ai}% AI)\n` +
+    `> - **POH Scope:** ${d.volShort} (${d.cadence})\n` +
+    `> - **Solo Pilot Authority:** ${d.pilotText}\n` +
+    `> - **AI Flight Crew & Automation:** ${d.aiText}\n` +
+    `> - **Algedonic Guardrail:** ${d.guardrail}\n` +
+    `> - **Annual Capacity Envelope:** 4–6 Ateliers/yr (12–18 wks / 25.0%–37.5% of 48 active wks) + 30–36 wks Core Airframe (62.5%–75.0%) + 4 Quarterly Reset wks.`;
+  copyText(md, 'Copied VSM Governance summary to clipboard');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+    selectedVsmIdx = (selectedVsmIdx + 1) % VSM_DATA.length;
+    algedonicOpen = false;
+    renderVsm();
+  } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+    selectedVsmIdx = (selectedVsmIdx - 1 + VSM_DATA.length) % VSM_DATA.length;
+    algedonicOpen = false;
+    renderVsm();
+  }
+});
+
+renderVsm();
+renderCapacity();
+</script>
+</body>
+</html>

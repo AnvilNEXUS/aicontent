@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ZERO TO VOICE · Pearson GSE Gates &amp; Empirical Speech-Rate Benchmarks</title>
+<style>
+
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, Monaco, Consolas, monospace;
+  --scale: 1;
+  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-md: 9px;
+  --radius-pill: 999px;
+
+  /* Obsidian Dark Console Theme (Default) */
+  --bg-page: #111317;
+  --bg-panel: #17191e;
+  --bg-card: #1d2027;
+  --bg-card-hover: #242831;
+  --bg-inset: #13151a;
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --grid-line: rgba(255, 255, 255, 0.06);
+
+  --text-primary: #f1f3f7;
+  --text-secondary: #a1a9b8;
+  --text-muted: #6f7888;
+
+  --blue: #3b82f6;
+  --blue-bright: #60a5fa;
+  --blue-soft: #93c5fd;
+  --blue-deep: #2563eb;
+  --blue-bg: rgba(59, 130, 246, 0.16);
+  --blue-border: rgba(96, 165, 250, 0.55);
+
+  --slate-bar: #4b5563;
+  --slate-bar-text: #f3f4f6;
+
+  --orange: #fb923c;
+  --orange-solid: #f97316;
+  --orange-bg: rgba(249, 115, 22, 0.15);
+  --orange-border: rgba(251, 146, 60, 0.45);
+
+  --emerald: #6ee7b7;
+  --emerald-solid: #34d399;
+  --emerald-bg: rgba(52, 211, 153, 0.14);
+  --emerald-border: rgba(52, 211, 153, 0.45);
+
+  --cyan: #22d3ee;
+  --cyan-solid: #06b6d4;
+  --cyan-bg: rgba(6, 182, 212, 0.14);
+  --cyan-border: rgba(34, 211, 238, 0.45);
+
+  --amber: #f59e0b;
+  --amber-bright: #fbbf24;
+  --amber-bg: rgba(245, 158, 11, 0.14);
+  --amber-border: rgba(251, 191, 36, 0.45);
+
+  --red: #f87171;
+  --red-solid: #ef4444;
+  --red-text: #fecaca;
+  --red-bg: rgba(153, 27, 27, 0.28);
+  --red-border: rgba(248, 113, 113, 0.5);
+
+  --pill-active-bg: #f1f3f7;
+  --pill-active-text: #111317;
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="parchment"] {
+  --bg-page: #f5efe2;
+  --bg-panel: #fbf7ee;
+  --bg-card: #f2ead9;
+  --bg-card-hover: #e9dec8;
+  --bg-inset: #ede4d1;
+  --border-subtle: rgba(74, 55, 32, 0.14);
+  --border-strong: rgba(74, 55, 32, 0.28);
+  --grid-line: rgba(74, 55, 32, 0.09);
+
+  --text-primary: #241c13;
+  --text-secondary: #584836;
+  --text-muted: #7d6b55;
+
+  --blue: #2563eb;
+  --blue-bright: #1d4ed8;
+  --blue-soft: #60a5fa;
+  --blue-deep: #1e40af;
+  --blue-bg: rgba(37, 99, 235, 0.11);
+  --blue-border: rgba(29, 78, 216, 0.52);
+
+  --slate-bar: #5c5346;
+  --slate-bar-text: #fbf7ee;
+
+  --orange: #ea580c;
+  --orange-solid: #ea580c;
+  --orange-bg: rgba(234, 88, 12, 0.11);
+  --orange-border: rgba(234, 88, 12, 0.38);
+
+  --emerald: #059669;
+  --emerald-solid: #059669;
+  --emerald-bg: rgba(5, 150, 105, 0.11);
+  --emerald-border: rgba(5, 150, 105, 0.38);
+
+  --cyan: #0891b2;
+  --cyan-solid: #0891b2;
+  --cyan-bg: rgba(8, 145, 178, 0.10);
+  --cyan-border: rgba(8, 145, 178, 0.42);
+
+  --amber: #b45309;
+  --amber-bright: #d97706;
+  --amber-bg: rgba(180, 83, 9, 0.10);
+  --amber-border: rgba(180, 83, 9, 0.38);
+
+  --red: #dc2626;
+  --red-solid: #dc2626;
+  --red-text: #7f1d1d;
+  --red-bg: rgba(220, 38, 38, 0.09);
+  --red-border: rgba(220, 38, 38, 0.42);
+
+  --pill-active-bg: #241c13;
+  --pill-active-text: #fbf7ee;
+  --shadow-card: 0 6px 20px rgba(68, 49, 25, 0.09);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: calc(15px * var(--scale)); -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  padding: 20px 16px;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+body.embed-mode { padding: 8px; }
+.shell {
+  max-width: 980px;
+  margin: 0 auto;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 24px 26px 22px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.header-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.title-wrap { flex: 1; min-width: 260px; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--text-muted);
+}
+h1.main-title {
+  font-size: 1.48rem;
+  font-weight: 750;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin-top: 4px;
+}
+.utility-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  flex-shrink: 0;
+}
+.util-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  border-radius: var(--radius-pill);
+  padding: 5px 11px;
+  font-size: 0.72rem;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all 0.16s ease;
+}
+.util-pill:hover { border-color: var(--border-strong); color: var(--text-primary); }
+.font-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.font-control input[type="range"] { width: 58px; accent-color: var(--blue); cursor: pointer; }
+.caption-block {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.caption-text {
+  font-size: 0.84rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.caption-text strong { color: var(--text-primary); font-weight: 650; }
+.sources-line {
+  font-size: 0.73rem;
+  color: var(--text-muted);
+}
+.sources-line span.src-ref { color: var(--blue-bright); }
+.toast {
+  position: fixed;
+  bottom: 18px;
+  right: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--emerald-border);
+  color: var(--text-primary);
+  padding: 9px 15px;
+  border-radius: var(--radius-md);
+  font-size: 0.78rem;
+  box-shadow: var(--shadow-card);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.2s ease;
+  z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+@media (max-width: 680px) {
+  body { padding: 8px; }
+  .shell { padding: 16px 14px; }
+  h1.main-title { font-size: 1.2rem; }
+}
+
+
+.panel-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.panel-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+.panel-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* Panel A: GSE Scale */
+.gse-chart-wrap {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  gap: 0 14px;
+  position: relative;
+}
+.gse-callouts-spacer { height: 54px; }
+.gse-callouts-track {
+  position: relative;
+  height: 54px;
+}
+.ielts-label {
+  position: absolute;
+  font-size: 0.73rem;
+  font-weight: 650;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.ielts-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.gap-badge {
+  position: absolute;
+  top: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: var(--red);
+  border-top: 1.5px solid var(--red);
+  cursor: pointer;
+}
+.gap-badge span {
+  background: var(--bg-panel);
+  padding: 0 5px;
+  margin-top: -12px;
+}
+
+.gse-body-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gse-label-cell {
+  height: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: right;
+  padding-right: 4px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.gse-label-cell.cefr-lbl { height: 42px; cursor: default; }
+.gse-label-cell.gate-lbl:hover, .gse-label-cell.gate-lbl.active {
+  background: var(--bg-card);
+  padding-right: 8px;
+}
+.gse-label-title {
+  font-size: 0.84rem;
+  font-weight: 650;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+.gse-label-cell.gate-lbl.active .gse-label-title { color: var(--blue-bright); }
+.gse-label-sub {
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  color: var(--text-muted);
+}
+
+.gse-plot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 8px;
+}
+.gse-grid-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.gse-vline {
+  position: absolute;
+  top: 0; bottom: 0;
+  border-left: 1px solid var(--grid-line);
+}
+.gse-gap-shade {
+  position: absolute;
+  top: -10px; bottom: 0;
+  background: rgba(239, 68, 68, 0.13);
+  pointer-events: none;
+  z-index: 1;
+}
+.ref-dashed {
+  position: absolute;
+  top: -36px; bottom: 0;
+  border-left: 1.5px dashed;
+  pointer-events: none;
+  z-index: 4;
+}
+.ref-dashed.short { top: -18px; }
+
+.cefr-strip {
+  position: relative;
+  height: 42px;
+  z-index: 2;
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.cefr-band {
+  position: absolute;
+  top: 0; bottom: 0;
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.14s ease;
+}
+.cefr-band:last-child { border-right: none; }
+.cefr-band:hover { background: var(--bg-card-hover); }
+.cefr-band strong {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.15;
+}
+.cefr-band span {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--text-muted);
+}
+
+.gate-track {
+  position: relative;
+  height: 40px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+.gate-bar {
+  position: absolute;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  z-index: 5;
+}
+.gate-track:hover .gate-bar, .gate-track.active .gate-bar {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px var(--text-primary);
+}
+.gate-note {
+  position: absolute;
+  font-size: 0.73rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.axis-row {
+  grid-column: 2;
+  position: relative;
+  height: 22px;
+  margin-top: 6px;
+}
+.axis-tick {
+  position: absolute;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.axis-tick.first { transform: translateX(0); }
+.axis-tick.last { transform: translateX(-100%); }
+.axis-caption {
+  grid-column: 2;
+  text-align: center;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* Interactive Gate Inspector */
+.gate-inspector {
+  margin-top: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 13px 16px;
+}
+.gi-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.gi-title { font-size: 0.94rem; font-weight: 700; }
+.gi-badge {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--blue-bg);
+  border: 1px solid var(--blue-border);
+  color: var(--blue-bright);
+}
+.gi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.gi-cell {
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 9px 11px;
+}
+.gi-cell p {
+  font-size: 0.79rem;
+  color: var(--text-primary);
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+/* Panel B: Empirical Speech Rate */
+.panel-divider {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 16px;
+}
+.wpm-chart-wrap {
+  display: grid;
+  grid-template-columns: 196px 1fr;
+  gap: 0 14px;
+}
+.wpm-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wpm-lbl {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 4px;
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-radius: 5px;
+}
+.wpm-lbl.muted { color: var(--text-secondary); }
+.wpm-lbl:hover, .wpm-lbl.active { background: var(--bg-card); padding-right: 8px; color: var(--cyan); }
+
+.wpm-plot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-strong);
+  padding-bottom: 8px;
+}
+.wpm-row {
+  position: relative;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  z-index: 3;
+}
+.wpm-ref-128 {
+  position: absolute;
+  top: 0; bottom: 0;
+  border-left: 1.5px dashed var(--text-muted);
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: 2;
+}
+.wpm-pill {
+  position: absolute;
+  height: 13px;
+  border-radius: 99px;
+  background: var(--cyan-solid);
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+.wpm-row:hover .wpm-pill, .wpm-row.active .wpm-pill {
+  transform: scaleY(1.22);
+  filter: brightness(1.15);
+}
+.wpm-dot {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+}
+.wpm-whisker {
+  position: absolute;
+  height: 2.5px;
+  background: var(--cyan);
+}
+.wpm-cap {
+  position: absolute;
+  width: 2.5px;
+  height: 12px;
+  background: var(--cyan);
+  transform: translateX(-50%);
+}
+.wpm-val-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 650;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+.wpm-mean-tag {
+  position: absolute;
+  top: -4px;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--cyan);
+  white-space: nowrap;
+}
+
+.wpm-detail-strip {
+  margin-top: 10px;
+  padding: 9px 13px;
+  border-radius: var(--radius-md);
+  background: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.79rem;
+  color: var(--text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+}
+.wpm-detail-strip strong { color: var(--cyan); }
+
+.oracle-box {
+  margin-top: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 3.5px solid var(--cyan);
+  border-radius: var(--radius-md);
+  padding: 12px 15px;
+  font-size: 0.81rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+.oracle-box strong { color: var(--text-primary); }
+.oracle-l1 {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border-subtle);
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 780px) {
+  .gse-chart-wrap, .wpm-chart-wrap { grid-template-columns: 1fr; }
+  .gse-callouts-spacer, .gse-body-labels, .wpm-labels { display: none; }
+  .axis-row, .axis-caption { grid-column: 1; }
+  .gi-grid { grid-template-columns: 1fr; }
+  .gate-note { display: none; }
+}
+</style>
+</head>
+<body>
+<main class="shell">
+  <header class="header-row">
+    <div class="title-wrap">
+      <div class="eyebrow">ZERO TO VOICE · PAYLOAD #01 CALIBRATION &amp; ACOUSTIC ORACLE</div>
+      <h1 class="main-title">ZERO TO VOICE Compresses EFL Progression Across Four Output Gates Mapped to Pearson GSE</h1>
+    </div>
+    <div class="utility-bar">
+      <div class="font-control" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontScaleSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" oninput="setFontScale(this.value)" />
+        <span>A+</span>
+      </div>
+      <button id="themeBtn" class="util-pill" onclick="toggleTheme()">☀ Parchment</button>
+      <button class="util-pill" onclick="copyBenchmarksMd()">⧉ Copy MD</button>
+    </div>
+  </header>
+
+  <!-- PANEL A -->
+  <section>
+    <div class="panel-header">
+      <span class="panel-eyebrow">PANEL A · PROFICIENCY SCALE &amp; VELOCITY GATES</span>
+      <span class="panel-desc">Pearson Global Scale of English (GSE 10–90) vs. CEFR &amp; IELTS concordance · Click any gate to inspect</span>
+    </div>
+
+    <div class="gse-chart-wrap">
+      <div class="gse-callouts-spacer"></div>
+      <div id="gseCallouts" class="gse-callouts-track"></div>
+
+      <div id="gseLabels" class="gse-body-labels"></div>
+      <div id="gsePlot" class="gse-plot"></div>
+
+      <div id="gseAxis" class="axis-row"></div>
+      <div class="axis-caption">Pearson Global Scale of English (GSE 10–90)</div>
+    </div>
+
+    <div id="gateInspector" class="gate-inspector"></div>
+  </section>
+
+  <!-- PANEL B -->
+  <section class="panel-divider">
+    <div class="panel-header">
+      <span class="panel-eyebrow">PANEL B · EMPIRICAL SPEECH-RATE BENCHMARKS</span>
+      <span class="panel-desc">Words Per Minute (WPM) across learner and native speaking contexts · Hover or click any band</span>
+    </div>
+
+    <div class="wpm-chart-wrap">
+      <div id="wpmLabels" class="wpm-labels"></div>
+      <div id="wpmPlot" class="wpm-plot"></div>
+
+      <div id="wpmAxis" class="axis-row"></div>
+      <div class="axis-caption">Empirical Speech Rate (Words Per Minute, WPM)</div>
+    </div>
+
+    <div id="wpmDetail" class="wpm-detail-strip"></div>
+
+    <div class="oracle-box">
+      <div><strong>Acoustic Oracle Thresholds:</strong> <strong>250 ms</strong> articulation cutoff &nbsp;|&nbsp; <strong>≥1.0 s</strong> mid-clause breakdown indicator &nbsp;|&nbsp; Unfilled pauses/100 words: <strong>B2 14.43</strong> (SD 4.42) vs. <strong>C1 10.76</strong> (SD 4.55)</div>
+      <div class="oracle-l1"><strong>L1 Baseline Normalization (De Jong et al.):</strong> Individual L1 speaking style accounts for <strong>21%</strong> of L2 syllable-duration variance and up to <strong>57%</strong> of L2 pause-duration variance. Gate 0 captures an optional 30-second local-only Vietnamese L1 baseline inside SOVRAELEX so acoustic rubrics normalize pace against each adult's natural speaking personality.</div>
+    </div>
+  </section>
+
+  <footer class="caption-block">
+    <p class="caption-text">
+      Empirical concordance shows an <strong>IELTS 6.5 overall</strong> score aligns to GSE 58 (top of B1+), yet permits a <strong>Speaking sub-score as low as GSE 46</strong> (low B1)—explaining why certificate holders still freeze in live meetings. <strong>ZERO TO VOICE</strong> bypasses seat-time ladders by enforcing sequential acoustic and unscripted output gates calibrated directly to GSE speaking descriptors, targeting fluent delivery toward natural conversational rates (150–210 WPM) and lower pause density (C1 averages 10.76 vs. B2's 14.43 unfilled pauses per 100 words).
+    </p>
+    <div class="sources-line">
+      Data sources: <span class="src-ref">Pearson GSE White Paper</span>, <span class="src-ref">Pearson PTE Academic</span>, <span class="src-ref">Pearson GSE Professional English</span>, <span class="src-ref">IDP IELTS–PTE Equivalency Study (2018–2020)</span>, <span class="src-ref">Huang &amp; Gráf (Taiwan Journal of TESOL)</span>, <span class="src-ref">De Jong et al. (Applied Psycholinguistics)</span>, <span class="src-ref">TalkSlower Speaking Rate Norms</span>.
+    </div>
+  </footer>
+</main>
+
+<div id="toast" class="toast">Copied</div>
+
+<script>
+
+(function initEnv() {
+  const params = new URLSearchParams(window.location.search);
+  const urlTheme = params.get('theme');
+  const savedTheme = localStorage.getItem('sovraeg_poh_theme');
+  const theme = urlTheme || savedTheme || 'dark';
+  if (theme === 'parchment' || theme === 'light') {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+  }
+  if (params.get('embed') === '1') {
+    document.body.classList.add('embed-mode');
+  }
+  const savedScale = localStorage.getItem('sovraeg_poh_scale');
+  if (savedScale) {
+    document.documentElement.style.setProperty('--scale', savedScale);
+    const slider = document.getElementById('fontScaleSlider');
+    if (slider) slider.value = savedScale;
+  }
+})();
+
+function toggleTheme() {
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  if (isParchment) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('sovraeg_poh_theme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'parchment');
+    localStorage.setItem('sovraeg_poh_theme', 'parchment');
+  }
+  updateThemeButton();
+  notifyHeight();
+}
+
+function updateThemeButton() {
+  const btn = document.getElementById('themeBtn');
+  if (!btn) return;
+  const isParchment = document.documentElement.getAttribute('data-theme') === 'parchment';
+  btn.textContent = isParchment ? '☾ Dark' : '☀ Parchment';
+}
+
+function setFontScale(val) {
+  document.documentElement.style.setProperty('--scale', val);
+  localStorage.setItem('sovraeg_poh_scale', val);
+  notifyHeight();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function copyText(text, msg) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => showToast(msg)).catch(() => fallbackCopy(text, msg));
+  } else {
+    fallbackCopy(text, msg);
+  }
+}
+
+function fallbackCopy(text, msg) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast(msg);
+}
+
+function notifyHeight() {
+  try {
+    const h = document.documentElement.scrollHeight;
+    window.parent.postMessage({ type: 'sovraeg-resize', height: h, source: document.title }, '*');
+  } catch (e) {}
+}
+
+window.addEventListener('load', () => { updateThemeButton(); notifyHeight(); });
+window.addEventListener('resize', notifyHeight);
+
+
+const CEFR_BANDS = [
+  { code: '<A1', label: '10–21', start: 10, end: 22 },
+  { code: 'A1',  label: '22–29', start: 22, end: 30 },
+  { code: 'A2',  label: '30–35', start: 30, end: 36 },
+  { code: 'A2+', label: '36–42', start: 36, end: 43 },
+  { code: 'B1',  label: '43–50', start: 43, end: 51 },
+  { code: 'B1+', label: '51–58', start: 51, end: 59 },
+  { code: 'B2',  label: '59–66', start: 59, end: 67 },
+  { code: 'B2+', label: '67–75', start: 67, end: 76 },
+  { code: 'C1',  label: '76–84', start: 76, end: 85 },
+  { code: 'C2',  label: '85–90', start: 85, end: 90 }
+];
+
+const GATES = [
+  {
+    id: 0,
+    name: 'Gate 0: Break the Mute',
+    sub: 'W1–2 · GSE 10–29',
+    start: 10, end: 29,
+    color: '#93c5fd', textColor: '#0c1629',
+    note: '60s natural-speed shadowing',
+    noteSide: 'right',
+    bottleneck: 'Vietnamese 6-final-consonant ceiling (/m n ŋ p t k/), zero clusters, syllable-timed cadence, and conditioned error fear (sợ sai).',
+    mechanism: 'Acoustic-first, orthography-second visual prosody contours, schwa (/ə/) reduction, and private zero-shame voice-AI shadowing reps.',
+    proof: 'Shadow a 60-second natural-speed SYNCZINE clip with clear stress timing and final-consonant intelligibility (+ optional local 30s VN L1 pace baseline).'
+  },
+  {
+    id: 1,
+    name: 'Gate 1: Functional Engine',
+    sub: 'W3–6 · GSE 30–46',
+    start: 30, end: 46,
+    color: '#60a5fa', textColor: '#0a1426',
+    note: '3-min unscripted monologue, <3s pause',
+    noteSide: 'right',
+    bottleneck: 'Memorizing isolated vocabulary lists and abstract tense tables without sub-3-second active spoken recall.',
+    mechanism: 'ANVILOCITY timed vocal sprints forging the top 1,500 adult lemmas and 150 spoken frames into interlocking SYNCTESS chunks.',
+    proof: 'Deliver a 3-minute unscripted spoken monologue on real work/life with <3s max anti-freezing pause latency and zero Vietnamese fallback.'
+  },
+  {
+    id: 2,
+    name: 'Gate 2: Contextual Velocity',
+    sub: 'M2–4 · GSE 47–66',
+    start: 47, end: 66,
+    color: '#3b82f6', textColor: '#ffffff',
+    note: '10-min native brief → 2-min synthesis + Q&A',
+    noteSide: 'left',
+    bottleneck: 'Word-by-word mental translation and comprehension collapse when hearing natural-speed diverse accents.',
+    mechanism: 'Domain-matched SYNCZINES at 1.0x–1.2x speed, ALCHEMOSAIC remixing, and high-rep peer SYNCZ sparring tightening pause density past the 128 WPM L2 ceiling.',
+    proof: 'Absorb an unfamiliar 10-minute native briefing and deliver a crisp 2-minute spoken synthesis plus unscripted live Q&A.'
+  },
+  {
+    id: 3,
+    name: 'Gate 3: Sovereign Voice',
+    sub: 'M4–6+ · GSE 67–84',
+    start: 67, end: 84,
+    color: '#2563eb', textColor: '#ffffff',
+    note: 'Live crucible + SYNTHCRED VC portfolio',
+    noteSide: 'left',
+    bottleneck: 'Memorized IELTS Part 2 scripts that shatter during real negotiations, client pushback, or spontaneous domain debates.',
+    mechanism: 'High-friction live crucibles targeting 150–210 WPM natural interview cadence and C1 pause discipline (≤10.76 unfilled pauses/100 words), plus Commons authoring.',
+    proof: 'Cryptographically signed SYNTHCRED (W3C VC 2.0 / Open Badges 3.0) proof-of-voice portfolio + published ALCHEMOSAIC Commons artifact.'
+  }
+];
+
+const WPM_BENCHMARKS = [
+  {
+    name: 'L2 Learners (B2/C1 Avg)',
+    muted: true,
+    type: 'point',
+    val: 128,
+    label: '128 WPM',
+    sps: '~2.8–3.6 syll/sec',
+    context: 'Empirical Huang & Gráf upper-intermediate/advanced L2 learner average — Gate 2 explicitly trains learners to break cleanly above this 128 WPM ceiling.'
+  },
+  {
+    name: 'Academic Lecturers',
+    type: 'range',
+    min: 125, max: 160,
+    label: '125–160 WPM',
+    sps: '~3.1–4.0 syll/sec',
+    context: 'Deliberate instructional delivery used in university lectures and structured technical explanations (target zone for early Gate 2 briefings).'
+  },
+  {
+    name: 'Radio Broadcasters',
+    type: 'range',
+    min: 150, max: 170,
+    label: '150–170 WPM',
+    sps: '~3.6–4.3 syll/sec',
+    context: 'Clear, articulate natural-speed scripted and semi-scripted native broadcast rhythm used for Gate 0–2 prosody shadowing benchmarks.'
+  },
+  {
+    name: 'Native Speakers (Mean)',
+    type: 'whisker',
+    min: 106, max: 265, mean: 174,
+    label: 'Mean 174',
+    sps: '~3.5–5.0 syll/sec (norm)',
+    context: 'Wide natural native speaker dispersion (106–265 WPM; mean 174 WPM), confirming why individual L1 speaking style normalization matters.'
+  },
+  {
+    name: 'Workplace Interviews',
+    type: 'range',
+    min: 160, max: 210,
+    label: '160–210 WPM',
+    sps: '~3.8–5.0 syll/sec',
+    context: 'Primary Gate 3 Sovereign Voice target zone for global client calls, negotiations, hiring interviews, and technical Q&A.'
+  },
+  {
+    name: 'Natural Conversations',
+    type: 'range',
+    min: 190, max: 230,
+    label: '190–230 WPM',
+    sps: '~4.5–5.5 syll/sec',
+    context: 'Rapid unscripted native social speech featuring heavy schwa reduction, linking, and overlapping turn-taking.'
+  }
+];
+
+const gsePct = v => ((v - 10) / 80) * 100;
+const wpmPct = v => (v / 270) * 100;
+
+let selectedGate = 1;
+let selectedWpm = 4;
+
+function renderPanelA() {
+  // Top IELTS Callouts
+  const p46 = gsePct(46), p58 = gsePct(58), p65 = gsePct(65), p66 = gsePct(66);
+  document.getElementById('gseCallouts').innerHTML = `
+    <div class="ielts-label" style="right:${100 - p58 - 0.6}%; top:2px; color:var(--amber);" onclick="selectGate(2)" title="IELTS 6.5 Overall maps to GSE 58 (top of B1+)">
+      <span>IELTS 6.5 Overall (58)</span><span class="ielts-dot" style="background:var(--amber)"></span>
+    </div>
+    <div class="ielts-label" style="right:${100 - p46 - 0.6}%; top:20px; color:var(--red);" onclick="selectGate(1)" title="IELTS 6.5 permits a Speaking floor down to GSE 46 (low B1)">
+      <span>IELTS 6.5 Speaking Floor (46)</span><span class="ielts-dot" style="background:var(--red)"></span>
+    </div>
+    <div class="ielts-label" style="left:${p66 - 0.5}%; top:2px; color:var(--text-primary);" onclick="selectGate(3)">
+      <span class="ielts-dot" style="background:var(--text-primary)"></span><span>IELTS 7.0 Overall (66)</span>
+    </div>
+    <div class="ielts-label" style="left:${p65 - 0.5}%; top:20px; color:var(--text-secondary);" onclick="selectGate(2)">
+      <span class="ielts-dot" style="background:var(--text-secondary)"></span><span>IELTS 7.0 Speaking (65)</span>
+    </div>
+    <div class="gap-badge" style="left:${p46}%; width:${p58 - p46}%;" onclick="selectGate(1)" title="12-point GSE gap between IELTS 6.5 overall (58) and speaking floor (46)">
+      <span>12-pt gap</span>
+    </div>
+  `;
+
+  // Left Labels
+  document.getElementById('gseLabels').innerHTML = `
+    <div class="gse-label-cell cefr-lbl">
+      <div class="gse-label-title">CEFR Bands</div>
+      <div class="gse-label-sub">Official GSE widths</div>
+    </div>
+    ${GATES.map((g, idx) => `
+      <div class="gse-label-cell gate-lbl ${idx === selectedGate ? 'active' : ''}" onclick="selectGate(${idx})" role="button" tabindex="0">
+        <div class="gse-label-title">${g.name}</div>
+        <div class="gse-label-sub">${g.sub}</div>
+      </div>
+    `).join('')}
+  `;
+
+  // Plot area
+  const gridLines = [10,20,30,40,50,60,70,80,90].map(v => `<div class="gse-vline" style="left:${gsePct(v)}%"></div>`).join('');
+  const cefrHtml = CEFR_BANDS.map(b => `
+    <div class="cefr-band" style="left:${gsePct(b.start)}%; width:${gsePct(b.end) - gsePct(b.start)}%;" title="CEFR ${b.code}: GSE ${b.label}">
+      <strong>${b.code}</strong>
+      <span>${b.label}</span>
+    </div>
+  `).join('');
+
+  const gatesHtml = GATES.map((g, idx) => {
+    const left = gsePct(g.start);
+    const width = gsePct(g.end) - left;
+    const noteStyle = g.noteSide === 'right'
+      ? `left:calc(${left + width}% + 10px);`
+      : `right:calc(${100 - left}% + 10px); text-align:right;`;
+    return `
+      <div class="gate-track ${idx === selectedGate ? 'active' : ''}" onclick="selectGate(${idx})" role="button" tabindex="0">
+        <div class="gate-bar" style="left:${left}%; width:${width}%; background:${g.color}; color:${g.textColor};">
+          GSE ${g.start}–${g.end}
+        </div>
+        <span class="gate-note" style="${noteStyle}">${g.note}</span>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('gsePlot').innerHTML = `
+    <div class="gse-grid-bg">${gridLines}</div>
+    <div class="gse-gap-shade" style="left:${p46}%; width:${p58 - p46}%;"></div>
+    <div class="ref-dashed short" style="left:${p46}%; border-color:var(--red);"></div>
+    <div class="ref-dashed" style="left:${p58}%; border-color:var(--amber);"></div>
+    <div class="ref-dashed short" style="left:${p65}%; border-color:var(--text-secondary); opacity:0.8;"></div>
+    <div class="ref-dashed" style="left:${p66}%; border-color:var(--text-primary); opacity:0.85;"></div>
+    <div class="cefr-strip">${cefrHtml}</div>
+    ${gatesHtml}
+  `;
+
+  // X Axis
+  document.getElementById('gseAxis').innerHTML = [10,20,30,40,50,60,70,80,90].map((v, i, arr) => `
+    <span class="axis-tick ${i === 0 ? 'first' : i === arr.length - 1 ? 'last' : ''}" style="left:${gsePct(v)}%">${v}</span>
+  `).join('');
+
+  renderGateInspector();
+}
+
+function renderGateInspector() {
+  const g = GATES[selectedGate];
+  document.getElementById('gateInspector').innerHTML = `
+    <div class="gi-head">
+      <div class="gi-title">${g.name} <span style="color:var(--text-muted);font-weight:500;">(${g.sub})</span></div>
+      <span class="gi-badge">CODE+V Non-Negotiable Output Gate</span>
+    </div>
+    <div class="gi-grid">
+      <div class="gi-cell">
+        <div class="eyebrow">VIETNAM L1 BOTTLENECK</div>
+        <p>${g.bottleneck}</p>
+      </div>
+      <div class="gi-cell">
+        <div class="eyebrow">CORE ANVILOCITY MECHANISM</div>
+        <p>${g.mechanism}</p>
+      </div>
+      <div class="gi-cell">
+        <div class="eyebrow">SYNCTESS EXIT PROOF</div>
+        <p>${g.proof}</p>
+      </div>
+    </div>
+  `;
+  notifyHeight();
+}
+
+function selectGate(idx) {
+  selectedGate = idx;
+  renderPanelA();
+}
+
+function renderPanelB() {
+  document.getElementById('wpmLabels').innerHTML = WPM_BENCHMARKS.map((b, idx) => `
+    <div class="wpm-lbl ${b.muted ? 'muted' : ''} ${idx === selectedWpm ? 'active' : ''}"
+         onmouseenter="selectWpm(${idx})" onclick="selectWpm(${idx})" role="button" tabindex="0">
+      ${b.name}
+    </div>
+  `).join('');
+
+  const ticks = [0,30,60,90,120,150,180,210,240,270];
+  const gridLines = ticks.map(v => `<div class="gse-vline" style="left:${wpmPct(v)}%"></div>`).join('');
+
+  const rowsHtml = WPM_BENCHMARKS.map((b, idx) => {
+    let inner = '';
+    if (b.type === 'point') {
+      const p = wpmPct(b.val);
+      inner = `
+        <div class="wpm-dot" style="left:${p}%; background:var(--text-secondary);"></div>
+        <span class="wpm-val-label" style="left:calc(${p}% + 11px);">${b.label}</span>
+      `;
+    } else if (b.type === 'range') {
+      const l = wpmPct(b.min), w = wpmPct(b.max) - l;
+      inner = `
+        <div class="wpm-pill" style="left:${l}%; width:${w}%;"></div>
+        <span class="wpm-val-label" style="left:calc(${l + w}% + 10px);">${b.label}</span>
+      `;
+    } else if (b.type === 'whisker') {
+      const l = wpmPct(b.min), r = wpmPct(b.max), m = wpmPct(b.mean);
+      inner = `
+        <div class="wpm-whisker" style="left:${l}%; width:${r - l}%;"></div>
+        <div class="wpm-cap" style="left:${l}%;"></div>
+        <div class="wpm-cap" style="left:${r}%;"></div>
+        <div class="wpm-dot" style="left:${m}%; background:var(--cyan); width:12px; height:12px;"></div>
+        <span class="wpm-mean-tag" style="left:${m}%;">${b.label}</span>
+        <span class="wpm-val-label" style="right:calc(${100 - l}% + 8px); color:var(--text-muted); font-weight:500;">${b.min}</span>
+        <span class="wpm-val-label" style="left:calc(${r}% + 8px); color:var(--text-muted); font-weight:500;">${b.max}</span>
+      `;
+    }
+    return `
+      <div class="wpm-row ${idx === selectedWpm ? 'active' : ''}"
+           onmouseenter="selectWpm(${idx})" onclick="selectWpm(${idx})" role="button" tabindex="0">
+        ${inner}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('wpmPlot').innerHTML = `
+    <div class="gse-grid-bg">${gridLines}</div>
+    <div class="wpm-ref-128" style="left:${wpmPct(128)}%;"></div>
+    ${rowsHtml}
+  `;
+
+  document.getElementById('wpmAxis').innerHTML = ticks.map((v, i, arr) => `
+    <span class="axis-tick ${i === 0 ? 'first' : i === arr.length - 1 ? 'last' : ''}" style="left:${wpmPct(v)}%">${v}</span>
+  `).join('');
+
+  renderWpmDetail();
+}
+
+function renderWpmDetail() {
+  const b = WPM_BENCHMARKS[selectedWpm];
+  document.getElementById('wpmDetail').innerHTML = `
+    <span><strong>${b.name} (${b.label}):</strong> ${b.context}</span>
+    <span style="font-family:var(--font-mono);color:var(--text-muted);white-space:nowrap;">Articulation equiv: ${b.sps}</span>
+  `;
+}
+
+function selectWpm(idx) {
+  selectedWpm = idx;
+  document.querySelectorAll('.wpm-lbl').forEach((el, i) => el.classList.toggle('active', i === idx));
+  document.querySelectorAll('.wpm-row').forEach((el, i) => el.classList.toggle('active', i === idx));
+  renderWpmDetail();
+}
+
+function copyBenchmarksMd() {
+  const g = GATES[selectedGate];
+  const md = `> [!NOTE] ZERO TO VOICE GSE Calibration — ${g.name} (${g.sub})\n` +
+    `> - **Vietnam L1 Bottleneck:** ${g.bottleneck}\n` +
+    `> - **ANVILOCITY Mechanism:** ${g.mechanism}\n` +
+    `> - **Exit Proof (SYNCTESS):** ${g.proof}\n` +
+    `> - **IELTS 6.5 Gap:** Overall = GSE 58 (B1+) vs. Speaking Floor = GSE 46 (low B1, 12-pt gap).\n` +
+    `> - **Acoustic Oracle:** 250 ms articulation cutoff | ≥1.0 s mid-clause breakdown | Unfilled pauses/100w: B2 14.43 vs. C1 10.76 | Target 150–210 WPM.`;
+  copyText(md, 'Copied GSE & Acoustic calibration note to clipboard');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === 'ArrowRight') selectGate((selectedGate + 1) % GATES.length);
+  if (e.key === 'ArrowLeft') selectGate((selectedGate - 1 + GATES.length) % GATES.length);
+});
+
+renderPanelA();
+renderPanelB();
+</script>
+</body>
+</html>
