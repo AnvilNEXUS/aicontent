@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Six-Milestone Rollout Targets a 48-Unit Adult ESL Pilot Mapped to GSE Granularity</title>
+<style>
+  :root {
+    --bg: #fbf7ef;
+    --surface: #f5efe0;
+    --surface-elevated: #ffffff;
+    --border: rgba(120, 53, 15, 0.16);
+    --border-strong: rgba(120, 53, 15, 0.34);
+    --text: #1c1917;
+    --text-muted: #57534e;
+    --text-soft: #78716c;
+    --accent: #92400e;
+    --accent-bright: #b45309;
+    --accent-soft: rgba(180, 83, 9, 0.11);
+    --teal: #0f766e;
+    --teal-soft: rgba(15, 118, 110, 0.12);
+    --slate: #334155;
+    --slate-soft: rgba(51, 65, 85, 0.10);
+    --crimson: #b91c1c;
+    --crimson-soft: rgba(185, 28, 28, 0.10);
+    --shadow: 0 2px 10px rgba(28, 25, 23, 0.06);
+    --radius: 10px;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  [data-theme="dark"] {
+    --bg: #141210;
+    --surface: #1e1b18;
+    --surface-elevated: #27231f;
+    --border: rgba(251, 191, 36, 0.14);
+    --border-strong: rgba(251, 191, 36, 0.35);
+    --text: #f5f5f4;
+    --text-muted: #d6d3d1;
+    --text-soft: #a8a29e;
+    --accent: #f59e0b;
+    --accent-bright: #fbbf24;
+    --accent-soft: rgba(245, 158, 11, 0.14);
+    --teal: #2dd4bf;
+    --teal-soft: rgba(45, 212, 191, 0.14);
+    --slate: #94a3b8;
+    --slate-soft: rgba(148, 163, 184, 0.14);
+    --crimson: #f87171;
+    --crimson-soft: rgba(248, 113, 113, 0.14);
+    --shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.45;
+    padding: 14px 16px 16px;
+    transition: background 0.2s ease, color 0.2s ease;
+    overflow-x: hidden;
+  }
+
+  .app {
+    max-width: 1080px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+  }
+
+  .title-block h1 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
+  .title-block h1 span { color: var(--accent-bright); }
+
+  .title-block p {
+    font-size: 0.77rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .tabs {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2px;
+    gap: 2px;
+  }
+
+  .tab-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { background: var(--accent); color: #fff; }
+  [data-theme="dark"] .tab-btn.active { color: #1c1917; }
+
+  .theme-btn {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    font-size: 0.74rem;
+    font-weight: 600;
+    padding: 6px 9px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .theme-btn:hover { border-color: var(--border-strong); color: var(--text); }
+
+  .view { display: none; flex-direction: column; gap: 12px; }
+  .view.active { display: flex; }
+
+  /* Milestones Grid */
+  .milestone-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+  }
+
+  @media (max-width: 900px) {
+    .milestone-strip { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 520px) {
+    .milestone-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .m-card {
+    background: var(--surface-elevated);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 9px 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .m-card:hover { border-color: var(--border-strong); }
+  .m-card.active {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .m-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .m-code {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent-bright);
+  }
+
+  .m-tag {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+
+  .m-tag.prop {
+    background: var(--slate-soft);
+    color: var(--slate);
+  }
+
+  .m-card h3 {
+    font-size: 0.77rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.25;
+  }
+
+  .m-card p {
+    font-size: 0.68rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+
+  /* Inspector */
+  .inspector {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 780px) {
+    .inspector { grid-template-columns: 1fr; }
+  }
+
+  .panel {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 13px 15px;
+    box-shadow: var(--shadow);
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.67rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent-bright);
+    margin-bottom: 7px;
+  }
+
+  .badge.teal {
+    background: var(--teal-soft);
+    color: var(--teal);
+  }
+
+  .panel h2 {
+    font-size: 0.96rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .panel p.desc {
+    font-size: 0.79rem;
+    color: var(--text-muted);
+    margin-bottom: 9px;
+  }
+
+  .bullet-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bullet-list li {
+    font-size: 0.78rem;
+    padding-left: 13px;
+    position: relative;
+  }
+
+  .bullet-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 7px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent-bright);
+  }
+
+  .meta-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .info-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 11px;
+  }
+
+  .info-label {
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+
+  .info-val {
+    font-size: 0.78rem;
+    color: var(--text);
+  }
+
+  /* 48-Unit ESL Corpus */
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  @media (max-width: 820px) {
+    .course-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .c-card {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: 9px;
+    padding: 10px 11px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s ease;
+  }
+
+  .c-card:hover { border-color: var(--border-strong); }
+  .c-card.active {
+    border-color: var(--teal);
+    background: var(--teal-soft);
+  }
+
+  .c-cefr {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: var(--teal);
+  }
+
+  .c-card h3 {
+    font-size: 0.82rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .c-gse {
+    font-family: var(--font-mono);
+    font-size: 0.71rem;
+    font-weight: 700;
+    color: var(--accent-bright);
+    margin-top: 4px;
+  }
+
+  .c-sub {
+    font-size: 0.69rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .unit-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 760px) {
+    .unit-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  .u-tile {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 7px 8px;
+    font-size: 0.7rem;
+  }
+
+  .u-tile.featured {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .u-num {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    font-weight: 700;
+    color: var(--text-soft);
+  }
+
+  .u-name {
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 2px;
+    line-height: 1.22;
+  }
+
+  .u-gse {
+    font-family: var(--font-mono);
+    font-size: 0.63rem;
+    color: var(--teal);
+    margin-top: 3px;
+  }
+
+  /* GSE Scale & Error Benchmarks */
+  .scale-band {
+    position: relative;
+    height: 36px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 12% 23% 23% 24% 18%;
+    border: 1px solid var(--border-strong);
+    margin: 10px 0 6px;
+  }
+
+  .sb-seg {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #fff;
+    padding: 2px;
+    text-align: center;
+  }
+
+  .bench-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 780px) {
+    .bench-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .b-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 10px;
+  }
+
+  .b-num {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--accent-bright);
+  }
+
+  .b-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-top: 2px;
+  }
+
+  .b-note {
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .footer-note {
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div class="title-block">
+      <h1>Six-Milestone Rollout Targets a <span>48-Unit Adult ESL Pilot</span> Mapped to GSE Granularity</h1>
+      <p>Headless-first delivery plan, 4-course × 12-unit adult ESL corpus, GSE 10–90 calibration &amp; empirical error/Zalo benchmarks</p>
+    </div>
+    <div class="controls">
+      <div class="tabs" role="tablist">
+        <button class="tab-btn active" data-view="roadmap" role="tab">1. Six Milestones</button>
+        <button class="tab-btn" data-view="pilot" role="tab">2. 48-Unit ESL Corpus</button>
+        <button class="tab-btn" data-view="gse" role="tab">3. GSE &amp; Error Benchmarks</button>
+      </div>
+      <button class="theme-btn" id="themeToggle">Dark Mode</button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: SIX MILESTONES -->
+  <section class="view active" id="view-roadmap">
+    <div class="milestone-strip" id="milestoneStrip"></div>
+    <div class="inspector">
+      <div class="panel" id="mDetail"></div>
+      <div class="panel" id="mSide"></div>
+    </div>
+  </section>
+
+  <!-- VIEW 2: 48-UNIT ESL CORPUS -->
+  <section class="view" id="view-pilot">
+    <div class="panel">
+      <div class="badge teal">4 Courses × 12 Units = 48 SYNCTESS Units · Click Any Course</div>
+      <h2>Anvilocity Adult ESL Path (A0–B2)</h2>
+      <p class="desc">One self-contained learning path (SYNCZINE) per CEFR tier and 12 hexagonal instructional units (SYNCTESS) per course, pairing communicative tasks with shared skill repair links.</p>
+      <div class="course-grid" id="courseGrid"></div>
+      <div class="info-box">
+        <div class="info-label" id="unitListTitle">12 Units in Selected Course</div>
+        <div class="unit-grid" id="unitGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIEW 3: GSE & ERROR BENCHMARKS -->
+  <section class="view" id="view-gse">
+    <div class="panel">
+      <div class="badge">Proficiency Granularity &amp; Empirical Field Evidence</div>
+      <h2>GSE (10–90) Fine-Grained Milestones vs. Broad CEFR Bands</h2>
+      <p class="desc">CEFR acts as the regional highway map while Pearson's GSE (10–90) provides turn-by-turn steps—paired with communicative observation and Vietnamese EFL error data.</p>
+      <div class="scale-band">
+        <div class="sb-seg" style="background:#64748b;"><span>Pre-A1</span><span>&lt;22</span></div>
+        <div class="sb-seg" style="background:#0f766e;"><span>A1</span><span>22–29</span></div>
+        <div class="sb-seg" style="background:#b45309;"><span>A2</span><span>30–42</span></div>
+        <div class="sb-seg" style="background:#334155;"><span>B1</span><span>43–58</span></div>
+        <div class="sb-seg" style="background:#78350f;"><span>B2</span><span>59–75</span></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:0.65rem;color:var(--text-soft);">
+        <span>GSE 10</span>
+        <span>Worked A2 Example: Repair GSE 29 → Core GSE 32 → Fluency GSE 35</span>
+        <span>GSE 90</span>
+      </div>
+
+      <div class="bench-grid">
+        <div class="b-card">
+          <div class="b-num">28.4% / 50.7%</div>
+          <div class="b-label">Final /s/, /z/ Omission</div>
+          <div class="b-note">16 Vietnamese adult speakers overall (28.4%) and post-consonant plural/3rd-sg (50.7%)</div>
+        </div>
+        <div class="b-card">
+          <div class="b-num">4.73 errors</div>
+          <div class="b-label">Pre-Intermediate Writing</div>
+          <div class="b-note">Mean errors per sample; wrong verb forms (15.9%) &amp; subject–verb agreement (12.0%) lead</div>
+        </div>
+        <div class="b-card">
+          <div class="b-num">80.2M / 81%</div>
+          <div class="b-label">Zalo Reach in Vietnam</div>
+          <div class="b-note">80.2M MAU end-Q1 2026 (79.6M in 2025; ~82.6M Q3 secondary); ~81% citizen reach (Q2 2026)</div>
+        </div>
+        <div class="b-card">
+          <div class="b-num">100 MB mobile</div>
+          <div class="b-label">Zero-Install File Envelope</div>
+          <div class="b-note">Zalo mobile file cap is 100 MB (1 GB PC/Web); 500 MB free personal doc storage (≤100 MB long-term)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <span>Sources: SOVRAEGIS specification &amp; blueprint, Pearson GSE guides, Vietnamese EFL error studies, VNG / Zalo / Decision Lab</span>
+    <span>Self-contained HTML widget · Obsidian &amp; GitHub Pages ready</span>
+  </footer>
+</div>
+
+<script>
+  const MILESTONES = [
+    {
+      code: "M1",
+      tag: "SPEC · ~Wk 1",
+      prop: false,
+      title: "Headless Compiler & Quality Inspector",
+      short: "Grammar, 7 checks & capsule builder",
+      summary: "Builds the core language parser, automated pedagogical checks, and offline course capsule generator with zero UI overhead.",
+      bullets: [
+        "Enforces unique IDs, circular-free skill prerequisites, CODE+V completeness, and bounded retry limits.",
+        "Compiles skills, lessons, zero-code grading rules, and policies into a structured course manifest.",
+        "Must resolve schema ambiguities—including dropping unsupported did:ion—before freezing formats."
+      ],
+      deliverable: "Command-line compiler + automated test suite",
+      gate: "All core pedagogical rules pass unit tests"
+    },
+    {
+      code: "M2",
+      tag: "SPEC · ~Wk 2",
+      prop: false,
+      title: "Headless Runtime & Diary Replay",
+      short: "Mastery, hint, drill & escalation tests",
+      summary: "Verifies adaptive routing, zero-code rule evaluation, and conflict-free offline log replay using automated test scenarios.",
+      bullets: [
+        "Simulates Direct Mastery, Partial → Hint → Mastery, Deficit → Repair Drill, and Loop Cap → Escalate.",
+        "Validates chronological event replay so out-of-order offline edits converge to one state.",
+        "Defines clear human educator escalation outcomes (Approve, Reject, Override) and per-attempt error counts."
+      ],
+      deliverable: "Deterministic state engine + local diary simulator",
+      gate: "All four learner scenarios & replay tests pass"
+    },
+    {
+      code: "M3",
+      tag: "SPEC · Wks 3–4",
+      prop: false,
+      title: "Dual Studio & First Live Widget",
+      short: "Code + hex canvas + 1 interactive widget",
+      summary: "Connects the live plain-text editor, hexagonal visual graph, and first real interactive learning widget in a browser.",
+      bullets: [
+        "Keeps text and visual graph synchronized within ~150 ms while saving node positions separately.",
+        "Attaches clickable error popovers to hexagonal units and skill cards for instant line jumps.",
+        "Connects one interactive widget emitting activity records to trigger a real state transition."
+      ],
+      deliverable: "Vertical slice of studio + learner player",
+      gate: "Live edit → canvas sync → widget event → transition"
+    },
+    {
+      code: "M4",
+      tag: "PROPOSED",
+      prop: true,
+      title: "Capsule Hardening & Web Export",
+      short: "Signing, integrity checks & .sovz.html",
+      summary: "Hardens course bundles with digital signatures, content fingerprinting, and zero-install single-file HTML export.",
+      bullets: [
+        "Validates bundle structure, computes content fingerprints, and attaches digital provenance signatures.",
+        "Packages the .sovz.html single-file web capsule for zero-install sharing over Zalo, USB, or email.",
+        "Adds encrypted progress export/restore to protect learners against 7-day Safari browser storage purges."
+      ],
+      deliverable: "Signed .sovz archive & zero-install .sovz.html exporter",
+      gate: "Tamper detection & offline single-file launch verified"
+    },
+    {
+      code: "M5",
+      tag: "PROPOSED",
+      prop: true,
+      title: "Offline Sync & SOVRAEPASS Wallet",
+      short: "Diary sync, OBv3 VCs, endorsements & CLR",
+      summary: "Connects offline learning diaries, xAPI profile checks, and Open Badges 3.0 / W3C VC 2.0 credential minting into SOVRAEPASS.",
+      bullets: [
+        "Implements batch push/pull sync and hash-chained evidence digests while bridging xAPI 2.0 to LearnCloud 1.0.3.",
+        "Mints atomic Open Badges 3.0 credentials on W3C VC 2.0 with CASE skill alignments and artifact hashes.",
+        "Supports separate educator Endorsement Credentials and full-course CLR 2.0 portfolio rollups."
+      ],
+      deliverable: "SOVRAEPASS wallet integration + credential mapper",
+      gate: "End-to-end offline mastery → verifiable badge in wallet"
+    },
+    {
+      code: "M6",
+      tag: "PROPOSED",
+      prop: true,
+      title: "Human–AI Co-Authoring Loop",
+      short: "Structured AI drafts + auto-repair + review",
+      summary: "Enables cloud and local AI copilots to draft and patch lessons inside an automated quality-check loop under teacher approval.",
+      bullets: [
+        "Generates structured drafts constrained to the six-block schema rather than unverified raw text.",
+        "Feeds quality-check diagnostics back to the model automatically for rapid pre-review repair.",
+        "Keeps every AI-assisted change gated behind explicit human educator inspection and sign-off."
+      ],
+      deliverable: "AI co-authoring workflow + constrained local copilot",
+      gate: "AI drafts pass quality checks with zero silent edits"
+    }
+  ];
+
+  const COURSES = [
+    {
+      cefr: "CEFR Pre-A1 → A1",
+      title: "Course 1: Survival & Foundations",
+      gse: "GSE ~22–29",
+      sub: "12 units · Greetings, daily routines, basic questions & /s/ /z/ awareness",
+      units: [
+        "1. Greetings & Names", "2. Classroom & Objects", "3. Numbers & Prices", "4. Days & Time",
+        "5. Family & Roles", "6. Daily Routines", "7. Food & Ordering", "8. Places in Town",
+        "9. Simple Yes/No", "10. Basic Wh- Prompts", "11. Plural -s / -es", "12. A1 Check-In"
+      ],
+      featured: [9, 10]
+    },
+    {
+      cefr: "CEFR A1 → A2",
+      title: "Course 2: Everyday Inquiry",
+      gse: "GSE ~29–36",
+      sub: "12 units · Includes worked A2 Wh-question interview (GSE 32/35) & do/does drill (GSE 29)",
+      units: [
+        "13. Wh-Question Core", "14. Cafe Interview (A2)", "15. Past Moments", "16. Shopping & Deals",
+        "17. Giving Directions", "18. Work & Shifts", "19. Health & Symptoms", "20. Weather & Plans",
+        "21. Invitations & Offers", "22. Transport & Travel", "23. Short Messages", "24. A2 Milestone"
+      ],
+      featured: [0, 1]
+    },
+    {
+      cefr: "CEFR A2 → B1",
+      title: "Course 3: Practical Autonomy",
+      gse: "GSE ~36–50",
+      sub: "12 units · Opinions, comparisons, problem-solving, narration & workplace tasks",
+      units: [
+        "25. Comparing Options", "26. Past Experiences", "27. Future Intentions", "28. Service Complaints",
+        "29. Clarifying Meaning", "30. Job & Skill Profiles", "31. Advice & Suggestions", "32. Cultural Etiquette",
+        "33. Short Summaries", "34. Phone & Chat Roleplay", "35. Error Self-Check", "36. B1 Threshold"
+      ],
+      featured: [4, 10]
+    },
+    {
+      cefr: "CEFR B1 → B2",
+      title: "Course 4: Nuance & Fluency",
+      gse: "GSE ~50–65",
+      sub: "12 units · Structured arguments, hypotheses, nuanced tone & portfolio capstone",
+      units: [
+        "37. Stating Positions", "38. Supporting Claims", "39. Hypotheticals", "40. Nuanced Agreement",
+        "41. Handling Pushback", "42. Process Explanations", "43. Data & Trends", "44. Workplace Meetings",
+        "45. Tone & Register", "46. Reflective Synthesis", "47. Peer Case Defense", "48. B2 CLR Capstone"
+      ],
+      featured: [3, 11]
+    }
+  ];
+
+  let activeM = 0;
+  let activeC = 1; // Default to Course 2 (A1 -> A2) containing worked Wh-question unit
+
+  document.getElementById("themeToggle").addEventListener("click", () => {
+    const html = document.documentElement;
+    const isDark = html.getAttribute("data-theme") === "dark";
+    html.setAttribute("data-theme", isDark ? "light" : "dark");
+    document.getElementById("themeToggle").textContent = isDark ? "Dark Mode" : "Light Mode";
+  });
+
+  document.querySelectorAll(".tab-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+      document.getElementById("view-" + btn.dataset.view).classList.add("active");
+    });
+  });
+
+  function renderMilestones() {
+    const strip = document.getElementById("milestoneStrip");
+    strip.innerHTML = "";
+    MILESTONES.forEach((m, idx) => {
+      const card = document.createElement("button");
+      card.className = "m-card" + (idx === activeM ? " active" : "");
+      card.innerHTML = `
+        <div class="m-top">
+          <span class="m-code">${m.code}</span>
+          <span class="m-tag ${m.prop ? "prop" : ""}">${m.tag}</span>
+        </div>
+        <h3>${m.title}</h3>
+        <p>${m.short}</p>
+      `;
+      card.addEventListener("click", () => {
+        activeM = idx;
+        renderMilestones();
+      });
+      strip.appendChild(card);
+    });
+
+    const cur = MILESTONES[activeM];
+    document.getElementById("mDetail").innerHTML = `
+      <div class="badge ${cur.prop ? "" : "teal"}">${cur.code} · ${cur.prop ? "Proposed Continuation" : "Core Prototype Specification"}</div>
+      <h2>${cur.title}</h2>
+      <p class="desc">${cur.summary}</p>
+      <ul class="bullet-list">
+        ${cur.bullets.map(b => `<li>${b}</li>`).join("")}
+      </ul>
+    `;
+
+    document.getElementById("mSide").innerHTML = `
+      <div class="meta-stack">
+        <div class="info-box">
+          <div class="info-label">Primary Deliverable</div>
+          <div class="info-val" style="font-weight:600;">${cur.deliverable}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Completion Gate</div>
+          <div class="info-val">${cur.gate}</div>
+        </div>
+        <div class="info-box">
+          <div class="info-label">Rollout Sequence</div>
+          <div class="info-val">Milestone ${activeM + 1} of 6 in the headless-first build plan.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderCourses() {
+    const grid = document.getElementById("courseGrid");
+    grid.innerHTML = "";
+    COURSES.forEach((c, idx) => {
+      const card = document.createElement("button");
+      card.className = "c-card" + (idx === activeC ? " active" : "");
+      card.innerHTML = `
+        <div class="c-cefr">${c.cefr}</div>
+        <h3>${c.title}</h3>
+        <div class="c-gse">${c.gse}</div>
+        <div class="c-sub">${c.sub}</div>
+      `;
+      card.addEventListener("click", () => {
+        activeC = idx;
+        renderCourses();
+      });
+      grid.appendChild(card);
+    });
+
+    const cur = COURSES[activeC];
+    document.getElementById("unitListTitle").textContent = `${cur.title} — 12 Hexagonal Units (${cur.gse})`;
+    const uGrid = document.getElementById("unitGrid");
+    uGrid.innerHTML = "";
+    cur.units.forEach((u, idx) => {
+      const isFeat = cur.featured.includes(idx);
+      const tile = document.createElement("div");
+      tile.className = "u-tile" + (isFeat ? " featured" : "");
+      tile.innerHTML = `
+        <div class="u-num">UNIT ${idx + 1}/12</div>
+        <div class="u-name">${u}</div>
+        <div class="u-gse">${isFeat ? "Core / Repair Link" : "CODE+V Unit"}</div>
+      `;
+      uGrid.appendChild(tile);
+    });
+  }
+
+  renderMilestones();
+  renderCourses();
+</script>
+</body>
+</html>
