@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS — Pedagogical Metamodel &amp; Mastery Band Simulator</title>
+  <style>
+    :root {
+      --font-scale: 1;
+      --bg-page: #fbf7ef;
+      --bg-surface: #f5efe0;
+      --bg-card: #fffdf8;
+      --bg-subtle: #ede4d1;
+      --border: #d9ccb4;
+      --border-strong: #b89f78;
+      --text-primary: #1f1a14;
+      --text-secondary: #574c3e;
+      --text-muted: #7c6f5d;
+      --accent-primary: #b45309;
+      --accent-primary-soft: rgba(180, 83, 9, 0.14);
+
+      --band-mastered: #047857;
+      --band-mastered-bg: #d1fae5;
+      --band-mastered-border: #6ee7b7;
+
+      --band-partial: #b45309;
+      --band-partial-bg: #fef3c7;
+      --band-partial-border: #fcd34d;
+
+      --band-deficit: #b91c1c;
+      --band-deficit-bg: #fee2e2;
+      --band-deficit-border: #fca5a5;
+
+      --std-color: #0f766e;
+      --std-bg: #ccfbf1;
+      --std-border: #5eead4;
+
+      --kw-color: #6d28d9;
+      --kw-bg: #ede9fe;
+      --kw-border: #c4b5fd;
+
+      --edge-idle: #c4b7a1;
+      --shadow-sm: 0 2px 6px rgba(31, 26, 20, 0.06);
+      --shadow-md: 0 8px 24px rgba(31, 26, 20, 0.10);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #141210;
+      --bg-surface: #1d1916;
+      --bg-card: #24201c;
+      --bg-subtle: #2e2822;
+      --border: #3d352d;
+      --border-strong: #6b5b49;
+      --text-primary: #f5efe4;
+      --text-secondary: #cbbba6;
+      --text-muted: #988875;
+      --accent-primary: #f59e0b;
+      --accent-primary-soft: rgba(245, 158, 11, 0.18);
+
+      --band-mastered: #34d399;
+      --band-mastered-bg: rgba(52, 211, 153, 0.14);
+      --band-mastered-border: rgba(52, 211, 153, 0.42);
+
+      --band-partial: #fbbf24;
+      --band-partial-bg: rgba(251, 191, 36, 0.14);
+      --band-partial-border: rgba(251, 191, 36, 0.42);
+
+      --band-deficit: #f87171;
+      --band-deficit-bg: rgba(248, 113, 113, 0.14);
+      --band-deficit-border: rgba(248, 113, 113, 0.42);
+
+      --std-color: #2dd4bf;
+      --std-bg: rgba(45, 212, 191, 0.14);
+      --std-border: rgba(45, 212, 191, 0.4);
+
+      --kw-color: #c4b5fd;
+      --kw-bg: rgba(167, 139, 250, 0.14);
+      --kw-border: rgba(167, 139, 250, 0.4);
+
+      --edge-idle: #52473b;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.5;
+      padding: 16px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .app {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    /* Header & Controls */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .title-group h1 {
+      font-size: calc(1.06rem * var(--font-scale));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-group p {
+      font-size: calc(0.8rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .segmented button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 700;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .segmented button:hover {
+      color: var(--text-primary);
+    }
+
+    .segmented button.active[data-scenario="mastered"] {
+      background: var(--band-mastered-bg);
+      border-color: var(--band-mastered-border);
+      color: var(--band-mastered);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .segmented button.active[data-scenario="partial"] {
+      background: var(--band-partial-bg);
+      border-color: var(--band-partial-border);
+      color: var(--band-partial);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .segmented button.active[data-scenario="deficit"] {
+      background: var(--band-deficit-bg);
+      border-color: var(--band-deficit-border);
+      color: var(--band-deficit);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sc-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .utility-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .font-control input[type="range"] {
+      width: 62px;
+      accent-color: var(--accent-primary);
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover { border-color: var(--accent-primary); }
+
+    /* Live Policy Status Banner */
+    .status-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      transition: all 0.2s ease;
+    }
+
+    .status-banner.band-mastered {
+      background: var(--band-mastered-bg);
+      border-color: var(--band-mastered-border);
+    }
+
+    .status-banner.band-partial {
+      background: var(--band-partial-bg);
+      border-color: var(--band-partial-border);
+    }
+
+    .status-banner.band-deficit {
+      background: var(--band-deficit-bg);
+      border-color: var(--band-deficit-border);
+    }
+
+    .status-left {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      font-size: calc(0.84rem * var(--font-scale));
+    }
+
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: calc(0.72rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 999px;
+      color: #ffffff;
+    }
+
+    .badge-mastered { background: var(--band-mastered); }
+    .badge-partial  { background: var(--band-partial); }
+    .badge-deficit  { background: var(--band-deficit); }
+
+    [data-theme="dark"] .status-badge { color: #141210; }
+
+    .rule-code {
+      font-family: var(--font-mono);
+      font-size: calc(0.78rem * var(--font-scale));
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 7px;
+      font-weight: 600;
+    }
+
+    /* Diagram Card */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 12px 10px;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+
+    .diagram-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 6px 8px;
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-secondary);
+    }
+
+    .metrics-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: calc(0.74rem * var(--font-scale));
+    }
+
+    .metric-chip {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      color: var(--text-primary);
+    }
+
+    .step-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover:not(:disabled) {
+      border-color: var(--accent-primary);
+      background: var(--accent-primary-soft);
+    }
+
+    .step-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .step-counter {
+      font-family: var(--font-mono);
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-muted);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    svg#metaSvg {
+      width: 100%;
+      min-width: 840px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .meta-node {
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+
+    .meta-node.dimmed {
+      opacity: 0.34;
+    }
+
+    .meta-node.dimmed.selected {
+      opacity: 0.92;
+    }
+
+    .meta-node .node-box {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.6;
+      transition: all 0.2s ease;
+    }
+
+    .meta-node:hover .node-box {
+      stroke: var(--accent-primary);
+    }
+
+    .meta-node.selected .node-box {
+      fill: var(--bg-card);
+      stroke-width: 2.8;
+      filter: drop-shadow(0 6px 14px rgba(31, 26, 20, 0.14));
+    }
+
+    .meta-node.tone-mastered.selected .node-box { stroke: var(--band-mastered); }
+    .meta-node.tone-partial.selected .node-box  { stroke: var(--band-partial); }
+    .meta-node.tone-deficit.selected .node-box  { stroke: var(--band-deficit); }
+
+    .meta-node.path-mastered .node-strip { fill: var(--band-mastered); }
+    .meta-node.path-partial .node-strip  { fill: var(--band-partial); }
+    .meta-node.path-deficit .node-strip  { fill: var(--band-deficit); }
+    .meta-node.dimmed .node-strip        { fill: var(--bg-subtle); }
+
+    .node-strip-txt {
+      fill: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    [data-theme="dark"] .meta-node:not(.dimmed) .node-strip-txt {
+      fill: #141210;
+    }
+
+    .meta-node.dimmed .node-strip-txt {
+      fill: var(--text-muted);
+    }
+
+    .node-title {
+      fill: var(--text-primary);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .node-sub {
+      fill: var(--text-secondary);
+      font-size: 10.5px;
+    }
+
+    .kw-pill-bg {
+      fill: var(--kw-bg);
+      stroke: var(--kw-border);
+      stroke-width: 1;
+    }
+
+    .kw-pill-txt {
+      fill: var(--kw-color);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .std-pill-bg {
+      fill: var(--std-bg);
+      stroke: var(--std-border);
+      stroke-width: 1;
+    }
+
+    .std-pill-txt {
+      fill: var(--std-color);
+      font-size: 9.5px;
+      font-weight: 600;
+    }
+
+    /* Edges */
+    .edge-base {
+      fill: none;
+      stroke: var(--edge-idle);
+      stroke-width: 2;
+      transition: stroke 0.25s ease, opacity 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .edge-base.dimmed {
+      opacity: 0.28;
+    }
+
+    .edge-base.lit-mastered { stroke: var(--band-mastered); stroke-width: 2.6; }
+    .edge-base.lit-partial  { stroke: var(--band-partial);  stroke-width: 2.6; }
+    .edge-base.lit-deficit  { stroke: var(--band-deficit);  stroke-width: 2.6; }
+
+    .edge-pulse {
+      fill: none;
+      stroke-width: 3;
+      stroke-dasharray: 6 10;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .edge-pulse.lit-mastered { stroke: var(--band-mastered); opacity: 1; animation: dashMove 0.95s linear infinite; }
+    .edge-pulse.lit-partial  { stroke: var(--band-partial);  opacity: 1; animation: dashMove 0.95s linear infinite; }
+    .edge-pulse.lit-deficit  { stroke: var(--band-deficit);  opacity: 1; animation: dashMove 0.95s linear infinite; }
+
+    @keyframes dashMove {
+      to { stroke-dashoffset: -32; }
+    }
+
+    .edge-label-txt {
+      fill: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 700;
+      text-anchor: middle;
+      transition: opacity 0.25s ease, fill 0.25s ease;
+    }
+
+    .edge-label-txt.dimmed { opacity: 0.3; }
+    .edge-label-txt.lit-mastered { fill: var(--band-mastered); }
+    .edge-label-txt.lit-partial  { fill: var(--band-partial); }
+    .edge-label-txt.lit-deficit  { fill: var(--band-deficit); }
+
+    .loop-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.2;
+      transition: all 0.25s ease;
+    }
+
+    .loop-pill-bg.dimmed { opacity: 0.3; }
+    .loop-pill-bg.lit-partial { fill: var(--band-partial-bg); stroke: var(--band-partial); stroke-width: 1.6; }
+    .loop-pill-bg.lit-deficit { fill: var(--band-deficit-bg); stroke: var(--band-deficit); stroke-width: 1.6; }
+
+    /* Inspector Panel */
+    .inspector {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 780px) {
+      .inspector { grid-template-columns: 1fr; }
+    }
+
+    .insp-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .insp-layer-tag {
+      font-family: var(--font-mono);
+      font-size: calc(0.7rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--bg-subtle);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .insp-kw-tag {
+      font-family: var(--font-mono);
+      font-size: calc(0.72rem * var(--font-scale));
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--kw-bg);
+      color: var(--kw-color);
+      border: 1px solid var(--kw-border);
+    }
+
+    .insp-title {
+      font-size: calc(1.08rem * var(--font-scale));
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+
+    .detail-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .detail-label {
+      font-family: var(--font-mono);
+      font-size: calc(0.67rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .detail-val {
+      font-size: calc(0.83rem * var(--font-scale));
+      color: var(--text-primary);
+    }
+
+    .linter-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-primary);
+      border-radius: 0 9px 9px 0;
+      padding: 10px 12px;
+      font-size: calc(0.83rem * var(--font-scale));
+    }
+
+    .linter-box strong {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: calc(0.68rem * var(--font-scale));
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent-primary);
+      margin-bottom: 3px;
+    }
+
+    .code-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .code-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: calc(0.7rem * var(--font-scale));
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .code-snippet {
+      font-family: var(--font-mono);
+      font-size: calc(0.77rem * var(--font-scale));
+      line-height: 1.5;
+      color: var(--text-primary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .std-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .std-chip {
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 6px;
+      background: var(--std-bg);
+      border: 1px solid var(--std-border);
+      color: var(--std-color);
+    }
+
+    .hint-footer {
+      text-align: right;
+      font-size: calc(0.72rem * var(--font-scale));
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="title-group">
+        <h1>SOVRAEGIS — Pedagogical Metamodel &amp; Mastery Band Simulator</h1>
+        <p>Inspect the 6 DSL primitives and simulate live adaptive routing through CODE+V, Gates, and XState Policies</p>
+      </div>
+      <div class="controls-row">
+        <div class="segmented" role="tablist" aria-label="Learner Mastery Scenario">
+          <button type="button" class="active" data-scenario="mastered" role="tab" aria-selected="true">
+            <span class="sc-dot" style="background:var(--band-mastered)"></span>Mastered (90%, 0 err)
+          </button>
+          <button type="button" data-scenario="partial" role="tab" aria-selected="false">
+            <span class="sc-dot" style="background:var(--band-partial)"></span>Partial (72%, 1 err)
+          </button>
+          <button type="button" data-scenario="deficit" role="tab" aria-selected="false">
+            <span class="sc-dot" style="background:var(--band-deficit)"></span>Deficit (48%, 4 err)
+          </button>
+        </div>
+        <div class="utility-group">
+          <label class="font-control" title="Adjust font scale">
+            <span>A</span>
+            <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font size" />
+            <span style="font-size:15px;font-weight:700;">A</span>
+          </label>
+          <button type="button" id="themeBtn" class="icon-btn" aria-label="Toggle color theme">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="status-banner band-mastered" id="statusBanner" aria-live="polite"></section>
+
+    <section class="diagram-card" aria-label="6-Node Pedagogical Metamodel Diagram">
+      <div class="diagram-topbar">
+        <div class="metrics-pill-row" id="metricsRow"></div>
+        <div class="step-nav">
+          <button type="button" class="step-btn" id="prevBtn">&larr; Prev</button>
+          <span class="step-counter" id="stepCounter">1 / 6</span>
+          <button type="button" class="step-btn" id="nextBtn">Next &rarr;</button>
+        </div>
+      </div>
+
+      <svg id="metaSvg" viewBox="0 0 1170 392" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="6-Node Pedagogical Metamodel and Adaptive Routing Diagram">
+        <defs>
+          <marker id="arrIdle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--edge-idle)" />
+          </marker>
+          <marker id="arrMastered" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--band-mastered)" />
+          </marker>
+          <marker id="arrPartial" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--band-partial)" />
+          </marker>
+          <marker id="arrDeficit" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--band-deficit)" />
+          </marker>
+        </defs>
+
+        <g id="edgesLayer"></g>
+        <g id="nodesLayer"></g>
+      </svg>
+    </section>
+
+    <section class="inspector" id="inspectorPanel" aria-live="polite"></section>
+
+    <div class="hint-footer">Tip: Switch learner scenarios above to simulate live routing, or click any node / press Left &amp; Right arrows to inspect its metamodel contract.</div>
+  </main>
+
+  <script>
+    const SCENARIOS = {
+      mastered: {
+        id: 'mastered',
+        badge: 'BAND: MASTERED',
+        accuracy: '0.90',
+        auxErrors: '0',
+        loopCount: '0 / 2',
+        summary: 'Learner meets accuracy >= 0.85 with zero auxiliary inversion omissions. Policy advances path and mints Open Badges 3.0 VC.',
+        dslRule: 'on mastered -> advance()',
+        remediationEdgeLabel: 'Inactive on Mastered',
+        remediationModeTag: 'Bypassed (Mastery Achieved)'
+      },
+      partial: {
+        id: 'partial',
+        badge: 'BAND: PARTIAL',
+        accuracy: '0.72',
+        auxErrors: '1',
+        loopCount: '1 / 2',
+        summary: 'Learner lands in partial band (0.60 - 0.84). Policy injects SyncModz chunk hints and routes back to Express for a scaffolded retry.',
+        dslRule: 'on partial -> scaffold("syncmodz.chunk_hints") then retry(current)',
+        remediationEdgeLabel: 'Partial: inject scaffold hints',
+        remediationModeTag: 'Active: SyncModz Chunk Hints'
+      },
+      deficit: {
+        id: 'deficit',
+        badge: 'BAND: DEFICIT',
+        accuracy: '0.48',
+        auxErrors: '4',
+        loopCount: '1 / 2',
+        summary: 'Learner triggers deficit band (< 0.60 or >= 3 errors). Policy resolves CASE remediates edge to AUX_DO_REPAIR before returning.',
+        dslRule: 'on deficit -> branch(target: AUX_DO_REPAIR, return_to: current)',
+        remediationEdgeLabel: 'Deficit: branch AUX_DO_REPAIR',
+        remediationModeTag: 'Active: Micro-Drill AUX_DO_REPAIR'
+      }
+    };
+
+    const NODES = [
+      {
+        id: 'competency',
+        step: 1,
+        x: 12, y: 26, w: 178, h: 156,
+        titleLines: ['Competency &', 'Relation DAG'],
+        layer: 'Knowledge Graph (SYNTHETARY)',
+        shortLayer: '01 · SYNTHETARY',
+        dslKeyword: 'competency / graph',
+        standards: ['1EdTech CASE v1.1', 'W3C OntoLex-Lemon'],
+        shortStd: 'CASE v1.1 · OntoLex',
+        keyFields: 'id, scale (GSE/CEFR), lexicon URIs, requires / remediates typed edges',
+        compilerChecks: 'Tarjan SCC DAG acyclicity on requires/partOf edges; valid external CASE & OntoLex URI resolution.',
+        activeOn: ['mastered', 'partial', 'deficit'],
+        snippet: `competency WH_SYNTAX_CORE {\n  title: "Form Wh-questions"\n  scale: gse("GSE:32")\n  bloom: apply\n}\ngraph prerequisites {\n  AUX_DO_REPAIR remediates WH_SYNTAX_CORE\n}`
+      },
+      {
+        id: 'synctess',
+        step: 2,
+        x: 254, y: 26, w: 178, h: 156,
+        titleLines: ['SYNCTESS Unit', '(CODE+V)'],
+        layer: 'Instructional Design',
+        shortLayer: '02 · CODE+V UNIT',
+        dslKeyword: 'synctess / phase',
+        standards: ['IMS-LD Activity', 'SyncModz'],
+        shortStd: 'IMS-LD · SyncModz',
+        keyFields: 'targets, roles (learner/peer/educator), phases: Curate, Organize, Distill, Express, Verify, Validate',
+        compilerChecks: 'CODE+V completeness profile (draft vs. certified); constructive alignment verifying Express activity exists.',
+        activeOn: ['mastered', 'partial', 'deficit'],
+        snippet: `synctess TESS_WH_INTERVIEW {\n  targets: [WH_SYNTAX_CORE, WH_SPOKEN_FLUENCY]\n  phase express {\n    activity info_gap_interview {\n      widget: "syncmodz.voice_studio"\n      emit: verb.answered\n    }\n  }\n}`
+      },
+      {
+        id: 'gate',
+        step: 3,
+        x: 496, y: 26, w: 178, h: 156,
+        titleLines: ['Mastery Gate', '(Deterministic)'],
+        layer: 'Verification & Telemetry',
+        shortLayer: '03 · VERIFY GATE',
+        dslKeyword: 'gate / band',
+        standards: ['IEEE xAPI 2.0'],
+        shortStd: 'IEEE xAPI 2.0',
+        keyFields: 'xAPI metric selectors, rubric thresholds (Mastered >= 85%, Partial 60%-84%, Deficit < 60%)',
+        compilerChecks: 'Unique band names, non-trivial band count, valid xAPI verb & result path selectors compiled to zero-eval AST.',
+        activeOn: ['mastered', 'partial', 'deficit'],
+        snippet: `gate GATE_WH_MASTERY {\n  metric accuracy from xapi(verb.answered).result.score.scaled\n  metric aux_errors from xapi(verb.answered).result.extensions.aux_omission_count\n  band mastered when accuracy >= 0.85 and aux_errors == 0\n  band partial  when accuracy >= 0.60 and accuracy < 0.85\n  band deficit  when accuracy < 0.60 or aux_errors >= 3\n}`
+      },
+      {
+        id: 'policy',
+        step: 4,
+        x: 738, y: 26, w: 178, h: 156,
+        titleLines: ['Adaptive Policy', '(XState v5)'],
+        layer: 'Orchestration (XState)',
+        shortLayer: '04 · ORCHESTRATION',
+        dslKeyword: 'policy / on',
+        standards: ['SCXML / XState', 'GIFT Pedagogical Model'],
+        shortStd: 'XState · GIFT',
+        keyFields: 'max_remediation_loops (2), advance, scaffold retry, remediate branch, escalate to SOVRAEGIX',
+        compilerChecks: 'Bounded loop termination check requiring finite max_remediation_loops and a terminal loop_limit_reached handler.',
+        activeOn: ['mastered', 'partial', 'deficit'],
+        snippet: `policy ADAPTIVE_SCAFFOLD {\n  max_remediation_loops: 2\n  on mastered -> advance()\n  on partial  -> scaffold(widget: "syncmodz.chunk_hints") then retry(current)\n  on deficit  -> branch(target: AUX_DO_REPAIR, return_to: current)\n  on loop_limit_reached -> escalate(role: educator, channel: "sovraegix.inbox")\n}`
+      },
+      {
+        id: 'remediation',
+        step: 5,
+        x: 415, y: 254, w: 340, h: 118,
+        titleLines: ['Remediation / Scaffold Loop'],
+        layer: 'Adaptive Branch',
+        shortLayer: '05 · ADAPTIVE LOOP',
+        dslKeyword: 'branch / scaffold',
+        standards: ['Targeted Micro-Drill (AUX_DO_REPAIR)', 'SyncModz Hints'],
+        shortStd: 'AUX_DO_REPAIR · SyncModz',
+        keyFields: 'Injects SyncModz chunk hints on Partial, or routes to prerequisite micro-drill on Deficit before returning',
+        compilerChecks: 'Verifies target competency exists in CASE graph, return_to scope is valid, and loop counter prevents dead ends.',
+        activeOn: ['partial', 'deficit'],
+        snippet: `// Dynamically resolved at runtime:\n// Partial -> mounts syncmodz.chunk_hints overlay\n// Deficit -> queries CASE remediates edge -> AUX_DO_REPAIR\n// On completion -> dispatches REMEDIATION.DONE -> returns to Express`
+      },
+      {
+        id: 'output',
+        step: 6,
+        x: 980, y: 26, w: 178, h: 156,
+        titleLines: ['SYNCZINE Advance', '& Credential'],
+        layer: 'Learner Runtime & Wallet',
+        shortLayer: '06 · VALIDATE & VC',
+        dslKeyword: 'synczine / validate',
+        standards: ['Open Badges 3.0', 'W3C VC (SOVRAEPASS)'],
+        shortStd: 'OBv3.0 · W3C VC',
+        keyFields: 'Unlocks next SYNCTESS node in flow and mints Tangible Evidence of Sovereign Success',
+        compilerChecks: 'Certified SYNCTESS requires evidence[] artifacts attached, credential binding declared, and signoff policy satisfied.',
+        activeOn: ['mastered'],
+        snippet: `phase validate {\n  evidence: [info_gap_interview.audio_clip, formula_card.artifact]\n  signoff: educator.review_optional(if: "score >= 0.85")\n  credential: vc("OpenBadge3:A2-WH-INTERVIEWER")\n}`
+      }
+    ];
+
+    const EDGES = [
+      {
+        id: 'e-comp-tess',
+        type: 'straight',
+        d: 'M 190 104 L 250 104',
+        labelX: 222, labelY: 94,
+        labelLines: ['targets'],
+        activeOn: ['mastered', 'partial', 'deficit']
+      },
+      {
+        id: 'e-tess-gate',
+        type: 'straight',
+        d: 'M 432 104 L 492 104',
+        labelX: 464, labelY: 84,
+        labelLines: ['emits xAPI', 'telemetry'],
+        activeOn: ['mastered', 'partial', 'deficit']
+      },
+      {
+        id: 'e-gate-policy',
+        type: 'straight',
+        d: 'M 674 104 L 734 104',
+        labelX: 706, labelY: 84,
+        labelLines: ['evaluates', 'band'],
+        activeOn: ['mastered', 'partial', 'deficit']
+      },
+      {
+        id: 'e-policy-output',
+        type: 'straight',
+        d: 'M 916 104 L 976 104',
+        labelX: 948, labelY: 84,
+        labelLines: ['Mastered:', 'advance & VC'],
+        activeOn: ['mastered']
+      },
+      {
+        id: 'e-policy-rem',
+        type: 'loop-in',
+        d: 'M 827 182 L 827 297 Q 827 313 811 313 L 759 313',
+        pillX: 717, pillY: 204, pillW: 220, pillH: 26,
+        activeOn: ['partial', 'deficit']
+      },
+      {
+        id: 'e-rem-tess',
+        type: 'loop-out',
+        d: 'M 415 313 L 359 313 Q 343 313 343 297 L 343 186',
+        pillX: 243, pillY: 204, pillW: 200, pillH: 26,
+        staticPillLabel: 'return to current SYNCTESS',
+        activeOn: ['partial', 'deficit']
+      }
+    ];
+
+    const state = {
+      scenario: 'mastered',
+      selectedIdx: 0,
+      theme: 'light'
+    };
+
+    function svgEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+      return el;
+    }
+
+    function buildSvg() {
+      const edgesLayer = document.getElementById('edgesLayer');
+      const nodesLayer = document.getElementById('nodesLayer');
+      edgesLayer.innerHTML = '';
+      nodesLayer.innerHTML = '';
+
+      // Build Edges
+      EDGES.forEach(edge => {
+        const g = svgEl('g', { id: `group-${edge.id}` });
+        g.appendChild(svgEl('path', {
+          id: `base-${edge.id}`,
+          class: 'edge-base',
+          d: edge.d,
+          'marker-end': 'url(#arrIdle)'
+        }));
+        g.appendChild(svgEl('path', {
+          id: `pulse-${edge.id}`,
+          class: 'edge-pulse',
+          d: edge.d
+        }));
+
+        if (edge.type === 'straight') {
+          edge.labelLines.forEach((line, idx) => {
+            const t = svgEl('text', {
+              class: `edge-label-txt lbl-${edge.id}`,
+              x: edge.labelX,
+              y: edge.labelY + idx * 12
+            });
+            t.textContent = line;
+            g.appendChild(t);
+          });
+        } else {
+          g.appendChild(svgEl('rect', {
+            id: `pill-bg-${edge.id}`,
+            class: 'loop-pill-bg',
+            x: edge.pillX,
+            y: edge.pillY,
+            width: edge.pillW,
+            height: edge.pillH,
+            rx: 13
+          }));
+          const t = svgEl('text', {
+            id: `pill-txt-${edge.id}`,
+            class: `edge-label-txt lbl-${edge.id}`,
+            x: edge.pillX + edge.pillW / 2,
+            y: edge.pillY + 16.5
+          });
+          t.textContent = edge.staticPillLabel || '';
+          g.appendChild(t);
+        }
+
+        edgesLayer.appendChild(g);
+      });
+
+      // Build Nodes
+      NODES.forEach((node, idx) => {
+        const g = svgEl('g', {
+          id: `node-${node.id}`,
+          class: 'meta-node',
+          transform: `translate(${node.x}, ${node.y})`,
+          tabindex: '0',
+          role: 'button',
+          'aria-label': `${node.step}. ${node.titleLines.join(' ')}`
+        });
+
+        g.addEventListener('click', () => selectNode(idx));
+        g.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectNode(idx);
+          }
+        });
+
+        g.appendChild(svgEl('rect', {
+          class: 'node-box',
+          x: 0, y: 0, width: node.w, height: node.h, rx: 12
+        }));
+
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 1, width: node.w - 2, height: 24, rx: 11
+        }));
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 14, width: node.w - 2, height: 11
+        }));
+
+        const stripTxt = svgEl('text', { class: 'node-strip-txt', x: 11, y: 16.5 });
+        stripTxt.textContent = node.shortLayer;
+        g.appendChild(stripTxt);
+
+        if (node.id === 'remediation') {
+          const title = svgEl('text', { class: 'node-title', x: 14, y: 45 });
+          title.textContent = node.titleLines[0];
+          g.appendChild(title);
+
+          const dynSub = svgEl('text', { id: 'remDynMode', class: 'node-sub', x: 14, y: 64 });
+          g.appendChild(dynSub);
+
+          // Keyword pill left, standard pill right
+          g.appendChild(svgEl('rect', { class: 'kw-pill-bg', x: 14, y: 78, width: 138, height: 24, rx: 6 }));
+          const kwT = svgEl('text', { class: 'kw-pill-txt', x: 22, y: 93.5 });
+          kwT.textContent = node.dslKeyword;
+          g.appendChild(kwT);
+
+          g.appendChild(svgEl('rect', { class: 'std-pill-bg', x: 160, y: 78, width: 166, height: 24, rx: 6 }));
+          const stdT = svgEl('text', { class: 'std-pill-txt', x: 168, y: 93.5 });
+          stdT.textContent = node.shortStd;
+          g.appendChild(stdT);
+        } else {
+          node.titleLines.forEach((line, lIdx) => {
+            const t = svgEl('text', { class: 'node-title', x: 11, y: 46 + lIdx * 16 });
+            t.textContent = line;
+            g.appendChild(t);
+          });
+
+          // Keyword pill
+          g.appendChild(svgEl('rect', { class: 'kw-pill-bg', x: 11, y: 80, width: node.w - 22, height: 24, rx: 6 }));
+          const kwT = svgEl('text', { class: 'kw-pill-txt', x: 19, y: 95.5 });
+          kwT.textContent = node.dslKeyword;
+          g.appendChild(kwT);
+
+          // Standards pill
+          g.appendChild(svgEl('rect', { class: 'std-pill-bg', x: 11, y: 114, width: node.w - 22, height: 24, rx: 6 }));
+          const stdT = svgEl('text', { class: 'std-pill-txt', x: 19, y: 129.5 });
+          stdT.textContent = node.shortStd;
+          g.appendChild(stdT);
+        }
+
+        nodesLayer.appendChild(g);
+      });
+    }
+
+    function render() {
+      const sc = SCENARIOS[state.scenario];
+      const activeNode = NODES[state.selectedIdx];
+      const markerMap = {
+        mastered: 'url(#arrMastered)',
+        partial: 'url(#arrPartial)',
+        deficit: 'url(#arrDeficit)'
+      };
+
+      // Status Banner
+      const banner = document.getElementById('statusBanner');
+      banner.className = `status-banner band-${sc.id}`;
+      banner.innerHTML = `
+        <div class="status-left">
+          <span class="status-badge badge-${sc.id}">${sc.badge}</span>
+          <span>${sc.summary}</span>
+        </div>
+        <code class="rule-code">${sc.dslRule}</code>
+      `;
+
+      // Metrics row
+      document.getElementById('metricsRow').innerHTML = `
+        <span class="metric-chip">xapi.accuracy = <strong>${sc.accuracy}</strong></span>
+        <span class="metric-chip">aux_errors = <strong>${sc.auxErrors}</strong></span>
+        <span class="metric-chip">remediation_loops = <strong>${sc.loopCount}</strong></span>
+      `;
+
+      // Update nodes
+      NODES.forEach((node, idx) => {
+        const el = document.getElementById(`node-${node.id}`);
+        const onActivePath = node.activeOn.includes(sc.id);
+        el.className.baseVal = [
+          'meta-node',
+          onActivePath ? `path-${sc.id}` : 'dimmed',
+          idx === state.selectedIdx ? `selected tone-${sc.id}` : ''
+        ].filter(Boolean).join(' ');
+      });
+
+      const remModeEl = document.getElementById('remDynMode');
+      if (remModeEl) remModeEl.textContent = sc.remediationModeTag;
+
+      // Update edges
+      EDGES.forEach(edge => {
+        const isLit = edge.activeOn.includes(sc.id);
+        const base = document.getElementById(`base-${edge.id}`);
+        const pulse = document.getElementById(`pulse-${edge.id}`);
+        base.className.baseVal = `edge-base ${isLit ? `lit-${sc.id}` : 'dimmed'}`;
+        base.setAttribute('marker-end', isLit ? markerMap[sc.id] : 'url(#arrIdle)');
+        pulse.className.baseVal = `edge-pulse ${isLit ? `lit-${sc.id}` : ''}`;
+
+        document.querySelectorAll(`.lbl-${edge.id}`).forEach(lbl => {
+          lbl.className.baseVal = `edge-label-txt lbl-${edge.id} ${isLit ? `lit-${sc.id}` : 'dimmed'}`;
+        });
+
+        if (edge.type === 'loop-in') {
+          const pillBg = document.getElementById(`pill-bg-${edge.id}`);
+          const pillTxt = document.getElementById(`pill-txt-${edge.id}`);
+          pillBg.className.baseVal = `loop-pill-bg ${isLit ? `lit-${sc.id}` : 'dimmed'}`;
+          pillTxt.textContent = sc.remediationEdgeLabel;
+        } else if (edge.type === 'loop-out') {
+          const pillBg = document.getElementById(`pill-bg-${edge.id}`);
+          pillBg.className.baseVal = `loop-pill-bg ${isLit ? `lit-${sc.id}` : 'dimmed'}`;
+        }
+      });
+
+      // Step nav
+      document.getElementById('stepCounter').textContent = `${state.selectedIdx + 1} / ${NODES.length}`;
+      document.getElementById('prevBtn').disabled = state.selectedIdx === 0;
+      document.getElementById('nextBtn').disabled = state.selectedIdx === NODES.length - 1;
+
+      // Inspector panel
+      const inCurrentScenario = activeNode.activeOn.includes(sc.id);
+      const inspector = document.getElementById('inspectorPanel');
+      inspector.innerHTML = `
+        <div>
+          <div class="insp-head">
+            <span class="insp-layer-tag">Primitive 0${activeNode.step} · ${activeNode.layer}</span>
+            <span class="insp-kw-tag">${activeNode.dslKeyword}</span>
+          </div>
+          <h2 class="insp-title">${activeNode.titleLines.join(' ')}</h2>
+          <div class="detail-grid">
+            <div class="detail-box">
+              <div class="detail-label">Key Schema Fields</div>
+              <div class="detail-val">${activeNode.keyFields}</div>
+            </div>
+            <div class="detail-box">
+              <div class="detail-label">Active Scenario Status</div>
+              <div class="detail-val">${inCurrentScenario
+                ? `<strong>Triggered</strong> under current <code>${sc.id}</code> learner band.`
+                : `<strong>Bypassed</strong> under current <code>${sc.id}</code> band (switch scenarios to activate).`}</div>
+            </div>
+          </div>
+          <div class="linter-box">
+            <strong>Compile-Time Pedagogical Linter Rules</strong>
+            ${activeNode.compilerChecks}
+          </div>
+        </div>
+        <div class="code-panel">
+          <div class="code-panel-head">
+            <span>.sovl Primitive Excerpt</span>
+            <span>Standards Alignment</span>
+          </div>
+          <div class="std-row">
+            ${activeNode.standards.map(s => `<span class="std-chip">${s}</span>`).join('')}
+          </div>
+          <pre class="code-snippet"><code>${activeNode.snippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+        </div>
+      `;
+    }
+
+    function selectNode(idx) {
+      state.selectedIdx = Math.max(0, Math.min(NODES.length - 1, idx));
+      render();
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+
+    // Event wiring
+    document.querySelectorAll('.segmented button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segmented button').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        state.scenario = btn.dataset.scenario;
+        // Auto-focus the branch target so the user immediately sees the policy consequence
+        state.selectedIdx = state.scenario === 'mastered' ? 5 : 4;
+        render();
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => selectNode(state.selectedIdx - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => selectNode(state.selectedIdx + 1));
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    document.getElementById('fontSlider').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--font-scale', e.target.value);
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight') selectNode(state.selectedIdx + 1);
+      if (e.key === 'ArrowLeft') selectNode(state.selectedIdx - 1);
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'dark') applyTheme('dark');
+
+    buildSvg();
+    render();
+  </script>
+</body>
+</html>

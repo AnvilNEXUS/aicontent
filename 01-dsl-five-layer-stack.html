@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS — 5-Layer Pedagogical DSL Stack</title>
+  <style>
+    :root {
+      --font-scale: 1;
+      --bg-page: #fbf7ef;
+      --bg-surface: #f5efe0;
+      --bg-card: #fffdf8;
+      --bg-subtle: #ede4d1;
+      --border: #d9ccb4;
+      --border-strong: #b89f78;
+      --text-primary: #1f1a14;
+      --text-secondary: #574c3e;
+      --text-muted: #7c6f5d;
+      --accent-eng: #9a3412;
+      --accent-eng-bg: #ffedd5;
+      --accent-eng-border: #fdba74;
+      --accent-std: #0f766e;
+      --accent-std-bg: #ccfbf1;
+      --accent-std-border: #5eead4;
+      --accent-active: #b45309;
+      --accent-active-soft: rgba(180, 83, 9, 0.14);
+      --accent-feedback: #7c2d12;
+      --edge-idle: #bcae96;
+      --shadow-sm: 0 2px 6px rgba(31, 26, 20, 0.06);
+      --shadow-md: 0 8px 24px rgba(31, 26, 20, 0.10);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #141210;
+      --bg-surface: #1d1916;
+      --bg-card: #24201c;
+      --bg-subtle: #2e2822;
+      --border: #3d352d;
+      --border-strong: #6b5b49;
+      --text-primary: #f5efe4;
+      --text-secondary: #cbbba6;
+      --text-muted: #988875;
+      --accent-eng: #fb923c;
+      --accent-eng-bg: rgba(251, 146, 60, 0.14);
+      --accent-eng-border: rgba(251, 146, 60, 0.42);
+      --accent-std: #2dd4bf;
+      --accent-std-bg: rgba(45, 212, 191, 0.14);
+      --accent-std-border: rgba(45, 212, 191, 0.42);
+      --accent-active: #f59e0b;
+      --accent-active-soft: rgba(245, 158, 11, 0.18);
+      --accent-feedback: #fb923c;
+      --edge-idle: #52473b;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.5;
+      padding: 16px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .app {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Header & Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .title-group h1 {
+      font-size: calc(1.08rem * var(--font-scale));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-group p {
+      font-size: calc(0.8rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .segmented button {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: calc(0.76rem * var(--font-scale));
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .segmented button:hover {
+      color: var(--text-primary);
+    }
+
+    .segmented button.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .utility-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .font-control input[type="range"] {
+      width: 64px;
+      accent-color: var(--accent-active);
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--accent-active);
+    }
+
+    /* Diagram Card */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 12px 10px;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+
+    .diagram-legend {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 6px 8px;
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-secondary);
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .legend-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .dot-eng { background: var(--accent-eng); }
+    .dot-std { background: var(--accent-std); }
+    .dot-fb  { background: var(--accent-feedback); border-radius: 50%; }
+
+    .step-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover:not(:disabled) {
+      border-color: var(--accent-active);
+      background: var(--accent-active-soft);
+    }
+
+    .step-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .step-counter {
+      font-family: var(--font-mono);
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-muted);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    svg#stackSvg {
+      width: 100%;
+      min-width: 780px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .svg-node {
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+    }
+
+    .svg-node .node-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.5;
+      transition: all 0.2s ease;
+    }
+
+    .svg-node:hover .node-bg {
+      stroke: var(--accent-active);
+    }
+
+    .svg-node.active .node-bg {
+      fill: var(--bg-card);
+      stroke: var(--accent-active);
+      stroke-width: 2.5;
+      filter: drop-shadow(0 6px 14px rgba(180, 83, 9, 0.18));
+    }
+
+    .svg-node .layer-strip {
+      fill: var(--bg-subtle);
+      transition: fill 0.2s ease;
+    }
+
+    .svg-node.active .layer-strip {
+      fill: var(--accent-active);
+    }
+
+    .svg-node .layer-num {
+      fill: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .svg-node.active .layer-num {
+      fill: #ffffff;
+    }
+
+    .svg-node .node-title {
+      fill: var(--text-primary);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .svg-node .sec-label {
+      fill: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .svg-node .badge-group {
+      transition: opacity 0.2s ease;
+    }
+
+    .svg-node .badge-group.dimmed {
+      opacity: 0.24;
+    }
+
+    .badge-eng-bg {
+      fill: var(--accent-eng-bg);
+      stroke: var(--accent-eng-border);
+      stroke-width: 1;
+    }
+
+    .badge-eng-txt {
+      fill: var(--accent-eng);
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    .badge-std-bg {
+      fill: var(--accent-std-bg);
+      stroke: var(--accent-std-border);
+      stroke-width: 1;
+    }
+
+    .badge-std-txt {
+      fill: var(--accent-std);
+      font-size: 10.5px;
+      font-weight: 600;
+    }
+
+    /* Edges & Flow Animation */
+    .edge-path {
+      fill: none;
+      stroke: var(--edge-idle);
+      stroke-width: 2.2;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .edge-path.active {
+      stroke: var(--accent-active);
+      stroke-width: 3;
+    }
+
+    .edge-pulse {
+      fill: none;
+      stroke: var(--accent-active);
+      stroke-width: 3;
+      stroke-dasharray: 6 10;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .edge-pulse.active {
+      opacity: 1;
+      animation: flowDash 1s linear infinite;
+    }
+
+    .feedback-path {
+      fill: none;
+      stroke: var(--edge-idle);
+      stroke-width: 2.2;
+      stroke-dasharray: 5 5;
+      transition: stroke 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .feedback-path.active {
+      stroke: var(--accent-feedback);
+      stroke-width: 3;
+      stroke-dasharray: 7 7;
+      animation: flowDash 1.1s linear infinite;
+    }
+
+    .feedback-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.2;
+      transition: all 0.25s ease;
+    }
+
+    .feedback-pill-bg.active {
+      fill: var(--accent-eng-bg);
+      stroke: var(--accent-feedback);
+      stroke-width: 1.8;
+    }
+
+    .feedback-pill-txt {
+      fill: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 700;
+      transition: fill 0.25s ease;
+    }
+
+    .feedback-pill-txt.active {
+      fill: var(--accent-feedback);
+    }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: -32; }
+    }
+
+    /* Inspector Panel */
+    .inspector {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 18px;
+    }
+
+    @media (max-width: 780px) {
+      .inspector {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .insp-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .insp-step-pill {
+      font-family: var(--font-mono);
+      font-size: calc(0.72rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--accent-active);
+      color: #ffffff;
+    }
+
+    .insp-title {
+      font-size: calc(1.1rem * var(--font-scale));
+      font-weight: 700;
+    }
+
+    .insp-role {
+      font-size: calc(0.9rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-bottom: 14px;
+    }
+
+    .io-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 520px) {
+      .io-grid { grid-template-columns: 1fr; }
+    }
+
+    .io-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .io-label {
+      font-family: var(--font-mono);
+      font-size: calc(0.68rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .io-value {
+      font-size: calc(0.84rem * var(--font-scale));
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .tradeoff-box {
+      background: var(--bg-card);
+      border-left: 3px solid var(--accent-active);
+      border-top: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0 9px 9px 0;
+      padding: 10px 12px;
+      font-size: calc(0.83rem * var(--font-scale));
+      color: var(--text-secondary);
+    }
+
+    .tradeoff-box strong {
+      color: var(--text-primary);
+    }
+
+    .stacks-col {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stack-group {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stack-group.dimmed {
+      opacity: 0.36;
+    }
+
+    .stack-group.focused-eng {
+      border-color: var(--accent-eng-border);
+    }
+
+    .stack-group.focused-std {
+      border-color: var(--accent-std-border);
+    }
+
+    .stack-group-title {
+      font-family: var(--font-mono);
+      font-size: calc(0.72rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .chip {
+      font-size: calc(0.8rem * var(--font-scale));
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 7px;
+      border: 1px solid transparent;
+    }
+
+    .chip-eng {
+      background: var(--accent-eng-bg);
+      border-color: var(--accent-eng-border);
+      color: var(--accent-eng);
+    }
+
+    .chip-std {
+      background: var(--accent-std-bg);
+      border-color: var(--accent-std-border);
+      color: var(--accent-std);
+    }
+
+    .hint-footer {
+      text-align: right;
+      font-size: calc(0.72rem * var(--font-scale));
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="title-group">
+        <h1>SOVRAEGIS — 5-Layer Pedagogical DSL Stack</h1>
+        <p>Open-source language engineering frameworks mapped against instructional &amp; telemetry standards</p>
+      </div>
+      <div class="controls-row">
+        <div class="segmented" role="tablist" aria-label="Architecture Perspective">
+          <button type="button" class="active" data-lens="unified" role="tab" aria-selected="true">Unified Stack</button>
+          <button type="button" data-lens="engineering" role="tab" aria-selected="false">Language Engineering</button>
+          <button type="button" data-lens="standards" role="tab" aria-selected="false">Instructional Interoperability</button>
+        </div>
+        <div class="utility-group">
+          <label class="font-control" title="Adjust typography scale">
+            <span>A</span>
+            <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font size" />
+            <span style="font-size:15px;font-weight:700;">A</span>
+          </label>
+          <button type="button" id="themeBtn" class="icon-btn" aria-label="Toggle color theme">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="diagram-card" aria-label="5-Layer Architecture Diagram">
+      <div class="diagram-legend">
+        <div class="legend-items">
+          <span class="legend-dot"><span class="dot dot-eng"></span>Language Engineering</span>
+          <span class="legend-dot"><span class="dot dot-std"></span>Pedagogical Standards</span>
+          <span class="legend-dot"><span class="dot dot-fb"></span>Adaptive Feedback Loop</span>
+        </div>
+        <div class="step-nav">
+          <button type="button" class="step-btn" id="prevBtn">&larr; Prev</button>
+          <span class="step-counter" id="stepCounter">1 / 5</span>
+          <button type="button" class="step-btn" id="nextBtn">Next &rarr;</button>
+        </div>
+      </div>
+
+      <svg id="stackSvg" viewBox="0 0 1040 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="5-Layer Pedagogical DSL Architecture Flowchart">
+        <defs>
+          <marker id="arrowIdle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--edge-idle)" />
+          </marker>
+          <marker id="arrowActive" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-active)" />
+          </marker>
+          <marker id="arrowFeedback" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-feedback)" />
+          </marker>
+        </defs>
+
+        <!-- Forward Pipeline Edges -->
+        <g id="edgesLayer"></g>
+
+        <!-- Telemetry -> Orchestration Feedback Loop -->
+        <g id="feedbackLayer">
+          <path id="feedbackPath" class="feedback-path" d="M 936 218 C 936 290, 728 290, 728 222" marker-end="url(#arrowIdle)" />
+          <rect id="feedbackPillBg" class="feedback-pill-bg" x="722" y="264" width="220" height="28" rx="14" />
+          <text id="feedbackPillTxt" class="feedback-pill-txt" x="832" y="282" text-anchor="middle">&#8634; Mastery &amp; Assessment Signals</text>
+        </g>
+
+        <!-- 5 Stage Nodes -->
+        <g id="nodesLayer"></g>
+      </svg>
+    </section>
+
+    <section class="inspector" id="inspectorPanel" aria-live="polite"></section>
+
+    <div class="hint-footer">Tip: Click any layer node or press Left / Right arrow keys to step through the pipeline.</div>
+  </main>
+
+  <script>
+    const LAYERS = [
+      {
+        id: 'syntax',
+        step: 1,
+        shortTitle: ['Authoring &', 'Concrete Syntax'],
+        layer: '1. Authoring & Concrete Syntax',
+        engSummary: ['Langium / TextX', 'MPS / CUE / Pkl'],
+        stdSummary: ['LiaScript / PreTeXt', 'MyST Markdown'],
+        engineeringTools: ['Langium', 'TextX', 'JetBrains MPS', 'CUE / Apple Pkl'],
+        pedagogicalStandards: ['LiaScript', 'PreTeXt', 'MyST Markdown'],
+        inputs: 'Instructional design goals, curriculum specs, and domain vocabularies',
+        outputs: 'Human- and LLM-authored .edu / .sovl DSL source files',
+        roleDescription: 'Captures pedagogical intent in a clean, readable, Git-diffable syntax while avoiding legacy XML verbosity and supporting both human authors and LLM co-authoring.',
+        tradeoff: 'Text-first workbenches (Langium, TextX) maximize version control and LLM reliability; projectional editors (MPS) maximize mixed visual/tabular notation at the cost of plain-text portability.'
+      },
+      {
+        id: 'metamodel',
+        step: 2,
+        shortTitle: ['Pedagogical Metamodel', '& Validator'],
+        layer: '2. Pedagogical Metamodel & Validator',
+        engSummary: ['Typed AST / LSP', 'Constraint Checker'],
+        stdSummary: ['IMS-LD Semantics', 'GIFT Domain Model'],
+        engineeringTools: ['Typed AST', 'Constraint Checker', 'JSON Schema / LSP'],
+        pedagogicalStandards: ['IMS Learning Design (Method / Play / Act / Role)', 'GIFT Domain & Pedagogical Models'],
+        inputs: 'Parsed .sovl / DSL source files and external vocabulary imports',
+        outputs: 'Validated Canonical Intermediate Representation (IR) free of circular prerequisites',
+        roleDescription: 'Enforces compile-time pedagogical verification—checking prerequisite acyclicity, constructive alignment, role bindings, and bounded remediation loops before runtime.',
+        tradeoff: 'Decoupling a canonical IR from concrete syntax allows code editors, visual node canvases, and AI pipelines to share one deterministic validator.'
+      },
+      {
+        id: 'mapping',
+        step: 3,
+        shortTitle: ['Competency &', 'Knowledge Graph'],
+        layer: '3. Competency & Knowledge Graph',
+        engSummary: ['Linked Data JSON-LD', 'Graph DB / DAG'],
+        stdSummary: ['CASE / OpenSALT', 'CaSS / CTDL-ASN'],
+        engineeringTools: ['Linked Data (JSON-LD)', 'Graph DB / DAG Resolver'],
+        pedagogicalStandards: ['1EdTech CASE / OpenSALT', 'CaSS Project', 'CTDL-ASN'],
+        inputs: 'Validated competency declarations, scale descriptors, and typed edges',
+        outputs: 'Queryable skill ontology, rubrics, and prerequisite dependency graph',
+        roleDescription: 'Transforms curriculum objectives, prerequisite chains, and remediation links into portable Linked Data schemas that stay queryable across databases and institutions.',
+        tradeoff: 'Mirroring CASE CFItem/CFAssociation and CTDL-ASN schemas prevents platform lock-in and enables dynamic remediation lookup instead of hardcoded branches.'
+      },
+      {
+        id: 'orchestration',
+        step: 4,
+        shortTitle: ['Path Execution &', 'Adaptation'],
+        layer: '4. Path Execution & Adaptation',
+        engSummary: ['XState Statecharts', 'Ink / Temporal'],
+        stdSummary: ['LAMS Runtime', 'GIFT / cmi5 Rules'],
+        engineeringTools: ['XState (Statecharts)', 'Ink / Yarn Spinner', 'Temporal / BPMN'],
+        pedagogicalStandards: ['LAMS Runtime', 'GIFT Adaptive Engine', 'cmi5 Launch Rules'],
+        inputs: 'Canonical IR path topology + live Mastery & Assessment Signals from Layer 5',
+        outputs: 'Real-time learner routing, remediation loops, and multi-role sequencing',
+        roleDescription: 'Compiles learning paths into deterministic statecharts and workflows that pace activities, inject scaffolding, trigger micro-drills, or escalate to human educators.',
+        tradeoff: 'Compiling to SCXML-aligned statecharts (XState) avoids custom ad-hoc interpreters and guarantees serializable pause/resume state offline.'
+      },
+      {
+        id: 'telemetry',
+        step: 5,
+        shortTitle: ['Telemetry &', 'Feedback Loop'],
+        layer: '5. Telemetry & Feedback Loop',
+        engSummary: ['Event Bus', 'Local / Cloud LRS'],
+        stdSummary: ['ADL xAPI / Caliper', 'Open Badges 3 / CLR'],
+        engineeringTools: ['Event Bus', 'Learning Record Store (LRS)'],
+        pedagogicalStandards: ['ADL xAPI & Profiles', '1EdTech Caliper', 'Open Badges 3.0 / CLR'],
+        inputs: 'Granular learner, peer, and assistive widget interaction events',
+        outputs: 'Verified mastery assertions feeding back into Layer 4 for dynamic adaptation',
+        roleDescription: 'Logs immutable interaction telemetry, evaluates deterministic mastery thresholds, closes the adaptive feedback loop back to Layer 4, and anchors verifiable credentials.',
+        tradeoff: 'Append-only xAPI event streams decouple learning widgets from orchestration logic and enable conflict-free offline synchronization.'
+      }
+    ];
+
+    const state = {
+      activeIdx: 0,
+      lens: 'unified',
+      theme: 'light'
+    };
+
+    const NODE_W = 184;
+    const NODE_H = 192;
+    const NODE_Y = 24;
+    const GAP = 24;
+    const START_X = 12;
+
+    function getNodeX(i) {
+      return START_X + i * (NODE_W + GAP);
+    }
+
+    function createSvgEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) {
+        el.setAttribute(k, String(v));
+      }
+      return el;
+    }
+
+    function buildDiagram() {
+      const edgesLayer = document.getElementById('edgesLayer');
+      const nodesLayer = document.getElementById('nodesLayer');
+      edgesLayer.innerHTML = '';
+      nodesLayer.innerHTML = '';
+
+      // 4 Forward edges
+      for (let i = 0; i < LAYERS.length - 1; i++) {
+        const x1 = getNodeX(i) + NODE_W;
+        const x2 = getNodeX(i + 1) - 3;
+        const y = NODE_Y + NODE_H / 2;
+        const d = `M ${x1} ${y} L ${x2} ${y}`;
+
+        const base = createSvgEl('path', {
+          id: `edge-base-${i}`,
+          class: 'edge-path',
+          d,
+          'marker-end': 'url(#arrowIdle)'
+        });
+        const pulse = createSvgEl('path', {
+          id: `edge-pulse-${i}`,
+          class: 'edge-pulse',
+          d
+        });
+        edgesLayer.appendChild(base);
+        edgesLayer.appendChild(pulse);
+      }
+
+      // 5 Nodes
+      LAYERS.forEach((item, i) => {
+        const x = getNodeX(i);
+        const g = createSvgEl('g', {
+          id: `node-${i}`,
+          class: 'svg-node',
+          transform: `translate(${x}, ${NODE_Y})`,
+          tabindex: '0',
+          role: 'button',
+          'aria-label': item.layer
+        });
+
+        g.addEventListener('click', () => selectStage(i));
+        g.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectStage(i);
+          }
+        });
+
+        // Main card rect
+        g.appendChild(createSvgEl('rect', {
+          class: 'node-bg',
+          x: 0, y: 0, width: NODE_W, height: NODE_H, rx: 12
+        }));
+
+        // Top strip
+        g.appendChild(createSvgEl('rect', {
+          class: 'layer-strip',
+          x: 1, y: 1, width: NODE_W - 2, height: 26, rx: 11
+        }));
+        g.appendChild(createSvgEl('rect', {
+          class: 'layer-strip',
+          x: 1, y: 15, width: NODE_W - 2, height: 12
+        }));
+
+        const layerNum = createSvgEl('text', {
+          class: 'layer-num',
+          x: 12, y: 18
+        });
+        layerNum.textContent = `LAYER 0${item.step}`;
+        g.appendChild(layerNum);
+
+        // Two-line title
+        item.shortTitle.forEach((line, lineIdx) => {
+          const t = createSvgEl('text', {
+            class: 'node-title',
+            x: 12,
+            y: 46 + lineIdx * 16
+          });
+          t.textContent = line;
+          g.appendChild(t);
+        });
+
+        // Engineering Badges Group
+        const engG = createSvgEl('g', { class: 'badge-group eng-group' });
+        const engLbl = createSvgEl('text', { class: 'sec-label', x: 12, y: 84 });
+        engLbl.textContent = 'ENGINEERING';
+        engG.appendChild(engLbl);
+
+        item.engSummary.forEach((txt, bIdx) => {
+          const by = 90 + bIdx * 21;
+          engG.appendChild(createSvgEl('rect', {
+            class: 'badge-eng-bg', x: 12, y: by, width: NODE_W - 24, height: 18, rx: 5
+          }));
+          const bt = createSvgEl('text', { class: 'badge-eng-txt', x: 18, y: by + 12.5 });
+          bt.textContent = txt;
+          engG.appendChild(bt);
+        });
+        g.appendChild(engG);
+
+        // Standards Badges Group
+        const stdG = createSvgEl('g', { class: 'badge-group std-group' });
+        const stdLbl = createSvgEl('text', { class: 'sec-label', x: 12, y: 142 });
+        stdLbl.textContent = 'PEDAGOGICAL STD';
+        stdG.appendChild(stdLbl);
+
+        item.stdSummary.forEach((txt, bIdx) => {
+          const by = 148 + bIdx * 20;
+          stdG.appendChild(createSvgEl('rect', {
+            class: 'badge-std-bg', x: 12, y: by, width: NODE_W - 24, height: 17.5, rx: 5
+          }));
+          const bt = createSvgEl('text', { class: 'badge-std-txt', x: 18, y: by + 12 });
+          bt.textContent = txt;
+          stdG.appendChild(bt);
+        });
+        g.appendChild(stdG);
+
+        nodesLayer.appendChild(g);
+      });
+    }
+
+    function render() {
+      const active = LAYERS[state.activeIdx];
+
+      // Update nodes & perspective dimming
+      LAYERS.forEach((_, i) => {
+        const nodeEl = document.getElementById(`node-${i}`);
+        nodeEl.classList.toggle('active', i === state.activeIdx);
+        const engG = nodeEl.querySelector('.eng-group');
+        const stdG = nodeEl.querySelector('.std-group');
+        engG.classList.toggle('dimmed', state.lens === 'standards');
+        stdG.classList.toggle('dimmed', state.lens === 'engineering');
+      });
+
+      // Update forward edges: highlight incoming & outgoing edges of active stage
+      for (let i = 0; i < LAYERS.length - 1; i++) {
+        const isLit = (i === state.activeIdx) || (i === state.activeIdx - 1);
+        const base = document.getElementById(`edge-base-${i}`);
+        const pulse = document.getElementById(`edge-pulse-${i}`);
+        base.classList.toggle('active', isLit);
+        base.setAttribute('marker-end', isLit ? 'url(#arrowActive)' : 'url(#arrowIdle)');
+        pulse.classList.toggle('active', isLit);
+      }
+
+      // Highlight Telemetry -> Orchestration feedback loop on Layer 4 or Layer 5
+      const fbActive = state.activeIdx === 3 || state.activeIdx === 4;
+      const fbPath = document.getElementById('feedbackPath');
+      fbPath.classList.toggle('active', fbActive);
+      fbPath.setAttribute('marker-end', fbActive ? 'url(#arrowFeedback)' : 'url(#arrowIdle)');
+      document.getElementById('feedbackPillBg').classList.toggle('active', fbActive);
+      document.getElementById('feedbackPillTxt').classList.toggle('active', fbActive);
+
+      // Update step controls
+      document.getElementById('stepCounter').textContent = `${state.activeIdx + 1} / ${LAYERS.length}`;
+      document.getElementById('prevBtn').disabled = state.activeIdx === 0;
+      document.getElementById('nextBtn').disabled = state.activeIdx === LAYERS.length - 1;
+
+      // Update inspector panel
+      const engDim = state.lens === 'standards' ? 'dimmed' : 'focused-eng';
+      const stdDim = state.lens === 'engineering' ? 'dimmed' : 'focused-std';
+
+      const inspector = document.getElementById('inspectorPanel');
+      inspector.innerHTML = `
+        <div>
+          <div class="insp-header">
+            <span class="insp-step-pill">Layer 0${active.step}</span>
+            <h2 class="insp-title">${active.layer.replace(/^\d+\.\s*/, '')}</h2>
+          </div>
+          <p class="insp-role">${active.roleDescription}</p>
+          <div class="io-grid">
+            <div class="io-box">
+              <div class="io-label">Primary Inputs</div>
+              <div class="io-value">${active.inputs}</div>
+            </div>
+            <div class="io-box">
+              <div class="io-label">Compiled / Runtime Outputs</div>
+              <div class="io-value">${active.outputs}</div>
+            </div>
+          </div>
+          <div class="tradeoff-box">
+            <strong>Design Trade-Off:</strong> ${active.tradeoff}
+          </div>
+        </div>
+        <div class="stacks-col">
+          <div class="stack-group ${engDim}">
+            <div class="stack-group-title" style="color:var(--accent-eng)">
+              <span class="dot dot-eng"></span>Open-Source Language &amp; Runtime Engineering
+            </div>
+            <div class="chip-list">
+              ${active.engineeringTools.map(t => `<span class="chip chip-eng">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="stack-group ${stdDim}">
+            <div class="stack-group-title" style="color:var(--accent-std)">
+              <span class="dot dot-std"></span>Pedagogical &amp; Interoperability Prior Art
+            </div>
+            <div class="chip-list">
+              ${active.pedagogicalStandards.map(s => `<span class="chip chip-std">${s}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function selectStage(idx) {
+      state.activeIdx = Math.max(0, Math.min(LAYERS.length - 1, idx));
+      render();
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+
+    // Event Wiring
+    document.querySelectorAll('.segmented button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segmented button').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        state.lens = btn.dataset.lens;
+        render();
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => selectStage(state.activeIdx - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => selectStage(state.activeIdx + 1));
+
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    document.getElementById('fontSlider').addEventListener('input', (e) => {
+      document.documentElement.style.setProperty('--font-scale', e.target.value);
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight') selectStage(state.activeIdx + 1);
+      if (e.key === 'ArrowLeft') selectStage(state.activeIdx - 1);
+    });
+
+    // Respect ?theme=dark URL query param for Obsidian dark-mode embeds
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'dark') applyTheme('dark');
+
+    buildDiagram();
+    render();
+  </script>
+</body>
+</html>

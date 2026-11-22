@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS — .sovz Bundle Anatomy &amp; Offline Sync Lifecycle</title>
+  <style>
+    :root {
+      --font-scale: 1;
+      --bg-page: #fbf7ef;
+      --bg-surface: #f5efe0;
+      --bg-card: #fffdf8;
+      --bg-subtle: #ede4d1;
+      --border: #d9ccb4;
+      --border-strong: #b89f78;
+      --text-primary: #1f1a14;
+      --text-secondary: #574c3e;
+      --text-muted: #7c6f5d;
+
+      --accent-bundle: #b45309;
+      --accent-bundle-bg: #fef3c7;
+      --accent-bundle-border: #f59e0b;
+
+      --accent-sync: #0f766e;
+      --accent-sync-bg: #ccfbf1;
+      --accent-sync-border: #2dd4bf;
+
+      --accent-gov: #6d28d9;
+      --accent-gov-bg: #ede9fe;
+      --accent-gov-border: #c4b5fd;
+
+      --accent-soft: rgba(180, 83, 9, 0.14);
+      --edge-idle: #c4b7a1;
+      --shadow-sm: 0 2px 6px rgba(31, 26, 20, 0.06);
+      --shadow-md: 0 8px 24px rgba(31, 26, 20, 0.11);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #141210;
+      --bg-surface: #1d1916;
+      --bg-card: #24201c;
+      --bg-subtle: #2e2822;
+      --border: #3d352d;
+      --border-strong: #6b5b49;
+      --text-primary: #f5efe4;
+      --text-secondary: #cbbba6;
+      --text-muted: #988875;
+
+      --accent-bundle: #f59e0b;
+      --accent-bundle-bg: rgba(245, 158, 11, 0.15);
+      --accent-bundle-border: rgba(245, 158, 11, 0.45);
+
+      --accent-sync: #2dd4bf;
+      --accent-sync-bg: rgba(45, 212, 191, 0.14);
+      --accent-sync-border: rgba(45, 212, 191, 0.42);
+
+      --accent-gov: #c4b5fd;
+      --accent-gov-bg: rgba(167, 139, 250, 0.15);
+      --accent-gov-border: rgba(167, 139, 250, 0.42);
+
+      --accent-soft: rgba(245, 158, 11, 0.18);
+      --edge-idle: #52473b;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.5;
+      padding: 16px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .app {
+      max-width: 1180px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    /* Header & Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .title-group h1 {
+      font-size: calc(1.06rem * var(--font-scale));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-group p {
+      font-size: calc(0.8rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .segmented button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .segmented button:hover { color: var(--text-primary); }
+
+    .segmented button.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .utility-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .font-control input[type="range"] {
+      width: 62px;
+      accent-color: var(--accent-bundle);
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover { border-color: var(--accent-bundle); }
+
+    /* Diagram Card */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 12px 10px;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+
+    .diagram-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 6px 8px;
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-secondary);
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .legend-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .dot-bundle { background: var(--accent-bundle); }
+    .dot-sync   { background: var(--accent-sync); }
+    .dot-gov    { background: var(--accent-gov); }
+
+    .step-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover:not(:disabled) {
+      border-color: var(--accent-bundle);
+      background: var(--accent-soft);
+    }
+
+    .step-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .step-counter {
+      font-family: var(--font-mono);
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-muted);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    svg#bundleSvg {
+      width: 100%;
+      min-width: 840px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    /* Zone Containers */
+    .zone-box {
+      fill: none;
+      stroke-width: 1.4;
+      stroke-dasharray: 6 6;
+      transition: opacity 0.25s ease;
+    }
+
+    .zone-bundle { stroke: var(--accent-bundle-border); opacity: 0.55; }
+    .zone-sync   { stroke: var(--accent-sync-border);   opacity: 0.55; }
+    .zone-box.emphasized { opacity: 0.95; stroke-width: 1.8; }
+    .zone-box.dimmed { opacity: 0.14; }
+
+    .zone-title {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      transition: opacity 0.25s ease;
+    }
+
+    .zone-title.bundle { fill: var(--accent-bundle); }
+    .zone-title.sync   { fill: var(--accent-sync); }
+    .zone-title.dimmed { opacity: 0.2; }
+
+    /* Nodes */
+    .sync-node {
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+
+    .sync-node.dimmed { opacity: 0.28; }
+    .sync-node.dimmed.selected { opacity: 0.92; }
+
+    .sync-node .node-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.6;
+      transition: all 0.2s ease;
+    }
+
+    .sync-node:hover .node-bg { stroke: var(--accent-bundle); }
+
+    .sync-node.selected .node-bg {
+      fill: var(--bg-card);
+      stroke-width: 2.8;
+      filter: drop-shadow(0 6px 16px rgba(31, 26, 20, 0.14));
+    }
+
+    .sync-node.kind-bundle.selected .node-bg { stroke: var(--accent-bundle); }
+    .sync-node.kind-sync.selected .node-bg   { stroke: var(--accent-sync); }
+    .sync-node.kind-gov.selected .node-bg    { stroke: var(--accent-gov); }
+
+    .sync-node.kind-bundle .node-strip { fill: var(--accent-bundle); }
+    .sync-node.kind-sync .node-strip   { fill: var(--accent-sync); }
+    .sync-node.kind-gov .node-strip    { fill: var(--accent-gov); }
+    .sync-node.dimmed .node-strip      { fill: var(--bg-subtle); }
+
+    .node-strip-txt {
+      fill: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    [data-theme="dark"] .sync-node:not(.dimmed) .node-strip-txt { fill: #141210; }
+    .sync-node.dimmed .node-strip-txt { fill: var(--text-muted); }
+
+    .node-title {
+      fill: var(--text-primary);
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+    .node-sub {
+      fill: var(--text-secondary);
+      font-size: 10.5px;
+    }
+
+    .fmt-badge-bg {
+      stroke-width: 1;
+    }
+
+    .sync-node.kind-bundle .fmt-badge-bg { fill: var(--accent-bundle-bg); stroke: var(--accent-bundle-border); }
+    .sync-node.kind-sync .fmt-badge-bg   { fill: var(--accent-sync-bg);   stroke: var(--accent-sync-border); }
+    .sync-node.kind-gov .fmt-badge-bg    { fill: var(--accent-gov-bg);    stroke: var(--accent-gov-border); }
+
+    .fmt-badge-txt {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+    }
+
+    .sync-node.kind-bundle .fmt-badge-txt { fill: var(--accent-bundle); }
+    .sync-node.kind-sync .fmt-badge-txt   { fill: var(--accent-sync); }
+    .sync-node.kind-gov .fmt-badge-txt    { fill: var(--accent-gov); }
+
+    /* Edges */
+    .edge-base {
+      fill: none;
+      stroke: var(--edge-idle);
+      stroke-width: 2;
+      transition: stroke 0.25s ease, opacity 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .edge-base.dimmed { opacity: 0.2; }
+    .edge-base.lit-bundle { stroke: var(--accent-bundle); stroke-width: 2.5; }
+    .edge-base.lit-sync   { stroke: var(--accent-sync);   stroke-width: 2.5; }
+
+    .edge-pulse {
+      fill: none;
+      stroke-width: 3.2;
+      stroke-dasharray: 6 12;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .edge-pulse.lit-bundle {
+      stroke: var(--accent-bundle);
+      opacity: 1;
+      animation: flowPulse 1.05s linear infinite;
+    }
+
+    .edge-pulse.lit-sync {
+      stroke: var(--accent-sync);
+      opacity: 1;
+      animation: flowPulse 0.95s linear infinite;
+    }
+
+    @keyframes flowPulse {
+      to { stroke-dashoffset: -36; }
+    }
+
+    .edge-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.1;
+      transition: all 0.25s ease;
+    }
+
+    .edge-pill-bg.dimmed { opacity: 0.22; }
+    .edge-pill-bg.lit-bundle { fill: var(--accent-bundle-bg); stroke: var(--accent-bundle-border); stroke-width: 1.4; }
+    .edge-pill-bg.lit-sync   { fill: var(--accent-sync-bg);   stroke: var(--accent-sync-border);   stroke-width: 1.4; }
+
+    .edge-pill-txt {
+      fill: var(--text-secondary);
+      font-size: 9.6px;
+      font-weight: 700;
+      text-anchor: middle;
+      transition: fill 0.25s ease, opacity 0.25s ease;
+    }
+
+    .edge-pill-txt.dimmed { opacity: 0.22; }
+    .edge-pill-txt.lit-bundle { fill: var(--accent-bundle); }
+    .edge-pill-txt.lit-sync   { fill: var(--accent-sync); }
+
+    /* Inspector Panel */
+    .inspector {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 780px) {
+      .inspector { grid-template-columns: 1fr; }
+    }
+
+    .insp-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill {
+      font-family: var(--font-mono);
+      font-size: calc(0.7rem * var(--font-scale));
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill-bundle  { background: var(--accent-bundle-bg); border-color: var(--accent-bundle-border); color: var(--accent-bundle); }
+    .pill-sync    { background: var(--accent-sync-bg);   border-color: var(--accent-sync-border);   color: var(--accent-sync); }
+    .pill-gov     { background: var(--accent-gov-bg);    border-color: var(--accent-gov-border);    color: var(--accent-gov); }
+    .pill-neutral { background: var(--bg-card);          border-color: var(--border);               color: var(--text-secondary); }
+
+    .insp-title {
+      font-size: calc(1.08rem * var(--font-scale));
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .insp-contract {
+      font-size: calc(0.88rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .guarantee-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent-sync);
+      border-radius: 0 9px 9px 0;
+      padding: 10px 12px;
+      font-size: calc(0.83rem * var(--font-scale));
+      margin-bottom: 10px;
+    }
+
+    .guarantee-box.bundle-accent { border-left-color: var(--accent-bundle); }
+    .guarantee-box.gov-accent    { border-left-color: var(--accent-gov); }
+
+    .guarantee-label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: calc(0.67rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .edges-mini {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .edge-chip {
+      font-size: calc(0.75rem * var(--font-scale));
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      color: var(--text-secondary);
+    }
+
+    .edge-chip strong { color: var(--text-primary); }
+
+    .snippet-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .snippet-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: calc(0.7rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .snippet-pre {
+      font-family: var(--font-mono);
+      font-size: calc(0.76rem * var(--font-scale));
+      line-height: 1.48;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text-primary);
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    .hint-footer {
+      text-align: right;
+      font-size: calc(0.72rem * var(--font-scale));
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="title-group">
+        <h1>SOVRAEGIS — .sovz Bundle Anatomy &amp; Offline Sync Lifecycle</h1>
+        <p>Immutable content-addressed SYNCZINE container paired with append-only SQLite xAPI 2.0 event-sourced replay</p>
+      </div>
+      <div class="controls-row">
+        <div class="segmented" role="tablist" aria-label="Lifecycle Perspective">
+          <button type="button" class="active" data-lens="full" role="tab" aria-selected="true">Full Lifecycle</button>
+          <button type="button" data-lens="bundle" role="tab" aria-selected="false">Bundle Anatomy (.sovz)</button>
+          <button type="button" data-lens="sync" role="tab" aria-selected="false">Offline Sync &amp; Replay</button>
+        </div>
+        <div class="utility-group">
+          <label class="font-control" title="Adjust font scale">
+            <span>A</span>
+            <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font size" />
+            <span style="font-size:15px;font-weight:700;">A</span>
+          </label>
+          <button type="button" id="themeBtn" class="icon-btn" aria-label="Toggle color theme">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="diagram-card" aria-label="6-Node .sovz Bundle and Offline Sync Diagram">
+      <div class="diagram-topbar">
+        <div class="legend-items">
+          <span class="legend-dot"><span class="dot dot-bundle"></span>Immutable .sovz Spine</span>
+          <span class="legend-dot"><span class="dot dot-sync"></span>SQLite Event Log &amp; Replay</span>
+          <span class="legend-dot"><span class="dot dot-gov"></span>Governance &amp; Wallet</span>
+        </div>
+        <div class="step-nav">
+          <button type="button" class="step-btn" id="prevBtn">&larr; Prev</button>
+          <span class="step-counter" id="stepCounter">1 / 6</span>
+          <button type="button" class="step-btn" id="nextBtn">Next &rarr;</button>
+        </div>
+      </div>
+
+      <svg id="bundleSvg" viewBox="0 0 1160 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="6-Node .sovz Bundle Anatomy and Offline SQLite Sync Diagram">
+        <defs>
+          <marker id="arrIdle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--edge-idle)" />
+          </marker>
+          <marker id="arrBundle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-bundle)" />
+          </marker>
+          <marker id="arrSync" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-sync)" />
+          </marker>
+        </defs>
+
+        <!-- Zone Framing Boxes -->
+        <rect id="zoneBundle" class="zone-box zone-bundle" x="8" y="10" width="1144" height="178" rx="14" />
+        <text id="zoneBundleTitle" class="zone-title bundle" x="22" y="28">IMMUTABLE COMPILED BUNDLE SPINE (READ-ONLY · SHA-256 CONTENT-ADDRESSED)</text>
+
+        <rect id="zoneSync" class="zone-box zone-sync" x="8" y="282" width="1144" height="178" rx="14" />
+        <text id="zoneSyncTitle" class="zone-title sync" x="22" y="300">MUTABLE LOCAL-FIRST PERSISTENCE &amp; EVENT-SOURCED RECONCILIATION LOOP</text>
+
+        <g id="edgesLayer"></g>
+        <g id="nodesLayer"></g>
+      </svg>
+    </section>
+
+    <section class="inspector" id="inspectorPanel" aria-live="polite"></section>
+
+    <div class="hint-footer">Tip: Switch between Bundle Anatomy and Offline Sync lenses, click any node, or press Left / Right arrow keys to step through all 6 stages.</div>
+  </main>
+
+  <script>
+    const NODES = [
+      {
+        id: 'sovzBundle',
+        step: 1,
+        x: 18, y: 42, w: 264, h: 132,
+        kind: 'bundle',
+        lenses: ['full', 'bundle'],
+        stripLabel: '01 · PACKAGING LAYER',
+        titleLines: ['Immutable .sovz /', '.sovz.html Bundle'],
+        category: 'Packaging Layer',
+        storageOrFormat: 'ZIP Archive or Single-File HTML + Ed25519 Signature',
+        shortFormat: 'ZIP / .sovz.html + Ed25519',
+        contractDetails: 'Contains synczine.manifest.json, content-addressed SHA-256 media assets, and pinned SyncModz SRI integrity hashes.',
+        integrityGuarantee: 'Read-only RFC 8785 JCS contentHash verified before load; never mutated by learner progress.',
+        snippetTitle: '.sovz Deterministic Archive Layout',
+        snippet: `daily-inquiry-v1.0.0.sovz\n├── synczine.manifest.json   # Canonical JSON IR\n├── provenance.sig.json      # Ed25519 signature\n├── assets/\n│   └── sha256-9a4f...mp4    # Deduplicated media\n└── widgets/\n    └── syncmodz-lock.json   # Pinned SRI hashes`
+      },
+      {
+        id: 'manifestIR',
+        step: 2,
+        x: 448, y: 42, w: 264, h: 132,
+        kind: 'bundle',
+        lenses: ['full', 'bundle'],
+        stripLabel: '02 · COMPILED SPEC',
+        titleLines: ['Canonical Manifest IR', '(JSON Schema 2020-12)'],
+        category: 'Compiled Spec',
+        storageOrFormat: 'CASE v1.1 Graph + CODE+V SYNCTESS + Zero-Eval Gate AST + XState v5 IR',
+        shortFormat: 'CASE v1.1 · Gate AST · XState',
+        contractDetails: 'Unifies competency DAG, CODE+V widget prompts, deterministic JSON boolean expression trees, and bounded remediation policies.',
+        integrityGuarantee: 'Zero eval() strings; safe under strict CSP with identical execution across TypeScript and Rust runtimes.',
+        snippetTitle: 'Zero-Eval Gate AST Excerpt',
+        snippet: `"bands": [{\n  "name": "mastered",\n  "when": {\n    "op": "and",\n    "args": [\n      { "op": "gte", "metric": "accuracy", "value": 0.85 },\n      { "op": "eq",  "metric": "aux_errors", "value": 0 }\n    ]\n  }\n}]`
+      },
+      {
+        id: 'localRuntime',
+        step: 3,
+        x: 878, y: 42, w: 264, h: 132,
+        kind: 'bundle',
+        lenses: ['full', 'bundle', 'sync'],
+        stripLabel: '03 · EXECUTION LAYER',
+        titleLines: ['SOVRAELEX', 'Offline Runtime'],
+        category: 'Execution Layer',
+        storageOrFormat: 'XState v5 Actor + actor_snapshots SQLite Table',
+        shortFormat: 'XState v5 + actor_snapshots',
+        contractDetails: 'Hydrates statechart from bundle_registry, renders the active CODE+V phase, evaluates Gate ASTs locally, and checkpoints snapshots.',
+        integrityGuarantee: 'Instant offline resume; materialized snapshots are disposable projections rebuildable at any time from xapi_outbox.',
+        snippetTitle: 'SQLite Materialized Snapshot Table',
+        snippet: `CREATE TABLE actor_snapshots (\n  session_id        TEXT PRIMARY KEY,\n  bundle_id         TEXT NOT NULL,\n  learner_did       TEXT NOT NULL,\n  last_statement_id TEXT,\n  xstate_snapshot   TEXT NOT NULL,\n  updated_at        TEXT NOT NULL\n);`
+      },
+      {
+        id: 'xapiOutbox',
+        step: 4,
+        x: 878, y: 314, w: 264, h: 132,
+        kind: 'sync',
+        lenses: ['full', 'sync'],
+        stripLabel: '04 · PERSISTENCE LAYER',
+        titleLines: ['SQLite xapi_outbox', '(Append-Only G-Set)'],
+        category: 'Persistence Layer',
+        storageOrFormat: 'Append-Only IEEE xAPI 2.0 Statements (UUIDv7 + HLC)',
+        shortFormat: 'SQLite · UUIDv7 · HLC Chain',
+        contractDetails: 'Stores every learner interaction and gate trigger locally with sync_status pending, in_flight, synced, or failed.',
+        integrityGuarantee: 'Optional SHA-256 prev_hash chain links consecutive offline statements for tamper-evident credential auditing.',
+        snippetTitle: 'SQLite Event-Sourced Outbox Table',
+        snippet: `CREATE TABLE xapi_outbox (\n  statement_id  TEXT PRIMARY KEY, -- UUIDv7\n  bundle_id     TEXT NOT NULL,\n  learner_did   TEXT NOT NULL,\n  hlc_timestamp TEXT NOT NULL,    -- Causal order\n  prev_hash     TEXT,             -- SHA-256 chain\n  payload_json  TEXT NOT NULL,\n  sync_status   TEXT DEFAULT 'pending'\n);`
+      },
+      {
+        id: 'syncTransport',
+        step: 5,
+        x: 448, y: 314, w: 264, h: 132,
+        kind: 'sync',
+        lenses: ['full', 'sync'],
+        stripLabel: '05 · SYNC PROTOCOL',
+        titleLines: ['Opportunistic Sync', '& Reconciliation'],
+        category: 'Sync Protocol',
+        storageOrFormat: 'Idempotent Batch Push/Pull + Deterministic Replay',
+        shortFormat: 'Batch 50 · Set Union · Replay',
+        contractDetails: 'Exchanges UUIDv7 xAPI batches with an LRS, Solid Pod, or LAN peer; triggers full XState replay if out-of-order remote events arrive.',
+        integrityGuarantee: 'Zero merge conflicts via grow-only set union by statement_id and pure deterministic state folding.',
+        snippetTitle: 'Offline Sync Manifest Config',
+        snippet: `"syncManifest": {\n  "storageEngine": "sqlite-native",\n  "reconciliationMode": "event_sourced_xapi_replay",\n  "outbox": {\n    "batchSize": 50,\n    "retryBackoffSeconds": 30,\n    "hashChainStatements": true\n  }\n}`
+      },
+      {
+        id: 'sovereignEndpoints',
+        step: 6,
+        x: 18, y: 314, w: 264, h: 132,
+        kind: 'gov',
+        lenses: ['full', 'sync'],
+        stripLabel: '06 · GOVERNANCE & WALLET',
+        titleLines: ['SOVRAEGIX &', 'SOVRAEPASS'],
+        category: 'Governance & Wallet',
+        storageOrFormat: 'Educator Signoff Events + Open Badges 3.0 / W3C VC',
+        shortFormat: 'Signoffs · OBv3.0 / W3C VC',
+        contractDetails: 'SOVRAEGIX pulls escalations and pushes educator signoffs back into the log; SOVRAEPASS mints verifiable credentials from validated evidence.',
+        integrityGuarantee: 'Human-in-the-loop oversight paired with portable learner sovereignty and offline Ed25519 verification.',
+        snippetTitle: 'Sync Peer Watermarks (sync_peers)',
+        snippet: `CREATE TABLE sync_peers (\n  peer_id         TEXT PRIMARY KEY,\n  peer_type       TEXT CHECK (peer_type IN\n                  ('lrs','sovraegix','solid_pod','lan_peer')),\n  endpoint_url    TEXT NOT NULL,\n  last_pulled_hlc TEXT,\n  last_pushed_hlc TEXT\n);`
+      }
+    ];
+
+    const EDGES = [
+      {
+        id: 'e-bundle-ir',
+        from: 'sovzBundle', to: 'manifestIR',
+        mode: 'bundle',
+        label: 'Verify Ed25519 & unpack',
+        pill: { x: 365, y: 88, w: 152 },
+        d: 'M 282 110 L 444 110'
+      },
+      {
+        id: 'e-ir-runtime',
+        from: 'manifestIR', to: 'localRuntime',
+        mode: 'bundle',
+        label: 'Hydrate XState + Gates',
+        pill: { x: 795, y: 88, w: 150 },
+        d: 'M 712 110 L 874 110'
+      },
+      {
+        id: 'e-runtime-outbox',
+        from: 'localRuntime', to: 'xapiOutbox',
+        mode: 'sync',
+        label: 'Append UUIDv7 xAPI 2.0',
+        pill: { x: 944, y: 218, w: 152 },
+        d: 'M 944 174 L 944 310'
+      },
+      {
+        id: 'e-outbox-runtime',
+        from: 'xapiOutbox', to: 'localRuntime',
+        mode: 'sync',
+        label: 'Replay sorted log on merge',
+        pill: { x: 1076, y: 254, w: 156 },
+        d: 'M 1076 314 L 1076 178'
+      },
+      {
+        id: 'e-outbox-sync',
+        from: 'xapiOutbox', to: 'syncTransport',
+        mode: 'sync',
+        label: 'Push batch (50 rows)',
+        pill: { x: 795, y: 334, w: 146 },
+        d: 'M 878 356 L 716 356'
+      },
+      {
+        id: 'e-sync-outbox',
+        from: 'syncTransport', to: 'xapiOutbox',
+        mode: 'sync',
+        label: 'Merge remote by UUID',
+        pill: { x: 795, y: 422, w: 146 },
+        d: 'M 712 400 L 874 400'
+      },
+      {
+        id: 'e-sync-gov',
+        from: 'syncTransport', to: 'sovereignEndpoints',
+        mode: 'sync',
+        label: 'Telemetry & escalations',
+        pill: { x: 365, y: 334, w: 150 },
+        d: 'M 448 356 L 286 356'
+      },
+      {
+        id: 'e-gov-sync',
+        from: 'sovereignEndpoints', to: 'syncTransport',
+        mode: 'sync',
+        label: 'Pull signoffs & peers',
+        pill: { x: 365, y: 422, w: 146 },
+        d: 'M 282 400 L 444 400'
+      }
+    ];
+
+    const state = {
+      selectedIdx: 0,
+      lens: 'full',
+      theme: 'light'
+    };
+
+    function svgEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+      return el;
+    }
+
+    function buildDiagram() {
+      const edgesLayer = document.getElementById('edgesLayer');
+      const nodesLayer = document.getElementById('nodesLayer');
+      edgesLayer.innerHTML = '';
+      nodesLayer.innerHTML = '';
+
+      // Render Edges
+      EDGES.forEach(edge => {
+        const g = svgEl('g', { id: `edge-${edge.id}` });
+        g.appendChild(svgEl('path', {
+          id: `base-${edge.id}`,
+          class: 'edge-base',
+          d: edge.d,
+          'marker-end': 'url(#arrIdle)'
+        }));
+        g.appendChild(svgEl('path', {
+          id: `pulse-${edge.id}`,
+          class: 'edge-pulse',
+          d: edge.d
+        }));
+        g.appendChild(svgEl('rect', {
+          id: `pill-bg-${edge.id}`,
+          class: 'edge-pill-bg',
+          x: edge.pill.x - edge.pill.w / 2,
+          y: edge.pill.y - 10.5,
+          width: edge.pill.w,
+          height: 21,
+          rx: 10.5
+        }));
+        const t = svgEl('text', {
+          id: `pill-txt-${edge.id}`,
+          class: 'edge-pill-txt',
+          x: edge.pill.x,
+          y: edge.pill.y + 3.3
+        });
+        t.textContent = edge.label;
+        g.appendChild(t);
+        edgesLayer.appendChild(g);
+      });
+
+      // Render Nodes
+      NODES.forEach((node, idx) => {
+        const g = svgEl('g', {
+          id: `node-${node.id}`,
+          class: `sync-node kind-${node.kind}`,
+          transform: `translate(${node.x}, ${node.y})`,
+          tabindex: '0',
+          role: 'button',
+          'aria-label': `${node.step}. ${node.titleLines.join(' ')}`
+        });
+
+        g.addEventListener('click', () => selectNode(idx));
+        g.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectNode(idx);
+          }
+        });
+
+        g.appendChild(svgEl('rect', {
+          class: 'node-bg',
+          x: 0, y: 0, width: node.w, height: node.h, rx: 12
+        }));
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 1, width: node.w - 2, height: 24, rx: 11
+        }));
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 14, width: node.w - 2, height: 11
+        }));
+
+        const strip = svgEl('text', { class: 'node-strip-txt', x: 11, y: 16.5 });
+        strip.textContent = node.stripLabel;
+        g.appendChild(strip);
+
+        node.titleLines.forEach((line, lIdx) => {
+          const tt = svgEl('text', { class: 'node-title', x: 12, y: 46 + lIdx * 16.5 });
+          tt.textContent = line;
+          g.appendChild(tt);
+        });
+
+        g.appendChild(svgEl('rect', {
+          class: 'fmt-badge-bg',
+          x: 12, y: 94, width: node.w - 24, height: 24, rx: 6
+        }));
+        const fmt = svgEl('text', { class: 'fmt-badge-txt', x: 20, y: 109.5 });
+        fmt.textContent = node.shortFormat;
+        g.appendChild(fmt);
+
+        nodesLayer.appendChild(g);
+      });
+    }
+
+    function render() {
+      const active = NODES[state.selectedIdx];
+      const lens = state.lens;
+
+      // Zone emphasis
+      const zB = document.getElementById('zoneBundle');
+      const zBT = document.getElementById('zoneBundleTitle');
+      const zS = document.getElementById('zoneSync');
+      const zST = document.getElementById('zoneSyncTitle');
+
+      zB.className.baseVal = `zone-box zone-bundle ${lens === 'bundle' ? 'emphasized' : lens === 'sync' ? 'dimmed' : ''}`;
+      zBT.className.baseVal = `zone-title bundle ${lens === 'sync' ? 'dimmed' : ''}`;
+      zS.className.baseVal = `zone-box zone-sync ${lens === 'sync' ? 'emphasized' : lens === 'bundle' ? 'dimmed' : ''}`;
+      zST.className.baseVal = `zone-title sync ${lens === 'bundle' ? 'dimmed' : ''}`;
+
+      // Nodes
+      NODES.forEach((node, idx) => {
+        const el = document.getElementById(`node-${node.id}`);
+        const inLens = node.lenses.includes(lens);
+        el.className.baseVal = [
+          'sync-node',
+          `kind-${node.kind}`,
+          !inLens ? 'dimmed' : '',
+          idx === state.selectedIdx ? 'selected' : ''
+        ].filter(Boolean).join(' ');
+      });
+
+      // Edges
+      EDGES.forEach(edge => {
+        const isConnected = edge.from === active.id || edge.to === active.id;
+        const inLens = lens === 'full' || edge.mode === lens;
+        const shouldLit = lens === 'full' ? isConnected : inLens;
+        const shouldPulse = lens === 'full' ? isConnected : inLens;
+        const marker = shouldLit ? (edge.mode === 'bundle' ? 'url(#arrBundle)' : 'url(#arrSync)') : 'url(#arrIdle)';
+
+        const base = document.getElementById(`base-${edge.id}`);
+        const pulse = document.getElementById(`pulse-${edge.id}`);
+        const pBg = document.getElementById(`pill-bg-${edge.id}`);
+        const pTxt = document.getElementById(`pill-txt-${edge.id}`);
+
+        base.className.baseVal = `edge-base ${!inLens ? 'dimmed' : shouldLit ? `lit-${edge.mode}` : ''}`;
+        base.setAttribute('marker-end', marker);
+        pulse.className.baseVal = `edge-pulse ${shouldPulse ? `lit-${edge.mode}` : ''}`;
+        pBg.className.baseVal = `edge-pill-bg ${!inLens ? 'dimmed' : shouldLit ? `lit-${edge.mode}` : ''}`;
+        pTxt.className.baseVal = `edge-pill-txt ${!inLens ? 'dimmed' : shouldLit ? `lit-${edge.mode}` : ''}`;
+      });
+
+      // Step counter
+      document.getElementById('stepCounter').textContent = `${state.selectedIdx + 1} / ${NODES.length}`;
+      document.getElementById('prevBtn').disabled = state.selectedIdx === 0;
+      document.getElementById('nextBtn').disabled = state.selectedIdx === NODES.length - 1;
+
+      // Inspector
+      const titleMap = Object.fromEntries(NODES.map(n => [n.id, n.titleLines.join(' ')]));
+      const connectedEdges = EDGES.filter(e => e.from === active.id || e.to === active.id);
+      const guaranteeAccent = active.kind === 'bundle' ? 'bundle-accent' : active.kind === 'gov' ? 'gov-accent' : '';
+
+      document.getElementById('inspectorPanel').innerHTML = `
+        <div>
+          <div class="insp-badges">
+            <span class="pill pill-${active.kind}">Stage 0${active.step} · ${active.category}</span>
+            <span class="pill pill-neutral">${active.storageOrFormat}</span>
+          </div>
+          <h2 class="insp-title">${active.titleLines.join(' ')}</h2>
+          <p class="insp-contract">${active.contractDetails}</p>
+          <div class="guarantee-box ${guaranteeAccent}">
+            <span class="guarantee-label">Cryptographic &amp; Consistency Guarantee</span>
+            ${active.integrityGuarantee}
+          </div>
+          <div class="edges-mini">
+            ${connectedEdges.map(e => {
+              const dir = e.from === active.id ? '&rarr;' : '&larr;';
+              const peer = e.from === active.id ? titleMap[e.to] : titleMap[e.from];
+              return `<span class="edge-chip"><strong>${e.label}</strong> ${dir} ${peer}</span>`;
+            }).join('')}
+          </div>
+        </div>
+        <div class="snippet-card">
+          <div class="snippet-head">
+            <span>${active.snippetTitle}</span>
+            <span>Contract Excerpt</span>
+          </div>
+          <pre class="snippet-pre"><code>${active.snippet.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
+        </div>
+      `;
+    }
+
+    function selectNode(idx) {
+      state.selectedIdx = Math.max(0, Math.min(NODES.length - 1, idx));
+      render();
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+
+    document.querySelectorAll('.segmented button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segmented button').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        state.lens = btn.dataset.lens;
+        if (state.lens === 'bundle' && state.selectedIdx > 2) state.selectedIdx = 0;
+        if (state.lens === 'sync' && state.selectedIdx < 2) state.selectedIdx = 3;
+        render();
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => selectNode(state.selectedIdx - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => selectNode(state.selectedIdx + 1));
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+    });
+    document.getElementById('fontSlider').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--font-scale', e.target.value);
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight') selectNode(state.selectedIdx + 1);
+      if (e.key === 'ArrowLeft') selectNode(state.selectedIdx - 1);
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'dark') applyTheme('dark');
+
+    buildDiagram();
+    render();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS — Prototype Architecture &amp; Runtime Event Loop</title>
+  <style>
+    :root {
+      --font-scale: 1;
+      --bg-page: #fbf7ef;
+      --bg-surface: #f5efe0;
+      --bg-card: #fffdf8;
+      --bg-subtle: #ede4d1;
+      --border: #d9ccb4;
+      --border-strong: #b89f78;
+      --text-primary: #1f1a14;
+      --text-secondary: #574c3e;
+      --text-muted: #7c6f5d;
+
+      --accent-compile: #b45309;
+      --accent-compile-bg: #fef3c7;
+      --accent-compile-border: #f59e0b;
+
+      --accent-runtime: #0f766e;
+      --accent-runtime-bg: #ccfbf1;
+      --accent-runtime-border: #2dd4bf;
+
+      --accent-gov: #6d28d9;
+      --accent-gov-bg: #ede9fe;
+      --accent-gov-border: #c4b5fd;
+
+      --accent-soft: rgba(180, 83, 9, 0.14);
+      --edge-idle: #c4b7a1;
+      --shadow-sm: 0 2px 6px rgba(31, 26, 20, 0.06);
+      --shadow-md: 0 8px 24px rgba(31, 26, 20, 0.11);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #141210;
+      --bg-surface: #1d1916;
+      --bg-card: #24201c;
+      --bg-subtle: #2e2822;
+      --border: #3d352d;
+      --border-strong: #6b5b49;
+      --text-primary: #f5efe4;
+      --text-secondary: #cbbba6;
+      --text-muted: #988875;
+
+      --accent-compile: #f59e0b;
+      --accent-compile-bg: rgba(245, 158, 11, 0.15);
+      --accent-compile-border: rgba(245, 158, 11, 0.45);
+
+      --accent-runtime: #2dd4bf;
+      --accent-runtime-bg: rgba(45, 212, 191, 0.14);
+      --accent-runtime-border: rgba(45, 212, 191, 0.42);
+
+      --accent-gov: #c4b5fd;
+      --accent-gov-bg: rgba(167, 139, 250, 0.15);
+      --accent-gov-border: rgba(167, 139, 250, 0.42);
+
+      --accent-soft: rgba(245, 158, 11, 0.18);
+      --edge-idle: #52473b;
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.30);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-size: calc(15px * var(--font-scale));
+      line-height: 1.5;
+      padding: 16px;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .app {
+      max-width: 1160px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    /* Header & Toolbar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .title-group h1 {
+      font-size: calc(1.06rem * var(--font-scale));
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .title-group p {
+      font-size: calc(0.8rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .segmented button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .segmented button:hover { color: var(--text-primary); }
+
+    .segmented button.active {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .utility-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px 9px;
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .font-control input[type="range"] {
+      width: 62px;
+      accent-color: var(--accent-compile);
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .icon-btn:hover { border-color: var(--accent-compile); }
+
+    /* Diagram Card */
+    .diagram-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 12px 10px;
+      box-shadow: var(--shadow-sm);
+      overflow-x: auto;
+    }
+
+    .diagram-topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 0 6px 8px;
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-secondary);
+    }
+
+    .legend-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .legend-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      display: inline-block;
+    }
+
+    .dot-compile { background: var(--accent-compile); }
+    .dot-runtime { background: var(--accent-runtime); }
+    .dot-gov     { background: var(--accent-gov); }
+
+    .step-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: calc(0.75rem * var(--font-scale));
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .step-btn:hover:not(:disabled) {
+      border-color: var(--accent-compile);
+      background: var(--accent-soft);
+    }
+
+    .step-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .step-counter {
+      font-family: var(--font-mono);
+      font-size: calc(0.75rem * var(--font-scale));
+      color: var(--text-muted);
+      min-width: 44px;
+      text-align: center;
+    }
+
+    svg#protoSvg {
+      width: 100%;
+      min-width: 820px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    /* SVG Nodes */
+    .proto-node {
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+
+    .proto-node.dimmed {
+      opacity: 0.3;
+    }
+
+    .proto-node.dimmed.selected {
+      opacity: 0.92;
+    }
+
+    .proto-node .node-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.6;
+      transition: all 0.2s ease;
+    }
+
+    .proto-node:hover .node-bg {
+      stroke: var(--accent-compile);
+    }
+
+    .proto-node.selected .node-bg {
+      fill: var(--bg-card);
+      stroke-width: 2.8;
+      filter: drop-shadow(0 6px 16px rgba(31, 26, 20, 0.14));
+    }
+
+    .proto-node.kind-compile.selected .node-bg { stroke: var(--accent-compile); }
+    .proto-node.kind-runtime.selected .node-bg { stroke: var(--accent-runtime); }
+    .proto-node.kind-gov.selected .node-bg     { stroke: var(--accent-gov); }
+
+    .proto-node.kind-compile .node-strip { fill: var(--accent-compile); }
+    .proto-node.kind-runtime .node-strip { fill: var(--accent-runtime); }
+    .proto-node.kind-gov .node-strip     { fill: var(--accent-gov); }
+    .proto-node.dimmed .node-strip       { fill: var(--bg-subtle); }
+
+    .node-strip-txt {
+      fill: #ffffff;
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    [data-theme="dark"] .proto-node:not(.dimmed) .node-strip-txt {
+      fill: #141210;
+    }
+
+    .proto-node.dimmed .node-strip-txt {
+      fill: var(--text-muted);
+    }
+
+    .node-pkg {
+      fill: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .node-sub {
+      fill: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .std-badge-bg {
+      fill: var(--bg-subtle);
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+
+    .proto-node.kind-compile .std-badge-bg { fill: var(--accent-compile-bg); stroke: var(--accent-compile-border); }
+    .proto-node.kind-runtime .std-badge-bg { fill: var(--accent-runtime-bg); stroke: var(--accent-runtime-border); }
+    .proto-node.kind-gov .std-badge-bg     { fill: var(--accent-gov-bg);     stroke: var(--accent-gov-border); }
+
+    .std-badge-txt {
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .proto-node.kind-compile .std-badge-txt { fill: var(--accent-compile); }
+    .proto-node.kind-runtime .std-badge-txt { fill: var(--accent-runtime); }
+    .proto-node.kind-gov .std-badge-txt     { fill: var(--accent-gov); }
+
+    /* SVG Edges */
+    .edge-base {
+      fill: none;
+      stroke: var(--edge-idle);
+      stroke-width: 2;
+      transition: stroke 0.25s ease, opacity 0.25s ease, stroke-width 0.25s ease;
+    }
+
+    .edge-base.dimmed { opacity: 0.22; }
+    .edge-base.lit-compile { stroke: var(--accent-compile); stroke-width: 2.5; }
+    .edge-base.lit-runtime { stroke: var(--accent-runtime); stroke-width: 2.6; }
+
+    .edge-pulse {
+      fill: none;
+      stroke-width: 3.2;
+      stroke-dasharray: 6 12;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .edge-pulse.lit-compile {
+      stroke: var(--accent-compile);
+      opacity: 1;
+      animation: packetFlow 1.05s linear infinite;
+    }
+
+    .edge-pulse.lit-runtime {
+      stroke: var(--accent-runtime);
+      opacity: 1;
+      animation: packetFlow 0.9s linear infinite;
+    }
+
+    @keyframes packetFlow {
+      to { stroke-dashoffset: -36; }
+    }
+
+    .edge-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.1;
+      transition: all 0.25s ease;
+    }
+
+    .edge-pill-bg.dimmed { opacity: 0.22; }
+    .edge-pill-bg.lit-compile { fill: var(--accent-compile-bg); stroke: var(--accent-compile-border); stroke-width: 1.4; }
+    .edge-pill-bg.lit-runtime { fill: var(--accent-runtime-bg); stroke: var(--accent-runtime-border); stroke-width: 1.4; }
+
+    .edge-pill-txt {
+      fill: var(--text-secondary);
+      font-size: 9.8px;
+      font-weight: 700;
+      text-anchor: middle;
+      transition: fill 0.25s ease, opacity 0.25s ease;
+    }
+
+    .edge-pill-txt.dimmed { opacity: 0.25; }
+    .edge-pill-txt.lit-compile { fill: var(--accent-compile); }
+    .edge-pill-txt.lit-runtime { fill: var(--accent-runtime); }
+
+    .loop-halo {
+      fill: none;
+      stroke: var(--accent-runtime-border);
+      stroke-width: 1.4;
+      stroke-dasharray: 6 6;
+      opacity: 0.35;
+      transition: opacity 0.25s ease;
+    }
+
+    .loop-halo.emphasized { opacity: 0.85; }
+    .loop-halo.dimmed { opacity: 0.1; }
+
+    .zone-label {
+      fill: var(--accent-runtime);
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-anchor: middle;
+      opacity: 0.72;
+      transition: opacity 0.25s ease;
+    }
+
+    .zone-label.dimmed { opacity: 0.18; }
+
+    /* Inspector Panel */
+    .inspector {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-sm);
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 780px) {
+      .inspector { grid-template-columns: 1fr; }
+    }
+
+    .insp-badges {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pill {
+      font-family: var(--font-mono);
+      font-size: calc(0.7rem * var(--font-scale));
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill-compile { background: var(--accent-compile-bg); border-color: var(--accent-compile-border); color: var(--accent-compile); }
+    .pill-runtime { background: var(--accent-runtime-bg); border-color: var(--accent-runtime-border); color: var(--accent-runtime); }
+    .pill-gov     { background: var(--accent-gov-bg);     border-color: var(--accent-gov-border);     color: var(--accent-gov); }
+    .pill-neutral { background: var(--bg-card);           border-color: var(--border);                color: var(--text-secondary); }
+
+    .insp-title {
+      font-family: var(--font-mono);
+      font-size: calc(1.06rem * var(--font-scale));
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .insp-role {
+      font-size: calc(0.88rem * var(--font-scale));
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .io-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 520px) {
+      .io-grid { grid-template-columns: 1fr; }
+    }
+
+    .io-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .io-label {
+      font-family: var(--font-mono);
+      font-size: calc(0.67rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .io-val {
+      font-size: calc(0.82rem * var(--font-scale));
+      color: var(--text-primary);
+    }
+
+    .contracts-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .contracts-title {
+      font-family: var(--font-mono);
+      font-size: calc(0.71rem * var(--font-scale));
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .contract-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .contract-item {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      font-size: calc(0.8rem * var(--font-scale));
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+    }
+
+    .dir-tag {
+      font-family: var(--font-mono);
+      font-size: calc(0.67rem * var(--font-scale));
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .dir-in  { background: var(--accent-runtime-bg); color: var(--accent-runtime); }
+    .dir-out { background: var(--accent-compile-bg); color: var(--accent-compile); }
+
+    .local-note {
+      font-size: calc(0.78rem * var(--font-scale));
+      color: var(--text-secondary);
+      border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+
+    .hint-footer {
+      text-align: right;
+      font-size: calc(0.72rem * var(--font-scale));
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="toolbar">
+      <div class="title-group">
+        <h1>SOVRAEGIS — Prototype Architecture &amp; Runtime Event Loop</h1>
+        <p>From .sovl compilation via Langium v4.4 to offline XState v5 orchestration, IEEE xAPI 2.0 telemetry, and W3C VC issuance</p>
+      </div>
+      <div class="controls-row">
+        <div class="segmented" role="tablist" aria-label="Architecture Layer Filter">
+          <button type="button" class="active" data-lens="full" role="tab" aria-selected="true">Full Prototype</button>
+          <button type="button" data-lens="compile" role="tab" aria-selected="false">Compile-Time Pipeline</button>
+          <button type="button" data-lens="runtime" role="tab" aria-selected="false">Runtime Feedback Loop</button>
+        </div>
+        <div class="utility-group">
+          <label class="font-control" title="Adjust font scale">
+            <span>A</span>
+            <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font size" />
+            <span style="font-size:15px;font-weight:700;">A</span>
+          </label>
+          <button type="button" id="themeBtn" class="icon-btn" aria-label="Toggle color theme">Dark</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="diagram-card" aria-label="6-Node Prototype Architecture Diagram">
+      <div class="diagram-topbar">
+        <div class="legend-items">
+          <span class="legend-dot"><span class="dot dot-compile"></span>Compile-Time Pipeline</span>
+          <span class="legend-dot"><span class="dot dot-runtime"></span>Offline Runtime Loop</span>
+          <span class="legend-dot"><span class="dot dot-gov"></span>Governance &amp; Credentials</span>
+        </div>
+        <div class="step-nav">
+          <button type="button" class="step-btn" id="prevBtn">&larr; Prev</button>
+          <span class="step-counter" id="stepCounter">1 / 6</span>
+          <button type="button" class="step-btn" id="nextBtn">Next &rarr;</button>
+        </div>
+      </div>
+
+      <svg id="protoSvg" viewBox="0 0 1140 456" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="6-Node Prototype Compilation and Offline Runtime Loop Diagram">
+        <defs>
+          <marker id="arrIdle" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--edge-idle)" />
+          </marker>
+          <marker id="arrCompile" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-compile)" />
+          </marker>
+          <marker id="arrRuntime" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+            <path d="M 0 1.5 L 8.5 5 L 0 8.5 z" fill="var(--accent-runtime)" />
+          </marker>
+        </defs>
+
+        <!-- Subtle offline closed-loop indicator zone -->
+        <rect id="loopHalo" class="loop-halo" x="8" y="196" width="1124" height="250" rx="16" />
+        <text id="zoneLabel" class="zone-label" x="560" y="366">OFFLINE ADAPTIVE LOOP (XSTATE &rarr; SYNCMODZ &rarr; xAPI LRS &rarr; XSTATE)</text>
+
+        <g id="edgesLayer"></g>
+        <g id="nodesLayer"></g>
+      </svg>
+    </section>
+
+    <section class="inspector" id="inspectorPanel" aria-live="polite"></section>
+
+    <div class="hint-footer">Tip: Toggle Compile-Time vs. Runtime lenses, click any package node, or press Left / Right arrows to trace the full prototype lifecycle.</div>
+  </main>
+
+  <script>
+    const MODULES = [
+      {
+        id: 'compiler',
+        step: 1,
+        x: 16, y: 24, w: 224, h: 132,
+        kind: 'compile',
+        layers: ['full', 'compile'],
+        stripLabel: '01 · COMPILE-TIME',
+        packageName: 'sovl-lang',
+        subtitle: 'Langium v4.4 Web Worker',
+        standard: 'LSP 3.18 + Pedagogical Linter',
+        phase: 'Compile-Time',
+        inputs: 'Human- or LLM-authored .sovl DSL source files',
+        outputs: 'Validated .sovz bundle (graph.case.jsonld, machine.ir.json, gates.ir.json)',
+        runtimeRole: 'Parses concrete syntax, enforces Tarjan SCC DAG acyclicity, CODE+V completeness profiles, and bounded remediation loops inside a browser Web Worker.',
+        localNote: 'Runs 100% client-side in TypeScript with zero JVM or Python daemon required.'
+      },
+      {
+        id: 'caseGraph',
+        step: 2,
+        x: 432, y: 24, w: 256, h: 118,
+        kind: 'compile',
+        layers: ['full', 'compile', 'runtime'],
+        stripLabel: '02 · KNOWLEDGE LAYER',
+        packageName: 'synthetary-graph',
+        subtitle: 'CASE v1.1 DAG & Ontology',
+        standard: '1EdTech CASE v1.1 / CTDL-ASN',
+        phase: 'Knowledge Layer',
+        inputs: 'graph.case.jsonld (CFItems and CFAssociations)',
+        outputs: 'Prerequisite resolution and dynamic remediation node lookup (e.g., AUX_DO_REPAIR)',
+        runtimeRole: 'Provides a portable JSON-LD skill ontology so adaptive policies dynamically resolve micro-drills by error tag instead of hardcoding remediation branches.',
+        localNote: 'Compatible with OpenSALT, CaSS, SurrealDB, or embedded SQLite graph tables.'
+      },
+      {
+        id: 'xstateEngine',
+        step: 3,
+        x: 432, y: 208, w: 256, h: 132,
+        kind: 'runtime',
+        layers: ['full', 'compile', 'runtime'],
+        stripLabel: '03 · ORCHESTRATION',
+        packageName: 'sovraelex-engine',
+        subtitle: 'XState v5 Statechart Actor',
+        standard: 'SCXML / IMS-LD Semantics',
+        phase: 'Orchestration Runtime',
+        inputs: 'machine.ir.json + GATE.EVALUATED events + CASE remediation targets',
+        outputs: 'Active CODE+V phase state, scaffold flags, persisted SQLite actor snapshot',
+        runtimeRole: 'Executes deterministic transitions across Curate, Organize, Distill, Express, Verify, and Validate with compile-verified loop-limit guards.',
+        localNote: 'The exact same XState machine runs headlessly in Vitest, SOVRAEGIX preview, and offline SOVRAELEX.'
+      },
+      {
+        id: 'syncmodz',
+        step: 4,
+        x: 876, y: 300, w: 248, h: 132,
+        kind: 'runtime',
+        layers: ['full', 'runtime'],
+        stripLabel: '04 · LEARNER DELIVERY',
+        packageName: 'sovraelex-player',
+        subtitle: 'SyncModz Sandboxed UI',
+        standard: 'Interactive Local-First Widgets',
+        phase: 'Learner Delivery',
+        inputs: 'Active CODE+V phase context and scaffold hints from XState',
+        outputs: 'Raw IEEE xAPI 2.0 JSON statements (with contextAgents for peers)',
+        runtimeRole: 'Renders offline classroom activities like Voice Studio or Hex Sorter without direct coupling to orchestration state or grading policy.',
+        localNote: 'Widgets remain pure emitters; swapping or upgrading a widget never touches statechart logic.'
+      },
+      {
+        id: 'lrsGate',
+        step: 5,
+        x: 16, y: 300, w: 224, h: 132,
+        kind: 'runtime',
+        layers: ['full', 'compile', 'runtime'],
+        stripLabel: '05 · TELEMETRY & VERIFY',
+        packageName: 'telemetry-lrs',
+        subtitle: 'Local SQLite LRS + Gate AST',
+        standard: 'IEEE 9274.1.1-2023 (xAPI 2.0)',
+        phase: 'Telemetry & Verification',
+        inputs: 'Immutable xAPI 2.0 statements + compiled gates.ir.json',
+        outputs: 'Evaluated mastery band (Mastered, Partial, or Deficit) dispatched to XState',
+        runtimeRole: 'Appends offline learning records to local SQLite/IndexedDB, evaluates deterministic zero-eval rubric thresholds, and closes the adaptive feedback loop.',
+        localNote: 'Append-only UUIDv7 statement logs allow conflict-free replay when reconnecting online.'
+      },
+      {
+        id: 'sovereignEndpoints',
+        step: 6,
+        x: 876, y: 24, w: 248, h: 132,
+        kind: 'gov',
+        layers: ['full', 'runtime'],
+        stripLabel: '06 · VALIDATE & GOVERN',
+        packageName: 'SOVRAEPASS & SOVRAEGIX',
+        subtitle: 'Wallet + Educator Cockpit',
+        standard: 'Open Badges 3.0 / W3C VC',
+        phase: 'Validation & Governance',
+        inputs: 'Validated evidence URIs (on Mastered) or escalation payloads (on loop limit)',
+        outputs: 'Signed Verifiable Credential or Educator Cockpit intervention ticket',
+        runtimeRole: 'Anchors human-in-the-loop educator oversight in SOVRAEGIX and portable, learner-owned Tangible Evidence of Sovereign Success in SOVRAEPASS.',
+        localNote: 'Supports offline Ed25519 credential verification and separate educator EndorsementCredentials.'
+      }
+    ];
+
+    const EDGES = [
+      {
+        id: 'e-comp-case',
+        from: 'compiler', to: 'caseGraph',
+        layer: 'compile',
+        label: 'Emits CASE v1.1 JSON-LD',
+        pill: { x: 334, y: 66, w: 152 },
+        d: 'M 240 84 L 428 84'
+      },
+      {
+        id: 'e-comp-xstate',
+        from: 'compiler', to: 'xstateEngine',
+        layer: 'compile',
+        label: 'Compiles machine.ir.json',
+        pill: { x: 334, y: 186, w: 152 },
+        d: 'M 240 132 C 336 132, 336 242, 428 242'
+      },
+      {
+        id: 'e-comp-lrs',
+        from: 'compiler', to: 'lrsGate',
+        layer: 'compile',
+        label: 'Compiles gates.ir.json',
+        pill: { x: 128, y: 228, w: 142 },
+        d: 'M 128 156 L 128 296'
+      },
+      {
+        id: 'e-case-xstate',
+        from: 'caseGraph', to: 'xstateEngine',
+        layer: 'runtime',
+        label: 'Resolves remediation target',
+        pill: { x: 560, y: 174, w: 172 },
+        d: 'M 560 142 L 560 204'
+      },
+      {
+        id: 'e-xstate-sov',
+        from: 'xstateEngine', to: 'sovereignEndpoints',
+        layer: 'runtime',
+        label: 'Mints W3C VC / Escalates',
+        pill: { x: 782, y: 152, w: 156 },
+        d: 'M 688 244 C 782 244, 782 90, 872 90'
+      },
+      {
+        id: 'e-xstate-sync',
+        from: 'xstateEngine', to: 'syncmodz',
+        layer: 'runtime',
+        label: 'Renders CODE+V & scaffolds',
+        pill: { x: 782, y: 312, w: 164 },
+        d: 'M 688 298 C 782 298, 782 344, 872 344'
+      },
+      {
+        id: 'e-sync-lrs',
+        from: 'syncmodz', to: 'lrsGate',
+        layer: 'runtime',
+        label: 'Emits IEEE xAPI 2.0 statement',
+        pill: { x: 560, y: 404, w: 190 },
+        d: 'M 876 404 L 244 404'
+      },
+      {
+        id: 'e-lrs-xstate',
+        from: 'lrsGate', to: 'xstateEngine',
+        layer: 'runtime',
+        label: 'Dispatches GATE.EVALUATED',
+        pill: { x: 334, y: 326, w: 166 },
+        d: 'M 240 344 C 336 344, 336 298, 428 298'
+      }
+    ];
+
+    const state = {
+      selectedIdx: 0,
+      lens: 'full',
+      theme: 'light'
+    };
+
+    function svgEl(tag, attrs = {}) {
+      const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, String(v));
+      return el;
+    }
+
+    function buildDiagram() {
+      const edgesLayer = document.getElementById('edgesLayer');
+      const nodesLayer = document.getElementById('nodesLayer');
+      edgesLayer.innerHTML = '';
+      nodesLayer.innerHTML = '';
+
+      // Render Edges
+      EDGES.forEach(edge => {
+        const g = svgEl('g', { id: `edge-group-${edge.id}` });
+        g.appendChild(svgEl('path', {
+          id: `base-${edge.id}`,
+          class: 'edge-base',
+          d: edge.d,
+          'marker-end': 'url(#arrIdle)'
+        }));
+        g.appendChild(svgEl('path', {
+          id: `pulse-${edge.id}`,
+          class: 'edge-pulse',
+          d: edge.d
+        }));
+        g.appendChild(svgEl('rect', {
+          id: `pill-bg-${edge.id}`,
+          class: 'edge-pill-bg',
+          x: edge.pill.x - edge.pill.w / 2,
+          y: edge.pill.y - 11,
+          width: edge.pill.w,
+          height: 22,
+          rx: 11
+        }));
+        const txt = svgEl('text', {
+          id: `pill-txt-${edge.id}`,
+          class: 'edge-pill-txt',
+          x: edge.pill.x,
+          y: edge.pill.y + 3.5
+        });
+        txt.textContent = edge.label;
+        g.appendChild(txt);
+        edgesLayer.appendChild(g);
+      });
+
+      // Render Nodes
+      MODULES.forEach((mod, idx) => {
+        const g = svgEl('g', {
+          id: `node-${mod.id}`,
+          class: `proto-node kind-${mod.kind}`,
+          transform: `translate(${mod.x}, ${mod.y})`,
+          tabindex: '0',
+          role: 'button',
+          'aria-label': `${mod.step}. ${mod.packageName}`
+        });
+
+        g.addEventListener('click', () => selectModule(idx));
+        g.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectModule(idx);
+          }
+        });
+
+        g.appendChild(svgEl('rect', {
+          class: 'node-bg',
+          x: 0, y: 0, width: mod.w, height: mod.h, rx: 12
+        }));
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 1, width: mod.w - 2, height: 24, rx: 11
+        }));
+        g.appendChild(svgEl('rect', {
+          class: 'node-strip',
+          x: 1, y: 14, width: mod.w - 2, height: 11
+        }));
+
+        const stripTxt = svgEl('text', { class: 'node-strip-txt', x: 11, y: 16.5 });
+        stripTxt.textContent = mod.stripLabel;
+        g.appendChild(stripTxt);
+
+        const pkgTxt = svgEl('text', { class: 'node-pkg', x: 12, y: 47 });
+        pkgTxt.textContent = mod.packageName;
+        g.appendChild(pkgTxt);
+
+        const subTxt = svgEl('text', { class: 'node-sub', x: 12, y: 66 });
+        subTxt.textContent = mod.subtitle;
+        g.appendChild(subTxt);
+
+        const badgeY = mod.h - 36;
+        g.appendChild(svgEl('rect', {
+          class: 'std-badge-bg',
+          x: 12, y: badgeY, width: mod.w - 24, height: 24, rx: 6
+        }));
+        const stdTxt = svgEl('text', {
+          class: 'std-badge-txt',
+          x: 20, y: badgeY + 15.5
+        });
+        stdTxt.textContent = mod.standard;
+        g.appendChild(stdTxt);
+
+        nodesLayer.appendChild(g);
+      });
+    }
+
+    function render() {
+      const activeMod = MODULES[state.selectedIdx];
+      const lens = state.lens;
+
+      // Halo emphasis
+      const halo = document.getElementById('loopHalo');
+      const zoneLbl = document.getElementById('zoneLabel');
+      halo.className.baseVal = `loop-halo ${lens === 'runtime' ? 'emphasized' : lens === 'compile' ? 'dimmed' : ''}`;
+      zoneLbl.className.baseVal = `zone-label ${lens === 'compile' ? 'dimmed' : ''}`;
+
+      // Update nodes
+      MODULES.forEach((mod, idx) => {
+        const el = document.getElementById(`node-${mod.id}`);
+        const inLens = mod.layers.includes(lens);
+        const isSelected = idx === state.selectedIdx;
+        el.className.baseVal = [
+          'proto-node',
+          `kind-${mod.kind}`,
+          !inLens ? 'dimmed' : '',
+          isSelected ? 'selected' : ''
+        ].filter(Boolean).join(' ');
+      });
+
+      // Update edges
+      EDGES.forEach(edge => {
+        const isConnected = edge.from === activeMod.id || edge.to === activeMod.id;
+        const inLens = lens === 'full' || edge.layer === lens;
+
+        // Animate pulse on connected edges in Full mode, or all active layer edges when filtered
+        const shouldLit = lens === 'full' ? isConnected : inLens;
+        const shouldPulse = lens === 'full'
+          ? isConnected
+          : (lens === 'runtime' ? edge.layer === 'runtime' : edge.layer === 'compile');
+
+        const tone = edge.layer === 'compile' ? 'compile' : 'runtime';
+        const marker = shouldLit ? (tone === 'compile' ? 'url(#arrCompile)' : 'url(#arrRuntime)') : 'url(#arrIdle)';
+
+        const base = document.getElementById(`base-${edge.id}`);
+        const pulse = document.getElementById(`pulse-${edge.id}`);
+        const pBg = document.getElementById(`pill-bg-${edge.id}`);
+        const pTxt = document.getElementById(`pill-txt-${edge.id}`);
+
+        base.className.baseVal = `edge-base ${!inLens ? 'dimmed' : shouldLit ? `lit-${tone}` : ''}`;
+        base.setAttribute('marker-end', marker);
+        pulse.className.baseVal = `edge-pulse ${shouldPulse ? `lit-${tone}` : ''}`;
+        pBg.className.baseVal = `edge-pill-bg ${!inLens ? 'dimmed' : shouldLit ? `lit-${tone}` : ''}`;
+        pTxt.className.baseVal = `edge-pill-txt ${!inLens ? 'dimmed' : shouldLit ? `lit-${tone}` : ''}`;
+      });
+
+      // Step counter
+      document.getElementById('stepCounter').textContent = `${state.selectedIdx + 1} / ${MODULES.length}`;
+      document.getElementById('prevBtn').disabled = state.selectedIdx === 0;
+      document.getElementById('nextBtn').disabled = state.selectedIdx === MODULES.length - 1;
+
+      // Contracts for selected node
+      const modMap = Object.fromEntries(MODULES.map(m => [m.id, m.packageName]));
+      const incoming = EDGES.filter(e => e.to === activeMod.id);
+      const outgoing = EDGES.filter(e => e.from === activeMod.id);
+
+      const pillKindClass = `pill-${activeMod.kind}`;
+
+      const inspector = document.getElementById('inspectorPanel');
+      inspector.innerHTML = `
+        <div>
+          <div class="insp-badges">
+            <span class="pill ${pillKindClass}">Step 0${activeMod.step} · ${activeMod.phase}</span>
+            <span class="pill pill-neutral">${activeMod.standard}</span>
+          </div>
+          <h2 class="insp-title">${activeMod.packageName} <span style="font-family:var(--font-sans);font-weight:500;color:var(--text-secondary);font-size:0.86em;">— ${activeMod.subtitle}</span></h2>
+          <p class="insp-role">${activeMod.runtimeRole}</p>
+          <div class="io-grid">
+            <div class="io-box">
+              <div class="io-label">Primary Inputs</div>
+              <div class="io-val">${activeMod.inputs}</div>
+            </div>
+            <div class="io-box">
+              <div class="io-label">Emitted Artifacts / Outputs</div>
+              <div class="io-val">${activeMod.outputs}</div>
+            </div>
+          </div>
+        </div>
+        <div class="contracts-card">
+          <div class="contracts-title">Active Edge Contracts (${incoming.length} In / ${outgoing.length} Out)</div>
+          <ul class="contract-list">
+            ${incoming.map(e => `
+              <li class="contract-item">
+                <span class="dir-tag dir-in">IN</span>
+                <span><strong>${modMap[e.from]}</strong> &rarr; ${e.label}</span>
+              </li>
+            `).join('')}
+            ${outgoing.map(e => `
+              <li class="contract-item">
+                <span class="dir-tag dir-out">OUT</span>
+                <span>${e.label} &rarr; <strong>${modMap[e.to]}</strong></span>
+              </li>
+            `).join('')}
+          </ul>
+          <div class="local-note"><strong>Local-First Guarantee:</strong> ${activeMod.localNote}</div>
+        </div>
+      `;
+    }
+
+    function selectModule(idx) {
+      state.selectedIdx = Math.max(0, Math.min(MODULES.length - 1, idx));
+      render();
+    }
+
+    function applyTheme(theme) {
+      state.theme = theme;
+      document.documentElement.setAttribute('data-theme', theme);
+      document.getElementById('themeBtn').textContent = theme === 'dark' ? 'Light' : 'Dark';
+    }
+
+    // Event wiring
+    document.querySelectorAll('.segmented button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.segmented button').forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-selected', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        state.lens = btn.dataset.lens;
+        if (state.lens === 'compile') state.selectedIdx = 0;
+        if (state.lens === 'runtime' && state.selectedIdx === 0) state.selectedIdx = 2;
+        render();
+      });
+    });
+
+    document.getElementById('prevBtn').addEventListener('click', () => selectModule(state.selectedIdx - 1));
+    document.getElementById('nextBtn').addEventListener('click', () => selectModule(state.selectedIdx + 1));
+    document.getElementById('themeBtn').addEventListener('click', () => {
+      applyTheme(state.theme === 'dark' ? 'light' : 'dark');
+    });
+    document.getElementById('fontSlider').addEventListener('input', e => {
+      document.documentElement.style.setProperty('--font-scale', e.target.value);
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'ArrowRight') selectModule(state.selectedIdx + 1);
+      if (e.key === 'ArrowLeft') selectModule(state.selectedIdx - 1);
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('theme') === 'dark') applyTheme('dark');
+
+    buildDiagram();
+    render();
+  </script>
+</body>
+</html>
