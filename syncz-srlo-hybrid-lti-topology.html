@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZ-SRLO — Hybrid Core + Thin LTI 1.3 Edge Adapter Topology</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.15);
+
+      --hex-stroke: rgba(212, 175, 55, 0.05);
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+      --violet: #6d28d9;
+      --violet-soft: rgba(109, 40, 217, 0.11);
+
+      --hex-stroke: rgba(154, 116, 17, 0.08);
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hex-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .title-group h1 {
+      font-size: 1.04rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Mode & Simulator Deck */
+    .control-deck {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .deck-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .deck-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 3px;
+      flex-wrap: wrap;
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 6px 11px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .seg-btn:hover { color: var(--text); }
+
+    .seg-btn.active[data-mode="full_hybrid"] {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.4);
+    }
+
+    .seg-btn.active[data-mode="pkm_sovereign"] {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      box-shadow: inset 0 0 0 1px rgba(46, 194, 126, 0.4);
+    }
+
+    .seg-btn.active[data-mode="lms_lti_hybrid"] {
+      background: var(--violet-soft);
+      color: var(--violet);
+      box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.4);
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 7px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .icon-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .icon-btn.emerald {
+      background: var(--emerald-soft);
+      border-color: rgba(46, 194, 126, 0.45);
+      color: var(--emerald);
+    }
+
+    .icon-btn.violet {
+      background: var(--violet-soft);
+      border-color: rgba(167, 139, 250, 0.45);
+      color: var(--violet);
+    }
+
+    /* Live Trace Banner */
+    .trace-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px 13px;
+      font-size: 0.77rem;
+    }
+
+    .trace-left {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .trace-pill {
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 5px;
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+
+    /* Metrics Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .metric-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 0.85rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .metric-sub {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.emerald { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+    .dot.violet { background: var(--violet); box-shadow: 0 0 8px var(--violet); }
+    .dot.amber { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .dot.gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+    .dot.blue { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+
+    /* Workspace */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.56fr) minmax(310px, 0.94fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .diagram-panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      box-shadow: var(--shadow);
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .svg-wrap {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    svg#hybridSvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .node-group.dimmed { opacity: 0.2; }
+    .node-group:hover .node-rect { filter: brightness(1.12); }
+    .node-group.selected .node-rect {
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.38));
+    }
+
+    .edge-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s ease;
+    }
+
+    .edge-path.dimmed,
+    .edge-label.dimmed { opacity: 0.14; }
+
+    .edge-flow {
+      fill: none;
+      stroke-dasharray: 7 9;
+      animation: flowDash 1.3s linear infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    .edge-flow.dimmed,
+    .packet.dimmed { opacity: 0; }
+
+    .paused .edge-flow { animation-play-state: paused; }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 32; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes pulseRing {
+      0% { stroke-opacity: 1; stroke-width: 3.5; }
+      100% { stroke-opacity: 0; stroke-width: 13; }
+    }
+
+    .flash-ring {
+      fill: none;
+      pointer-events: none;
+      animation: pulseRing 0.72s ease-out forwards;
+    }
+
+    /* Inspector */
+    .inspector {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .inspector-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 11px;
+    }
+
+    .inspector-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.69rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+    }
+
+    .inspector-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill.emerald { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46, 194, 126, 0.35); }
+    .pill.violet { background: var(--violet-soft); color: var(--violet); border-color: rgba(167, 139, 250, 0.35); }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: rgba(240, 168, 48, 0.35); }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); border-color: rgba(88, 166, 255, 0.35); }
+    .pill.gold { background: var(--gold-soft); color: var(--gold); border-color: rgba(212, 175, 55, 0.35); }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .inspector-section h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .inspector-section p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .code-box {
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+      color: var(--text);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.44;
+    }
+
+    .decouple-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-size: 0.77rem;
+      color: var(--text);
+    }
+
+    .inspector-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.71rem;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+      .metrics-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 580px) {
+      body { padding: 10px; }
+      .metrics-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.8" />
+            <text x="20" y="24" text-anchor="middle" fill="var(--gold)" font-size="12" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div class="title-group">
+          <h1>Hybrid Core + Thin LTI 1.3 Edge Adapter Topology</h1>
+          <p>One 100% LTI-agnostic SYNCZ-SRLO runtime serving both passive PKM Second Brains and institutional LMS gradebooks</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="icon-btn" id="animToggleBtn"><span>&#10074;&#10074;</span> Pause Flow</button>
+        <button class="icon-btn" id="themeToggleBtn"><span>&#9788;</span> Light</button>
+      </div>
+    </header>
+
+    <!-- View Mode & Interactive Trace Deck -->
+    <section class="control-deck" aria-label="Topology View and Trace Controls">
+      <div class="deck-group">
+        <span class="deck-label">Topology View:</span>
+        <div class="segmented" role="tablist" aria-label="View Mode">
+          <button class="seg-btn active" data-mode="full_hybrid" role="tab" aria-selected="true">Full Hybrid Topology</button>
+          <button class="seg-btn" data-mode="pkm_sovereign" role="tab" aria-selected="false">Sovereign PKM Path Only</button>
+          <button class="seg-btn" data-mode="lms_lti_hybrid" role="tab" aria-selected="false">Institutional LMS (LTI 1.3) Path</button>
+        </div>
+      </div>
+
+      <div class="deck-group">
+        <span class="deck-label">Simulate Flow:</span>
+        <button class="icon-btn emerald" id="simPkmBtn">&#9654; PKM Direct Launch</button>
+        <button class="icon-btn violet" id="simLmsBtn">&#9654; LMS LTI Launch + AGS Passback</button>
+      </div>
+    </section>
+
+    <!-- Live Step Trace Banner -->
+    <div class="trace-banner" aria-live="polite">
+      <div class="trace-left">
+        <span class="trace-pill" id="traceBadge">HYBRID READY</span>
+        <span id="traceText" style="color: var(--text-muted);">Select a topology view or click a Simulate button to trace launch handshakes and asynchronous AGS 2.0 gradebook passback.</span>
+      </div>
+      <span id="tracePhase" style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--gold);">Phase 1 Core + Phase 2 LTI Edge</span>
+    </div>
+
+    <!-- Capability Comparison Strip -->
+    <section class="metrics-strip" aria-label="Mode Capability Summary">
+      <div class="metric-card">
+        <span class="metric-label">Host Registration</span>
+        <div class="metric-value" id="mRegVal"><span class="dot gold"></span>Zero (PKM) / OIDC (LMS)</div>
+        <span class="metric-sub" id="mRegSub">LTI ceremony isolated strictly at lti.synczines.org</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Offline &amp; Local-First</span>
+        <div class="metric-value" id="mOffVal"><span class="dot emerald"></span>Native IndexedDB Outbox</div>
+        <span class="metric-sub" id="mOffSub">Full offline playback in PKM; resilient reconnect in LMS</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Gradebook Passback</span>
+        <div class="metric-value" id="mAgsVal"><span class="dot violet"></span>Async LTI AGS 2.0 Worker</div>
+        <span class="metric-sub" id="mAgsSub">Decoupled JetStream consumer posts verified scores</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">SRLO Runtime Codebase</span>
+        <div class="metric-value" id="mCodeVal"><span class="dot blue"></span>1 Unified LTI-Agnostic Player</div>
+        <span class="metric-sub" id="mCodeSub">Zero player rewrites when adding Canvas or Moodle</span>
+      </div>
+    </section>
+
+    <!-- Main Workspace -->
+    <main class="workspace">
+      <!-- Interactive SVG Topology -->
+      <section class="diagram-panel" aria-label="Hybrid Architecture Diagram">
+        <div class="legend">
+          <span class="legend-item"><span class="legend-swatch" style="background: var(--emerald);"></span>Sovereign PKM Host</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: var(--violet);"></span>Institutional LMS &amp; Thin LTI Edge</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: var(--gold);"></span>Unified LTI-Agnostic SRLO Core</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: var(--blue);"></span>NATS JetStream &amp; SYNCZINE</span>
+          <span class="legend-item"><span class="legend-swatch" style="background: var(--amber);"></span>Async NATS-to-AGS Bridge</span>
+        </div>
+
+        <div class="svg-wrap">
+          <svg id="hybridSvg" viewBox="0 0 780 562" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hybrid SYNCZ-SRLO Core and Thin LTI 1.3 Edge Adapter Topology">
+            <defs>
+              <pattern id="hexPattern" width="48" height="41.57" patternUnits="userSpaceOnUse">
+                <path d="M24 0 L48 13.85 L48 27.71 L24 41.57 L0 27.71 L0 13.85 Z" fill="none" stroke="var(--hex-stroke)" stroke-width="1" />
+              </pattern>
+
+              <marker id="arrEmerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2ec27e" />
+              </marker>
+              <marker id="arrViolet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+              </marker>
+              <marker id="arrGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37" />
+              </marker>
+              <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#58a6ff" />
+              </marker>
+              <marker id="arrAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f0a830" />
+              </marker>
+
+              <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <rect width="780" height="562" fill="url(#hexPattern)" />
+
+            <!-- Zone Backdrops -->
+            <!-- Top Left: Sovereign Open Web -->
+            <rect x="14" y="12" width="322" height="114" rx="10" fill="rgba(46, 194, 126, 0.045)" stroke="rgba(46, 194, 126, 0.25)" stroke-width="1" />
+            <text x="26" y="27" fill="var(--emerald)" font-size="9.2" font-weight="800" letter-spacing="0.8">SOVEREIGN / OPEN WEB HOSTS</text>
+
+            <!-- Top Right: Institutional LMS -->
+            <rect x="382" y="12" width="384" height="114" rx="10" fill="rgba(167, 139, 250, 0.045)" stroke="rgba(167, 139, 250, 0.28)" stroke-width="1" />
+            <text x="394" y="27" fill="var(--violet)" font-size="9.2" font-weight="800" letter-spacing="0.8">INSTITUTIONAL LMS ECOSYSTEM (LTI 1.3)</text>
+
+            <!-- Unified Core Zone (Bottom Left) -->
+            <rect x="14" y="274" width="464" height="276" rx="10" fill="rgba(212, 175, 55, 0.04)" stroke="rgba(212, 175, 55, 0.28)" stroke-width="1" />
+            <text x="26" y="289" fill="var(--gold)" font-size="9.2" font-weight="800" letter-spacing="0.8">UNIFIED CORE — 100% LTI-AGNOSTIC RUNTIME &amp; EVENT BUS</text>
+
+            <!-- EDGES -->
+            <!-- 1. PKM Host -> SRLO Runtime -->
+            <path id="e-pkm-srlo" class="edge-path" d="M 171 112 L 171 296" stroke="var(--emerald)" stroke-width="2.4" marker-end="url(#arrEmerald)" />
+            <path id="f-pkm-srlo" class="edge-flow" d="M 171 112 L 171 294" stroke="var(--emerald)" stroke-width="2.4" />
+            <g id="lbl-pkm-srlo" class="edge-label">
+              <rect x="44" y="182" width="254" height="32" rx="6" fill="var(--bg-canvas)" stroke="rgba(46, 194, 126, 0.3)" stroke-width="1" />
+              <text x="171" y="196" text-anchor="middle" fill="var(--emerald)" font-size="9.1" font-weight="700">Direct Iframe Embed (Zero Host Code)</text>
+              <text x="171" y="208" text-anchor="middle" fill="var(--text-muted)" font-size="8.2">URL #code / Local ECDSA Device Key</text>
+            </g>
+
+            <!-- 2. LMS Host -> Thin LTI Edge Adapter -->
+            <path id="e-lms-lti" class="edge-path" d="M 538 112 L 538 158" stroke="var(--violet)" stroke-width="2.4" marker-end="url(#arrViolet)" />
+            <path id="f-lms-lti" class="edge-flow" d="M 538 112 L 538 156" stroke="var(--violet)" stroke-width="2.4" />
+            <g id="lbl-lms-lti" class="edge-label">
+              <rect x="424" y="126" width="228" height="19" rx="4" fill="var(--bg-canvas)" />
+              <text x="538" y="139" text-anchor="middle" fill="var(--violet)" font-size="9" font-weight="700">LTI 1.3 Signed OIDC JWT Launch</text>
+            </g>
+
+            <!-- 3. Thin LTI Edge Adapter -> SRLO Runtime -->
+            <path id="e-lti-srlo" class="edge-path" d="M 538 242 L 538 265 L 354 265 L 354 296" stroke="var(--gold)" stroke-width="2.4" marker-end="url(#arrGold)" />
+            <path id="f-lti-srlo" class="edge-flow" d="M 538 242 L 538 265 L 354 265 L 354 294" stroke="var(--gold)" stroke-width="2.4" />
+            <g id="lbl-lti-srlo" class="edge-label">
+              <rect x="336" y="254" width="234" height="19" rx="4" fill="var(--bg-canvas)" />
+              <text x="453" y="267" text-anchor="middle" fill="var(--gold)" font-size="9" font-weight="700">Redirect w/ Standard Ephemeral #code</text>
+            </g>
+
+            <!-- 4. SRLO Runtime -> NATS Core -->
+            <path id="e-srlo-nats" class="edge-path" d="M 244 384 L 244 442" stroke="var(--blue)" stroke-width="2.4" marker-end="url(#arrBlue)" />
+            <path id="f-srlo-nats" class="edge-flow" d="M 244 384 L 244 440" stroke="var(--blue)" stroke-width="2.4" />
+            <g id="lbl-srlo-nats" class="edge-label">
+              <rect x="116" y="403" width="256" height="19" rx="4" fill="var(--bg-canvas)" />
+              <text x="244" y="416" text-anchor="middle" fill="var(--blue)" font-size="9.1" font-weight="700">xAPI 2.0 Stream (nats.ws / HTTPS Fallback)</text>
+            </g>
+
+            <!-- 5. NATS Core -> AGS Bridge Worker -->
+            <path id="e-nats-ags" class="edge-path" d="M 464 491 L 510 491" stroke="var(--amber)" stroke-width="2.4" marker-end="url(#arrAmber)" />
+            <path id="f-nats-ags" class="edge-flow" d="M 464 491 L 508 491" stroke="var(--amber)" stroke-width="2.4" />
+            <g id="lbl-nats-ags" class="edge-label">
+              <rect x="467" y="458" width="46" height="24" rx="4" fill="var(--bg-canvas)" />
+              <text x="490" y="469" text-anchor="middle" fill="var(--amber)" font-size="8" font-weight="800">Sub</text>
+              <text x="490" y="479" text-anchor="middle" fill="var(--text-muted)" font-size="7.4">Mastery</text>
+            </g>
+
+            <!-- 6. AGS Bridge Worker -> LMS Host (Async Return Highway) -->
+            <path id="e-ags-lms" class="edge-path" d="M 720 442 L 720 114" stroke="var(--amber)" stroke-width="2.4" marker-end="url(#arrAmber)" />
+            <path id="f-ags-lms" class="edge-flow" d="M 720 442 L 720 116" stroke="var(--amber)" stroke-width="2.4" />
+            <g id="lbl-ags-lms" class="edge-label">
+              <rect x="510" y="316" width="194" height="44" rx="6" fill="var(--bg-canvas)" stroke="rgba(240, 168, 48, 0.35)" stroke-width="1" />
+              <text x="607" y="333" text-anchor="middle" fill="var(--amber)" font-size="9.2" font-weight="800">Async Gradebook Passback</text>
+              <text x="607" y="346" text-anchor="middle" fill="var(--text-muted)" font-size="8.2">OAuth2 Client Token &rarr; LTI AGS 2.0</text>
+              <line x1="704" y1="338" x2="720" y2="338" stroke="var(--amber)" stroke-width="1.2" stroke-dasharray="3 2" />
+            </g>
+
+            <!-- Animated Packets -->
+            <circle id="p-pkm" class="packet" r="4.1" fill="#2ec27e" filter="url(#glow)">
+              <animateMotion dur="2.0s" repeatCount="indefinite" path="M 171 112 L 171 296" />
+            </circle>
+            <circle id="p-lms1" class="packet" r="4.1" fill="#a78bfa" filter="url(#glow)">
+              <animateMotion dur="1.5s" repeatCount="indefinite" path="M 538 112 L 538 158" />
+            </circle>
+            <circle id="p-lms2" class="packet" r="4.1" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="2.1s" repeatCount="indefinite" path="M 538 242 L 538 265 L 354 265 L 354 296" />
+            </circle>
+            <circle id="p-core" class="packet" r="4.1" fill="#58a6ff" filter="url(#glow)">
+              <animateMotion dur="1.5s" repeatCount="indefinite" path="M 244 384 L 244 442" />
+            </circle>
+            <circle id="p-ags1" class="packet" r="4" fill="#f0a830" filter="url(#glow)">
+              <animateMotion dur="1.3s" repeatCount="indefinite" path="M 464 491 L 510 491" />
+            </circle>
+            <circle id="p-ags2" class="packet" r="4.2" fill="#f0a830" filter="url(#glow)">
+              <animateMotion dur="2.4s" repeatCount="indefinite" path="M 720 442 L 720 114" />
+            </circle>
+
+            <!-- Flash FX Layer -->
+            <g id="fxLayer"></g>
+
+            <!-- NODES -->
+            <!-- 1. Passive PKM Host -->
+            <g class="node-group selected" data-node="pkm_host" tabindex="0" role="button" aria-label="Inspect Passive PKM Host">
+              <rect class="node-rect" x="24" y="36" width="298" height="76" rx="9" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2" />
+              <rect x="38" y="45" width="118" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="97" y="56" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">PASSIVE HOST</text>
+              <rect x="210" y="45" width="98" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="259" y="56" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">OFFLINE SAFE</text>
+              <text x="38" y="81" fill="var(--text)" font-size="12.5" font-weight="700">PKM Second Brain Host</text>
+              <text x="38" y="97" fill="var(--text-muted)" font-size="9.4">AFFiNE • Obsidian • Notion • Web</text>
+            </g>
+
+            <!-- 2. Institutional LMS Host -->
+            <g class="node-group" data-node="lms_host" tabindex="0" role="button" aria-label="Inspect Institutional LMS Host">
+              <rect class="node-rect" x="394" y="36" width="360" height="76" rx="9" fill="var(--bg-card)" stroke="var(--violet)" stroke-width="2" />
+              <rect x="408" y="45" width="124" height="16" rx="4" fill="var(--violet-soft)" />
+              <text x="470" y="56" text-anchor="middle" fill="var(--violet)" font-size="8.4" font-weight="800">LMS IDP &amp; GRADEBOOK</text>
+              <rect x="634" y="45" width="106" height="16" rx="4" fill="var(--amber-soft)" />
+              <text x="687" y="56" text-anchor="middle" fill="var(--amber)" font-size="8.4" font-weight="800">AGS 2.0 + DL 2.0</text>
+              <text x="408" y="81" fill="var(--text)" font-size="12.5" font-weight="700">Institutional LMS (Canvas / Moodle)</text>
+              <text x="408" y="97" fill="var(--text-muted)" font-size="9.4">Signed OIDC Launches • Roster Sync • Grade Columns</text>
+            </g>
+
+            <!-- 3. Thin LTI 1.3 Edge Adapter -->
+            <g class="node-group" data-node="lti_adapter" tabindex="0" role="button" aria-label="Inspect Thin LTI 1.3 Edge Adapter">
+              <rect class="node-rect" x="394" y="160" width="290" height="82" rx="9" fill="var(--bg-card)" stroke="var(--violet)" stroke-width="2" />
+              <rect x="408" y="170" width="136" height="16" rx="4" fill="var(--violet-soft)" />
+              <text x="476" y="181" text-anchor="middle" fill="var(--violet)" font-size="8.4" font-weight="800">OPTIONAL EDGE BRIDGE</text>
+              <rect x="574" y="170" width="96" height="16" rx="4" fill="var(--gold-soft)" />
+              <text x="622" y="181" text-anchor="middle" fill="var(--gold)" font-size="8.4" font-weight="800">lti.synczines</text>
+              <text x="408" y="207" fill="var(--text)" font-size="12.2" font-weight="700">Thin LTI 1.3 Edge Adapter</text>
+              <text x="408" y="222" fill="var(--text-muted)" font-size="9.1">JWKS Verify • lti.put_data/get_data</text>
+              <text x="408" y="234" fill="var(--text-muted)" font-size="9.1">Maps LMS sub &harr; SYNCZ actorId</text>
+            </g>
+
+            <!-- 4. Unified SYNCZ-SRLO Runtime -->
+            <g class="node-group" data-node="srlo_runtime" tabindex="0" role="button" aria-label="Inspect Unified SYNCZ-SRLO Runtime">
+              <rect class="node-rect" x="24" y="298" width="440" height="86" rx="9" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="2.2" />
+              <rect x="38" y="308" width="152" height="16" rx="4" fill="var(--gold-soft)" />
+              <text x="114" y="319" text-anchor="middle" fill="var(--gold)" font-size="8.5" font-weight="800">100% LTI-AGNOSTIC CORE</text>
+              <rect x="316" y="308" width="134" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="383" y="319" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">play.synczines.org</text>
+              <text x="38" y="346" fill="var(--text)" font-size="13.2" font-weight="700">Unified SYNCZ-SRLO Runtime (Single Codebase)</text>
+              <text x="38" y="362" fill="var(--text-muted)" font-size="9.5">Fragment Scrub (#code) • Dual-Mode Resize • IndexedDB xAPI Outbox</text>
+              <text x="38" y="375" fill="var(--gold)" font-size="8.8" font-weight="700">Never imports LTI SDKs — speaks only the Embed Contract</text>
+            </g>
+
+            <!-- 5. NATS JetStream + Official SYNCZINE -->
+            <g class="node-group" data-node="nats_core" tabindex="0" role="button" aria-label="Inspect NATS JetStream and SYNCZINE Core">
+              <rect class="node-rect" x="24" y="444" width="440" height="92" rx="9" fill="var(--bg-card)" stroke="var(--blue)" stroke-width="2" />
+              <rect x="38" y="454" width="142" height="16" rx="4" fill="var(--blue-soft)" />
+              <text x="109" y="465" text-anchor="middle" fill="var(--blue)" font-size="8.4" font-weight="800">AUTHORITATIVE BUS</text>
+              <rect x="308" y="454" width="142" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="379" y="465" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">EXACTLY-ONCE DEDUP</text>
+              <text x="38" y="491" fill="var(--text)" font-size="13" font-weight="700">NATS.io JetStream + Official SYNCZINE Core</text>
+              <text x="38" y="507" fill="var(--text-muted)" font-size="9.4">Single Source of Truth • UUIDv7 Nats-Msg-Id • LRS Archive</text>
+              <text x="38" y="523" fill="var(--blue)" font-size="8.8" font-weight="700">Verifies Mastery Evidence &rarr; Emits Sovereign Credentials</text>
+            </g>
+
+            <!-- 6. NATS-to-LTI AGS Bridge Worker -->
+            <g class="node-group" data-node="ags_worker" tabindex="0" role="button" aria-label="Inspect NATS-to-LTI AGS Bridge Worker">
+              <rect class="node-rect" x="512" y="444" width="242" height="92" rx="9" fill="var(--bg-card)" stroke="var(--amber)" stroke-width="2" />
+              <rect x="526" y="454" width="148" height="16" rx="4" fill="var(--amber-soft)" />
+              <text x="600" y="465" text-anchor="middle" fill="var(--amber)" font-size="8.4" font-weight="800">ASYNC BRIDGE WORKER</text>
+              <text x="526" y="491" fill="var(--text)" font-size="12.2" font-weight="700">NATS-to-AGS Worker</text>
+              <text x="526" y="507" fill="var(--text-muted)" font-size="9.1">Subscribes to Verified Mastery</text>
+              <text x="526" y="523" fill="var(--amber)" font-size="8.8" font-weight="700">Decoupled from Browser Session</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Inspector Panel -->
+      <aside class="inspector" aria-live="polite">
+        <div class="inspector-header">
+          <div class="inspector-eyebrow">
+            <span id="insZone">SOVEREIGN / OPEN WEB</span>
+            <span id="insModeBadge">ACTIVE IN PKM &amp; HYBRID</span>
+          </div>
+          <h2 class="inspector-title" id="insTitle">Passive PKM Host</h2>
+          <div class="pill-row" id="insPills"></div>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Architectural Role</h3>
+          <p id="insDesc"></p>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Protocol Contract</h3>
+          <div class="code-box" id="insCode"></div>
+        </div>
+
+        <div class="decouple-box" id="insDecouple"></div>
+
+        <div class="inspector-footer">
+          <span>Click any node to inspect trust boundary</span>
+          <span>Hybrid Core + Thin LTI</span>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const NODES = {
+        pkm_host: {
+          title: "Passive PKM Host (AFFiNE / Obsidian / Notion)",
+          zone: "Sovereign / Open Web",
+          modeBadge: "ACTIVE IN PKM & HYBRID",
+          pills: [
+            { txt: "Zero Host Code", cls: "emerald" },
+            { txt: "Offline Local-First", cls: "gold" }
+          ],
+          desc: "Untrusted, unregistered learner workspace. Requires zero OIDC registration, zero institutional admin approval, and zero vendor plugins. Launches the SRLO directly via standard iframe or embed URL.",
+          code: `Host Embed:  https://play.synczines.org/embed/v1/sz_w2/srlo_04\nTrust Model: Learner-Sovereign (Untrusted Host Viewport)\nIdentity:    ECDSA P-256 device key in IndexedDB (Zero Cookies)`,
+          decouple: "Why it stays decoupled: Keeping PKM hosts completely passive ensures AFFiNE, Obsidian, or Notion updates never break SYNCZINES."
+        },
+        lms_host: {
+          title: "Institutional LMS (Canvas / Moodle / Blackboard)",
+          zone: "Institutional LMS Ecosystem",
+          modeBadge: "ACTIVE IN LMS & HYBRID",
+          pills: [
+            { txt: "OIDC IdP", cls: "violet" },
+            { txt: "AGS 2.0 Gradebook", cls: "amber" }
+          ],
+          desc: "Pre-registered institutional platform acting as Identity Provider (IdP) and authoritative course gradebook. Initiates signed LTI 1.3 JWT launches, embeds activities via Deep Linking 2.0, and receives summative scores via AGS 2.0.",
+          code: `Launch:     POST lti.synczines.org/launch (Signed LTI 1.3 JWT)\nClaims:     iss, sub, deployment_id, context_id, lineitem URL\nServices:   Deep Linking 2.0 | AGS 2.0 | Optional NRPS 2.0`,
+          decouple: "Why it stays decoupled: Institutional OIDC ceremony and gradebook formats never leak into the portable SYNCZ-SRLO player."
+        },
+        lti_adapter: {
+          title: "Thin LTI 1.3 Edge Adapter (lti.synczines.org)",
+          zone: "Optional Edge Bridge",
+          modeBadge: "PHASE 2 EDGE SERVICE",
+          pills: [
+            { txt: "JWKS + OIDC", cls: "violet" },
+            { txt: "lti.put_data / get_data", cls: "gold" }
+          ],
+          desc: "Terminates 100% of LTI 1.3 Advantage complexity at the network edge. Validates LMS JWT signatures, uses LTI postMessage Storage to beat third-party cookie blocking, maps (iss + sub) to a SYNCZINE actorId, stores AGS callback metadata, and redirects to the standard SRLO player with an ephemeral #code.",
+          code: `1. Verify LMS JWT against Platform JWKS\n2. Map (iss, sub, context_id) <-> actorId + save lineitem\n3. Redirect -> https://play.synczines.org/embed/v1/...#code={5m_ttl}`,
+          decouple: "Why it stays decoupled: Can be deployed in Phase 2 using ltijs or a clean microservice without modifying a single line of existing SRLO content."
+        },
+        srlo_runtime: {
+          title: "Unified SYNCZ-SRLO Runtime (play.synczines.org)",
+          zone: "Core Polymorphic Runtime",
+          modeBadge: "ACTIVE IN ALL MODES",
+          pills: [
+            { txt: "100% LTI-Agnostic", cls: "gold" },
+            { txt: "Single Codebase", cls: "emerald" }
+          ],
+          desc: "One unified interactive player serving every learner regardless of whether they launched from Obsidian, AFFiNE, Notion, Canvas, or Moodle. Speaks exclusively the Host-Agnostic Embed Contract: scrubs #code on tick 0, runs dual-mode postMessage resize, and persists xAPI 2.0 statements to IndexedDB.",
+          code: `Bootstrap:  Scrub #code -> POST /auth/exchange -> Scoped NATS JWT\nTelemetry:  UUIDv7 xAPI 2.0 -> IndexedDB Outbox -> nats.ws / HTTPS\nLTI Code:   0 bytes (Player has zero knowledge of Canvas/Moodle)`,
+          decouple: "Why it stays decoupled: Eliminates the dual-implementation anti-pattern so institutional and sovereign learners share identical learning records."
+        },
+        nats_core: {
+          title: "NATS.io JetStream + Official SYNCZINE Core",
+          zone: "Authoritative Event Bus",
+          modeBadge: "ACTIVE IN ALL MODES",
+          pills: [
+            { txt: "Nats-Msg-Id Dedup", cls: "blue" },
+            { txt: "Canonical LRS", cls: "emerald" }
+          ],
+          desc: "Single durable source of truth for all telemetry across every host environment. Enforces exactly-once ingestion via Nats-Msg-Id, updates real-time SYNCZINE progress, archives xAPI records, and validates summative mastery evidence before emitting verifiable credentials.",
+          code: `Subject:    syncz.v1.{synczineId}.{srloId}.{actorId}.xapi\nMastery:    syncz.v1.{synczineId}.{srloId}.{actorId}.verified\nDedupe:     24h JetStream window keyed by xAPI Statement UUIDv7`,
+          decouple: "Why it stays decoupled: Downstream consumers (analytics, credentials, LMS gradebook bridge) fan out cleanly without coupling to the frontend."
+        },
+        ags_worker: {
+          title: "NATS-to-LTI AGS Bridge Worker",
+          zone: "Async Gradebook Passback",
+          modeBadge: "ACTIVE IN LMS & HYBRID",
+          pills: [
+            { txt: "JetStream Consumer", cls: "amber" },
+            { txt: "OAuth2 -> AGS 2.0", cls: "violet" }
+          ],
+          desc: "Stateless backend worker subscribing to verified mastery events on NATS JetStream. When an event corresponds to an active institutional LTI bridge, it requests an OAuth 2.0 client-credentials token from the LMS and posts the summative score asynchronously—even if the student closed their browser.",
+          code: `POST {lineitem}/scores (application/vnd.ims.lis.v1.score+json)\n{\n  "userId": "lms_sub_4821", "scoreGiven": 94, "scoreMaximum": 100,\n  "activityProgress": "Completed", "gradingProgress": "FullyGraded"\n}`,
+          decouple: "Why it stays decoupled: Browser drops, proxy blocks, or LMS downtime never lose grades—JetStream retries passback with backoff until acknowledged."
+        }
+      };
+
+      const MODES = {
+        full_hybrid: {
+          reg: { cls: "gold", val: "Zero (PKM) / OIDC (LMS)", sub: "LTI ceremony isolated strictly at lti.synczines.org" },
+          off: { cls: "emerald", val: "Native IndexedDB Outbox", sub: "Full offline playback in PKM; resilient reconnect in LMS" },
+          ags: { cls: "violet", val: "Async LTI AGS 2.0 Worker", sub: "Decoupled JetStream consumer posts verified scores" },
+          code: { cls: "blue", val: "1 Unified LTI-Agnostic Player", sub: "Zero player rewrites when adding Canvas or Moodle" }
+        },
+        pkm_sovereign: {
+          reg: { cls: "emerald", val: "Zero Admin Registration", sub: "Paste URL / iframe in AFFiNE, Obsidian, or Notion" },
+          off: { cls: "emerald", val: "100% Local-First Offline", sub: "IndexedDB outbox + ECDSA device key survive disconnects" },
+          ags: { cls: "amber", val: "Not Needed (Sovereign Only)", sub: "Progress writes directly to SYNCZINE & Learner Vault" },
+          code: { cls: "blue", val: "Phase 1 Core Contract Only", sub: "Ship immediately without standing up LTI services" }
+        },
+        lms_lti_hybrid: {
+          reg: { cls: "violet", val: "LTI 1.3 OIDC + JWKS", sub: "Registered once per university; Deep Linking 2.0 picker" },
+          off: { cls: "amber", val: "Online Launch + Resilient Sync", sub: "OIDC requires online launch; xAPI buffers network blips" },
+          ags: { cls: "violet", val: "Automated Gradebook Sync", sub: "NATS-to-AGS worker pushes FullyGraded scores reliably" },
+          code: { cls: "blue", val: "Same LTI-Agnostic Runtime", sub: "Edge adapter translates LMS launch into standard #code" }
+        }
+      };
+
+      let mode = "full_hybrid";
+      let selectedNode = "pkm_host";
+      let isPaused = false;
+      let tracing = false;
+
+      const appRoot = document.getElementById("appRoot");
+      const modeBtns = document.querySelectorAll("[data-mode]");
+      const nodeGroups = document.querySelectorAll(".node-group");
+      const simPkmBtn = document.getElementById("simPkmBtn");
+      const simLmsBtn = document.getElementById("simLmsBtn");
+      const animBtn = document.getElementById("animToggleBtn");
+      const themeBtn = document.getElementById("themeToggleBtn");
+
+      function pulseNode(nodeId, color) {
+        const g = document.querySelector(`.node-group[data-node="${nodeId}"]`);
+        if (!g) return;
+        const rect = g.querySelector(".node-rect");
+        const fx = document.getElementById("fxLayer");
+        const ring = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        ring.setAttribute("x", rect.getAttribute("x"));
+        ring.setAttribute("y", rect.getAttribute("y"));
+        ring.setAttribute("width", rect.getAttribute("width"));
+        ring.setAttribute("height", rect.getAttribute("height"));
+        ring.setAttribute("rx", "9");
+        ring.setAttribute("stroke", color);
+        ring.setAttribute("class", "flash-ring");
+        fx.appendChild(ring);
+        setTimeout(() => ring.remove(), 750);
+      }
+
+      function renderInspector(nodeId) {
+        selectedNode = nodeId;
+        const n = NODES[nodeId];
+        nodeGroups.forEach((g) => g.classList.toggle("selected", g.dataset.node === nodeId));
+
+        document.getElementById("insZone").textContent = n.zone.toUpperCase();
+        document.getElementById("insModeBadge").textContent = n.modeBadge;
+        document.getElementById("insTitle").textContent = n.title;
+        document.getElementById("insDesc").textContent = n.desc;
+        document.getElementById("insCode").textContent = n.code;
+        document.getElementById("insDecouple").textContent = n.decouple;
+        document.getElementById("insPills").innerHTML = n.pills
+          .map((p) => `<span class="pill ${p.cls}">${p.txt}</span>`)
+          .join("");
+      }
+
+      function setStates(ids, active) {
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.toggle("dimmed", !active);
+        });
+      }
+
+      function updateView() {
+        const pkmActive = mode === "full_hybrid" || mode === "pkm_sovereign";
+        const lmsActive = mode === "full_hybrid" || mode === "lms_lti_hybrid";
+
+        nodeGroups.forEach((g) => {
+          const id = g.dataset.node;
+          let active = true;
+          if (id === "pkm_host") active = pkmActive;
+          if (id === "lms_host" || id === "lti_adapter" || id === "ags_worker") active = lmsActive;
+          g.classList.toggle("dimmed", !active);
+        });
+
+        setStates(["e-pkm-srlo", "f-pkm-srlo", "lbl-pkm-srlo", "p-pkm"], pkmActive);
+        setStates(
+          [
+            "e-lms-lti", "f-lms-lti", "lbl-lms-lti", "p-lms1",
+            "e-lti-srlo", "f-lti-srlo", "lbl-lti-srlo", "p-lms2",
+            "e-nats-ags", "f-nats-ags", "lbl-nats-ags", "p-ags1",
+            "e-ags-lms", "f-ags-lms", "lbl-ags-lms", "p-ags2"
+          ],
+          lmsActive
+        );
+        setStates(["e-srlo-nats", "f-srlo-nats", "lbl-srlo-nats", "p-core"], true);
+
+        const m = MODES[mode];
+        document.getElementById("mRegVal").innerHTML = `<span class="dot ${m.reg.cls}"></span>${m.reg.val}`;
+        document.getElementById("mRegSub").textContent = m.reg.sub;
+        document.getElementById("mOffVal").innerHTML = `<span class="dot ${m.off.cls}"></span>${m.off.val}`;
+        document.getElementById("mOffSub").textContent = m.off.sub;
+        document.getElementById("mAgsVal").innerHTML = `<span class="dot ${m.ags.cls}"></span>${m.ags.val}`;
+        document.getElementById("mAgsSub").textContent = m.ags.sub;
+        document.getElementById("mCodeVal").innerHTML = `<span class="dot ${m.code.cls}"></span>${m.code.val}`;
+        document.getElementById("mCodeSub").textContent = m.code.sub;
+      }
+
+      function setMode(nextMode) {
+        mode = nextMode;
+        modeBtns.forEach((b) => {
+          const active = b.dataset.mode === nextMode;
+          b.classList.toggle("active", active);
+          b.setAttribute("aria-selected", String(active));
+        });
+        updateView();
+      }
+
+      function runTrace(steps, badgeLabel, phaseLabel) {
+        if (tracing) return;
+        tracing = true;
+        simPkmBtn.disabled = true;
+        simLmsBtn.disabled = true;
+
+        const badge = document.getElementById("traceBadge");
+        const text = document.getElementById("traceText");
+        const phase = document.getElementById("tracePhase");
+        badge.textContent = badgeLabel;
+        phase.textContent = phaseLabel;
+
+        steps.forEach((step, i) => {
+          setTimeout(() => {
+            renderInspector(step.node);
+            pulseNode(step.node, step.color);
+            text.textContent = step.msg;
+            if (i === steps.length - 1) {
+              setTimeout(() => {
+                tracing = false;
+                simPkmBtn.disabled = false;
+                simLmsBtn.disabled = false;
+              }, 700);
+            }
+          }, i * 900);
+        });
+      }
+
+      simPkmBtn.addEventListener("click", () => {
+        setMode("pkm_sovereign");
+        runTrace(
+          [
+            { node: "pkm_host", color: "#2ec27e", msg: "1/3: Learner opens embedded SYNCZ-SRLO inside AFFiNE / Obsidian (Zero LTI ceremony)." },
+            { node: "srlo_runtime", color: "#d4af37", msg: "2/3: play.synczines.org scrubs #code, signs challenge with local ECDSA key, buffers xAPI." },
+            { node: "nats_core", color: "#58a6ff", msg: "3/3: NATS JetStream deduplicates UUIDv7 xAPI & updates Sovereign SYNCZINE progress!" }
+          ],
+          "PKM TRACE",
+          "Sovereign Path (3 Hops)"
+        );
+      });
+
+      simLmsBtn.addEventListener("click", () => {
+        setMode("lms_lti_hybrid");
+        runTrace(
+          [
+            { node: "lms_host", color: "#a78bfa", msg: "1/6: Student clicks module in Canvas / Moodle -> LMS posts signed LTI 1.3 OIDC JWT." },
+            { node: "lti_adapter", color: "#a78bfa", msg: "2/6: lti.synczines.org verifies JWKS, saves AGS lineitem, redirects with ephemeral #code." },
+            { node: "srlo_runtime", color: "#d4af37", msg: "3/6: Same LTI-agnostic SRLO runs identically & emits xAPI 2.0 mastery statements." },
+            { node: "nats_core", color: "#58a6ff", msg: "4/6: NATS JetStream verifies evidence & publishes verified mastery event." },
+            { node: "ags_worker", color: "#f0a830", msg: "5/6: Decoupled AGS Bridge Worker mints OAuth2 token & submits FullyGraded 94/100." },
+            { node: "lms_host", color: "#2ec27e", msg: "6/6: Canvas / Moodle gradebook updates automatically — learner keeps full sovereign record!" }
+          ],
+          "LMS HYBRID TRACE",
+          "Full LTI + Async AGS Loop (6 Hops)"
+        );
+      });
+
+      modeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setMode(btn.dataset.mode);
+          if (mode === "pkm_sovereign" && ["lms_host", "lti_adapter", "ags_worker"].includes(selectedNode)) {
+            renderInspector("pkm_host");
+          } else if (mode === "lms_lti_hybrid" && selectedNode === "pkm_host") {
+            renderInspector("lti_adapter");
+          }
+          document.getElementById("traceBadge").textContent = "MODE UPDATED";
+          document.getElementById("traceText").textContent =
+            mode === "full_hybrid"
+              ? "Showing both Sovereign PKM and Institutional LMS LTI 1.3 paths converging on one unified SYNCZ-SRLO runtime."
+              : mode === "pkm_sovereign"
+              ? "Phase 1 Sovereign PKM path active — zero LMS registration required, 100% local-first offline capable."
+              : "Phase 2 Institutional LTI 1.3 path active — Thin Edge Adapter and Async AGS Worker isolated from core player.";
+        });
+      });
+
+      nodeGroups.forEach((g) => {
+        g.addEventListener("click", () => renderInspector(g.dataset.node));
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            renderInspector(g.dataset.node);
+          }
+        });
+      });
+
+      animBtn.addEventListener("click", () => {
+        isPaused = !isPaused;
+        appRoot.classList.toggle("paused", isPaused);
+        const svg = document.getElementById("hybridSvg");
+        if (isPaused) {
+          svg.pauseAnimations();
+          animBtn.innerHTML = `<span>&#9654;</span> Resume Flow`;
+        } else {
+          svg.unpauseAnimations();
+          animBtn.innerHTML = `<span>&#10074;&#10074;</span> Pause Flow`;
+        }
+      });
+
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light` : `<span>&#9790;</span> Dark`;
+      });
+
+      renderInspector("pkm_host");
+      updateView();
+    })();
+  </script>
+</body>
+</html>
