@@ -1,0 +1,1550 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVRÆGIS / SOVRÆG LABS — Capitalizing the Cost of Trust & Sizing Living Lab 0</title>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --scale: 1;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --transition: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* DARK MODE: Charcoal, Deep Emerald, Brushed Gold */
+  [data-theme="dark"] {
+    --bg: #0c1112;
+    --bg-elev: #121a1c;
+    --bg-card: #162124;
+    --bg-card-hover: #1c2a2e;
+    --bg-subtle: #0f1618;
+    --border: rgba(212, 175, 95, 0.22);
+    --border-strong: rgba(212, 175, 95, 0.48);
+    --text: #edf2f0;
+    --text-muted: #9eb2ad;
+    --text-faint: #6c827d;
+    --gold: #d9b25f;
+    --gold-bright: #f0cf82;
+    --gold-soft: rgba(217, 178, 95, 0.14);
+    --emerald: #2ea87e;
+    --emerald-soft: rgba(46, 168, 126, 0.16);
+    --teal: #38bdf8;
+    --teal-soft: rgba(56, 189, 248, 0.15);
+    --violet: #a78bfa;
+    --violet-soft: rgba(167, 139, 250, 0.16);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.16);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.16);
+    --shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+    --svg-grid: rgba(212, 175, 95, 0.13);
+    --svg-track: #1b282b;
+  }
+
+  /* LIGHT MODE: Antique Parchment, Warm Cream, Forest Ink & Burnished Gold */
+  [data-theme="light"] {
+    --bg: #f6f1e6;
+    --bg-elev: #fbf8f1;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f3ecdc;
+    --bg-subtle: #efe7d6;
+    --border: rgba(133, 98, 35, 0.24);
+    --border-strong: rgba(133, 98, 35, 0.52);
+    --text: #182622;
+    --text-muted: #4a5e58;
+    --text-faint: #6f807a;
+    --gold: #9a6e1c;
+    --gold-bright: #7d5610;
+    --gold-soft: rgba(154, 110, 28, 0.12);
+    --emerald: #13795b;
+    --emerald-soft: rgba(19, 121, 91, 0.12);
+    --teal: #0369a1;
+    --teal-soft: rgba(3, 105, 161, 0.11);
+    --violet: #6d28d9;
+    --violet-soft: rgba(109, 40, 217, 0.11);
+    --amber: #b45309;
+    --amber-soft: rgba(180, 83, 9, 0.12);
+    --rose: #be123c;
+    --rose-soft: rgba(190, 18, 60, 0.11);
+    --shadow: 0 8px 22px rgba(24, 38, 34, 0.08);
+    --svg-grid: rgba(133, 98, 35, 0.16);
+    --svg-track: #e6decb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale));
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 20px 28px;
+  }
+
+  body.embed-mode .app {
+    padding: 10px 12px 18px;
+    max-width: 100%;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--emerald), var(--teal));
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+  }
+  .brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.12rem;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+  }
+  .brand-title span { color: var(--gold); }
+  .brand-sub {
+    font-size: 0.77rem;
+    color: var(--text-muted);
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition);
+    font-family: inherit;
+  }
+  .btn:hover {
+    border-color: var(--gold);
+    background: var(--bg-card-hover);
+    color: var(--gold-bright);
+  }
+  .btn.primary {
+    background: var(--gold-soft);
+    border-color: var(--border-strong);
+    color: var(--gold-bright);
+  }
+  .btn.active {
+    background: var(--gold);
+    color: #0c1112;
+    border-color: var(--gold);
+  }
+  [data-theme="light"] .btn.active { color: #ffffff; }
+
+  /* KPI STRIP */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 880px) {
+    .kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .kpi-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .kpi-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .kpi-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .kpi-val {
+    font-family: var(--font-serif);
+    font-size: 1.42rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .kpi-foot {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-top: 3px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    padding: 8px 13px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--bg-elev); border-color: var(--border); }
+  .tab-btn.active { color: var(--gold-bright); background: var(--gold-soft); border-color: var(--border-strong); }
+  .tab-pill {
+    font-size: 0.68rem;
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 180ms ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+  /* LAYOUT */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.32fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .grid-eq {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 940px) {
+    .grid-2, .grid-eq { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .card-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+
+  .svg-box {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+  }
+  .svg-box svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+  }
+
+  /* TAGS */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.67rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
+  .tag-pass { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46,168,126,0.4); }
+  .tag-warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(245,158,11,0.4); }
+  .tag-fail { background: var(--rose-soft); color: var(--rose); border-color: rgba(251,113,133,0.4); }
+  .tag-info { background: var(--teal-soft); color: var(--teal); border-color: rgba(56,189,248,0.4); }
+  .tag-gold { background: var(--gold-soft); color: var(--gold-bright); border-color: var(--border-strong); }
+  .tag-vio { background: var(--violet-soft); color: var(--violet); border-color: rgba(167,139,250,0.4); }
+
+  /* SLIDERS & STATS */
+  .control-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    margin-bottom: 9px;
+  }
+  .control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+  }
+  .control-row strong { color: var(--gold-bright); font-family: var(--font-mono); }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 11px;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 11px;
+  }
+  .stat-box label {
+    display: block;
+    font-size: 0.67rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+  }
+  .stat-box .val {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .callout-box {
+    padding: 11px 13px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--gold);
+    background: var(--bg-card);
+    font-size: 0.79rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+  .callout-box strong { color: var(--text); }
+
+  /* TABLES */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.79rem;
+  }
+  .data-table th, .data-table td {
+    text-align: left;
+    padding: 8px 9px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .data-table th {
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+  }
+  .data-table tr.trust-row td {
+    background: var(--gold-soft);
+  }
+  .data-table tr.total-row td {
+    font-weight: 700;
+    border-top: 1.5px solid var(--border-strong);
+    background: var(--bg-subtle);
+  }
+
+  /* CHECKLIST & LEGAL CARDS */
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .check-item:hover { border-color: var(--border-strong); }
+  .check-item.done {
+    border-color: var(--emerald);
+    background: var(--emerald-soft);
+  }
+  .check-box {
+    width: 17px; height: 17px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-strong);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+  .check-item.done .check-box {
+    background: var(--emerald);
+    border-color: var(--emerald);
+    color: #fff;
+  }
+
+  .legal-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .legal-card:hover { border-color: var(--border-strong); }
+  .legal-card.selected { border-color: var(--gold); background: var(--gold-soft); }
+
+  .bar-track {
+    height: 8px;
+    background: var(--svg-track);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 5px;
+  }
+  .bar-track > span {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+  }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    place-items: center;
+    padding: 16px;
+    z-index: 999;
+  }
+  .modal-backdrop.open { display: grid; }
+  .modal {
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    max-width: 680px;
+    width: 100%;
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .code-block {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 8px 0 12px;
+  }
+  .footer-note {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.73rem;
+    color: var(--text-faint);
+  }
+  .toast {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: var(--gold);
+    color: #0c1112;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 200ms ease;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 44 44" width="40" height="40" aria-hidden="true">
+        <polygon points="22,2 40,12 40,32 22,42 4,32 4,12" fill="none" stroke="var(--gold)" stroke-width="2"/>
+        <polygon points="22,8 34,15 34,29 22,36 10,29 10,15" fill="var(--gold-soft)" stroke="var(--emerald)" stroke-width="1.2"/>
+        <text x="22" y="26" text-anchor="middle" fill="var(--gold-bright)" font-family="Georgia, serif" font-size="13" font-weight="700">Æ</text>
+      </svg>
+      <div>
+        <div class="brand-title">SOVR<span>Æ</span>GIS — Cost of Trust Capital &amp; Living Lab 0 Power Modeler</div>
+        <div class="brand-sub">24-Month Non-Dilutive Budget ($521.5K), Paired t-Test Power Curves, HCMC Unit Economics &amp; Law 91/2025 Readiness</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="btnFontDec" title="Decrease font size">A−</button>
+      <button class="btn" id="btnFontInc" title="Increase font size">A+</button>
+      <button class="btn" id="btnTheme" title="Toggle Light / Dark theme">☀ Light</button>
+      <button class="btn primary" id="btnExport">⬇ Obsidian &amp; Budget</button>
+    </div>
+  </header>
+
+  <!-- KPI STRIP -->
+  <section class="kpi-strip">
+    <div class="kpi-card" data-jump="budget">
+      <div class="kpi-label"><span>24-Month Capital Plan</span><span class="tag tag-gold">Zero VC</span></div>
+      <div class="kpi-val">$521,490 <span style="font-size:0.76rem;color:var(--text-muted);">Y1+Y2</span></div>
+      <div class="kpi-foot">$141,490 Year 1 Lean · $380,000 Year 2 Multi-Site</div>
+    </div>
+    <div class="kpi-card" data-jump="budget">
+      <div class="kpi-label"><span>Ring-Fenced Cost of Trust</span><span class="tag tag-pass">16.3% → 21.1%</span></div>
+      <div class="kpi-val">$103,000 <span style="font-size:0.76rem;color:var(--text-muted);">(19.8%)</span></div>
+      <div class="kpi-foot">$23K Y1 · $80K Y2 (Security Audits + Ombuds)</div>
+    </div>
+    <div class="kpi-card" data-jump="power">
+      <div class="kpi-label"><span>Living Lab 0 Power Target</span><span class="tag tag-info">45–60 Adults</span></div>
+      <div class="kpi-val">76.8%–88.6% <span style="font-size:0.76rem;color:var(--text-muted);">d=0.50</span></div>
+      <div class="kpi-foot">At 70% retention · 93.8%–98.4% at d=0.65</div>
+    </div>
+    <div class="kpi-card" data-jump="economics">
+      <div class="kpi-label"><span>Living Lab 0 Direct Unit Cost</span><span class="tag tag-pass">$189 / Learner</span></div>
+      <div class="kpi-val">$8,490 <span style="font-size:0.76rem;color:var(--text-muted);">10 Weeks</span></div>
+      <div class="kpi-foot">HCMC 45 adults · incl. $3.5K Law 91/2025 opinion</div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="budget" role="tab">
+      <span>1. 24-Month Budget &amp; Cost of Trust</span>
+      <span class="tab-pill">Non-Dilutive Stack</span>
+    </button>
+    <button class="tab-btn" data-tab="power" role="tab">
+      <span>2. Living Lab 0 Power &amp; CEFR GLH</span>
+      <span class="tab-pill">Paired t-Test</span>
+    </button>
+    <button class="tab-btn" data-tab="economics" role="tab">
+      <span>3. Living Lab 0 Unit-Cost Modeler</span>
+      <span class="tab-pill">HCMC · 3 Pods</span>
+    </button>
+    <button class="tab-btn" data-tab="compliance" role="tab">
+      <span>4. Legal Home &amp; Vietnam Law 91/2025</span>
+      <span class="tab-pill" id="compPill">0/8 Ready</span>
+    </button>
+  </nav>
+
+  <!-- PANEL 1: 24-MONTH BUDGET & COST OF TRUST -->
+  <section class="panel active" id="panel-budget">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">24-Month Capital Architecture &amp; Escalating Trust Reserve</div>
+            <div class="card-sub">Dedicated independent assurance (external security audits + firewalled Ombuds) rises from 16.3% in Year 1 to 21.1% in Year 2.</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn active" id="btnViewStack">Line-Item Stack</button>
+            <button class="btn" id="btnViewShare">Trust Reserve Share (%)</button>
+          </div>
+        </div>
+        <div class="svg-box" id="budgetSvgWrap"></div>
+        <div style="overflow-x:auto;margin-top:12px;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Budget Category</th>
+                <th style="text-align:right;">Year 1 (Lean)</th>
+                <th style="text-align:right;">Year 2 (Scale)</th>
+                <th>Primary Non-Dilutive Channel</th>
+              </tr>
+            </thead>
+            <tbody id="budgetTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Non-Dilutive Capital &amp; Audit Sponsor Simulator</div>
+            <div class="card-sub">Model how Canadian NRC IRAP + SR&amp;ED stacking and OSTIF / Sovereign Tech grants reduce founder cash burn.</div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row"><span>Canadian Eligible R&amp;D Share of Year 1–2 Eng ($300K)</span><strong id="lblCaShare">55% ($165,000)</strong></div>
+          <input type="range" id="rngCaShare" min="0" max="100" step="5" value="55">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>NRC IRAP Reimbursement Rate (Up to 80% Emp / 50% Sub)</span><strong id="lblIrap">60%</strong></div>
+          <input type="range" id="rngIrap" min="0" max="75" step="5" value="60">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>OSTIF / Sovereign Tech / Philanthropic Audit Coverage</span><strong id="lblAuditCov">70%</strong></div>
+          <input type="range" id="rngAuditCov" min="0" max="100" step="10" value="70">
+        </div>
+
+        <div id="fundingSummary"></div>
+
+        <div class="callout-box">
+          <strong>Key 2026 Non-Dilutive Vehicles:</strong><br>
+          • <strong>NRC IRAP + SR&amp;ED (Canada):</strong> ~CAD $393–$414M/yr IRAP reimburses up to 80% employee salaries (75% combined cap) + 35% refundable CCPC SR&amp;ED credit on post-IRAP base.<br>
+          • <strong>Sovereign Tech Agency (EU/DE) &amp; NLnet:</strong> €61.6M committed (2022–2026) covering maintenance, Resilience audits, fellowships, and standards.<br>
+          • <strong>OSTIF, UNICEF Venture Fund &amp; Co-Develop:</strong> OSTIF sponsors white-box open-source security audits; UNICEF Venture Fund deploys up to $100K equity-free cohorts; Co-Develop backs DPI pilots.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 2: LIVING LAB 0 POWER & CEFR GLH -->
+  <section class="panel" id="panel-power">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Living Lab 0 — Two-Sided Paired t-Test Statistical Power Curve (α = 0.05)</div>
+            <div class="card-sub">Evaluating Day 1 vs. Day 70 blind dual-rater speaking gains across enrolled sample sizes at your active retention rate.</div>
+          </div>
+        </div>
+        <div class="svg-box" id="powerSvgWrap"></div>
+        <div class="callout-box">
+          <strong>Why Enrolling 30 Adults Underpowers Living Lab 0:</strong> At 70% 10-week retention, enrolling 30 adults leaves only <code>n = 21</code> completers—yielding just <strong>58.7% power</strong> to detect a medium speaking gain (<code>d = 0.50</code>). Expanding enrollment to <strong>45–60 adults (3–4 pods of 15)</strong> lifts statistical power to <strong>76.8%–88.6%</strong> at <code>d = 0.50</code> and <strong>93.8%–98.4%</strong> at <code>d = 0.65</code> (or <strong>83.1%</strong> at <code>N = 45</code> with 80% retention).
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interactive Power &amp; CEFR GLH Calibrator</div>
+            <div class="card-sub">Test enrollment, retention, speaking effect size (Cohen's d), and weekly Guided Learning Hours.</div>
+          </div>
+        </div>
+
+        <div class="preset-row">
+          <button class="btn" data-ppreset="30,70,0.50,4.5">Underpowered N=30 (70%)</button>
+          <button class="btn" data-ppreset="45,70,0.50,4.5">Baseline N=45 (70%)</button>
+          <button class="btn" data-ppreset="45,80,0.50,4.5">Strong N=45 (80%)</button>
+          <button class="btn" data-ppreset="60,70,0.50,4.5">High-Power N=60 (70%)</button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row"><span>Enrolled Adult Cohort (N)</span><strong id="lblPN">45 adults (3 pods)</strong></div>
+          <input type="range" id="rngPN" min="20" max="90" step="5" value="45">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>10-Week Retention Rate</span><strong id="lblPRet">70% (n = 31 completers)</strong></div>
+          <input type="range" id="rngPRet" min="55" max="90" step="5" value="70">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Target Speaking Effect Size (Cohen's d)</span><strong id="lblPD">d = 0.50</strong></div>
+          <input type="range" id="rngPD" min="0.30" max="0.85" step="0.05" value="0.50">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Weekly Guided Learning Hours (10 Weeks)</span><strong id="lblPGlh">4.5 hrs/wk (45 GLH)</strong></div>
+          <input type="range" id="rngPGlh" min="3.0" max="10.0" step="0.5" value="4.5">
+        </div>
+
+        <div id="powerVerdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 3: LIVING LAB 0 UNIT ECONOMICS -->
+  <section class="panel" id="panel-economics">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Living Lab 0 (Ho Chi Minh City) — Direct Cost &amp; Amortization Breakdown</div>
+            <div class="card-sub">Baseline 2026 HCMC rates (~25,400 VND/USD). Fixed compliance ($4,500) + hardware ($550) amortize sharply across 3–4 pods.</div>
+          </div>
+        </div>
+        <div class="svg-box" id="econSvgWrap"></div>
+        <div style="overflow-x:auto;margin-top:12px;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Line Item</th><th>Type</th><th>Calculation Basis</th><th style="text-align:right;">Cost (USD)</th></tr>
+            </thead>
+            <tbody id="econTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interactive HCMC Facilitator &amp; Pod Cost Modeler</div>
+            <div class="card-sub">Adjust pods (15 adults/pod) and lawful local Vietnamese coaching rates (2026 HCMC benchmark: 300k–330k VND/hr ≈ $12–$13/hr).</div>
+          </div>
+          <button class="btn" id="btnResetEcon">Reset $8,490 Baseline</button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row"><span>Cohort Pods (15 Adults per Pod)</span><strong id="lblEPods">3 pods (45 adults)</strong></div>
+          <input type="range" id="rngEPods" min="2" max="6" step="1" value="3">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Vietnamese Bilingual Coach Rate (50 hrs/pod)</span><strong id="lblECoach">$14 / hr (~356k VND)</strong></div>
+          <input type="range" id="rngECoach" min="10" max="22" step="1" value="14">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Assumed 10-Week Completion Rate</span><strong id="lblERet">70%</strong></div>
+          <input type="range" id="rngERet" min="55" max="90" step="5" value="70">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Reference Budget Android Test Phones ($110 ea)</span><strong id="lblEPhones">5 devices ($550)</strong></div>
+          <input type="range" id="rngEPhones" min="3" max="12" step="1" value="5">
+        </div>
+
+        <div id="econVerdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 4: LEGAL HOME & VIETNAM LAW 91/2025 -->
+  <section class="panel" id="panel-compliance">
+    <div class="grid-eq">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Cross-Border Legal Home Matrix (US / Canada / Vietnam)</div>
+            <div class="card-sub">Brief for qualified counsel: click any legal vehicle to inspect asset locks, tax/grant trade-offs, and Commons vs. Labs fit.</div>
+          </div>
+        </div>
+        <div id="legalList"></div>
+        <div id="legalDetail" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Vietnam Law 91/2025/QH15 &amp; Decree 356/2025 Readiness</div>
+            <div class="card-sub">Effective Jan 1, 2026 (repealing Decree 13/2023). Penalties up to VND 3B / 5% revenue. Check off prior to post-Tết recruitment.</div>
+          </div>
+          <button class="btn" id="btnResetComp">Reset</button>
+        </div>
+        <ul class="checklist" id="compChecklist"></ul>
+        <div class="callout-box" style="border-left-color:var(--rose);">
+          <strong style="color:var(--rose);">Three Mandatory Ethical Stop Rules (Immediate Pilot Pause):</strong><br>
+          1. Any undeclared network egress detected during Gate 2 traffic capture.<br>
+          2. Onboarding Vietnamese consent comprehension drops below target threshold.<br>
+          3. Any participant reports institutional, employer, or coach pressure to join or share audio.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <span>SOVRÆGIS Commons &amp; SOVRÆG LABS · Zero-Dependency Financial &amp; Power Modeler (Offline-Ready)</span>
+    <span>URL Params: <code>?theme=dark|light&amp;embed=true&amp;tab=budget|power|economics|compliance</code></span>
+  </footer>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-backdrop" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="card-header">
+      <div>
+        <div class="card-title" id="modalTitle">Obsidian Embed &amp; Living Lab 0 Scenario Export</div>
+        <div class="card-sub">Copy the collapsed Obsidian callout for GitHub Pages or export your modeled budget, statistical power, and Law 91/2025 checklist.</div>
+      </div>
+      <button class="btn" id="btnCloseModal">✕ Close</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">1. Collapsed Obsidian Callout (GitHub Pages Embed)</div>
+    <pre class="code-block" id="obsidianSnippet"></pre>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn primary" id="btnCopyObsidian">Copy Callout</button>
+      <button class="btn" id="btnDownloadMd">⬇ Download Modeler Snapshot (.md)</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">2. Live Scenario Markdown Snapshot</div>
+    <pre class="code-block" id="mdPreview"></pre>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+(function() {
+  const STORAGE_KEY = "sovraegis_trust_lab0_state_v1";
+
+  const BUDGET_LINES = [
+    { id: "eng", name: "Core R&D Engineering & Maintenance", y1: 90000, y2: 210000, isTrust: false, color: "#38bdf8", channel: "NRC IRAP + SR&ED stacking + NLnet / Sovereign Tech" },
+    { id: "lab", name: "Field Living Laboratories (HCMC + Site 2)", y1: 8490, y2: 45000, isTrust: false, color: "#2ea87e", channel: "UNICEF Venture Fund, Co-Develop, joint LEF/Walton/Gates" },
+    { id: "sec", name: "Independent Security & Cryptography Audits", y1: 15000, y2: 55000, isTrust: true, color: "#d9b25f", channel: "OSTIF open-source sponsorship + Sovereign Tech Resilience" },
+    { id: "omb", name: "Ombuds, Stewardship & Sovereignty Audit", y1: 8000, y2: 25000, isTrust: true, color: "#f59e0b", channel: "Ring-fenced Commons reserve (firewalled from engineering)" },
+    { id: "leg", name: "Legal, Trademarks, Standards & Compliance", y1: 12000, y2: 45000, isTrust: false, color: "#a78bfa", channel: "Institutional contracts + Sovereign Tech standards grants" },
+    { id: "hos", name: "Fiscal Hosting Admin (~10% est. on Y1 grants)", y1: 8000, y2: 0, isTrust: false, color: "#fb7185", channel: "Indirect grant line (folded into Y2 Commons legal line)" }
+  ];
+
+  const LEGAL_OPTIONS = [
+    {
+      id: "us501c3", name: "U.S. 501(c)(3) Fiscal Sponsor (e.g., Code for Science & Society)",
+      role: "Recommended Year 1–2 Home for SOVRAEGIS Commons", tag: "pass", badge: "Commons Y1–Y2",
+      strength: "Unlocks U.S. private foundation grants (Gates, Walton, LEGO, Co-Develop) immediately without IRS Equivalency Determination (Rev. Proc. 2017-53) or Expenditure Responsibility overhead.",
+      tradeoff: "Subject to sponsor admin fees and host rules. Never use LEF itself as fiscal sponsor so SOVRAEGIS retains full independence to audit LearnCard."
+    },
+    {
+      id: "bcc3", name: "BC Community Contribution Company (C3 / CCC)",
+      role: "Strong Year 1–2 Upgrade for SOVRAEG LABS (Sovraecan Creative Inc.)", tag: "gold", badge: "Labs Hybrid",
+      strength: "Statutory 40% annual profit dividend cap, 60% minimum residual asset lock to qualified community entities upon dissolution, 3-director accountability, and compatibility with Canadian NRC IRAP + SR&ED (confirm CCPC rules with tax counsel).",
+      tradeoff: "Cannot issue charitable tax receipts; converting an existing corporation requires unanimous shareholder approval."
+    },
+    {
+      id: "osc", name: "Open Source Collective (U.S. 501(c)(6))",
+      role: "Fast-Start Channel for Corporate Sponsorships & Trademarks", tag: "info", badge: "10% Host Fee",
+      strength: "Fixed 10% host fee, zero setup fees, transparent real-time ledger, GitHub Sponsors/Drips integration, and U.S. trademark custody ($1,200 single-class registration; $350 transfer).",
+      tradeoff: "Donations are NOT tax-deductible under 501(c)(6), limiting eligibility for charitable U.S. private foundations."
+    },
+    {
+      id: "canplat", name: "Canadian Shared Platform + CRA CG-032 (e.g., MakeWay)",
+      role: "Secondary Channel for Canadian Grants & Vietnam Pilots", tag: "vio", badge: "CRA CG-032",
+      strength: "Under CRA Guidance CG-032 (Dec 2023), Canadian charities can issue Qualifying Disbursements to international/non-qualified grantees using risk assessments, written agreements (>$5K), and Form T1441 without full direction & control.",
+      tradeoff: "Carries anti-directed-giving diligence overhead and U.S. donor tax-deductibility friction."
+    },
+    {
+      id: "standalone", name: "Standalone Nonprofit Foundation (US / CNCA / EU Stichting)",
+      role: "Target Year 2–3 Transition Once Grants Reach $250K–$350K+", tag: "warn", badge: "Year 2–3 Target",
+      strength: "Strongest long-term constitutional vehicle for entrenched bylaws, irreversible asset locks, TMLA conformance mark ownership, and autonomous Ombuds oversight.",
+      tradeoff: "High initial legal overhead, 6–12+ month tax-exemption wait, board recruitment, and annual filing/audit costs."
+    }
+  ];
+
+  const COMPLIANCE_ITEMS = [
+    { id: "c1", title: "Zero Behavioral Tracking Telemetry (SME Exemption Shield)", desc: "Decree 356 classifies platform behavioral tracking as sensitive personal data—voiding Art. 41's 5-year SME grace period. Keep SYNCZINE strictly zero-telemetry." },
+    { id: "c2", title: "Strictly Local-Only Voice Storage & Sensitive Consent", desc: "Treat Day 1 & Day 70 voice recordings conservatively as sensitive data; keep audio on-device unless learner explicitly consents to blind-rater transfer." },
+    { id: "c3", title: "Subject-Initiated Cross-Border Exemption Verified", desc: "Law 91/2025 waives A05 CTIA filings when data subjects voluntarily transfer their own records abroad; confirm LearnCloud sync boundaries with local counsel." },
+    { id: "c4", title: "Strict Zalo Isolation Policy Enforced", desc: "Restrict Zalo strictly to non-sensitive daily reminders and scheduling links—zero voice clips, assessment scores, or credentials transit Zalo." },
+    { id: "c5", title: "Adults-Only Enrollment Gate (18+ Strict)", desc: "Law 91/2025 requires dual consent for children aged 7+ (paralleling tightened FTC COPPA enforcement). Restrict Living Lab 0 strictly to adults 18+." },
+    { id: "c6", title: "Granular Verifiable Vietnamese Consent Packet (Art. 6.1)", desc: "Record explicit fact, timestamp, and granular scope of consent in plain Vietnamese, with instant withdrawal and local-vault deletion capability." },
+    { id: "c7", title: "2-Day DSR SLA & 72-Hour A05 Breach Runbook", desc: "Operationalize 2-working-day initial acknowledgement (7–10 days resolution) for learner data requests and a documented 72-hour MPS A05 breach protocol." },
+    { id: "c8", title: "Lawful Local Vietnamese Coach Contracting", desc: "Contract Vietnamese bilingual coaches lawfully through local entity (~300k–330k VND/hr benchmark); avoid informal foreign freelance tutoring (Decree 283/2026 risk)." }
+  ];
+
+  let state = {
+    theme: null,
+    scale: 1,
+    budgetView: "stack",
+    caShare: 55,
+    irapRate: 60,
+    auditCov: 70,
+    pN: 45,
+    pRet: 70,
+    pD: 0.50,
+    pGlh: 4.5,
+    ePods: 3,
+    eCoachRate: 14,
+    eRet: 70,
+    ePhones: 5,
+    selectedLegal: "us501c3",
+    compChecked: {}
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    if (saved) state = Object.assign(state, saved);
+  } catch (e) {}
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  // URL Params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "true") document.body.classList.add("embed-mode");
+  const initTheme = params.get("theme") || state.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  applyTheme(initTheme);
+  document.documentElement.style.setProperty("--scale", state.scale);
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    state.theme = t;
+    document.getElementById("btnTheme").textContent = t === "dark" ? "☀ Light" : "☾ Dark";
+    saveState();
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
+  function fmtUSD(n) {
+    return "$" + Math.round(n).toLocaleString("en-US");
+  }
+
+  // Tabs
+  function switchTab(id) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + id));
+  }
+  document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+  document.querySelectorAll("[data-jump]").forEach(c => c.addEventListener("click", () => switchTab(c.dataset.jump)));
+  if (["budget", "power", "economics", "compliance"].includes(params.get("tab"))) switchTab(params.get("tab"));
+
+  // =========================================================
+  // PANEL 1: 24-MONTH BUDGET & NON-DILUTIVE STACK
+  // =========================================================
+  function renderBudget() {
+    const y1Tot = BUDGET_LINES.reduce((s, l) => s + l.y1, 0);
+    const y2Tot = BUDGET_LINES.reduce((s, l) => s + l.y2, 0);
+    const y1Trust = BUDGET_LINES.filter(l => l.isTrust).reduce((s, l) => s + l.y1, 0);
+    const y2Trust = BUDGET_LINES.filter(l => l.isTrust).reduce((s, l) => s + l.y2, 0);
+
+    // Table
+    document.getElementById("budgetTableBody").innerHTML = BUDGET_LINES.map(l => `
+      <tr class="${l.isTrust ? 'trust-row' : ''}">
+        <td>
+          <span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${l.color};margin-right:6px;"></span>
+          <strong>${l.name}</strong> ${l.isTrust ? '<span class="tag tag-gold" style="margin-left:4px;">Cost of Trust</span>' : ''}
+        </td>
+        <td style="text-align:right;font-family:var(--font-mono);">${fmtUSD(l.y1)}</td>
+        <td style="text-align:right;font-family:var(--font-mono);">${l.y2 ? fmtUSD(l.y2) : '—'}</td>
+        <td style="color:var(--text-muted);font-size:0.75rem;">${l.channel}</td>
+      </tr>
+    `).join("") + `
+      <tr class="total-row">
+        <td>Total Operating Requirement (24-Mo: ${fmtUSD(y1Tot + y2Tot)})</td>
+        <td style="text-align:right;font-family:var(--font-mono);color:var(--gold-bright);">${fmtUSD(y1Tot)}</td>
+        <td style="text-align:right;font-family:var(--font-mono);color:var(--gold-bright);">${fmtUSD(y2Tot)}</td>
+        <td style="color:var(--emerald);font-size:0.76rem;">Cost of Trust: ${fmtUSD(y1Trust)} (16.3%) → ${fmtUSD(y2Trust)} (21.1%)</td>
+      </tr>
+    `;
+
+    // SVG
+    const W = 680, H = 265;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+    if (state.budgetView === "stack") {
+      const padL = 132, padR = 88, padT = 38, barH = 48;
+      const maxVal = 400000;
+      const plotW = W - padL - padR;
+      svg += `<text x="12" y="20" fill="var(--gold-bright)" font-size="11" font-weight="700">Year 1 ($141.5K) vs. Year 2 ($380.0K) Capital Stack — Gold/Amber = Ring-Fenced Trust Reserve</text>`;
+
+      [0, 100000, 200000, 300000, 400000].forEach(v => {
+        const gx = padL + (v / maxVal) * plotW;
+        svg += `<line x1="${gx}" y1="${padT}" x2="${gx}" y2="${H - 58}" stroke="var(--svg-grid)" stroke-dasharray="3,3"/>`;
+        svg += `<text x="${gx}" y="${H - 42}" text-anchor="middle" fill="var(--text-faint)" font-size="9.3" font-family="var(--font-mono)">$${v/1000}K</text>`;
+      });
+
+      const years = [
+        { label: "Year 1 (Lean)", sub: "Proof Trio + Lab 0", key: "y1", tot: y1Tot, trust: y1Trust, y: padT + 14 },
+        { label: "Year 2 (Scale)", sub: "Multi-Site + Audit", key: "y2", tot: y2Tot, trust: y2Trust, y: padT + 92 }
+      ];
+
+      years.forEach(yr => {
+        svg += `<text x="12" y="${yr.y + 20}" fill="var(--text)" font-size="11.5" font-weight="700">${yr.label}</text>`;
+        svg += `<text x="12" y="${yr.y + 34}" fill="var(--text-faint)" font-size="9.3">${yr.sub}</text>`;
+        let cx = padL;
+        BUDGET_LINES.forEach(l => {
+          const val = l[yr.key];
+          if (!val) return;
+          const sw = (val / maxVal) * plotW;
+          svg += `<rect x="${cx + 0.5}" y="${yr.y + 4}" width="${Math.max(3, sw - 1)}" height="${barH - 8}" rx="3" fill="${l.color}" fill-opacity="${l.isTrust ? 0.92 : 0.72}" stroke="${l.isTrust ? 'var(--gold-bright)' : 'none'}" stroke-width="${l.isTrust ? 1.2 : 0}"/>`;
+          if (sw >= 36) {
+            svg += `<text x="${cx + sw/2}" y="${yr.y + 28}" text-anchor="middle" fill="#0c1112" font-size="9.2" font-weight="800">$${Math.round(val/1000)}K</text>`;
+          }
+          cx += sw;
+        });
+        svg += `<text x="${cx + 8}" y="${yr.y + 22}" fill="var(--gold-bright)" font-size="11" font-family="var(--font-mono)" font-weight="700">${fmtUSD(yr.tot)}</text>`;
+        svg += `<text x="${cx + 8}" y="${yr.y + 35}" fill="var(--emerald)" font-size="9.2" font-weight="700">Trust: ${(yr.trust/yr.tot*100).toFixed(1)}%</text>`;
+      });
+
+      // Legend bottom
+      let lx = 12;
+      BUDGET_LINES.forEach(l => {
+        const lbl = l.name.split(" ")[0] + (l.isTrust ? " ★" : "");
+        svg += `<rect x="${lx}" y="${H - 20}" width="9" height="9" rx="2" fill="${l.color}"/>`;
+        svg += `<text x="${lx + 13}" y="${H - 12}" fill="var(--text-muted)" font-size="9.2" font-weight="${l.isTrust ? '700' : '500'}">${lbl}</text>`;
+        lx += 110;
+      });
+    } else {
+      // Share % view
+      const padL = 135, padR = 75, padT = 40, barH = 38;
+      const plotW = W - padL - padR;
+      svg += `<text x="12" y="20" fill="var(--gold-bright)" font-size="11" font-weight="700">Share of Total Capital Dedicated to Independent Assurance ("Cost of Trust")</text>`;
+      const rows = [
+        { label: "Year 1 Lean ($141.5K)", pct: (y1Trust/y1Tot)*100, amt: "$23,000", col: "#d9b25f" },
+        { label: "Year 2 Scale ($380.0K)", pct: (y2Trust/y2Tot)*100, amt: "$80,000", col: "#2ea87e" },
+        { label: "24-Mo Blended ($521.5K)", pct: ((y1Trust+y2Trust)/(y1Tot+y2Tot))*100, amt: "$103,000", col: "#38bdf8" }
+      ];
+      [0, 10, 15, 20, 25, 30].forEach(v => {
+        const gx = padL + (v / 30) * plotW;
+        svg += `<line x1="${gx}" y1="${padT}" x2="${gx}" y2="${H - 36}" stroke="var(--svg-grid)" stroke-dasharray="3,3"/>`;
+        svg += `<text x="${gx}" y="${H - 20}" text-anchor="middle" fill="var(--text-faint)" font-size="9.5" font-family="var(--font-mono)">${v}%</text>`;
+      });
+      rows.forEach((r, i) => {
+        const y = padT + 14 + i * 58;
+        const bw = (r.pct / 30) * plotW;
+        svg += `<text x="12" y="${y + 22}" fill="var(--text)" font-size="10.8" font-weight="700">${r.label}</text>`;
+        svg += `<rect x="${padL}" y="${y + 4}" width="${plotW}" height="${barH - 10}" rx="5" fill="var(--svg-track)"/>`;
+        svg += `<rect x="${padL}" y="${y + 4}" width="${bw}" height="${barH - 10}" rx="5" fill="${r.col}" fill-opacity="0.85"/>`;
+        svg += `<text x="${padL + bw + 8}" y="${y + 22}" fill="var(--gold-bright)" font-size="10.8" font-family="var(--font-mono)" font-weight="700">${r.pct.toFixed(1)}% (${r.amt})</text>`;
+      });
+    }
+    svg += `</svg>`;
+    document.getElementById("budgetSvgWrap").innerHTML = svg;
+
+    // Non-dilutive simulator math
+    const tot24 = y1Tot + y2Tot; // 521490
+    const engTot = 300000;
+    const caElig = engTot * (state.caShare / 100);
+    const irapReimb = caElig * (state.irapRate / 100);
+    // SR&ED 35% on remaining post-IRAP Canadian base, capped at 75% combined gov assistance on caElig
+    const sredRaw = Math.max(0, caElig - irapReimb) * 0.35;
+    const caGovTot = Math.min(caElig * 0.75, irapReimb + sredRaw);
+    const sredNet = Math.max(0, caGovTot - irapReimb);
+
+    const trustTot = y1Trust + y2Trust; // 103000
+    const auditSponsor = trustTot * (state.auditCov / 100);
+    const nonDilutiveSecured = caGovTot + auditSponsor;
+    const remainingGrants = Math.max(0, tot24 - nonDilutiveSecured);
+
+    document.getElementById("rngCaShare").value = state.caShare;
+    document.getElementById("rngIrap").value = state.irapRate;
+    document.getElementById("rngAuditCov").value = state.auditCov;
+    document.getElementById("lblCaShare").textContent = `${state.caShare}% (${fmtUSD(caElig)})`;
+    document.getElementById("lblIrap").textContent = `${state.irapRate}%`;
+    document.getElementById("lblAuditCov").textContent = `${state.auditCov}% (${fmtUSD(auditSponsor)})`;
+
+    document.getElementById("fundingSummary").innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>Canadian IRAP + SR&amp;ED Offset</label>
+          <div class="val" style="color:var(--emerald);">${fmtUSD(caGovTot)}</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">IRAP ${fmtUSD(irapReimb)} + SR&amp;ED ${fmtUSD(sredNet)}</div>
+        </div>
+        <div class="stat-box">
+          <label>OSTIF / Trust Reserve Grants</label>
+          <div class="val" style="color:var(--gold-bright);">${fmtUSD(auditSponsor)}</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">Of ${fmtUSD(trustTot)} 24-mo trust reserve</div>
+        </div>
+        <div class="stat-box">
+          <label>Modeled Offset Coverage</label>
+          <div class="val" style="color:var(--teal);">${((nonDilutiveSecured/tot24)*100).toFixed(1)}%</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">${fmtUSD(nonDilutiveSecured)} of ${fmtUSD(tot24)}</div>
+        </div>
+        <div class="stat-box">
+          <label>Remaining Philanthropy / Contracts</label>
+          <div class="val" style="color:var(--text);">${fmtUSD(remainingGrants)}</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">UNICEF / Co-Develop / LEF / Contracts</div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById("btnViewStack").addEventListener("click", () => {
+    state.budgetView = "stack";
+    document.getElementById("btnViewStack").classList.add("active");
+    document.getElementById("btnViewShare").classList.remove("active");
+    renderBudget();
+  });
+  document.getElementById("btnViewShare").addEventListener("click", () => {
+    state.budgetView = "share";
+    document.getElementById("btnViewShare").classList.add("active");
+    document.getElementById("btnViewStack").classList.remove("active");
+    renderBudget();
+  });
+  ["rngCaShare", "rngIrap", "rngAuditCov"].forEach(id => {
+    document.getElementById(id).addEventListener("input", e => {
+      if (id === "rngCaShare") state.caShare = Number(e.target.value);
+      if (id === "rngIrap") state.irapRate = Number(e.target.value);
+      if (id === "rngAuditCov") state.auditCov = Number(e.target.value);
+      saveState();
+      renderBudget();
+    });
+  });
+
+  // =========================================================
+  // PANEL 2: LIVING LAB 0 STATISTICAL POWER & CEFR GLH
+  // =========================================================
+  function erf(x) {
+    const sign = x < 0 ? -1 : 1;
+    x = Math.abs(x);
+    const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741, a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+    const t = 1.0 / (1.0 + p * x);
+    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+    return sign * y;
+  }
+  function normCdf(x) { return 0.5 * (1 + erf(x / Math.SQRT2)); }
+
+  function pairedTPower(nComp, d) {
+    if (nComp < 4) return 5.0;
+    const df = nComp - 1;
+    const z = 1.959963984540054;
+    const tCrit = z + (z**3 + z)/(4*df) + (5*z**5 + 16*z**3 + 3*z)/(96*df*df) + (3*z**7 + 19*z**5 + 17*z**3 - 15*z)/(384*df*df*df);
+    const ncp = d * Math.sqrt(nComp);
+    const denom = Math.sqrt(1 + (tCrit * tCrit) / (2 * df));
+    const zHi = (tCrit * (1 - 1 / (4 * df)) - ncp) / denom;
+    const zLo = (-tCrit * (1 - 1 / (4 * df)) - ncp) / denom;
+    return Math.min(99.9, Math.max(5.0, (1 - normCdf(zHi) + normCdf(zLo)) * 100));
+  }
+
+  function renderPower() {
+    const N = state.pN, ret = state.pRet, d = state.pD, glhWk = state.pGlh;
+    const nComp = Math.floor(N * (ret / 100));
+    const pwr = pairedTPower(nComp, d);
+    const pwr50 = pairedTPower(nComp, 0.50);
+    const pwr65 = pairedTPower(nComp, 0.65);
+    const totGlh = glhWk * 10;
+    const a1LowPct = (totGlh / 100) * 100; // vs 100 GLH
+    const a1HighPct = Math.min(100, (totGlh / 90) * 100); // vs 90 GLH
+
+    document.getElementById("rngPN").value = N;
+    document.getElementById("rngPRet").value = ret;
+    document.getElementById("rngPD").value = d;
+    document.getElementById("rngPGlh").value = glhWk;
+
+    document.getElementById("lblPN").textContent = `${N} adults (${(N/15).toFixed(1)} pods)`;
+    document.getElementById("lblPRet").textContent = `${ret}% (n = ${nComp} completers)`;
+    document.getElementById("lblPD").textContent = `d = ${d.toFixed(2)}`;
+    document.getElementById("lblPGlh").textContent = `${glhWk.toFixed(1)} hrs/wk (${totGlh.toFixed(0)} total GLH)`;
+
+    const pwrTag = pwr >= 80
+      ? '<span class="tag tag-pass">Well-Powered (≥80% Power)</span>'
+      : pwr >= 70
+      ? '<span class="tag tag-warn">Borderline Power (70–79%)</span>'
+      : '<span class="tag tag-fail">Underpowered (&lt;70%) — Expand Cohort</span>';
+
+    const credScope = totGlh >= 90
+      ? '<span class="tag tag-pass">Full CEFR A1 Track (90–100 GLH Met)</span>'
+      : '<span class="tag tag-gold">Scope to: CEFR Pre-A1 / A1-Foundations Spoken Survival</span>';
+
+    document.getElementById("powerVerdict").innerHTML = `
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">${pwrTag} ${credScope}</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>Statistical Power (at d=${d.toFixed(2)})</label>
+          <div class="val" style="color:${pwr >= 80 ? 'var(--emerald)' : pwr >= 70 ? 'var(--amber)' : 'var(--rose)'};">${pwr.toFixed(1)}%</div>
+        </div>
+        <div class="stat-box">
+          <label>Power at d=0.50 / d=0.65</label>
+          <div class="val" style="color:var(--teal);">${pwr50.toFixed(1)}% / ${pwr65.toFixed(1)}%</div>
+        </div>
+        <div class="stat-box">
+          <label>10-Week Guided Hours vs. CEFR A1</label>
+          <div class="val" style="color:var(--gold-bright);">${totGlh.toFixed(0)} GLH</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">${a1LowPct.toFixed(0)}%–${a1HighPct.toFixed(1)}% of 90–100 GLH benchmark</div>
+        </div>
+        <div class="stat-box">
+          <label>Scoring Rigor Standard</label>
+          <div class="val" style="font-size:0.86rem;color:var(--text);">Blind Dual Raters</div>
+          <div style="font-size:0.7rem;color:var(--text-faint);">Report ICC[2,2] + disagreement bands</div>
+        </div>
+      </div>
+    `;
+
+    // Render SVG power curves vs Enrolled N (at current retention)
+    const W = 680, H = 295;
+    const padL = 54, padR = 26, padT = 34, padB = 38;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const minN = 15, maxN = 90;
+    const xOf = nv => padL + ((nv - minN) / (maxN - minN)) * plotW;
+    const yOf = pct => padT + plotH - (pct / 100) * plotH;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<text x="12" y="19" fill="var(--gold-bright)" font-size="11" font-weight="700">Paired t-Test Statistical Power (%) vs. Enrolled Adults N (at ${ret}% Retention, α = 0.05)</text>`;
+
+    // Recommended enrollment band (45-60)
+    const x45 = xOf(45), x60 = xOf(60);
+    svg += `<rect x="${x45}" y="${padT}" width="${x60 - x45}" height="${plotH}" fill="var(--emerald)" fill-opacity="0.1"/>`;
+    svg += `<text x="${(x45+x60)/2}" y="${padT + 14}" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="700">Target: 45–60</text>`;
+
+    // Horizontal grid & 80% line
+    [0, 20, 40, 60, 80, 100].forEach(v => {
+      const gy = yOf(v);
+      const is80 = v === 80;
+      svg += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="${is80 ? 'var(--emerald)' : 'var(--svg-grid)'}" stroke-width="${is80 ? 1.8 : 1}" stroke-dasharray="${is80 ? '5,3' : '3,3'}"/>`;
+      svg += `<text x="${padL - 8}" y="${gy + 3}" text-anchor="end" fill="${is80 ? 'var(--emerald)' : 'var(--text-faint)'}" font-size="9.2" font-weight="${is80 ? '700' : '400'}" font-family="var(--font-mono)">${v}%</text>`;
+    });
+    svg += `<text x="${padL + 6}" y="${yOf(80) - 5}" fill="var(--emerald)" font-size="9" font-weight="700">▲ 80% Power Threshold</text>`;
+
+    // Vertical grid
+    [15, 30, 45, 60, 75, 90].forEach(nv => {
+      const gx = xOf(nv);
+      svg += `<line x1="${gx}" y1="${padT}" x2="${gx}" y2="${padT + plotH}" stroke="var(--svg-grid)" stroke-dasharray="3,3"/>`;
+      svg += `<text x="${gx}" y="${H - 16}" text-anchor="middle" fill="var(--text-faint)" font-size="9.2" font-family="var(--font-mono)">N=${nv} (n=${Math.floor(nv*ret/100)})</text>`;
+    });
+
+    const ns = [];
+    for (let nv = 15; nv <= 90; nv += 3) ns.push(nv);
+    const curves = [
+      { label: "d = 0.65 (Med-Large)", val: 0.65, col: "#2ea87e" },
+      { label: "d = 0.50 (Medium)", val: 0.50, col: "#38bdf8" },
+      { label: "d = 0.35 (Small-Med)", val: 0.35, col: "#fb7185" }
+    ];
+    curves.forEach(c => {
+      const path = ns.map((nv, i) => {
+        const nc = Math.floor(nv * (ret / 100));
+        return `${i === 0 ? 'M' : 'L'}${xOf(nv).toFixed(1)},${yOf(pairedTPower(nc, c.val)).toFixed(1)}`;
+      }).join(" ");
+      svg += `<path d="${path}" fill="none" stroke="${c.col}" stroke-width="2.2"/>`;
+    });
+
+    // Active crosshair
+    const ax = xOf(N), ay = yOf(pwr);
+    svg += `<line x1="${ax}" y1="${padT}" x2="${ax}" y2="${padT + plotH}" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="2,2"/>`;
+    svg += `<circle cx="${ax}" cy="${ay}" r="6.5" fill="var(--gold)" stroke="var(--bg)" stroke-width="2"/>`;
+    const lblX = ax > W - 180 ? ax - 10 : ax + 10;
+    const anchor = ax > W - 180 ? "end" : "start";
+    svg += `<text x="${lblX}" y="${Math.max(padT + 26, ay - 8)}" text-anchor="${anchor}" fill="var(--gold-bright)" font-size="10" font-family="var(--font-mono)" font-weight="700">N=${N} (n=${nComp}), d=${d.toFixed(2)} → ${pwr.toFixed(1)}%</text>`;
+
+    // Legend
+    svg += `<rect x="${padL + 8}" y="${padT + plotH - 22}" width="335" height="18" rx="4" fill="var(--bg-elev)" fill-opacity="0.88" stroke="var(--border)"/>`;
+    svg += `<text x="${padL + 16}" y="${padT + plotH - 10}" fill="#2ea87e" font-size="9" font-weight="700">━ d=0.65</text>`;
+    svg += `<text x="${padL + 86}" y="${padT + plotH - 10}" fill="#38bdf8" font-size="9" font-weight="700">━ d=0.50</text>`;
+    svg += `<text x="${padL + 156}" y="${padT + plotH - 10}" fill="#fb7185" font-size="9" font-weight="700">━ d=0.35</text>`;
+    svg += `<text x="${padL + 228}" y="${padT + plotH - 10}" fill="var(--gold-bright)" font-size="9" font-weight="700">● Active Scenario</text>`;
+
+    svg += `</svg>`;
+    document.getElementById("powerSvgWrap").innerHTML = svg;
+  }
+
+  ["rngPN", "rngPRet", "rngPD", "rngPGlh"].forEach(id => {
+    document.getElementById(id).addEventListener("input", e => {
+      if (id === "rngPN") state.pN = Number(e.target.value);
+      if (id === "rngPRet") state.pRet = Number(e.target.value);
+      if (id === "rngPD") state.pD = Number(e.target.value);
+      if (id === "rngPGlh") state.pGlh = Number(e.target.value);
+      saveState();
+      renderPower();
+    });
+  });
+  document.querySelectorAll("[data-ppreset]").forEach(b => {
+    b.addEventListener("click", () => {
+      const [n, ret, d, glh] = b.dataset.ppreset.split(",").map(Number);
+      state.pN = n; state.pRet = ret; state.pD = d; state.pGlh = glh;
+      saveState();
+      renderPower();
+    });
+  });
+
+  // =========================================================
+  // PANEL 3: LIVING LAB 0 UNIT ECONOMICS
+  // =========================================================
+  function renderEconomics() {
+    const pods = state.ePods;
+    const learners = pods * 15;
+    const coachHrs = pods * 50; // 150 hrs for 3 pods
+    const coachCost = coachHrs * state.eCoachRate;
+    const leadHrs = 25 + pods * 5; // 40 hrs for 3 pods
+    const leadCost = leadHrs * 20;
+    const raterHrs = pods * 10; // 30 hrs for 3 pods (Day 1 + Day 70 dual raters)
+    const raterCost = raterHrs * 18;
+    const phonesCost = state.ePhones * 110;
+    const legalCost = 3500;
+    const ethicsCost = 1000;
+
+    const varTotal = coachCost + leadCost + raterCost;
+    const fixTotal = phonesCost + legalCost + ethicsCost;
+    const total = varTotal + fixTotal;
+    const completers = Math.floor(learners * (state.eRet / 100));
+    const perEnrolled = total / learners;
+    const perCompleter = total / Math.max(1, completers);
+
+    document.getElementById("rngEPods").value = pods;
+    document.getElementById("rngECoach").value = state.eCoachRate;
+    document.getElementById("rngERet").value = state.eRet;
+    document.getElementById("rngEPhones").value = state.ePhones;
+
+    document.getElementById("lblEPods").textContent = `${pods} pods (${learners} adults)`;
+    document.getElementById("lblECoach").textContent = `$${state.eCoachRate} / hr (~${Math.round(state.eCoachRate*25.4)}k VND)`;
+    document.getElementById("lblERet").textContent = `${state.eRet}% (${completers} completers)`;
+    document.getElementById("lblEPhones").textContent = `${state.ePhones} devices (${fmtUSD(phonesCost)})`;
+
+    const items = [
+      { name: "VN Law 91/2025 + Decree 356 Legal Opinion", type: "Fixed", basis: "Pre-recruitment Vietnam counsel review", cost: legalCost, col: "#a78bfa" },
+      { name: "Vietnamese Bilingual Coaches", type: "Variable", basis: `${coachHrs} hrs (${pods} pods × 50 hrs) @ $${state.eCoachRate}/hr`, cost: coachCost, col: "#2ea87e" },
+      { name: "Independent Ethics & Protocol Reviewer", type: "Fixed", basis: "Pre-registration & consent audit stipend", cost: ethicsCost, col: "#d9b25f" },
+      { name: "Lead Coach & Train-the-Trainer", type: "Variable", basis: `${leadHrs} hrs @ $20/hr`, cost: leadCost, col: "#38bdf8" },
+      { name: "Reference 2–3 GB Android Test Phones", type: "Fixed", basis: `${state.ePhones} physical Gate 1 phones @ $110`, cost: phonesCost, col: "#f59e0b" },
+      { name: "Two Blind Speaking Raters (ICC[2,2])", type: "Variable", basis: `${raterHrs} hrs (Day 1 + Day 70 clips) @ $18/hr`, cost: raterCost, col: "#fb7185" }
+    ];
+
+    document.getElementById("econTableBody").innerHTML = items.map(it => `
+      <tr>
+        <td><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${it.col};margin-right:6px;"></span><strong>${it.name}</strong></td>
+        <td><span class="tag ${it.type === 'Fixed' ? 'tag-gold' : 'tag-info'}">${it.type}</span></td>
+        <td style="color:var(--text-muted);font-size:0.76rem;">${it.basis}</td>
+        <td style="text-align:right;font-family:var(--font-mono);font-weight:700;">${fmtUSD(it.cost)}</td>
+      </tr>
+    `).join("") + `
+      <tr class="total-row">
+        <td colspan="3">Total Direct Pilot Cost (${learners} Enrolled · ${completers} Completers)</td>
+        <td style="text-align:right;font-family:var(--font-mono);color:var(--gold-bright);">${fmtUSD(total)}</td>
+      </tr>
+    `;
+
+    document.getElementById("econVerdict").innerHTML = `
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>Total Pilot Direct Cost</label>
+          <div class="val" style="color:var(--gold-bright);">${fmtUSD(total)}</div>
+        </div>
+        <div class="stat-box">
+          <label>Cost per Enrolled Learner</label>
+          <div class="val" style="color:var(--emerald);">${fmtUSD(perEnrolled)} / learner</div>
+        </div>
+        <div class="stat-box">
+          <label>Cost per Completing Learner</label>
+          <div class="val" style="color:var(--teal);">${fmtUSD(perCompleter)} / grad</div>
+        </div>
+        <div class="stat-box">
+          <label>Fixed Compliance vs. Variable Delivery</label>
+          <div class="val" style="font-size:0.88rem;">${Math.round(fixTotal/total*100)}% Fix / ${Math.round(varTotal/total*100)}% Var</div>
+        </div>
+      </div>
+      <div class="callout-box">
+        <strong>Scaling Insight (Factor 54):</strong> Fixed legal/ethics compliance (<code>${fmtUSD(fixTotal)}</code>) drops from <strong>${fmtUSD(fixTotal/30)}/learner</strong> at 2 pods (30 adults) to <strong>${fmtUSD(fixTotal/60)}/learner</strong> at 4 pods (60 adults). Beyond Pilot 0, marginal variable delivery runs roughly <strong>${fmtUSD(varTotal/learners)}/learner</strong>—proving local facilitator training, not cloud infrastructure, is the true scaling lever.
+      </div>
+    `;
+
+    // Horizontal SVG bar chart of line items
+    const W = 680, H = 240;
+    const padL = 228, padR = 72, padT = 30, rowH = 32;
+    const maxC = Math.max(4000, ...items.map(i => i.cost)) * 1.08;
+    const plotW = W - padL - padR;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<text x="12" y="19" fill="var(--gold-bright)" font-size="11" font-weight="700">Living Lab 0 Cost Structure (${fmtUSD(total)} Total · ${fmtUSD(perEnrolled)}/Enrolled Learner)</text>`;
+    items.forEach((it, idx) => {
+      const y = padT + 4 + idx * rowH;
+      const bw = Math.max(6, (it.cost / maxC) * plotW);
+      const pct = ((it.cost / total) * 100).toFixed(1);
+      svg += `<text x="12" y="${y + 16}" fill="var(--text)" font-size="10.2" font-weight="600">${it.name.slice(0, 35)}</text>`;
+      svg += `<rect x="${padL}" y="${y + 4}" width="${plotW}" height="17" rx="4" fill="var(--svg-track)"/>`;
+      svg += `<rect x="${padL}" y="${y + 4}" width="${bw}" height="17" rx="4" fill="${it.col}" fill-opacity="0.82"/>`;
+      svg += `<text x="${padL + bw + 7}" y="${y + 16}" fill="var(--text)" font-size="9.8" font-family="var(--font-mono)" font-weight="700">${fmtUSD(it.cost)} (${pct}%)</text>`;
+    });
+    svg += `</svg>`;
+    document.getElementById("econSvgWrap").innerHTML = svg;
+  }
+
+  ["rngEPods", "rngECoach", "rngERet", "rngEPhones"].forEach(id => {
+    document.getElementById(id).addEventListener("input", e => {
+      if (id === "rngEPods") state.ePods = Number(e.target.value);
+      if (id === "rngECoach") state.eCoachRate = Number(e.target.value);
+      if (id === "rngERet") state.eRet = Number(e.target.value);
+      if (id === "rngEPhones") state.ePhones = Number(e.target.value);
+      saveState();
+      renderEconomics();
+    });
+  });
+  document.getElementById("btnResetEcon").addEventListener("click", () => {
+    state.ePods = 3; state.eCoachRate = 14; state.eRet = 70; state.ePhones = 5;
+    saveState();
+    renderEconomics();
+    showToast("Reset to $8,490 baseline");
+  });
+
+  // =========================================================
+  // PANEL 4: LEGAL HOME & VIETNAM LAW 91/2025
+  // =========================================================
+  function renderCompliance() {
+    document.getElementById("legalList").innerHTML = LEGAL_OPTIONS.map(o => `
+      <div class="legal-card ${state.selectedLegal === o.id ? 'selected' : ''}" data-leg="${o.id}">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+          <strong style="font-size:0.85rem;">${o.name}</strong>
+          <span class="tag tag-${o.tag}">${o.badge}</span>
+        </div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">${o.role}</div>
+      </div>
+    `).join("");
+
+    document.getElementById("legalList").querySelectorAll("[data-leg]").forEach(el => {
+      el.addEventListener("click", () => {
+        state.selectedLegal = el.dataset.leg;
+        saveState();
+        renderCompliance();
+      });
+    });
+
+    const cur = LEGAL_OPTIONS.find(o => o.id === state.selectedLegal) || LEGAL_OPTIONS[0];
+    document.getElementById("legalDetail").innerHTML = `
+      <div class="stat-box" style="margin-bottom:8px;">
+        <label>Primary Strategic Strength</label>
+        <div style="font-size:0.8rem;margin-top:3px;color:var(--text);">${cur.strength}</div>
+      </div>
+      <div class="stat-box">
+        <label>Constraints, Fees &amp; Counsel Considerations</label>
+        <div style="font-size:0.8rem;margin-top:3px;color:var(--text-muted);">${cur.tradeoff}</div>
+      </div>
+    `;
+
+    let doneCnt = 0;
+    document.getElementById("compChecklist").innerHTML = COMPLIANCE_ITEMS.map(c => {
+      const done = !!state.compChecked[c.id];
+      if (done) doneCnt++;
+      return `
+        <li class="check-item ${done ? 'done' : ''}" data-comp="${c.id}">
+          <span class="check-box">${done ? '✓' : ''}</span>
+          <div>
+            <div style="font-weight:700;font-size:0.82rem;">${c.title}</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);margin-top:2px;">${c.desc}</div>
+          </div>
+        </li>
+      `;
+    }).join("");
+    document.getElementById("compPill").textContent = `${doneCnt}/${COMPLIANCE_ITEMS.length} Ready`;
+
+    document.getElementById("compChecklist").querySelectorAll("[data-comp]").forEach(li => {
+      li.addEventListener("click", () => {
+        const id = li.dataset.comp;
+        state.compChecked[id] = !state.compChecked[id];
+        saveState();
+        renderCompliance();
+      });
+    });
+  }
+
+  document.getElementById("btnResetComp").addEventListener("click", () => {
+    state.compChecked = {};
+    saveState();
+    renderCompliance();
+    showToast("Law 91/2025 checklist reset");
+  });
+
+  // Theme & Font
+  document.getElementById("btnTheme").addEventListener("click", () => {
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+  document.getElementById("btnFontInc").addEventListener("click", () => {
+    state.scale = Math.min(1.25, +(state.scale + 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+  document.getElementById("btnFontDec").addEventListener("click", () => {
+    state.scale = Math.max(0.84, +(state.scale - 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+
+  // Export Modal
+  const EMBED_SNIPPET = `> [!note]- Capitalizing the Cost of Trust and Sizing Living Lab 0 for Statistical Power\n> \n> https://anvilnexus.github.io/aicontent/sovraegis_cost_of_trust_living_lab0.html\n> \n> <iframe src="https://anvilnexus.github.io/aicontent/sovraegis_cost_of_trust_living_lab0.html?embed=true" width="100%" height="740px" style="border: 1px solid var(--background-modifier-border); border-radius: 8px;" loading="lazy"></iframe>`;
+
+  function buildMdSnapshot() {
+    const nComp = Math.floor(state.pN * (state.pRet / 100));
+    const pwr = pairedTPower(nComp, state.pD);
+    const learners = state.ePods * 15;
+    const totalPilot = (state.ePods * 50 * state.eCoachRate) + ((25 + state.ePods * 5) * 20) + (state.ePods * 10 * 18) + (state.ePhones * 110) + 4500;
+    const compLines = COMPLIANCE_ITEMS.map(c => `- [${state.compChecked[c.id] ? 'x' : ' '}] **${c.title}**`).join("\n");
+    return `# SOVRÆGIS / SOVRÆG LABS — Cost of Trust & Living Lab 0 Modeler Snapshot\n\n## 24-Month Operating Budget & Cost of Trust\n- **Year 1 Lean:** $141,490 (Cost of Trust: $23,000 / 16.3%)\n- **Year 2 Multi-Site:** $380,000 (Cost of Trust: $80,000 / 21.1%)\n- **24-Month Total:** $521,490 (Ring-Fenced Trust Reserve: $103,000 / 19.8%)\n\n## Living Lab 0 Statistical Power Scenario\n- **Enrolled:** ${state.pN} adults | **Retention:** ${state.pRet}% (n = ${nComp} completers)\n- **Target Effect Size:** d = ${state.pD.toFixed(2)} | **Two-Sided Paired t-Test Power (α=0.05):** ${pwr.toFixed(1)}%\n- **10-Week Guided Hours:** ${(state.pGlh * 10).toFixed(0)} GLH (${state.pGlh.toFixed(1)} hrs/wk)\n\n## Living Lab 0 HCMC Direct Cost Scenario\n- **Pods:** ${state.ePods} (${learners} adults) | **Coach Rate:** $${state.eCoachRate}/hr\n- **Total Pilot Cost:** ${fmtUSD(totalPilot)} (${fmtUSD(totalPilot / learners)}/enrolled learner)\n\n## Vietnam Law 91/2025 & Decree 356 Readiness\n${compLines}\n`;
+  }
+
+  document.getElementById("btnExport").addEventListener("click", () => {
+    document.getElementById("obsidianSnippet").textContent = EMBED_SNIPPET;
+    document.getElementById("mdPreview").textContent = buildMdSnapshot();
+    document.getElementById("exportModal").classList.add("open");
+  });
+  document.getElementById("btnCloseModal").addEventListener("click", () => document.getElementById("exportModal").classList.remove("open"));
+  document.getElementById("exportModal").addEventListener("click", e => { if (e.target.id === "exportModal") document.getElementById("exportModal").classList.remove("open"); });
+  document.getElementById("btnCopyObsidian").addEventListener("click", () => {
+    navigator.clipboard && navigator.clipboard.writeText(EMBED_SNIPPET);
+    showToast("Obsidian callout copied");
+  });
+  document.getElementById("btnDownloadMd").addEventListener("click", () => {
+    const blob = new Blob([buildMdSnapshot()], { type: "text/markdown;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "SOVRAEGIS_Cost_of_Trust_Living_Lab0_Snapshot.md";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("Downloaded Markdown snapshot");
+  });
+
+  // Init
+  renderBudget();
+  renderPower();
+  renderEconomics();
+  renderCompliance();
+})();
+</script>
+</body>
+</html>
