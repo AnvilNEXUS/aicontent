@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZINES — AFFiNE & BlockSuite Architectural & Licensing Boundary</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+
+      --hex-stroke: rgba(212, 175, 55, 0.05);
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+
+      --hex-stroke: rgba(154, 116, 17, 0.08);
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1240px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hex-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .title-group h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .seg-btn:hover {
+      color: var(--text);
+    }
+
+    .seg-btn.active[data-mode="blocksuite_only"] {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      box-shadow: inset 0 0 0 1px rgba(46, 194, 126, 0.35);
+    }
+
+    .seg-btn.active[data-mode="full_affine_stack"] {
+      background: var(--crimson-soft);
+      color: var(--crimson);
+      box-shadow: inset 0 0 0 1px rgba(239, 83, 80, 0.35);
+    }
+
+    .seg-btn.active[data-mode="compare"] {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.4);
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 7px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .icon-btn.danger-active {
+      background: var(--crimson-soft);
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    /* Executive Risk Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: border-color 0.25s ease, transform 0.2s ease;
+    }
+
+    .metric-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 0.88rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .metric-sub {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.low { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+    .dot.medium { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .dot.high, .dot.critical { background: var(--crimson); box-shadow: 0 0 8px var(--crimson); }
+    .dot.gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+    /* Main Workspace Grid */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(300px, 0.95fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    /* Diagram Panel */
+    .diagram-panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .diagram-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 0 4px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-swatch {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    .svg-wrap {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    svg#archSvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    /* SVG Interactive Node & Edge Styles */
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.3s ease, filter 0.3s ease;
+    }
+
+    .node-group.dimmed {
+      opacity: 0.24;
+    }
+
+    .node-group:hover .node-rect {
+      filter: brightness(1.12);
+    }
+
+    .node-group.selected .node-rect {
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.35));
+    }
+
+    .edge-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s ease, stroke 0.3s ease, stroke-width 0.3s ease;
+    }
+
+    .edge-path.dimmed {
+      opacity: 0.14;
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke-dasharray: 8 10;
+      animation: flowDash 1.4s linear infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    .edge-flow.dimmed,
+    .packet.dimmed {
+      opacity: 0;
+    }
+
+    .paused .edge-flow {
+      animation-play-state: paused;
+    }
+
+    .paused .boundary-pulse {
+      animation-play-state: paused;
+    }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 36; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes boundaryAlert {
+      0%, 100% { stroke-opacity: 0.55; }
+      50% { stroke-opacity: 1; }
+    }
+
+    .boundary-pulse {
+      animation: boundaryAlert 1.6s ease-in-out infinite;
+    }
+
+    .leak-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--crimson-soft);
+      border: 1px solid var(--crimson);
+      color: var(--crimson);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .leak-banner.visible {
+      display: flex;
+    }
+
+    /* Inspector Panel */
+    .inspector {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .inspector-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .inspector-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+    }
+
+    .inspector-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .repo-path {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      display: inline-block;
+      width: fit-content;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill.safe { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46, 194, 126, 0.35); }
+    .pill.warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(240, 168, 48, 0.35); }
+    .pill.danger { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(239, 83, 80, 0.35); }
+    .pill.neutral { background: var(--blue-soft); color: var(--blue); border-color: rgba(88, 166, 255, 0.3); }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .inspector-section h3 {
+      font-size: 0.73rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .inspector-section p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+    }
+
+    .mitigation-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .mitigation-list li {
+      font-size: 0.8rem;
+      color: var(--text);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 7px 10px;
+    }
+
+    .inspector-footer {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.74rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    @media (max-width: 920px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .metrics-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 10px; }
+      .metrics-strip { grid-template-columns: 1fr; }
+      .seg-btn { font-size: 0.72rem; padding: 6px 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Top Control Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.8" />
+            <text x="20" y="24" text-anchor="middle" fill="var(--gold)" font-size="12" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div class="title-group">
+          <h1>Architectural &amp; Licensing Boundary: BlockSuite vs. AFFiNE</h1>
+          <p>Toggle integration paths and click any node to inspect MIT, MPL 2.0, EE, and OEM boundaries for SYNCZINES</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="segmented" role="tablist" aria-label="Integration Path Selector">
+          <button class="seg-btn active" data-mode="blocksuite_only" role="tab" aria-selected="true">Path A: BlockSuite Only (MIT)</button>
+          <button class="seg-btn" data-mode="full_affine_stack" role="tab" aria-selected="false">Path B: Full AFFiNE Stack</button>
+          <button class="seg-btn" data-mode="compare" role="tab" aria-selected="false">Compare Both</button>
+        </div>
+
+        <button class="icon-btn" id="leakToggleBtn" title="Simulate accidental import of packages/common/native (y-octo) in Path A">
+          <span id="leakIcon">&#9888;</span> Simulate <code>y-octo</code> Leak
+        </button>
+
+        <button class="icon-btn" id="animToggleBtn" title="Pause or resume data-flow animation">
+          <span id="animIcon">&#10074;&#10074;</span> Pause Flow
+        </button>
+
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Sovereign Dark / Warm Parchment Light">
+          <span id="themeIcon">&#9788;</span> Light
+        </button>
+      </div>
+    </header>
+
+    <!-- Executive Risk Summary Strip -->
+    <section class="metrics-strip" aria-label="Executive Risk Summary">
+      <div class="metric-card">
+        <span class="metric-label">License Risk</span>
+        <div class="metric-value" id="mLicenseVal"><span class="dot low"></span>Low — Pure MIT Boundary</div>
+        <span class="metric-sub" id="mLicenseSub">Standard MIT attribution only; zero EE/OEM fees</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Upgrade &amp; Maintenance</span>
+        <div class="metric-value" id="mUpgradeVal"><span class="dot medium"></span>Medium — Monorepo Vendoring</div>
+        <span class="metric-sub" id="mUpgradeSub">npm 0.22.4 stalled; pin commits from AFFiNE repo</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Data Sovereignty</span>
+        <div class="metric-value" id="mSovVal"><span class="dot low"></span>100% SYNCZINES Control</div>
+        <span class="metric-sub" id="mSovSub">Own Yjs sync, auth, snapshots, and exit path</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Feature Scope</span>
+        <div class="metric-value" id="mScopeVal"><span class="dot gold"></span>Hybrid Doc + Edgeless Canvas</div>
+        <span class="metric-sub" id="mScopeSub">Editor surface only; custom sync &amp; export adapters</span>
+      </div>
+    </section>
+
+    <!-- Main Split Workspace -->
+    <main class="workspace">
+      <!-- Interactive SVG Architecture Diagram -->
+      <section class="diagram-panel" aria-label="Architecture Diagram">
+        <div class="diagram-toolbar">
+          <div class="legend">
+            <span class="legend-item"><span class="legend-swatch" style="background: var(--emerald);"></span>Safe MIT / Proprietary Yours</span>
+            <span class="legend-item"><span class="legend-swatch" style="background: var(--amber);"></span>Pre-1.0 Churn / Caution</span>
+            <span class="legend-item"><span class="legend-swatch" style="background: var(--crimson);"></span>MPL 2.0 / EE / Commercial OEM</span>
+          </div>
+          <span style="font-size: 0.72rem; color: var(--text-dim);">Click any node to inspect details</span>
+        </div>
+
+        <div class="leak-banner" id="leakBanner" role="alert">
+          <span><strong>SBOM BOUNDARY BREACH:</strong> Transitive import of <code>packages/common/native</code> (Rust <code>y-octo</code>) pulls Path A across the MIT license boundary into MPL 2.0 / Server License terms!</span>
+          <button class="icon-btn" id="clearLeakBtn" style="padding: 4px 8px; font-size: 0.72rem;">Fix in CI</button>
+        </div>
+
+        <div class="svg-wrap">
+          <svg id="archSvg" viewBox="0 0 760 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SYNCZINES and AFFiNE Licensing Boundary Architecture Diagram">
+            <defs>
+              <!-- Subtle Hexagonal Tesserae Background Pattern -->
+              <pattern id="hexPattern" width="48" height="41.57" patternUnits="userSpaceOnUse">
+                <path d="M24 0 L48 13.85 L48 27.71 L24 41.57 L0 27.71 L0 13.85 Z" fill="none" stroke="var(--hex-stroke)" stroke-width="1" />
+              </pattern>
+
+              <!-- Arrowheads -->
+              <marker id="arrowSafe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2ec27e" />
+              </marker>
+              <marker id="arrowGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37" />
+              </marker>
+              <marker id="arrowDanger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef5350" />
+              </marker>
+              <marker id="arrowMuted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#526075" />
+              </marker>
+
+              <!-- Glow filter for packets -->
+              <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.5" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <!-- Background -->
+            <rect width="760" height="540" fill="url(#hexPattern)" />
+
+            <!-- Zone Backgrounds -->
+            <!-- Top Permissive / Sovereign Zone -->
+            <rect x="16" y="14" width="728" height="226" rx="10" fill="rgba(46, 194, 126, 0.045)" stroke="rgba(46, 194, 126, 0.22)" stroke-width="1" />
+            <text x="28" y="33" fill="var(--emerald)" font-size="10.5" font-weight="800" letter-spacing="1.1">PERMISSIVE MIT &amp; SOVEREIGN APPLICATION ZONE</text>
+
+            <!-- Bottom Left Permissive Zone Extension (Path A) -->
+            <rect x="16" y="274" width="350" height="252" rx="10" fill="rgba(46, 194, 126, 0.045)" stroke="rgba(46, 194, 126, 0.24)" stroke-width="1" />
+            <text x="28" y="294" fill="var(--emerald)" font-size="10" font-weight="800" letter-spacing="0.9">PATH A: SOVEREIGN MIT / OWN BACKEND</text>
+
+            <!-- Bottom Right Restricted Open-Core / Commercial Zone (Path B) -->
+            <rect x="386" y="274" width="358" height="252" rx="10" fill="rgba(239, 83, 80, 0.055)" stroke="rgba(239, 83, 80, 0.3)" stroke-width="1" />
+            <text x="398" y="294" fill="var(--crimson)" font-size="10" font-weight="800" letter-spacing="0.9">PATH B: MPL 2.0 / ENTERPRISE (EE) / OEM ZONE</text>
+
+            <!-- Horizontal License Boundary Line -->
+            <line id="boundaryLine" x1="382" y1="257" x2="744" y2="257" stroke="var(--crimson)" stroke-width="2" stroke-dasharray="7 5" class="boundary-pulse" />
+            <rect x="466" y="246" width="198" height="22" rx="11" fill="var(--bg-canvas)" stroke="var(--crimson)" stroke-width="1.4" />
+            <text x="565" y="260.5" text-anchor="middle" fill="var(--crimson)" font-size="9.5" font-weight="800" letter-spacing="0.6">LICENSE BOUNDARY CARVE-OUT</text>
+
+            <!-- Vertical Divider Between Path A and Path B -->
+            <line x1="376" y1="274" x2="376" y2="526" stroke="var(--border-strong)" stroke-width="1.2" stroke-dasharray="4 4" />
+
+            <!-- EDGES -->
+            <!-- Edge 1: synczines_app -> blocksuite_editor -->
+            <path id="edge-app-bs" class="edge-path" d="M 380 112 L 380 150" stroke="var(--gold)" stroke-width="2.4" marker-end="url(#arrowGold)" />
+            <path id="flow-app-bs" class="edge-flow" d="M 380 112 L 380 148" stroke="var(--gold)" stroke-width="2.4" />
+            <rect x="285" y="121" width="190" height="18" rx="4" fill="var(--bg-canvas)" />
+            <text x="380" y="133" text-anchor="middle" fill="var(--text-muted)" font-size="9.5" font-weight="600">Web Components / Extension API</text>
+
+            <!-- Edge 2 (Path A): blocksuite_editor -> crdt_sync_custom -->
+            <path id="edge-bs-custom" class="edge-path" d="M 285 224 L 285 258 L 190 258 L 190 310" stroke="var(--emerald)" stroke-width="2.4" marker-end="url(#arrowSafe)" />
+            <path id="flow-bs-custom" class="edge-flow" d="M 285 224 L 285 258 L 190 258 L 190 308" stroke="var(--emerald)" stroke-width="2.4" />
+            <rect x="74" y="248" width="134" height="18" rx="4" fill="var(--bg-canvas)" />
+            <text x="141" y="260" text-anchor="middle" fill="var(--emerald)" font-size="9.5" font-weight="700">Yjs Doc Updates (MIT)</text>
+
+            <!-- Edge 3 (Path A): crdt_sync_custom -> synczines_backend -->
+            <path id="edge-custom-be" class="edge-path" d="M 190 388 L 190 432" stroke="var(--emerald)" stroke-width="2.4" marker-end="url(#arrowSafe)" />
+            <path id="flow-custom-be" class="edge-flow" d="M 190 388 L 190 430" stroke="var(--emerald)" stroke-width="2.4" />
+            <rect x="108" y="399" width="164" height="18" rx="4" fill="var(--bg-canvas)" />
+            <text x="190" y="411" text-anchor="middle" fill="var(--emerald)" font-size="9.5" font-weight="700">Snapshots + Auth + Export</text>
+
+            <!-- Edge 4 (Path B / Leak): blocksuite_editor -> affine_native -->
+            <path id="edge-bs-native" class="edge-path" d="M 475 224 L 475 258 L 565 258 L 565 310" stroke="var(--crimson)" stroke-width="2.4" marker-end="url(#arrowDanger)" />
+            <path id="flow-bs-native" class="edge-flow" d="M 475 224 L 475 258 L 565 258 L 565 308" stroke="var(--crimson)" stroke-width="2.4" />
+
+            <!-- Edge 5 (Path B): affine_native -> affine_backend -->
+            <path id="edge-native-be" class="edge-path" d="M 565 388 L 565 432" stroke="var(--crimson)" stroke-width="2.4" marker-end="url(#arrowDanger)" />
+            <path id="flow-native-be" class="edge-flow" d="M 565 388 L 565 430" stroke="var(--crimson)" stroke-width="2.4" />
+            <rect x="466" y="399" width="198" height="18" rx="4" fill="var(--bg-canvas)" />
+            <text x="565" y="411" text-anchor="middle" fill="var(--crimson)" font-size="9.5" font-weight="700">EE / OEM License Required</text>
+
+            <!-- Animated Data Packets -->
+            <circle id="pkt-1" class="packet" r="4" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="1.7s" repeatCount="indefinite" path="M 380 112 L 380 150" />
+            </circle>
+            <circle id="pkt-a1" class="packet" r="4.2" fill="#2ec27e" filter="url(#glow)">
+              <animateMotion dur="2.1s" repeatCount="indefinite" path="M 285 224 L 285 258 L 190 258 L 190 310" />
+            </circle>
+            <circle id="pkt-a2" class="packet" r="4.2" fill="#2ec27e" filter="url(#glow)">
+              <animateMotion dur="1.8s" repeatCount="indefinite" path="M 190 388 L 190 432" />
+            </circle>
+            <circle id="pkt-b1" class="packet" r="4.2" fill="#ef5350" filter="url(#glow)">
+              <animateMotion dur="2.0s" repeatCount="indefinite" path="M 475 224 L 475 258 L 565 258 L 565 310" />
+            </circle>
+            <circle id="pkt-b2" class="packet" r="4.2" fill="#ef5350" filter="url(#glow)">
+              <animateMotion dur="1.8s" repeatCount="indefinite" path="M 565 388 L 565 432" />
+            </circle>
+
+            <!-- NODES -->
+            <!-- 1. SYNCZINES Host App -->
+            <g class="node-group selected" data-node="synczines_app" tabindex="0" role="button" aria-label="Inspect SYNCZINES Host App">
+              <rect class="node-rect" x="190" y="46" width="380" height="66" rx="10" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="2" />
+              <rect x="204" y="56" width="90" height="17" rx="4" fill="var(--gold-soft)" />
+              <text x="249" y="68" text-anchor="middle" fill="var(--gold)" font-size="9" font-weight="800">APPLICATION</text>
+              <rect x="462" y="56" width="94" height="17" rx="4" fill="var(--emerald-soft)" />
+              <text x="509" y="68" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="800">PROPRIETARY</text>
+              <text x="204" y="92" fill="var(--text)" font-size="13.5" font-weight="700">SYNCZINES Host App (Your Core Product)</text>
+              <text x="204" y="105" fill="var(--text-muted)" font-size="10">Internal Editor Adapter • Auth • Billing • Publishing Pipeline</text>
+            </g>
+
+            <!-- 2. BlockSuite Editor -->
+            <g class="node-group" data-node="blocksuite_editor" tabindex="0" role="button" aria-label="Inspect BlockSuite Editor">
+              <rect class="node-rect" x="190" y="152" width="380" height="72" rx="10" fill="var(--bg-card)" stroke="var(--amber)" stroke-width="2" />
+              <rect x="204" y="162" width="108" height="17" rx="4" fill="var(--amber-soft)" />
+              <text x="258" y="174" text-anchor="middle" fill="var(--amber)" font-size="9" font-weight="800">PRE-1.0 • MIT</text>
+              <rect x="424" y="162" width="132" height="17" rx="4" fill="var(--blue-soft)" />
+              <text x="490" y="174" text-anchor="middle" fill="var(--blue)" font-size="9" font-weight="800">npm 0.22.4 STALE</text>
+              <text x="204" y="198" fill="var(--text)" font-size="13.5" font-weight="700">BlockSuite Editor (blocksuite/*)</text>
+              <text x="204" y="213" fill="var(--text-muted)" font-size="10">Lit Web Components (Page + Edgeless) • Append-Only CRDT</text>
+            </g>
+
+            <!-- 3. Custom Yjs Sync Layer (Path A) -->
+            <g class="node-group" data-node="crdt_sync_custom" tabindex="0" role="button" aria-label="Inspect Custom Yjs Sync Layer">
+              <rect class="node-rect" x="34" y="312" width="314" height="76" rx="10" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2" />
+              <rect x="48" y="322" width="84" height="17" rx="4" fill="var(--emerald-soft)" />
+              <text x="90" y="334" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="800">MIT (YJS)</text>
+              <rect x="234" y="322" width="100" height="17" rx="4" fill="var(--emerald-soft)" />
+              <text x="284" y="334" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="800">LOW RISK</text>
+              <text x="48" y="359" fill="var(--text)" font-size="13" font-weight="700">Custom Yjs Sync Layer</text>
+              <text x="48" y="375" fill="var(--text-muted)" font-size="10">Hocuspocus / Custom WS • Zero AFFiNE Server Code</text>
+            </g>
+
+            <!-- 4. SYNCZINES Backend & Storage (Path A) -->
+            <g class="node-group" data-node="synczines_backend" tabindex="0" role="button" aria-label="Inspect SYNCZINES Backend and Storage">
+              <rect class="node-rect" x="34" y="434" width="314" height="76" rx="10" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2" />
+              <rect x="48" y="444" width="114" height="17" rx="4" fill="var(--emerald-soft)" />
+              <text x="105" y="456" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="800">FULL SOVEREIGNTY</text>
+              <rect x="234" y="444" width="100" height="17" rx="4" fill="var(--gold-soft)" />
+              <text x="284" y="456" text-anchor="middle" fill="var(--gold)" font-size="9" font-weight="800">YOUR STACK</text>
+              <text x="48" y="481" fill="var(--text)" font-size="13" font-weight="700">SYNCZINES Backend &amp; Storage</text>
+              <text x="48" y="497" fill="var(--text-muted)" font-size="10">CRDT Updates + Portable JSON/HTML/MD Snapshots</text>
+            </g>
+
+            <!-- 5. AFFiNE Native (Path B) -->
+            <g class="node-group" data-node="affine_native" tabindex="0" role="button" aria-label="Inspect AFFiNE Native Module">
+              <rect class="node-rect" x="404" y="312" width="322" height="76" rx="10" fill="var(--bg-card)" stroke="var(--crimson)" stroke-width="2" />
+              <rect x="418" y="322" width="108" height="17" rx="4" fill="var(--crimson-soft)" />
+              <text x="472" y="334" text-anchor="middle" fill="var(--crimson)" font-size="9" font-weight="800">MPL 2.0 / EE</text>
+              <rect x="614" y="322" width="98" height="17" rx="4" fill="var(--crimson-soft)" />
+              <text x="663" y="334" text-anchor="middle" fill="var(--crimson)" font-size="9" font-weight="800">HIGH RISK</text>
+              <text x="418" y="359" fill="var(--text)" font-size="13" font-weight="700">AFFiNE Native (common/native)</text>
+              <text x="418" y="375" fill="var(--text-muted)" font-size="10">Rust y-octo via Napi-rs • Carved Out of Root MIT</text>
+            </g>
+
+            <!-- 6. AFFiNE Server (Path B) -->
+            <g class="node-group" data-node="affine_backend" tabindex="0" role="button" aria-label="Inspect AFFiNE Backend Server">
+              <rect class="node-rect" x="404" y="434" width="322" height="76" rx="10" fill="var(--bg-card)" stroke="var(--crimson)" stroke-width="2" />
+              <rect x="418" y="444" width="138" height="17" rx="4" fill="var(--crimson-soft)" />
+              <text x="487" y="456" text-anchor="middle" fill="var(--crimson)" font-size="9" font-weight="800">MPL CE / EE / OEM</text>
+              <rect x="614" y="444" width="98" height="17" rx="4" fill="var(--crimson-soft)" />
+              <text x="663" y="456" text-anchor="middle" fill="var(--crimson)" font-size="9" font-weight="800">CRITICAL</text>
+              <text x="418" y="481" fill="var(--text)" font-size="13" font-weight="700">AFFiNE Server (backend/server)</text>
+              <text x="418" y="497" fill="var(--text-muted)" font-size="10">v0.27.4 • 10-Seat Free Cap • OEM License to Embed</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Node Inspector Panel -->
+      <aside class="inspector" aria-live="polite">
+        <div class="inspector-header">
+          <div class="inspector-eyebrow">
+            <span id="insLayer">APPLICATION LAYER</span>
+            <span id="insPathBadge">ACTIVE IN BOTH PATHS</span>
+          </div>
+          <h2 class="inspector-title" id="insTitle">SYNCZINES Host App</h2>
+          <code class="repo-path" id="insRepo">synczines/apps/host-shell</code>
+          <div class="pill-row" id="insPills"></div>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Architectural &amp; Legal Assessment</h3>
+          <p id="insDetails"></p>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Stability &amp; Version Posture</h3>
+          <p id="insStability"></p>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Recommended Mitigation for SYNCZINES</h3>
+          <ul class="mitigation-list" id="insMitigations"></ul>
+        </div>
+
+        <div class="inspector-footer">
+          <span id="insFooterNote">Sovereign boundary intact</span>
+          <span>SYNCZINES Architecture Reference</span>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const NODES = {
+        synczines_app: {
+          title: "SYNCZINES Host App",
+          layer: "Application Layer",
+          repo: "synczines/apps/host-shell",
+          license: "Proprietary (Yours)",
+          licenseClass: "safe",
+          risk: "Low Risk",
+          riskClass: "safe",
+          status: "Core Product Shell",
+          activeIn: ["blocksuite_only", "full_affine_stack", "compare"],
+          activeLabel: "ACTIVE IN BOTH PATHS",
+          details:
+            "Hosts the SYNCZINES UI shell, authentication, billing, learner runtime orchestration, and publishing pipeline. By wrapping the editor behind an internal adapter interface, SYNCZINES prevents upstream BlockSuite API churn from leaking across your product.",
+          stability:
+            "Fully under your engineering control. Avoids direct coupling to Lit Web Component internals by communicating via a versioned adapter contract.",
+          mitigations: [
+            "Wrap BlockSuite behind an internal SYNCZINES EditorAdapter interface from day one.",
+            "Keep canonical JSON/HTML snapshots decoupled from raw CRDT binary updates so you retain a clean exit path."
+          ],
+          footer: "Core sovereign application boundary"
+        },
+        blocksuite_editor: {
+          title: "BlockSuite Editor Engine",
+          layer: "Frontend Editor Layer",
+          repo: "toeverything/AFFiNE -> blocksuite/*",
+          license: "MIT License",
+          licenseClass: "safe",
+          risk: "Medium Technical Risk",
+          riskClass: "warn",
+          status: "Pre-1.0 (npm 0.22.4 stale)",
+          activeIn: ["blocksuite_only", "full_affine_stack", "compare"],
+          activeLabel: "ACTIVE IN BOTH PATHS",
+          details:
+            "Permissively MIT-licensed Lit Web Components delivering both PageEditor (linear rich text) and EdgelessEditor (infinite whiteboard) over a unified CRDT store. Safe to modify, rebrand, and embed commercially with standard MIT attribution.",
+          stability:
+            "Legacy npm packages (@blocksuite/blocks, @blocksuite/presets) stopped at 0.19.5 in late 2024; refactored packages (@blocksuite/store, @blocksuite/std, @blocksuite/affine) stalled at 0.22.4 (July 2025) while active commits moved inside the AFFiNE v0.27.4 monorepo. CRDT block schemas must remain strictly append-only.",
+          mitigations: [
+            "Budget engineering time to pin, vendor, or fork a known-good commit directly from the AFFiNE monorepo.",
+            "Treat every custom SYNCZINES block schema as strictly append-only (new fields optional with undefined default).",
+            "Maintain custom BlockSuite transformers if you require clean HTML, Markdown, or print publishing outputs."
+          ],
+          footer: "MIT-safe frontend; high pre-1.0 churn"
+        },
+        crdt_sync_custom: {
+          title: "Custom Yjs Sync Layer",
+          layer: "Sync & State Layer (Path A)",
+          repo: "yjs / hocuspocus / custom-ws-sync",
+          license: "MIT (Yjs Ecosystem)",
+          licenseClass: "safe",
+          risk: "Low Risk",
+          riskClass: "safe",
+          status: "Mature Production Ecosystem",
+          activeIn: ["blocksuite_only", "compare"],
+          activeLabel: "PATH A: MIT ONLY",
+          details:
+            "Standard MIT-licensed Yjs synchronization and persistence layer (e.g., Hocuspocus, y-websocket, or a custom NATS/WebSocket bridge). Completely bypasses AFFiNE's server and native Rust licensing restrictions.",
+          stability:
+            "Battle-tested CRDT wire format with widespread community tooling, offline IndexedDB providers, and zero single-vendor roadmap risk.",
+          mitigations: [
+            "Run automated SBOM license checks in CI to verify zero transitive pulls from packages/common/native.",
+            "Implement server-side snapshot compaction alongside raw Yjs binary update logs."
+          ],
+          footer: "Recommended sovereign sync architecture"
+        },
+        synczines_backend: {
+          title: "SYNCZINES Backend & Storage",
+          layer: "Persistence & Sovereignty Layer (Path A)",
+          repo: "synczines/services/core-storage",
+          license: "Proprietary (Yours)",
+          licenseClass: "safe",
+          risk: "Low Risk",
+          riskClass: "safe",
+          status: "100% Data Sovereignty",
+          activeIn: ["blocksuite_only", "compare"],
+          activeLabel: "PATH A: MIT ONLY",
+          details:
+            "Your own persistence, authentication, multi-tenant authorization, and publishing storage. Keeps customer data strictly within your controlled infrastructure for GDPR, institutional, or local-first residency compliance.",
+          stability:
+            "Long-term durability guaranteed because portable JSON/HTML/Markdown exports are archived alongside CRDT blobs.",
+          mitigations: [
+            "Store canonical portable exports alongside Yjs binary updates for search indexing and future editor migration.",
+            "Avoid routing enterprise or institutional customer data through AFFiNE Cloud (no public SOC 2 / ISO 27001 claims)."
+          ],
+          footer: "Zero vendor lock-in or seat limits"
+        },
+        affine_native: {
+          title: "AFFiNE Native Rust Modules",
+          layer: "Native Binding Layer (Path B)",
+          repo: "toeverything/AFFiNE -> packages/common/native",
+          license: "MPL 2.0 / Server License",
+          licenseClass: "danger",
+          risk: "High License Risk",
+          riskClass: "danger",
+          status: "Rust y-octo via Napi-rs",
+          activeIn: ["full_affine_stack", "compare"],
+          activeLabel: "CROSSES MIT BOUNDARY",
+          details:
+            "High-performance Rust CRDT engine (y-octo) exposed via Napi-rs. Explicitly carved out of AFFiNE's root MIT LICENSE and governed by packages/backend/server/LICENSE (MPL 2.0 weak copyleft / EE terms).",
+          stability:
+            "Tightly coupled to AFFiNE internal monorepo builds and native binary targets. Pulling this package transitively contaminates a pure MIT bundle.",
+          mitigations: [
+            "Block packages/common/native in package manager lockfile policies if pursuing Path A (MIT Only).",
+            "If modifying any MPL 2.0 covered source file, publish file-level source modifications under MPL 2.0."
+          ],
+          footer: "Carve-out warning: not MIT-licensed"
+        },
+        affine_backend: {
+          title: "AFFiNE Backend & Sync Server",
+          layer: "Open-Core Server Layer (Path B)",
+          repo: "toeverything/AFFiNE -> packages/backend/server",
+          license: "MPL 2.0 (CE) / EE / Commercial OEM",
+          licenseClass: "danger",
+          risk: "Critical Commercial Risk",
+          riskClass: "danger",
+          status: "v0.27.4 (10-Seat Free Cap)",
+          activeIn: ["full_affine_stack", "compare"],
+          activeLabel: "REQUIRES EE / OEM CONTRACT",
+          details:
+            "Open-core backend governing multi-user collaboration, server sync, and workspace controls. Free self-hosting of Enterprise Edition (EE) features is capped at 10 seats per workspace. Embedding, rebranding, or redistributing AFFiNE's full stack inside SYNCZINES requires purchasing a commercial OEM license from TOEVERYTHING PTE. LTD.",
+          stability:
+            "Active product development (~74.5k GitHub stars), but single-vendor governed with commercial relicensing exposure and product-first priorities over third-party SDK ergonomics.",
+          mitigations: [
+            "Do not ship AFFiNE's sync server inside SYNCZINES without a signed commercial OEM contract.",
+            "Evaluate whether you only need to embed SYNCZ-SRLO inside a learner's own AFFiNE workspace instead of bundling AFFiNE."
+          ],
+          footer: "Commercial OEM agreement required for whitelabel embedding"
+        }
+      };
+
+      const METRICS = {
+        blocksuite_only: {
+          license: { cls: "low", val: "Low — Pure MIT Boundary", sub: "Standard MIT attribution only; zero EE/OEM fees" },
+          upgrade: { cls: "medium", val: "Medium — Monorepo Vendoring", sub: "npm 0.22.4 stalled; pin commits from AFFiNE repo" },
+          sov: { cls: "low", val: "100% SYNCZINES Control", sub: "Own Yjs sync, auth, snapshots, and exit path" },
+          scope: { cls: "gold", val: "Hybrid Doc + Edgeless Canvas", sub: "Editor surface only; custom sync & export adapters" }
+        },
+        blocksuite_only_leak: {
+          license: { cls: "critical", val: "BREACH — MPL 2.0 / EE Leak!", sub: "Accidental y-octo import crossed root MIT boundary" },
+          upgrade: { cls: "high", val: "High — Native Binary Coupling", sub: "Rust Napi-rs dependency breaks pure JS MIT build" },
+          sov: { cls: "medium", val: "Compromised — Audit Needed", sub: "Requires immediate SBOM removal or MPL disclosure" },
+          scope: { cls: "gold", val: "Hybrid Doc + Native CRDT", sub: "Remove packages/common/native to restore MIT purity" }
+        },
+        full_affine_stack: {
+          license: { cls: "critical", val: "Critical — EE / OEM Required", sub: "10-seat free self-host cap; OEM needed to embed" },
+          upgrade: { cls: "high", val: "High — Full Monorepo Lock-In", sub: "Pre-1.0 v0.27.x churn + MPL/EE compliance audits" },
+          sov: { cls: "high", val: "Vendor-Coupled Stack", sub: "Single-vendor governance & relicensing exposure" },
+          scope: { cls: "gold", val: "Full Workspace & Cloud Sync", sub: "Turnkey AFFiNE backend, auth, and native y-octo" }
+        },
+        compare: {
+          license: { cls: "medium", val: "MIT (Left) vs. EE/OEM (Right)", sub: "Dashed crimson line marks exact legal carve-out" },
+          upgrade: { cls: "medium", val: "Pinned SDK vs. Full Platform", sub: "Both share pre-1.0 BlockSuite API churn at layer 2" },
+          sov: { cls: "gold", val: "Sovereign Backend vs. Open Core", sub: "Click any node on either side to compare risks" },
+          scope: { cls: "gold", val: "Side-by-Side Architecture View", sub: "Inspect both paths simultaneously" }
+        }
+      };
+
+      let currentMode = "blocksuite_only";
+      let selectedNode = "synczines_app";
+      let leakSimulated = false;
+      let isPaused = false;
+
+      const appRoot = document.getElementById("appRoot");
+      const segButtons = document.querySelectorAll(".seg-btn");
+      const nodeGroups = document.querySelectorAll(".node-group");
+      const leakBtn = document.getElementById("leakToggleBtn");
+      const clearLeakBtn = document.getElementById("clearLeakBtn");
+      const leakBanner = document.getElementById("leakBanner");
+      const animBtn = document.getElementById("animToggleBtn");
+      const themeBtn = document.getElementById("themeToggleBtn");
+
+      function updateMetrics() {
+        const key = currentMode === "blocksuite_only" && leakSimulated ? "blocksuite_only_leak" : currentMode;
+        const m = METRICS[key];
+        document.getElementById("mLicenseVal").innerHTML = `<span class="dot ${m.license.cls}"></span>${m.license.val}`;
+        document.getElementById("mLicenseSub").textContent = m.license.sub;
+        document.getElementById("mUpgradeVal").innerHTML = `<span class="dot ${m.upgrade.cls}"></span>${m.upgrade.val}`;
+        document.getElementById("mUpgradeSub").textContent = m.upgrade.sub;
+        document.getElementById("mSovVal").innerHTML = `<span class="dot ${m.sov.cls}"></span>${m.sov.val}`;
+        document.getElementById("mSovSub").textContent = m.sov.sub;
+        document.getElementById("mScopeVal").innerHTML = `<span class="dot ${m.scope.cls}"></span>${m.scope.val}`;
+        document.getElementById("mScopeSub").textContent = m.scope.sub;
+      }
+
+      function renderInspector(nodeId) {
+        const data = NODES[nodeId];
+        if (!data) return;
+        selectedNode = nodeId;
+
+        nodeGroups.forEach((g) => {
+          g.classList.toggle("selected", g.dataset.node === nodeId);
+        });
+
+        document.getElementById("insLayer").textContent = data.layer.toUpperCase();
+        document.getElementById("insPathBadge").textContent = data.activeLabel;
+        document.getElementById("insTitle").textContent = data.title;
+        document.getElementById("insRepo").textContent = data.repo;
+        document.getElementById("insDetails").textContent = data.details;
+        document.getElementById("insStability").textContent = data.stability;
+        document.getElementById("insFooterNote").textContent = data.footer;
+
+        const pillsEl = document.getElementById("insPills");
+        pillsEl.innerHTML = `
+          <span class="pill ${data.licenseClass}">${data.license}</span>
+          <span class="pill ${data.riskClass}">${data.risk}</span>
+          <span class="pill neutral">${data.status}</span>
+        `;
+
+        const listEl = document.getElementById("insMitigations");
+        listEl.innerHTML = data.mitigations.map((item) => `<li>${item}</li>`).join("");
+      }
+
+      function setEdgeState(ids, active) {
+        ids.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.classList.toggle("dimmed", !active);
+        });
+      }
+
+      function updateDiagram() {
+        const pathAActive = currentMode === "blocksuite_only" || currentMode === "compare";
+        const pathBActive = currentMode === "full_affine_stack" || currentMode === "compare";
+        const nativeActive = pathBActive || (currentMode === "blocksuite_only" && leakSimulated);
+
+        // Toggle leak controls availability
+        leakBtn.style.display = currentMode === "blocksuite_only" ? "inline-flex" : "none";
+        leakBtn.classList.toggle("danger-active", leakSimulated && currentMode === "blocksuite_only");
+        leakBanner.classList.toggle("visible", leakSimulated && currentMode === "blocksuite_only");
+
+        // Update node dimming
+        nodeGroups.forEach((g) => {
+          const id = g.dataset.node;
+          let active = true;
+          if (id === "crdt_sync_custom" || id === "synczines_backend") active = pathAActive;
+          if (id === "affine_native") active = nativeActive;
+          if (id === "affine_backend") active = pathBActive;
+          g.classList.toggle("dimmed", !active);
+        });
+
+        // Update edges & packets
+        setEdgeState(["edge-app-bs", "flow-app-bs", "pkt-1"], true);
+        setEdgeState(["edge-bs-custom", "flow-bs-custom", "pkt-a1", "edge-custom-be", "flow-custom-be", "pkt-a2"], pathAActive);
+        setEdgeState(["edge-bs-native", "flow-bs-native", "pkt-b1"], nativeActive);
+        setEdgeState(["edge-native-be", "flow-native-be", "pkt-b2"], pathBActive);
+
+        updateMetrics();
+      }
+
+      // Event Listeners
+      segButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          currentMode = btn.dataset.mode;
+          if (currentMode !== "blocksuite_only") leakSimulated = false;
+          segButtons.forEach((b) => {
+            const isActive = b === btn;
+            b.classList.toggle("active", isActive);
+            b.setAttribute("aria-selected", String(isActive));
+          });
+          // Focus a relevant node when switching modes
+          if (currentMode === "full_affine_stack" && (selectedNode === "crdt_sync_custom" || selectedNode === "synczines_backend")) {
+            renderInspector("affine_backend");
+          } else if (currentMode === "blocksuite_only" && (selectedNode === "affine_native" || selectedNode === "affine_backend")) {
+            renderInspector("crdt_sync_custom");
+          }
+          updateDiagram();
+        });
+      });
+
+      nodeGroups.forEach((g) => {
+        g.addEventListener("click", () => renderInspector(g.dataset.node));
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            renderInspector(g.dataset.node);
+          }
+        });
+      });
+
+      leakBtn.addEventListener("click", () => {
+        leakSimulated = !leakSimulated;
+        if (leakSimulated) renderInspector("affine_native");
+        updateDiagram();
+      });
+
+      clearLeakBtn.addEventListener("click", () => {
+        leakSimulated = false;
+        renderInspector("crdt_sync_custom");
+        updateDiagram();
+      });
+
+      animBtn.addEventListener("click", () => {
+        isPaused = !isPaused;
+        appRoot.classList.toggle("paused", isPaused);
+        const svg = document.getElementById("archSvg");
+        if (isPaused) {
+          svg.pauseAnimations();
+          animBtn.innerHTML = `<span>&#9654;</span> Resume Flow`;
+        } else {
+          svg.unpauseAnimations();
+          animBtn.innerHTML = `<span>&#10074;&#10074;</span> Pause Flow`;
+        }
+      });
+
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light` : `<span>&#9790;</span> Dark`;
+      });
+
+      // Initialize
+      renderInspector("synczines_app");
+      updateDiagram();
+    })();
+  </script>
+</body>
+</html>
