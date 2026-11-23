@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVRÆGIS / SOVRÆG LABS — 56 Sovereign Factors & 24-Month Evidence-Gated Partnership Roadmap</title>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --scale: 1;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --transition: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* DARK MODE: Charcoal, Deep Emerald, Brushed Gold */
+  [data-theme="dark"] {
+    --bg: #0c1112;
+    --bg-elev: #121a1c;
+    --bg-card: #162124;
+    --bg-card-hover: #1c2a2e;
+    --bg-subtle: #0f1618;
+    --border: rgba(212, 175, 95, 0.22);
+    --border-strong: rgba(212, 175, 95, 0.48);
+    --text: #edf2f0;
+    --text-muted: #9eb2ad;
+    --text-faint: #6c827d;
+    --gold: #d9b25f;
+    --gold-bright: #f0cf82;
+    --gold-soft: rgba(217, 178, 95, 0.14);
+    --emerald: #2ea87e;
+    --emerald-soft: rgba(46, 168, 126, 0.16);
+    --teal: #38bdf8;
+    --teal-soft: rgba(56, 189, 248, 0.15);
+    --violet: #a78bfa;
+    --violet-soft: rgba(167, 139, 250, 0.16);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.16);
+    --rose: #f472b6;
+    --rose-soft: rgba(244, 114, 182, 0.15);
+    --shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+    --svg-grid: rgba(212, 175, 95, 0.12);
+    --svg-track: #1b282b;
+  }
+
+  /* LIGHT MODE: Antique Parchment, Warm Cream, Forest Ink & Burnished Gold */
+  [data-theme="light"] {
+    --bg: #f6f1e6;
+    --bg-elev: #fbf8f1;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f3ecdc;
+    --bg-subtle: #efe7d6;
+    --border: rgba(133, 98, 35, 0.24);
+    --border-strong: rgba(133, 98, 35, 0.52);
+    --text: #182622;
+    --text-muted: #4a5e58;
+    --text-faint: #6f807a;
+    --gold: #9a6e1c;
+    --gold-bright: #7d5610;
+    --gold-soft: rgba(154, 110, 28, 0.12);
+    --emerald: #13795b;
+    --emerald-soft: rgba(19, 121, 91, 0.12);
+    --teal: #0369a1;
+    --teal-soft: rgba(3, 105, 161, 0.11);
+    --violet: #6d28d9;
+    --violet-soft: rgba(109, 40, 217, 0.11);
+    --amber: #b45309;
+    --amber-soft: rgba(180, 83, 9, 0.12);
+    --rose: #be185d;
+    --rose-soft: rgba(190, 24, 93, 0.11);
+    --shadow: 0 8px 22px rgba(24, 38, 34, 0.08);
+    --svg-grid: rgba(133, 98, 35, 0.15);
+    --svg-track: #e6decb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale));
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 20px 28px;
+  }
+
+  body.embed-mode .app {
+    padding: 10px 12px 18px;
+    max-width: 100%;
+  }
+
+  /* HEADER */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--emerald), var(--gold), var(--teal));
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+  }
+  .hex-badge {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+  }
+  .brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .brand-title span { color: var(--gold); }
+  .brand-sub {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    letter-spacing: 0.01em;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition);
+    font-family: inherit;
+  }
+  .btn:hover {
+    border-color: var(--gold);
+    background: var(--bg-card-hover);
+    color: var(--gold-bright);
+  }
+  .btn.primary {
+    background: var(--gold-soft);
+    border-color: var(--border-strong);
+    color: var(--gold-bright);
+  }
+  .btn.active {
+    background: var(--gold);
+    color: #0c1112;
+    border-color: var(--gold);
+  }
+  [data-theme="light"] .btn.active {
+    color: #ffffff;
+  }
+
+  /* KPI STRIP */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 900px) {
+    .kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .kpi-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .kpi-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .kpi-card.selected {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold) inset;
+  }
+  .kpi-label {
+    font-size: 0.71rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .kpi-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .kpi-val {
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-top: 2px;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .kpi-val small {
+    font-family: var(--font-sans);
+    font-size: 0.73rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .kpi-bar {
+    height: 4px;
+    background: var(--svg-track);
+    border-radius: 99px;
+    margin-top: 7px;
+    overflow: hidden;
+  }
+  .kpi-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: 99px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.84rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+  }
+  .tab-btn:hover {
+    color: var(--text);
+    background: var(--bg-elev);
+    border-color: var(--border);
+  }
+  .tab-btn.active {
+    color: var(--gold-bright);
+    background: var(--gold-soft);
+    border-color: var(--border-strong);
+  }
+  .tab-pill {
+    font-size: 0.69rem;
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 180ms ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+  /* CARDS & GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.45fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 960px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+
+  /* SVG WRAPPER */
+  .svg-box {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+  }
+  .svg-box svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 640px;
+  }
+  .svg-clickable { cursor: pointer; transition: opacity 150ms ease, filter 150ms ease; }
+  .svg-clickable:hover { filter: brightness(1.12); }
+
+  /* INSPECTOR */
+  .inspector-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 99px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: 1px solid var(--border-strong);
+    background: var(--gold-soft);
+    color: var(--gold-bright);
+    margin-bottom: 8px;
+  }
+  .inspector-h {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .meta-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .meta-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 10px;
+  }
+  .meta-box label {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-faint);
+    margin-bottom: 2px;
+  }
+  .meta-box div {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .checklist {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 8px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 0.81rem;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .check-item:hover { border-color: var(--border-strong); }
+  .check-item.done {
+    border-color: var(--emerald);
+    background: var(--emerald-soft);
+  }
+  .check-box {
+    width: 17px; height: 17px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border-strong);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    color: #0c1112;
+  }
+  .check-item.done .check-box {
+    background: var(--emerald);
+    border-color: var(--emerald);
+    color: #ffffff;
+  }
+
+  /* FACTOR MATRIX */
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .search-input, .select-input {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 7px 11px;
+    font-size: 0.82rem;
+    font-family: inherit;
+    outline: none;
+  }
+  .search-input { flex: 1; min-width: 200px; }
+  .search-input:focus, .select-input:focus { border-color: var(--gold); }
+
+  .factor-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 10px;
+    max-height: 540px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .factor-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: all var(--transition);
+    position: relative;
+  }
+  .factor-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+  }
+  .factor-card.domain-new {
+    border-left: 3px solid var(--gold);
+  }
+  .factor-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .factor-num {
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .tag {
+    font-size: 0.67rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 99px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
+  .tag-A { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46,168,126,0.35); }
+  .tag-B { background: var(--teal-soft); color: var(--teal); border-color: rgba(56,189,248,0.35); }
+  .tag-C { background: var(--violet-soft); color: var(--violet); border-color: rgba(167,139,250,0.35); }
+  .tag-D { background: var(--amber-soft); color: var(--amber); border-color: rgba(245,158,11,0.35); }
+  .tag-P { background: var(--gold-soft); color: var(--gold-bright); border-color: var(--border-strong); }
+  .tag-new { background: var(--rose-soft); color: var(--rose); border-color: rgba(244,114,182,0.35); }
+
+  .factor-name {
+    font-weight: 700;
+    font-size: 0.87rem;
+    color: var(--text);
+  }
+  .factor-desc {
+    font-size: 0.77rem;
+    color: var(--text-muted);
+    flex: 1;
+  }
+  .factor-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    padding-top: 6px;
+    border-top: 1px dashed var(--border);
+    font-size: 0.71rem;
+    color: var(--text-faint);
+  }
+  .status-pill {
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+    transition: all var(--transition);
+  }
+  .status-pill:hover { border-color: var(--gold); color: var(--gold-bright); }
+  .status-pill[data-status="Prototype"] { background: var(--teal-soft); color: var(--teal); border-color: rgba(56,189,248,0.4); }
+  .status-pill[data-status="Tested"] { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46,168,126,0.4); }
+  .status-pill[data-status="Audited"] { background: var(--gold-soft); color: var(--gold-bright); border-color: var(--gold); }
+
+  /* PROOF TRIO & DECISIONS */
+  .trio-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 860px) {
+    .trio-grid { grid-template-columns: 1fr; }
+  }
+  .trio-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .trio-card h4 {
+    font-family: var(--font-serif);
+    font-size: 0.96rem;
+    color: var(--gold-bright);
+  }
+  .trio-card p {
+    font-size: 0.79rem;
+    color: var(--text-muted);
+  }
+
+  .decision-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8rem;
+  }
+  .decision-table th, .decision-table td {
+    text-align: left;
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .decision-table th {
+    font-size: 0.71rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+  }
+  .decision-table tr:hover td { background: var(--bg-card-hover); }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    place-items: center;
+    padding: 16px;
+    z-index: 999;
+  }
+  .modal-backdrop.open { display: grid; }
+  .modal {
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    max-width: 680px;
+    width: 100%;
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .code-block {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 8px 0 12px;
+  }
+
+  .footer-note {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.73rem;
+    color: var(--text-faint);
+  }
+  .toast {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: var(--gold);
+    color: #0c1112;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 200ms ease;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="hex-badge" aria-hidden="true">
+        <svg viewBox="0 0 44 44" width="40" height="40">
+          <polygon points="22,2 40,12 40,32 22,42 4,32 4,12" fill="none" stroke="var(--gold)" stroke-width="2"/>
+          <polygon points="22,8 34,15 34,29 22,36 10,29 10,15" fill="var(--gold-soft)" stroke="var(--emerald)" stroke-width="1.2"/>
+          <text x="22" y="26" text-anchor="middle" fill="var(--gold-bright)" font-family="Georgia, serif" font-size="13" font-weight="700">Æ</text>
+        </svg>
+      </div>
+      <div>
+        <div class="brand-title">SOVR<span>Æ</span>GIS / SOVR<span>Æ</span>G LABS — 56 Factors &amp; 24-Month Roadmap</div>
+        <div class="brand-sub">Evidence-Gated Four-Rung LEF Partnership Ladder · Tiered Sovereign Operating System (Nov 2026 – Nov 2028)</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="btnFontDec" title="Decrease font size">A−</button>
+      <button class="btn" id="btnFontInc" title="Increase font size">A+</button>
+      <button class="btn" id="btnTheme" title="Toggle Light / Dark theme">☀ Light</button>
+      <button class="btn primary" id="btnExport">⬇ Obsidian &amp; Markdown</button>
+    </div>
+  </header>
+
+  <!-- TIER KPI STRIP -->
+  <section class="kpi-strip" id="kpiStrip" aria-label="56 Factor Tier Breakdown"></section>
+
+  <!-- NAVIGATION TABS -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="roadmap" role="tab">
+      <span>24-Month Evidence-Gated Roadmap</span>
+      <span class="tab-pill">4 Rungs · 5+1 Phases</span>
+    </button>
+    <button class="tab-btn" data-tab="factors" role="tab">
+      <span>56-Factor Tier &amp; Domain Matrix</span>
+      <span class="tab-pill">7 Domains · +8 New</span>
+    </button>
+    <button class="tab-btn" data-tab="ledger" role="tab">
+      <span>Proof Trio, Decisions &amp; Claims Ledger</span>
+      <span class="tab-pill" id="ledgerProgressPill">0/8 Decisions</span>
+    </button>
+  </nav>
+
+  <!-- PANEL 1: ROADMAP & RUNG LADDER -->
+  <section class="panel active" id="panel-roadmap">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interactive 24-Month Evidence-Gated Architecture</div>
+            <div class="card-sub">Click any Rung (1–4) or Phase (Assay → Sovereign Guild) to inspect exit evidence, LEF counterparties, and linked factor tiers.</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn" id="btnPrevStep">← Prev</button>
+            <button class="btn" id="btnNextStep">Next →</button>
+          </div>
+        </div>
+        <div class="svg-box" id="roadmapSvgWrap"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:0.74rem;color:var(--text-muted);">
+          <span><strong style="color:var(--emerald);">●</strong> Phase-Gate Rule: Never start a phase until prior exit evidence is published openly.</span>
+          <span><strong style="color:var(--gold);">◆</strong> Upstream-First Rule: MIT plugins on LearnCard; no competing wallet fork.</span>
+        </div>
+      </div>
+
+      <div class="card" id="roadmapInspector"></div>
+    </div>
+  </section>
+
+  <!-- PANEL 2: 56 FACTORS MATRIX -->
+  <section class="panel" id="panel-factors">
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Domain-to-Tier Allocation Flow (7 Domains → 5 Execution Tiers)</div>
+          <div class="card-sub">Click a Domain bar or Tier pill to filter the 56-Factor ledger below. Domain 7 (49–56) closes evidence, security, and sustainability exposures.</div>
+        </div>
+        <button class="btn" id="btnResetFilters">Reset Filters</button>
+      </div>
+      <div class="svg-box" id="domainFlowSvgWrap"></div>
+    </div>
+
+    <div class="card">
+      <div class="filter-bar">
+        <input type="search" class="search-input" id="factorSearch" placeholder="Search 56 factors by number, name, standard (OB 3.0, xAPI, TRQP, CODE+V)...">
+        <select class="select-input" id="filterDomain">
+          <option value="ALL">All 7 Domains (56)</option>
+          <option value="1">Domain 1: Philosophy &amp; Agency (1–8)</option>
+          <option value="2">Domain 2: Local-First &amp; Privacy (9–16)</option>
+          <option value="3">Domain 3: Composable Protocols (17–24)</option>
+          <option value="4">Domain 4: Trust &amp; Learning Economy (25–32)</option>
+          <option value="5">Domain 5: Human UX &amp; Pedagogy (33–40)</option>
+          <option value="6">Domain 6: Governance &amp; Prime R&amp;D (41–48)</option>
+          <option value="7">Domain 7: Evidence, Security &amp; Sustainability (49–56) ★ NEW</option>
+        </select>
+        <select class="select-input" id="filterTier">
+          <option value="ALL">All 5 Tiers</option>
+          <option value="A">Tier A: Build Now (15)</option>
+          <option value="B">Tier B: Prove in Field (17)</option>
+          <option value="C">Tier C: Frontier Research (13)</option>
+          <option value="D">Tier D: Governance &amp; Stewardship (7)</option>
+          <option value="P">Tier P: Principles / Bill of Rights (4)</option>
+        </select>
+        <select class="select-input" id="filterStatus">
+          <option value="ALL">All Claim Statuses</option>
+          <option value="Aspiration">Aspiration</option>
+          <option value="Prototype">Prototype</option>
+          <option value="Tested">Tested</option>
+          <option value="Audited">Audited</option>
+        </select>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;font-size:0.76rem;color:var(--text-muted);">
+        <span id="factorCountLabel">Showing 56 of 56 factors</span>
+        <span>Tip: Click any factor's <strong>Claims Ledger badge</strong> to cycle its verification state (saved locally).</span>
+      </div>
+      <div class="factor-grid" id="factorGrid"></div>
+    </div>
+  </section>
+
+  <!-- PANEL 3: PROOF TRIO, DECISIONS & CLAIMS LEDGER -->
+  <section class="panel" id="panel-ledger">
+    <div class="trio-grid">
+      <div class="trio-card">
+        <span class="tag tag-A" style="align-self:flex-start;">Proof 1 · Rung 1–2</span>
+        <h4>SYNCZINE-to-LearnCard Bridge</h4>
+        <p>Offline-capable SYNCZINE runtime emits W3C VC 2.0 / Open Badges 3.0 credentials into a learner's LearnCard wallet via Partner Connect SDK and thin MIT Control-Plane plugins—positioned as a native LearnCard App, never a competing wallet fork.</p>
+        <div style="font-size:0.73rem;color:var(--text-faint);margin-top:auto;padding-top:6px;border-top:1px dashed var(--border);">
+          <strong>Guardrail:</strong> Two-tier issuance (learner self-attestation vs. institutional Signing Authority); MIT/Apache-2.0 license lane.
+        </div>
+      </div>
+      <div class="trio-card">
+        <span class="tag tag-B" style="align-self:flex-start;">Proof 2 · Rung 2</span>
+        <h4>Sovereignty Conformance Kit v0.1</h4>
+        <p>Open-source automated test harness + protocols turning the 6 Charter Release Gates into repeatable checks (Edge airplane-mode, OWASP MASVS egress diff, One-Click Exit round-trip, 30-Second Dignity test).</p>
+        <div style="font-size:0.73rem;color:var(--text-faint);margin-top:auto;padding-top:6px;border-top:1px dashed var(--border);">
+          <strong>Guardrail:</strong> Run on SOVRÆG software first and publish failures openly; offer LEF a private pre-release hardening run.
+        </div>
+      </div>
+      <div class="trio-card">
+        <span class="tag tag-P" style="align-self:flex-start;">Proof 3 · Rung 3</span>
+        <h4>Living Lab 0 (Ho Chi Minh City ESL)</h4>
+        <p>Ten-week, legally hardened field pilot with 45–60 adult learners (post-Tết, Mar–May 2027) on their own budget Android phones, measuring Pre-A1/A1-Foundations speaking gains via blind dual raters and native Vietnamese UX.</p>
+        <div style="font-size:0.73rem;color:var(--text-faint);margin-top:auto;padding-top:6px;border-top:1px dashed var(--border);">
+          <strong>Guardrail:</strong> Complies with Vietnam Law 91/2025/QH15 &amp; Decree 356/2025; strict Zalo isolation; adults 18+ only.
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Eight Immediate Founding Directorate Decisions (Days 1–30)</div>
+            <div class="card-sub">Check off each decision before December 23, 2026 to clear the Assay phase without scope drift.</div>
+          </div>
+          <button class="btn" id="btnResetDecisions">Reset Checks</button>
+        </div>
+        <div style="overflow-x:auto;">
+          <table class="decision-table">
+            <thead>
+              <tr>
+                <th style="width:36px;">Done</th>
+                <th>Decision Point</th>
+                <th>Recommended Default</th>
+                <th style="width:76px;">Due</th>
+              </tr>
+            </thead>
+            <tbody id="decisionTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Live Claims Ledger Readiness</div>
+            <div class="card-sub">Tracks the share of the 56 factors verified at Prototype, Tested, or Audited status.</div>
+          </div>
+          <button class="btn" id="btnResetLedger">Reset Ledger</button>
+        </div>
+        <div id="ledgerSummary"></div>
+        <div style="margin-top:14px;padding:11px;border-radius:var(--radius-sm);background:var(--bg-card);border:1px solid var(--border);font-size:0.78rem;color:var(--text-muted);">
+          <strong style="color:var(--gold-bright);">Claims Ledger Rule:</strong> Partnership briefs, grant applications, and websites may cite only <strong>Tested</strong> and <strong>Audited</strong> rows as live capabilities. <strong>Aspiration</strong> and <strong>Prototype</strong> entries must be explicitly labeled as active research targets.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <span>SOVRÆGIS Commons &amp; SOVRÆG LABS · Zero-Dependency Local-First Component (Offline-Ready)</span>
+    <span>URL Params: <code>?theme=dark|light&amp;embed=true&amp;tab=roadmap|factors|ledger</code></span>
+  </footer>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-backdrop" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="card-header">
+      <div>
+        <div class="card-title" id="modalTitle">Obsidian Embed &amp; Claims Ledger Export</div>
+        <div class="card-sub">Copy the collapsed Obsidian callout for GitHub Pages or export your live Claims Ledger &amp; Decisions snapshot.</div>
+      </div>
+      <button class="btn" id="btnCloseModal">✕ Close</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">1. Collapsed Obsidian Callout (GitHub Pages Embed)</div>
+    <pre class="code-block" id="obsidianSnippet"></pre>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn primary" id="btnCopyObsidian">Copy Callout</button>
+      <button class="btn" id="btnDownloadMd">⬇ Download Live Claims Ledger (.md)</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">2. Live Markdown Status Snapshot</div>
+    <pre class="code-block" id="mdPreview"></pre>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+(function() {
+  const STORAGE_KEY = "sovraegis_roadmap_state_v1";
+
+  const TIERS = [
+    { id: "A", name: "Tier A · Build Now", short: "Build Now", count: 15, color: "var(--emerald)", hex: "#2ea87e", role: "Horizon 1 core product behavior; directly verifiable at Release Gates.", artifact: "Bridge demo; Conformance Kit v0.1; Threat Model v1" },
+    { id: "B", name: "Tier B · Prove in Field", short: "Prove in Field", count: 17, color: "var(--teal)", hex: "#38bdf8", role: "Contextual pedagogy, UX, and facilitator economics validated with real learners.", artifact: "Living Lab 0 Report; Multiplier Kit v0.1" },
+    { id: "C", name: "Tier C · Frontier Research", short: "Frontier R&D", count: 13, color: "var(--violet)", hex: "#a78bfa", role: "Horizon 2 cryptographic, economic, and semantic research before standardization.", artifact: "10 Horizon-2 Working Papers & Benchmarks" },
+    { id: "D", name: "Tier D · Governance", short: "Governance", count: 7, color: "var(--amber)", hex: "#f59e0b", role: "Legal separation, fiscal hosting, conformance trademarks, and independent audits.", artifact: "Fiscal Sponsor; Interim Council; Conflict Firewall" },
+    { id: "P", name: "Tier P · Principles", short: "Principles", count: 4, color: "var(--gold)", hex: "#d9b25f", role: "Inalienable Sovereign Learner Bill of Rights governing every design review.", artifact: "Bill of Rights Architectural Review Checklist" }
+  ];
+
+  const DOMAINS = [
+    { id: 1, name: "1. Philosophical Foundations & Agency", short: "D1: Philosophy", range: "1–8", isNew: false },
+    { id: 2, name: "2. Local-First & Privacy Core", short: "D2: Local-First", range: "9–16", isNew: false },
+    { id: 3, name: "3. Composable Knowledge & Protocols", short: "D3: Protocols", range: "17–24", isNew: false },
+    { id: 4, name: "4. Trust & Learning Economy Engine", short: "D4: Economy", range: "25–32", isNew: false },
+    { id: 5, name: "5. Human Experience & Pedagogy", short: "D5: Human UX", range: "33–40", isNew: false },
+    { id: 6, name: "6. Governance & Prime Directive R&D", short: "D6: Governance", range: "41–48", isNew: false },
+    { id: 7, name: "7. Evidence, Security & Sustainability", short: "D7: Evidence ★", range: "49–56", isNew: true }
+  ];
+
+  const FACTORS = [
+    // Domain 1 (1-8)
+    { n:1, d:1, t:"P", name:"Self-Sovereign Learning Identity (SSLI)", desc:"Permanent, self-owned learning identity independent of any school, employer, or national registry.", deliv:"Bill of Rights Checklist", defStatus:"Aspiration" },
+    { n:2, d:1, t:"A", name:"Data Dignity & Consent Sovereignty", desc:"Active, human-readable, revocable consent receipts replacing opaque terms of service.", deliv:"Gate 2 Consent Receipt Schema", defStatus:"Prototype" },
+    { n:3, d:1, t:"P", name:"Learner-as-Author (Epistemic Agency)", desc:"Learners co-design and author pathways rather than passively inheriting centralized curricula.", deliv:"Bill of Rights Checklist", defStatus:"Aspiration" },
+    { n:4, d:1, t:"P", name:"Holistic Human Capital Valuation", desc:"Recognizes social, emotional, physical, creative, ethical, care, and civic capacities.", deliv:"Bill of Rights Checklist", defStatus:"Aspiration" },
+    { n:5, d:1, t:"B", name:"Cultural, Linguistic & Epistemic Grounding", desc:"Multilingual, culturally native schemas honoring local languages and oral traditions.", deliv:"Vietnamese Living Lab 0 Schema", defStatus:"Prototype" },
+    { n:6, d:1, t:"B", name:"Anti-Trickle-Down Equity Design", desc:"Engineered first for 2–3 GB RAM budget Android phones and low-bandwidth communities.", deliv:"Gate 1 Reference Device Profile", defStatus:"Prototype" },
+    { n:7, d:1, t:"B", name:"Cognitive Liberty & Attention Protection", desc:"Calm Learning Standard banning addictive streaks and surveillance behavioral nudging.", deliv:"Calm Learning Indicator Paper", defStatus:"Aspiration" },
+    { n:8, d:1, t:"P", name:"Regenerative Purpose Alignment", desc:"Links learning projects directly to verifiable civic, social, and ecological stewardship.", deliv:"Bill of Rights Checklist", defStatus:"Aspiration" },
+    // Domain 2 (9-16)
+    { n:9, d:2, t:"A", name:"Local-First Knowledge Vaults", desc:"Primary notes, artifacts, and credentials reside on the learner's own device edge.", deliv:"@sovraeg/local-first-storage-plugin", defStatus:"Prototype" },
+    { n:10, d:2, t:"A", name:"Offline-First & Intermittent-Sync Resilience", desc:"Five core workflows execute in airplane mode with device-to-device QR exchange.", deliv:"Gate 1 Airplane-Mode Harness", defStatus:"Prototype" },
+    { n:11, d:2, t:"A", name:"Zero-Surveillance Minimal Disclosure", desc:"Selective truth sharing and OWASP MASVS privacy controls with declared egress manifests.", deliv:"Gate 2 Egress Diff & SD-JWT/BBS+", defStatus:"Aspiration" },
+    { n:12, d:2, t:"B", name:"Human-Friendly Key & Vault Recovery", desc:"Heterogeneous Circles of Trust comparing Shamir SSS vs. timelocked DID-webVH rotation.", deliv:"Social Recovery Failure-Mode Guide", defStatus:"Aspiration" },
+    { n:13, d:2, t:"B", name:"Edge-Native, Loyal Personal AI Companions", desc:"4-Tier Progressive Fiduciary AI (Tier 0 zero-AI baseline up to opt-in HCP/enclave).", deliv:"Tiered Edge-AI Benchmark", defStatus:"Prototype" },
+    { n:14, d:2, t:"A", name:"Ephemeral & Scoped Access Windows", desc:"Sovereignty Radar dashboard tracking every active share with one-tap revocation.", deliv:"Sovereignty Radar UI & Broker", defStatus:"Aspiration" },
+    { n:15, d:2, t:"C", name:"Century-Scale Archival Longevity Discipline", desc:"Human-readable formats, schema versioning, dual-custody archives, and FIPS 204 agility.", deliv:"Cryptographic Agility Checklist", defStatus:"Aspiration" },
+    { n:16, d:2, t:"C", name:"Graduated Guardianship for Youth", desc:"Age-banded stewardship handover aligned with Vietnam Law 91/2025 (age 7+) and COPPA.", deliv:"Youth Guardianship Policy Paper", defStatus:"Aspiration" },
+    // Domain 3 (17-24)
+    { n:17, d:3, t:"A", name:"Atomic & Modular Learning Units", desc:"Composable SYNCZINE & SYNCTESS 'Knowledge Legos' unbundling rigid multi-year degrees.", deliv:"SYNCZINE Runtime Container", defStatus:"Prototype" },
+    { n:18, d:3, t:"B", name:"Personal Living Knowledge Graphs", desc:"Pluggable personal intellectual context aligned with Stanford/Loyal Agents HCP.", deliv:"Portable Knowledge Graph Spec", defStatus:"Prototype" },
+    { n:19, d:3, t:"A", name:"Open-Standard Credential Interoperability", desc:"Native W3C VC 2.0, Open Badges 3.0, CLR 2.0, and LearnCard Partner Connect SDK.", deliv:"Proof 1 Bridge (eddsa-rdfc-2022)", defStatus:"Prototype" },
+    { n:20, d:3, t:"A", name:"Data-App Separation & Zero Lock-In", desc:"Learner-record bundle separated from publications; One-Click Exit across ≥3 wallets.", deliv:"Gate 4 Round-Trip Exit Harness", defStatus:"Prototype" },
+    { n:21, d:3, t:"B", name:"Multi-Modal Proof & Knowledge Expression", desc:"Audio speaking artifacts, craft documentation, and live defenses with equal standing.", deliv:"Living Lab 0 Spoken Evidence Flow", defStatus:"Prototype" },
+    { n:22, d:3, t:"C", name:"Dynamic Skill Taxonomies & Semantic Bridging", desc:"Meaning bridges translating local/informal mastery into CTDL, ESCO, and O*NET.", deliv:"Bilingual Crosswalk Dataset", defStatus:"Aspiration" },
+    { n:23, d:3, t:"C", name:"Verifiable Provenance & Knowledge Lineage", desc:"Transparent attribution preserving original educator and indigenous knowledge lineage.", deliv:"Provenance Method Note", defStatus:"Aspiration" },
+    { n:24, d:3, t:"C", name:"Cross-Ecosystem Federation Without Monopolies", desc:"Federated trust directories preserving local standards while remaining globally legible.", deliv:"Federated Directory Reference", defStatus:"Aspiration" },
+    // Domain 4 (25-32)
+    { n:25, d:4, t:"C", name:"Skills as Liquid Human Capital Assets", desc:"Verified portable credentials connecting directly to livelihood, grants, and mobility.", deliv:"Mobility Pathway Analysis", defStatus:"Aspiration" },
+    { n:26, d:4, t:"B", name:"360-Degree Multi-Source Verification", desc:"Institutional diplomas paired with coach, peer, and guild OB 3.0 EndorsementCredentials.", deliv:"Dual-Coach Attestation Flow", defStatus:"Prototype" },
+    { n:27, d:4, t:"A", name:"Evidence-Backed Competency Proofs", desc:"Credentials anchored to tamper-evident artifact hashes separating self-attestation vs. authority.", deliv:"Two-Tier Issuance Spec", defStatus:"Prototype" },
+    { n:28, d:4, t:"C", name:"Non-Speculative, Regenerative Incentives", desc:"Stipends and impact micro-grants tied strictly to verified mastery—no speculative tokens.", deliv:"Regenerative Incentive Policy", defStatus:"Aspiration" },
+    { n:29, d:4, t:"C", name:"Skill Vitality, Evolution & Renewal", desc:"Low-friction vitality check-ins via real work artifacts rather than abrupt expiration.", deliv:"Vitality Renewal Model", defStatus:"Aspiration" },
+    { n:30, d:4, t:"C", name:"Algorithmic Fairness & Transparent Matching", desc:"Bias-audited recommendations with plain-language learner contestability.", deliv:"Fairness Audit Template", defStatus:"Aspiration" },
+    { n:31, d:4, t:"C", name:"Contextual Reputation Portability", desc:"Distinct civic, technical, creative, and mentorship reputation lenses protecting boundaries.", deliv:"Contextual Reputation Spec", defStatus:"Aspiration" },
+    { n:32, d:4, t:"C", name:"Real-Time Opportunity & Pull Signals", desc:"Private pathway simulations matching learner vaults against open employer skill demand.", deliv:"Pathway Simulation Prototype", defStatus:"Aspiration" },
+    // Domain 5 (33-40)
+    { n:33, d:5, t:"A", name:"Invisible Complexity (30-Second Dignity UX)", desc:"First-time non-technical learners receive and share a skill in <30s without jargon.", deliv:"Gate 5 Two-Tier Dignity Protocol", defStatus:"Prototype" },
+    { n:34, d:5, t:"B", name:"Metacognitive & Self-Regulation Scaffolding", desc:"Reflective personal dashboards testing the 6-stage CODE+V cycle as an empirical hypothesis.", deliv:"CODE+V Efficacy Evaluation", defStatus:"Prototype" },
+    { n:35, d:5, t:"B", name:"Human-in-the-Loop Mentorship & Guilds", desc:"Fairly compensated human coaches, mentors, and elders as first-class infrastructure.", deliv:"Living Lab 0 Dual-Coach Model", defStatus:"Prototype" },
+    { n:36, d:5, t:"B", name:"Sovereign Collaborative Studios & Commons", desc:"Peer pods with automatic co-authorship attribution back to each learner's local vault.", deliv:"Peer Studio Co-Authorship Flow", defStatus:"Aspiration" },
+    { n:37, d:5, t:"A", name:"Universal & Neurodivergent-First Accessibility", desc:"WCAG 2.2 Level AA + W3C COGA cognitive accessibility patterns built in from sprint 1.", deliv:"WCAG 2.2 AA / COGA Gate Check", defStatus:"Prototype" },
+    { n:38, d:5, t:"B", name:"Embodied & Real-World Learning Loops", desc:"Fast mobile voice, photo, and QR-handshake capture bridging physical craft to digital proof.", deliv:"Mobile Voice/QR Capture Loop", defStatus:"Prototype" },
+    { n:39, d:5, t:"A", name:"Failure-Safe Private Sandboxes", desc:"Unbreachable wall between ungraded Private Studio Space and curated Published Proof Space.", deliv:"Studio vs. Proof UX Separation", defStatus:"Prototype" },
+    { n:40, d:5, t:"C", name:"Intergenerational & Lifelong Continuity", desc:"Gracefully adapting workspaces including elder Wisdom Preservation Modes.", deliv:"Intergenerational UX Study", defStatus:"Aspiration" },
+    // Domain 6 (41-48)
+    { n:41, d:6, t:"D", name:"Staged Multi-Stakeholder Commons Governance", desc:"Grows from Stage-0 Interim Council (5–7 stewards) to 5 Chambers only when quorums exist.", deliv:"Constitutional Transition Schedule", defStatus:"Aspiration" },
+    { n:42, d:6, t:"D", name:"Public-Good Open Core & Non-Extractive Econ", desc:"Commons fiscal sponsor (501(c)(3)) + BC C3/for-profit Labs + Commons-held TMLA marks.", deliv:"Legal Home & TMLA Architecture", defStatus:"Aspiration" },
+    { n:43, d:6, t:"D", name:"Regulatory Harmonization & Policy Co-Design", desc:"Proactive alignment with Vietnam Law 91/2025, EU AI Act Art. 50/Annex III, and DPGA DPI.", deliv:"Vietnam & EU Compliance Briefs", defStatus:"Prototype" },
+    { n:44, d:6, t:"B", name:"Field-Tested Living Laboratories", desc:"Empirical proving ground in HCMC (Living Lab 0) before global standardization.", deliv:"Living Lab 0 Published Report", defStatus:"Aspiration" },
+    { n:45, d:6, t:"B", name:"Ecosystem Multiplier Kits (SDKs & Playbooks)", desc:"MIT developer plugins paired with bilingual non-technical facilitator launch playbooks.", deliv:"Multiplier Kit v0.1", defStatus:"Aspiration" },
+    { n:46, d:6, t:"D", name:"Continuous Sovereignty & Ethics Red-Teaming", desc:"Ombuds-selected external audits funded by a ring-fenced trust reserve.", deliv:"First Scoped Sovereignty Audit", defStatus:"Aspiration" },
+    { n:47, d:6, t:"D", name:"Graceful Evolution & Backward Compatibility", desc:"Versioned schemas, pinned LearnCard CI tracks, and zero-disruption migration paths.", deliv:"Migration & Longevity Pledge", defStatus:"Aspiration" },
+    { n:48, d:6, t:"D", name:"Dual-Horizon Earned Synergy With LEF", desc:"Four-rung earned ladder joining EducationOS working groups and LearnCard Apps.", deliv:"4-Rung LEF Engagement Cadence", defStatus:"Prototype" },
+    // Domain 7 (49-56) NEW
+    { n:49, d:7, t:"A", name:"Adversary Threat Model & Abuse Catalogue", desc:"Explicitly models extractive platforms, coercive relatives/employers, thieves, and state surveillance.", deliv:"Threat Model v1.0", defStatus:"Aspiration" },
+    { n:50, d:7, t:"C", name:"Issuer Trust, Anti-Fraud & Collusion Resistance", desc:"Defends 360° verification against Sybil endorsement rings via TRQP & OB 3.0 policies.", deliv:"Adversarial Weighting Simulation", defStatus:"Aspiration" },
+    { n:51, d:7, t:"B", name:"Learning Efficacy & Outcome Evidence", desc:"Pre-registered Day 1 vs. Day 70 blind dual-rater ICC[2,2] speaking gains; publishes null results.", deliv:"Pre-Registered Pilot Protocol", defStatus:"Aspiration" },
+    { n:52, d:7, t:"B", name:"Privacy-Preserving Measurement", desc:"Scale-tiered analytics: consented cohorts at n<200; formal LDP/secure aggregation only at n≥1,000.", deliv:"Reviewed Measurement Protocol", defStatus:"Aspiration" },
+    { n:53, d:7, t:"A", name:"Pedagogy-Layer Interoperability", desc:"Crosswalks SYNCZINE/SYNCTESS to xAPI 2.0 (IEEE 9274.1.1), cmi5, LTI 1.3, OB 3.0, and CLR 2.0.", deliv:"xAPI / OB 3.0 Crosswalk Profile", defStatus:"Prototype" },
+    { n:54, d:7, t:"B", name:"Facilitator & Steward Capacity Economics", desc:"Treats trained local coaches as the scaling constraint; tracks facilitator hours and unit cost ($189/learner).", deliv:"Facilitator Playbook & Unit Ledger", defStatus:"Prototype" },
+    { n:55, d:7, t:"D", name:"Funding Transparency & Conflict Firewall", desc:"Three-layer firewall isolating Commons, Labs, and Studio Ventures (Anvilocity/Sovraecan) + audit reserve.", deliv:"Public Disclosure & 24m Budget", defStatus:"Aspiration" },
+    { n:56, d:7, t:"A", name:"Plain-Language Progressive Disclosure", desc:"Applies the 30-Second Dignity Test to SOVRÆG's own copy with three clean message registers.", deliv:"Plain-Language One-Pager & Glossary", defStatus:"Prototype" }
+  ];
+
+  const ROADMAP_NODES = [
+    {
+      id: "assay", kind: "Phase 1 · Rung 1", title: "Assay (Test the Ore)",
+      window: "Nov 23, 2026 – Jan 22, 2027 (Days 1–60)",
+      rung: "Rung 1: Contributor (Months 0–3)",
+      counterparties: "Jacksón Smith (CTO), Duncan Cox (VP Product)",
+      ask: "No formal ask yet — earn visibility via open GitHub issues/PRs and local LearnCard build.",
+      tiers: ["A", "D", "P"],
+      x1: 0, x2: 2, row: 0, color: "#2ea87e",
+      checklist: [
+        "Publish Claims Ledger v1 and plain-language one-pager + glossary (Factor 56)",
+        "Sign upstream-first LearnCard plugin decision & MIT/Apache-2.0 license lane",
+        "Get local LearnCard monorepo running and file ≥1 upstream GitHub issue or PR",
+        "Draft Threat Model v1.0 & choose 2–3 GB RAM Android reference device profile",
+        "Brief Vietnam counsel on Law 91/2025 + Decree 356 & Canadian/US counsel on fiscal sponsor",
+        "Send Interim Stewardship Council (5–7 stewards) invitations & publish Conflict Firewall"
+      ]
+    },
+    {
+      id: "smelt", kind: "Phase 2 · Rung 1→2", title: "Smelt (First Working Metal)",
+      window: "Jan 23 – Mar 15, 2027 (Core Demo by Day 90 / Feb 21)",
+      rung: "Rung 1 → Rung 2 Transition",
+      counterparties: "Duncan Cox (VP Product), Jacksón Smith (CTO)",
+      ask: "Ask 1 (Attention): 30-minute technical walkthrough of Proof 1 Bridge + named engineering contact (~1.5 hrs LEF cost).",
+      tiers: ["A", "B"],
+      x1: 2, x2: 3.75, row: 1, color: "#38bdf8",
+      checklist: [
+        "Ship working SYNCZINE-to-LearnCard Bridge demo (W3C VC 2.0 / OB 3.0 via Partner Connect SDK)",
+        "Run Sovereignty Conformance Kit v0.1 on SOVRÆG software and publish failures openly",
+        "Offer LEF a private pre-release conformance hardening pass (publish only with consent)",
+        "Send Ask 1 to Duncan Cox / Jacksón Smith immediately post-Tết",
+        "Complete post-Tết recruitment of 45–60 adult learners (18+) for Living Lab 0"
+      ]
+    },
+    {
+      id: "forge", kind: "Phase 3 · Rung 2", title: "Forge (Shape Under Load)",
+      window: "Mar 16 – May 31, 2027 (Months 4–6)",
+      rung: "Rung 2: Reference Partner (Months 3–6)",
+      counterparties: "Duncan Cox (VP Product), Taylor Kendal (Chief Trust & Community)",
+      ask: "Ask 2 (Collaboration): LearnCard App listing review + seat in an EducationOS trust/AI working group (~3–4 hrs/mo).",
+      tiers: ["B", "A"],
+      x1: 3.75, x2: 6.25, row: 2, color: "#d9b25f",
+      checklist: [
+        "Execute 10-week Living Lab 0 adult ESL cohort (45–60 adults, HCMC, Pre-A1/A1-Foundations)",
+        "Capture local Day 1 & Day 70 spoken artifacts with blind dual-rater ICC[2,2] scoring",
+        "Execute real-device Gate 1 (airplane mode), Gate 2 (egress), Gate 4 (exit), & Gate 5 (VN 30s) tests",
+        "Submit SOVRÆG SYNCZINE integration for LearnCard Apps directory listing",
+        "Initiate EducationOS working-group & Loyal Agents / HCP portable memory collaboration"
+      ]
+    },
+    {
+      id: "temper", kind: "Phase 4 · Rung 3", title: "Temper (Strengthen & Verify)",
+      window: "Jun 1 – Aug 31, 2027 (Months 7–9)",
+      rung: "Rung 3: Joint Research Program (Months 6–12)",
+      counterparties: "Arabella Nyffenegger (VP Partnerships), Taylor Kendal",
+      ask: "Ask 3 (Co-Creation): Co-sponsored second regional pilot (SIDS / Southeast Asia) + joint philanthropic grant.",
+      tiers: ["B", "D", "C"],
+      x1: 6.25, x2: 9.25, row: 3, color: "#f59e0b",
+      checklist: [
+        "Publish Living Lab 0 empirical report openly (including null/negative findings & $189/learner unit cost)",
+        "Release Ecosystem Multiplier Kit v0.1 (MIT SDK + bilingual Vietnamese/English facilitator guide)",
+        "Formalize Interim Stewardship Council under U.S. 501(c)(3) fiscal sponsor",
+        "Complete Tier-1 targeted external security & threat-model review ($15K budget)",
+        "Review co-designed second regional pilot proposal with Arabella Nyffenegger"
+      ]
+    },
+    {
+      id: "hallmark", kind: "Phase 5 · Rung 3→4", title: "Hallmark (The Independent Mark)",
+      window: "Sep 1 – Nov 23, 2027 (Months 10–12)",
+      rung: "Rung 3 → Rung 4 Qualification",
+      counterparties: "Chris Purifoy (CEO), Dr. Alison Bryant (COO), Arabella Nyffenegger",
+      ask: "Go/No-Go governance review for a formal Rung-4 Research MoU backed by two-site evidence.",
+      tiers: ["D", "C", "B"],
+      x1: 9.25, x2: 12, row: 4, color: "#a78bfa",
+      checklist: [
+        "Launch second pilot site in a distinct regional/linguistic context",
+        "Submit Proof Trio artifacts for DPGA Digital Public Goods Registry listing (9 indicators)",
+        "Publish first scoped independent Sovereignty Impact Audit with public remediation tracker",
+        "Verify unrecruited external adoption of Conformance Kit or LearnCard offline plugins",
+        "Convene Commons & LEF leadership for Go/No-Go decision on Rung-4 MoU"
+      ]
+    },
+    {
+      id: "guild", kind: "Year 2 · Rung 4", title: "Prime R&D Partner & Sovereign Guild",
+      window: "Dec 2027 – Nov 2028 (Months 13–24)",
+      rung: "Rung 4: Prime R&D Partner (Months 12–24)",
+      counterparties: "Chris Purifoy (CEO), Dr. Alison Bryant (COO), LEF Board",
+      ask: "Ask 4 (Agreement): Multi-year Prime Research Partner MoU & standing EducationOS conformance role.",
+      tiers: ["C", "D"],
+      x1: 12, x2: 24, row: 5, color: "#f472b6",
+      checklist: [
+        "Execute formal multi-year Research MoU with standing Frontier R&D agenda (10 working papers)",
+        "Complete full Tier-2 white-box cryptography & mobile audit ($55K / OSTIF-backed)",
+        "Add Year-2 Release Gates: Gate 7 (Security/Threat-Model) & Gate 8 (Learning Efficacy)",
+        "Seat ≥4 of 5 Stakeholder Governance Chambers & activate 45-day supermajority bylaws",
+        "Evaluate standalone nonprofit Commons incorporation once annual grants exceed $250K–$350K+"
+      ]
+    }
+  ];
+
+  const DECISIONS = [
+    { id:1, point:"External Name & Positioning", def:"Keep 'Prime Directive' internally; adopt 'SOVRÆG LABS — Open Research Lab for Offline, Sovereign Learning Infrastructure' publicly.", due:"Day 7" },
+    { id:2, point:"SOVRAEPASS Architecture", def:"Commit formally to an upstream-first plugin distribution of MIT-licensed LearnCard; retire the hard-fork plan.", due:"Day 10" },
+    { id:3, point:"12-Month Critical Path Freeze", def:"Lock the Proof Trio (Bridge, Conformance Kit v0.1, Living Lab 0) as sole Year-1 deliverables; park secondary apps to Q4 2027.", due:"Day 10" },
+    { id:4, point:"Open-Source License Lanes", def:"Mandate MIT / Apache-2.0 for all plugins, bridges, schemas, and harnesses; isolate any AGPLv3 server code behind API boundaries.", due:"Day 14" },
+    { id:5, point:"Legal Home & Counsel Brief", def:"Approach U.S. 501(c)(3) fiscal sponsor for Commons; brief Canadian counsel (BC C3 / IRAP+SR&ED) & Vietnamese counsel (Law 91/2025).", due:"Day 21" },
+    { id:6, point:"Interim Stewardship Council", def:"Shortlist 5–7 named stewards (learner, educator, security/privacy, nonprofit-law) and issue Stage-0 invitations.", due:"Day 21" },
+    { id:7, point:"Living Lab 0 Scope & Cohort", def:"Confirm 45–60 adults (18+), Pre-A1/A1-Foundations scope (40–50 GLH), post-Tết Mar–May 2027 run, and independent protocol reviewer.", due:"Day 25" },
+    { id:8, point:"Claims Ledger & Conflict Firewall", def:"Publish Claims Ledger v1 and 3-layer firewall disclosure (Anvilocity Labs, Sovraecan Creative Inc., SYNCZINE) before LEF outreach.", due:"Day 30" }
+  ];
+
+  const STATUS_CYCLE = ["Aspiration", "Prototype", "Tested", "Audited"];
+
+  // Load persisted state
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    const statusMap = {};
+    FACTORS.forEach(f => statusMap[f.n] = f.defStatus);
+    return {
+      selectedNode: "assay",
+      checkedExit: {},
+      checkedDecisions: {},
+      factorStatus: statusMap,
+      theme: null,
+      scale: 1
+    };
+  }
+
+  let state = loadState();
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  // URL Params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "true") document.body.classList.add("embed-mode");
+  const initTheme = params.get("theme") || state.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  applyTheme(initTheme);
+  if (state.scale) document.documentElement.style.setProperty("--scale", state.scale);
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    state.theme = t;
+    document.getElementById("btnTheme").textContent = t === "dark" ? "☀ Light" : "☾ Dark";
+    saveState();
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
+  // Render KPI Strip
+  let activeKpiTier = "ALL";
+  function renderKpis() {
+    const wrap = document.getElementById("kpiStrip");
+    wrap.innerHTML = TIERS.map(t => {
+      const pct = Math.round((t.count / 56) * 100);
+      const sel = activeKpiTier === t.id ? " selected" : "";
+      return `
+        <div class="kpi-card${sel}" data-tier="${t.id}" title="Click to filter 56-Factor Matrix by ${t.name}">
+          <div class="kpi-label">
+            <span>${t.name}</span>
+            <span class="kpi-dot" style="background:${t.color};"></span>
+          </div>
+          <div class="kpi-val">${t.count} <small>/ 56 (${pct}%)</small></div>
+          <div class="kpi-bar"><span style="width:${pct}%;background:${t.color};"></span></div>
+        </div>
+      `;
+    }).join("");
+    wrap.querySelectorAll(".kpi-card").forEach(card => {
+      card.addEventListener("click", () => {
+        const tid = card.getAttribute("data-tier");
+        activeKpiTier = activeKpiTier === tid ? "ALL" : tid;
+        document.getElementById("filterTier").value = activeKpiTier;
+        switchTab("factors");
+        renderKpis();
+        renderFactors();
+        renderDomainFlow();
+      });
+    });
+  }
+
+  // Tabs
+  function switchTab(tabId) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === tabId));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + tabId));
+  }
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.addEventListener("click", () => switchTab(b.dataset.tab));
+  });
+  if (["roadmap", "factors", "ledger"].includes(params.get("tab"))) {
+    switchTab(params.get("tab"));
+  }
+
+  // Render 24-Month Roadmap SVG
+  function renderRoadmapSvg() {
+    const W = 760, H = 370;
+    const padL = 148, padR = 20, padT = 62, rowH = 44;
+    const plotW = W - padL - padR;
+    const xOf = m => padL + (m / 24) * plotW;
+
+    const rungs = [
+      { n: 1, label: "RUNG 1: Contributor", m1: 0, m2: 3, col: "#2ea87e" },
+      { n: 2, label: "RUNG 2: Reference", m1: 3, m2: 6, col: "#38bdf8" },
+      { n: 3, label: "RUNG 3: Joint R&D", m1: 6, m2: 12, col: "#d9b25f" },
+      { n: 4, label: "RUNG 4: Prime R&D Partner", m1: 12, m2: 24, col: "#a78bfa" }
+    ];
+
+    const months = [0, 3, 6, 9, 12, 18, 24];
+    const monthLabels = { 0:"Nov 26", 3:"Feb 27", 6:"May 27", 9:"Aug 27", 12:"Nov 27", 18:"May 28", 24:"Nov 28" };
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+    // Rung header bands
+    rungs.forEach(r => {
+      const rx = xOf(r.m1), rw = xOf(r.m2) - rx;
+      svg += `<rect x="${rx+1}" y="8" width="${rw-2}" height="28" rx="5" fill="${r.col}" fill-opacity="0.16" stroke="${r.col}" stroke-opacity="0.55" stroke-width="1"/>`;
+      svg += `<text x="${rx + rw/2}" y="26" text-anchor="middle" fill="var(--text)" font-size="10.5" font-weight="700">${r.label}</text>`;
+    });
+
+    // Vertical grid & month axis
+    months.forEach(m => {
+      const gx = xOf(m);
+      svg += `<line x1="${gx}" y1="42" x2="${gx}" y2="${H - 22}" stroke="var(--svg-grid)" stroke-dasharray="${m===12?'0':'3,3'}" stroke-width="${m===12?'1.5':'1'}"/>`;
+      svg += `<text x="${gx}" y="53" text-anchor="middle" fill="var(--text-faint)" font-size="9.5" font-family="var(--font-mono)">M${m} · ${monthLabels[m]}</text>`;
+    });
+
+    // Year divider label
+    svg += `<text x="${xOf(12)}" y="${H - 7}" text-anchor="middle" fill="var(--gold)" font-size="9.5" font-weight="700">▲ Year 1 Exit / Rung-4 Go-No-Go</text>`;
+
+    // Phase rows
+    ROADMAP_NODES.forEach((node, idx) => {
+      const y = padT + idx * rowH;
+      const isSel = state.selectedNode === node.id;
+      const bx = xOf(node.x1), bw = Math.max(24, xOf(node.x2) - bx);
+      const totalC = node.checklist.length;
+      const doneC = node.checklist.filter((_, ci) => state.checkedExit[node.id + "_" + ci]).length;
+      const progW = totalC ? (bw * (doneC / totalC)) : 0;
+
+      // Row zebra
+      if (idx % 2 === 1) {
+        svg += `<rect x="4" y="${y}" width="${W - 8}" height="${rowH - 4}" rx="4" fill="var(--bg-card)" fill-opacity="0.45"/>`;
+      }
+
+      // Left label
+      svg += `<g class="svg-clickable" data-node="${node.id}">`;
+      svg += `<text x="12" y="${y + 17}" fill="${isSel ? 'var(--gold-bright)' : 'var(--text)'}" font-size="11.5" font-weight="700">${node.title.split(" (")[0]}</text>`;
+      svg += `<text x="12" y="${y + 31}" fill="var(--text-faint)" font-size="9.5">${node.kind}</text>`;
+
+      // Track bar
+      svg += `<rect x="${bx}" y="${y + 6}" width="${bw}" height="28" rx="6" fill="var(--svg-track)" stroke="${isSel ? 'var(--gold-bright)' : node.color}" stroke-width="${isSel ? 2.4 : 1.3}"/>`;
+      if (progW > 0) {
+        svg += `<rect x="${bx}" y="${y + 6}" width="${progW}" height="28" rx="6" fill="${node.color}" fill-opacity="0.42"/>`;
+      } else {
+        svg += `<rect x="${bx}" y="${y + 6}" width="${bw}" height="28" rx="6" fill="${node.color}" fill-opacity="0.18"/>`;
+      }
+
+      // Gate diamond at right edge
+      const gx = bx + bw;
+      svg += `<polygon points="${gx},${y+13} ${gx+7},${y+20} ${gx},${y+27} ${gx-7},${y+20}" fill="${doneC === totalC ? '#2ea87e' : 'var(--gold)'}" stroke="var(--bg)" stroke-width="1.2"/>`;
+
+      // Bar inner label
+      const labelTxt = bw > 110 ? `${doneC}/${totalC} Gates · Tiers ${node.tiers.join("+")}` : `${doneC}/${totalC}`;
+      svg += `<text x="${bx + bw/2}" y="${y + 24}" text-anchor="middle" fill="var(--text)" font-size="10" font-weight="700">${labelTxt}</text>`;
+      svg += `</g>`;
+    });
+
+    svg += `</svg>`;
+    const wrap = document.getElementById("roadmapSvgWrap");
+    wrap.innerHTML = svg;
+    wrap.querySelectorAll("[data-node]").forEach(g => {
+      g.addEventListener("click", () => {
+        state.selectedNode = g.getAttribute("data-node");
+        saveState();
+        renderRoadmapSvg();
+        renderRoadmapInspector();
+      });
+    });
+  }
+
+  function renderRoadmapInspector() {
+    const node = ROADMAP_NODES.find(n => n.id === state.selectedNode) || ROADMAP_NODES[0];
+    const doneC = node.checklist.filter((_, i) => state.checkedExit[node.id + "_" + i]).length;
+    const pct = Math.round((doneC / node.checklist.length) * 100);
+
+    const el = document.getElementById("roadmapInspector");
+    el.innerHTML = `
+      <div class="inspector-badge">${node.kind} · ${doneC}/${node.checklist.length} Exit Gates (${pct}%)</div>
+      <div class="inspector-h">${node.title}</div>
+      <div class="card-sub">${node.window}</div>
+
+      <div class="meta-grid">
+        <div class="meta-box">
+          <label>Partnership Rung</label>
+          <div>${node.rung}</div>
+        </div>
+        <div class="meta-box">
+          <label>LEF Counterparties</label>
+          <div>${node.counterparties}</div>
+        </div>
+      </div>
+
+      <div class="meta-box" style="margin-bottom:12px;">
+        <label>Bounded Ask &amp; Cost to LEF</label>
+        <div style="font-weight:500;color:var(--text);">${node.ask}</div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <strong style="font-size:0.8rem;color:var(--gold-bright);">Hard Exit Evidence Checklist (Click to Verify)</strong>
+        <div style="display:flex;gap:4px;">
+          ${node.tiers.map(t => `<span class="tag tag-${t}">Tier ${t}</span>`).join("")}
+        </div>
+      </div>
+
+      <ul class="checklist">
+        ${node.checklist.map((item, i) => {
+          const k = node.id + "_" + i;
+          const done = !!state.checkedExit[k];
+          return `
+            <li class="check-item ${done ? 'done' : ''}" data-check="${k}">
+              <span class="check-box">${done ? '✓' : ''}</span>
+              <span>${item}</span>
+            </li>
+          `;
+        }).join("")}
+      </ul>
+    `;
+
+    el.querySelectorAll("[data-check]").forEach(li => {
+      li.addEventListener("click", () => {
+        const k = li.getAttribute("data-check");
+        state.checkedExit[k] = !state.checkedExit[k];
+        saveState();
+        renderRoadmapSvg();
+        renderRoadmapInspector();
+      });
+    });
+  }
+
+  document.getElementById("btnPrevStep").addEventListener("click", () => {
+    const idx = ROADMAP_NODES.findIndex(n => n.id === state.selectedNode);
+    state.selectedNode = ROADMAP_NODES[(idx - 1 + ROADMAP_NODES.length) % ROADMAP_NODES.length].id;
+    saveState();
+    renderRoadmapSvg();
+    renderRoadmapInspector();
+  });
+  document.getElementById("btnNextStep").addEventListener("click", () => {
+    const idx = ROADMAP_NODES.findIndex(n => n.id === state.selectedNode);
+    state.selectedNode = ROADMAP_NODES[(idx + 1) % ROADMAP_NODES.length].id;
+    saveState();
+    renderRoadmapSvg();
+    renderRoadmapInspector();
+  });
+
+  // Render Domain-to-Tier Stacked Bar SVG
+  function renderDomainFlow() {
+    const W = 760, H = 225;
+    const padL = 175, padR = 65, padT = 28, rowH = 26;
+    const barMaxW = W - padL - padR;
+    const tierOrder = ["A", "B", "C", "D", "P"];
+    const tierColor = { A:"#2ea87e", B:"#38bdf8", C:"#a78bfa", D:"#f59e0b", P:"#d9b25f" };
+    const selD = document.getElementById("filterDomain").value;
+    const selT = document.getElementById("filterTier").value;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+    // Legend
+    tierOrder.forEach((tid, i) => {
+      const lx = padL + i * 105;
+      const tObj = TIERS.find(x => x.id === tid);
+      svg += `<g class="svg-clickable" data-legend-tier="${tid}">`;
+      svg += `<rect x="${lx}" y="6" width="10" height="10" rx="2" fill="${tierColor[tid]}"/>`;
+      svg += `<text x="${lx+14}" y="15" fill="${selT === tid ? 'var(--gold-bright)' : 'var(--text-muted)'}" font-size="10" font-weight="700">${tid}: ${tObj.short} (${tObj.count})</text>`;
+      svg += `</g>`;
+    });
+
+    DOMAINS.forEach((dom, idx) => {
+      const y = padT + idx * rowH;
+      const domFactors = FACTORS.filter(f => f.d === dom.id);
+      const isDomActive = selD === "ALL" || Number(selD) === dom.id;
+      svg += `<g class="svg-clickable" data-dom="${dom.id}" opacity="${isDomActive ? 1 : 0.35}">`;
+      svg += `<text x="10" y="${y + 15}" fill="${dom.isNew ? 'var(--gold-bright)' : 'var(--text)'}" font-size="10.5" font-weight="${dom.isNew ? '700' : '600'}">${dom.short} (${dom.range})</text>`;
+
+      let cursorX = padL;
+      tierOrder.forEach(tid => {
+        const cnt = domFactors.filter(f => f.t === tid).length;
+        if (!cnt) return;
+        const segW = (cnt / 8) * barMaxW;
+        const dim = selT !== "ALL" && selT !== tid;
+        svg += `<rect x="${cursorX + 1}" y="${y + 3}" width="${Math.max(4, segW - 2)}" height="18" rx="3" fill="${tierColor[tid]}" fill-opacity="${dim ? 0.18 : 0.78}"/>`;
+        if (segW >= 26) {
+          svg += `<text x="${cursorX + segW/2}" y="${y + 15}" text-anchor="middle" fill="#0c1112" font-size="9.5" font-weight="800">${tid}·${cnt}</text>`;
+        }
+        cursorX += segW;
+      });
+      svg += `<text x="${padL + barMaxW + 10}" y="${y + 15}" fill="var(--text-faint)" font-size="9.5" font-family="var(--font-mono)">8 factors</text>`;
+      svg += `</g>`;
+    });
+
+    svg += `</svg>`;
+    const wrap = document.getElementById("domainFlowSvgWrap");
+    wrap.innerHTML = svg;
+
+    wrap.querySelectorAll("[data-dom]").forEach(el => {
+      el.addEventListener("click", () => {
+        const id = el.getAttribute("data-dom");
+        const sel = document.getElementById("filterDomain");
+        sel.value = sel.value === id ? "ALL" : id;
+        renderDomainFlow();
+        renderFactors();
+      });
+    });
+    wrap.querySelectorAll("[data-legend-tier]").forEach(el => {
+      el.addEventListener("click", () => {
+        const tid = el.getAttribute("data-legend-tier");
+        const sel = document.getElementById("filterTier");
+        sel.value = sel.value === tid ? "ALL" : tid;
+        activeKpiTier = sel.value;
+        renderKpis();
+        renderDomainFlow();
+        renderFactors();
+      });
+    });
+  }
+
+  // Render 56 Factor Cards
+  function renderFactors() {
+    const q = document.getElementById("factorSearch").value.trim().toLowerCase();
+    const dVal = document.getElementById("filterDomain").value;
+    const tVal = document.getElementById("filterTier").value;
+    const sVal = document.getElementById("filterStatus").value;
+
+    const filtered = FACTORS.filter(f => {
+      const st = state.factorStatus[f.n] || f.defStatus;
+      if (dVal !== "ALL" && f.d !== Number(dVal)) return false;
+      if (tVal !== "ALL" && f.t !== tVal) return false;
+      if (sVal !== "ALL" && st !== sVal) return false;
+      if (q) {
+        const hay = `${f.n} ${f.name} ${f.desc} ${f.deliv} domain ${f.d} tier ${f.t} ${st}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+
+    document.getElementById("factorCountLabel").textContent = `Showing ${filtered.length} of 56 factors`;
+    const grid = document.getElementById("factorGrid");
+    if (!filtered.length) {
+      grid.innerHTML = `<div style="grid-column:1/-1;padding:24px;text-align:center;color:var(--text-muted);">No factors match the active filter combination.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(f => {
+      const st = state.factorStatus[f.n] || f.defStatus;
+      const isNew = f.d === 7;
+      return `
+        <article class="factor-card ${isNew ? 'domain-new' : ''}">
+          <div class="factor-top">
+            <span class="factor-num">F${String(f.n).padStart(2, "0")} · D${f.d}</span>
+            <div style="display:flex;gap:4px;">
+              ${isNew ? '<span class="tag tag-new">New</span>' : ''}
+              <span class="tag tag-${f.t}">Tier ${f.t}</span>
+            </div>
+          </div>
+          <div class="factor-name">${f.name}</div>
+          <div class="factor-desc">${f.desc}</div>
+          <div class="factor-foot">
+            <span title="Primary Proof Deliverable">↳ ${f.deliv}</span>
+            <button class="status-pill" data-cycle="${f.n}" data-status="${st}" title="Click to advance Claims Ledger status">${st}</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    grid.querySelectorAll("[data-cycle]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const num = Number(btn.getAttribute("data-cycle"));
+        const cur = state.factorStatus[num] || "Aspiration";
+        const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(cur) + 1) % STATUS_CYCLE.length];
+        state.factorStatus[num] = next;
+        saveState();
+        renderFactors();
+        renderLedgerSummary();
+      });
+    });
+  }
+
+  ["factorSearch", "filterDomain", "filterTier", "filterStatus"].forEach(id => {
+    document.getElementById(id).addEventListener("input", () => {
+      activeKpiTier = document.getElementById("filterTier").value;
+      renderKpis();
+      renderDomainFlow();
+      renderFactors();
+    });
+  });
+
+  document.getElementById("btnResetFilters").addEventListener("click", () => {
+    document.getElementById("factorSearch").value = "";
+    document.getElementById("filterDomain").value = "ALL";
+    document.getElementById("filterTier").value = "ALL";
+    document.getElementById("filterStatus").value = "ALL";
+    activeKpiTier = "ALL";
+    renderKpis();
+    renderDomainFlow();
+    renderFactors();
+  });
+
+  // Render Decisions & Claims Ledger
+  function renderDecisions() {
+    const tbody = document.getElementById("decisionTableBody");
+    let doneCount = 0;
+    tbody.innerHTML = DECISIONS.map(d => {
+      const done = !!state.checkedDecisions[d.id];
+      if (done) doneCount++;
+      return `
+        <tr style="cursor:pointer;" data-dec="${d.id}">
+          <td><span class="check-box" style="display:inline-grid;${done ? 'background:var(--emerald);border-color:var(--emerald);color:#fff;' : ''}">${done ? '✓' : ''}</span></td>
+          <td><strong>${d.id}. ${d.point}</strong></td>
+          <td style="color:var(--text-muted);">${d.def}</td>
+          <td><span class="tag tag-D">${d.due}</span></td>
+        </tr>
+      `;
+    }).join("");
+    document.getElementById("ledgerProgressPill").textContent = `${doneCount}/8 Decisions`;
+
+    tbody.querySelectorAll("[data-dec]").forEach(tr => {
+      tr.addEventListener("click", () => {
+        const id = tr.getAttribute("data-dec");
+        state.checkedDecisions[id] = !state.checkedDecisions[id];
+        saveState();
+        renderDecisions();
+      });
+    });
+  }
+
+  function renderLedgerSummary() {
+    const counts = { Aspiration: 0, Prototype: 0, Tested: 0, Audited: 0 };
+    FACTORS.forEach(f => {
+      const st = state.factorStatus[f.n] || f.defStatus;
+      counts[st] = (counts[st] || 0) + 1;
+    });
+    const verified = counts.Tested + counts.Audited;
+    const cols = { Aspiration: "var(--text-faint)", Prototype: "var(--teal)", Tested: "var(--emerald)", Audited: "var(--gold)" };
+
+    document.getElementById("ledgerSummary").innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;">
+        <div>
+          <div style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);">Publicly Verifiable Claims (Tested + Audited)</div>
+          <div style="font-family:var(--font-serif);font-size:1.7rem;font-weight:700;color:var(--gold-bright);">${verified} <span style="font-family:var(--font-sans);font-size:0.85rem;color:var(--text-muted);">/ 56 (${Math.round(verified/56*100)}%)</span></div>
+        </div>
+      </div>
+      ${STATUS_CYCLE.map(st => {
+        const c = counts[st];
+        const p = Math.round((c / 56) * 100);
+        return `
+          <div style="margin-bottom:9px;">
+            <div style="display:flex;justify-content:space-between;font-size:0.78rem;margin-bottom:3px;">
+              <strong>${st}</strong>
+              <span style="font-family:var(--font-mono);color:var(--text-muted);">${c} factors (${p}%)</span>
+            </div>
+            <div class="kpi-bar" style="height:7px;"><span style="width:${p}%;background:${cols[st]};"></span></div>
+          </div>
+        `;
+      }).join("")}
+    `;
+  }
+
+  document.getElementById("btnResetDecisions").addEventListener("click", () => {
+    state.checkedDecisions = {};
+    saveState();
+    renderDecisions();
+    showToast("Directorate checklist reset");
+  });
+
+  document.getElementById("btnResetLedger").addEventListener("click", () => {
+    FACTORS.forEach(f => state.factorStatus[f.n] = f.defStatus);
+    saveState();
+    renderFactors();
+    renderLedgerSummary();
+    showToast("Claims Ledger reset to baseline");
+  });
+
+  // Theme & Font controls
+  document.getElementById("btnTheme").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+  });
+  document.getElementById("btnFontInc").addEventListener("click", () => {
+    state.scale = Math.min(1.25, +(state.scale + 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+  document.getElementById("btnFontDec").addEventListener("click", () => {
+    state.scale = Math.max(0.84, +(state.scale - 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+
+  // Export Modal
+  function buildMarkdownSnapshot() {
+    const decLines = DECISIONS.map(d => `- [${state.checkedDecisions[d.id] ? 'x' : ' '}] **${d.id}. ${d.point}** (${d.due}) — ${d.def}`).join("\n");
+    const ledgerLines = FACTORS.map(f => `| F${String(f.n).padStart(2,'0')} | D${f.d} | Tier ${f.t} | ${f.name} | **${state.factorStatus[f.n] || f.defStatus}** | ${f.deliv} |`).join("\n");
+    return `# SOVRÆGIS / SOVRÆG LABS — Live Claims Ledger & Directorate Snapshot\n\n## Founding Directorate Decisions (Days 1–30)\n${decLines}\n\n## 56-Factor Claims Ledger\n| # | Domain | Tier | Factor | Status | Primary Proof Artifact |\n|---|---|---|---|---|---|\n${ledgerLines}\n`;
+  }
+
+  const EMBED_SNIPPET = `> [!note]- Tiering 56 Sovereign Factors Into a 24-Month Evidence-Gated Partnership Roadmap\n> \n> https://anvilnexus.github.io/aicontent/sovraegis_56_factors_24m_roadmap.html\n> \n> <iframe src="https://anvilnexus.github.io/aicontent/sovraegis_56_factors_24m_roadmap.html?embed=true" width="100%" height="740px" style="border: 1px solid var(--background-modifier-border); border-radius: 8px;" loading="lazy"></iframe>`;
+
+  document.getElementById("btnExport").addEventListener("click", () => {
+    document.getElementById("obsidianSnippet").textContent = EMBED_SNIPPET;
+    document.getElementById("mdPreview").textContent = buildMarkdownSnapshot();
+    document.getElementById("exportModal").classList.add("open");
+  });
+  document.getElementById("btnCloseModal").addEventListener("click", () => {
+    document.getElementById("exportModal").classList.remove("open");
+  });
+  document.getElementById("exportModal").addEventListener("click", e => {
+    if (e.target.id === "exportModal") document.getElementById("exportModal").classList.remove("open");
+  });
+  document.getElementById("btnCopyObsidian").addEventListener("click", () => {
+    navigator.clipboard && navigator.clipboard.writeText(EMBED_SNIPPET);
+    showToast("Obsidian callout copied");
+  });
+  document.getElementById("btnDownloadMd").addEventListener("click", () => {
+    const blob = new Blob([buildMarkdownSnapshot()], { type: "text/markdown;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "SOVRAEGIS_56_Factors_Claims_Ledger.md";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("Downloaded Markdown snapshot");
+  });
+
+  // Initial render
+  renderKpis();
+  renderRoadmapSvg();
+  renderRoadmapInspector();
+  renderDomainFlow();
+  renderFactors();
+  renderDecisions();
+  renderLedgerSummary();
+})();
+</script>
+</body>
+</html>
