@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZ-SRLO — Host-Agnostic Embed Contract Lifecycle</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.14);
+
+      --hex-stroke: rgba(212, 175, 55, 0.05);
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+      --violet: #6d28d9;
+      --violet-soft: rgba(109, 40, 217, 0.11);
+
+      --hex-stroke: rgba(154, 116, 17, 0.08);
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Top Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hex-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .title-group h1 {
+      font-size: 1.04rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Control Deck */
+    .control-deck {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .deck-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .deck-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 3px;
+      flex-wrap: wrap;
+    }
+
+    .seg-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .seg-btn:hover { color: var(--text); }
+
+    .seg-btn.active[data-host] {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.4);
+    }
+
+    .seg-btn.active[data-scenario="online_nats"] {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      box-shadow: inset 0 0 0 1px rgba(46, 194, 126, 0.4);
+    }
+
+    .seg-btn.active[data-scenario="offline_fallback"] {
+      background: var(--amber-soft);
+      color: var(--amber);
+      box-shadow: inset 0 0 0 1px rgba(240, 168, 48, 0.4);
+    }
+
+    .seg-btn.active[data-scenario="crash_recovery"] {
+      background: var(--crimson-soft);
+      color: var(--crimson);
+      box-shadow: inset 0 0 0 1px rgba(239, 83, 80, 0.4);
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 7px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .icon-btn.primary {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .icon-btn:disabled {
+      opacity: 0.5;
+      cursor: wait;
+    }
+
+    /* Live Address Bar & Fragment Scrub Preview */
+    .url-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+    }
+
+    .url-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .url-badge {
+      font-family: var(--font-sans);
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: var(--blue-soft);
+      color: var(--blue);
+    }
+
+    .url-fragment {
+      color: var(--crimson);
+      background: var(--crimson-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+      transition: all 0.35s ease;
+    }
+
+    .url-fragment.scrubbed {
+      color: var(--emerald);
+      background: var(--emerald-soft);
+      text-decoration: line-through;
+    }
+
+    /* Metrics Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .metric-label {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .metric-value {
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .metric-sub {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot.emerald { background: var(--emerald); box-shadow: 0 0 8px var(--emerald); }
+    .dot.amber { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
+    .dot.crimson { background: var(--crimson); box-shadow: 0 0 8px var(--crimson); }
+    .dot.blue { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
+    .dot.gold { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+
+    /* Main Workspace */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.52fr) minmax(320px, 0.98fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .diagram-panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .svg-wrap {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    svg#contractSvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .stage-node {
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+
+    .stage-node:hover .node-rect { filter: brightness(1.12); }
+
+    .stage-node.selected .node-rect {
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.38));
+    }
+
+    .edge-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s ease;
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke-dasharray: 7 9;
+      animation: flowDash 1.3s linear infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    .dimmed { opacity: 0.16 !important; }
+    .paused .edge-flow { animation-play-state: paused; }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 32; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes pulseStage {
+      0% { stroke-opacity: 1; stroke-width: 3.5; }
+      100% { stroke-opacity: 0; stroke-width: 13; }
+    }
+
+    .flash-ring {
+      fill: none;
+      pointer-events: none;
+      animation: pulseStage 0.7s ease-out forwards;
+    }
+
+    /* Inspector */
+    .inspector {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .inspector-header {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 11px;
+    }
+
+    .inspector-eyebrow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.69rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+    }
+
+    .inspector-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .pill {
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill.emerald { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46, 194, 126, 0.35); }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); border-color: rgba(240, 168, 48, 0.35); }
+    .pill.crimson { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(239, 83, 80, 0.35); }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); border-color: rgba(88, 166, 255, 0.35); }
+    .pill.gold { background: var(--gold-soft); color: var(--gold); border-color: rgba(212, 175, 55, 0.35); }
+
+    .inspector-section {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .inspector-section h3 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .inspector-section p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .code-box {
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+      color: var(--text);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      overflow-x: auto;
+      white-space: pre;
+      line-height: 1.45;
+    }
+
+    .rule-callout {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-size: 0.77rem;
+      color: var(--text);
+    }
+
+    .inspector-footer {
+      margin-top: auto;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.71rem;
+      color: var(--text-dim);
+    }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+      .metrics-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 580px) {
+      body { padding: 10px; }
+      .metrics-strip { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.8" />
+            <text x="20" y="24" text-anchor="middle" fill="var(--gold)" font-size="12" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div class="title-group">
+          <h1>SYNCZ-SRLO Host-Agnostic Embed Contract Lifecycle</h1>
+          <p>CSP Framing, Ephemeral Fragment Auth, Dual-Mode postMessage Resize &amp; 5-State IndexedDB xAPI Outbox</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="icon-btn primary" id="runBootBtn">&#9654; Simulate Boot &amp; Sync Trace</button>
+        <button class="icon-btn" id="animToggleBtn"><span>&#10074;&#10074;</span> Pause Flow</button>
+        <button class="icon-btn" id="themeToggleBtn"><span>&#9788;</span> Light</button>
+      </div>
+    </header>
+
+    <!-- Dual Segmented Control Deck -->
+    <section class="control-deck" aria-label="Host Environment and Sync Scenario Controls">
+      <div class="deck-group">
+        <span class="deck-label">Host Environment:</span>
+        <div class="segmented" role="group" aria-label="Host Environment">
+          <button class="seg-btn active" data-host="affine">AFFiNE</button>
+          <button class="seg-btn" data-host="obsidian">Obsidian</button>
+          <button class="seg-btn" data-host="notion">Notion</button>
+          <button class="seg-btn" data-host="sovraelex">Aware Host (SOVRÆLEX)</button>
+        </div>
+      </div>
+
+      <div class="deck-group">
+        <span class="deck-label">Sync Scenario:</span>
+        <div class="segmented" role="group" aria-label="Sync Scenario">
+          <button class="seg-btn active" data-scenario="online_nats">Online: nats.ws</button>
+          <button class="seg-btn" data-scenario="offline_fallback">Offline / Firewall</button>
+          <button class="seg-btn" data-scenario="crash_recovery">Tab Crash &amp; DLQ</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Fragment Scrubbing URL Bar -->
+    <div class="url-bar" aria-live="polite">
+      <div class="url-left">
+        <span class="url-badge" id="urlStateBadge">EMBED ORIGIN</span>
+        <span>https://play.synczines.org/embed/v1/sz_ielts_w2/srlo_cohesion_04</span>
+        <span class="url-fragment" id="urlFragment">#v=1&amp;code=ephem_9x7kQ4mP&amp;theme=auto</span>
+      </div>
+      <span id="urlScrubNote" style="color: var(--text-dim); font-size: 0.7rem;">Tick 0: history.replaceState() wipes fragment before UI mounts</span>
+    </div>
+
+    <!-- Live Adaptation Strip -->
+    <section class="metrics-strip" aria-label="Contract Environment Summary">
+      <div class="metric-card">
+        <span class="metric-label">Parent Origin &amp; CSP</span>
+        <div class="metric-value" id="mCspVal"><span class="dot emerald"></span>Omit frame-ancestors</div>
+        <span class="metric-sub" id="mCspSub">Allows AFFiNE Web, self-hosted &amp; Electron schemes</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">postMessage Resize (250ms)</span>
+        <div class="metric-value" id="mResizeVal"><span class="dot amber"></span>Passive Fallback Mode</div>
+        <span class="metric-sub" id="mResizeSub">No ACK &rarr; 100dvh scroll + CSS @container</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Outbox State Transition</span>
+        <div class="metric-value" id="mQueueVal"><span class="dot emerald"></span>PENDING &rarr; IN_FLIGHT &rarr; ACKED</div>
+        <span class="metric-sub" id="mQueueSub">navigator.locks prevents multi-tab collision</span>
+      </div>
+      <div class="metric-card">
+        <span class="metric-label">Transport &amp; Idempotency</span>
+        <div class="metric-value" id="mTransVal"><span class="dot blue"></span>nats.ws (WSS) + UUIDv7</div>
+        <span class="metric-sub" id="mTransSub">Nats-Msg-Id = statementId (Zero Duplicates)</span>
+      </div>
+    </section>
+
+    <!-- Main Split Workspace -->
+    <main class="workspace">
+      <!-- SVG Lifecycle + 5-State Machine Diagram -->
+      <section class="diagram-panel" aria-label="6-Stage Lifecycle Diagram">
+        <div class="svg-wrap">
+          <svg id="contractSvg" viewBox="0 0 770 595" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SYNCZ-SRLO 6-Stage Embed Contract and IndexedDB Sync State Machine">
+            <defs>
+              <pattern id="hexPattern" width="48" height="41.57" patternUnits="userSpaceOnUse">
+                <path d="M24 0 L48 13.85 L48 27.71 L24 41.57 L0 27.71 L0 13.85 Z" fill="none" stroke="var(--hex-stroke)" stroke-width="1" />
+              </pattern>
+
+              <marker id="arrGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37" />
+              </marker>
+              <marker id="arrEmerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2ec27e" />
+              </marker>
+              <marker id="arrAmber" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#f0a830" />
+              </marker>
+              <marker id="arrCrimson" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef5350" />
+              </marker>
+              <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#58a6ff" />
+              </marker>
+
+              <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <rect width="770" height="595" fill="url(#hexPattern)" />
+
+            <!-- Phase A Container (Nodes 1-3: Boot & Host Negotiation) -->
+            <rect x="14" y="12" width="742" height="202" rx="10" fill="rgba(212, 175, 55, 0.04)" stroke="rgba(212, 175, 55, 0.25)" stroke-width="1" />
+            <text x="26" y="28" fill="var(--gold)" font-size="9.5" font-weight="800" letter-spacing="0.9">PHASE A: HOST FRAMING, ZERO-COOKIE IDENTITY &amp; LAYOUT NEGOTIATION (STAGES 1–3)</text>
+
+            <!-- Phase B Container (Nodes 4-6: Outbox State Machine & Delivery) -->
+            <rect x="14" y="230" width="742" height="352" rx="10" fill="rgba(88, 166, 255, 0.04)" stroke="rgba(88, 166, 255, 0.25)" stroke-width="1" />
+            <text x="26" y="246" fill="var(--blue)" font-size="9.5" font-weight="800" letter-spacing="0.9">PHASE B: 5-STATE INDEXEDDB xAPI OUTBOX, TRANSPORT CASCADE &amp; JETSTREAM DEDUP (STAGES 4–6)</text>
+
+            <!-- PHASE A CONNECTORS -->
+            <!-- 1 -> 2 -->
+            <path class="edge-path" d="M 244 108 L 268 108" stroke="var(--gold)" stroke-width="2.2" marker-end="url(#arrGold)" />
+            <path class="edge-flow" d="M 244 108 L 266 108" stroke="var(--gold)" stroke-width="2.2" />
+            <!-- 2 -> 3 -->
+            <path class="edge-path" d="M 502 108 L 526 108" stroke="var(--gold)" stroke-width="2.2" marker-end="url(#arrGold)" />
+            <path class="edge-flow" d="M 502 108 L 524 108" stroke="var(--gold)" stroke-width="2.2" />
+
+            <!-- Phase A -> Phase B (Stage 3 -> Stage 4) -->
+            <path class="edge-path" d="M 638 196 L 638 220 L 385 220 L 385 256" stroke="var(--gold)" stroke-width="2.2" marker-end="url(#arrGold)" />
+            <path class="edge-flow" d="M 638 196 L 638 220 L 385 220 L 385 254" stroke="var(--gold)" stroke-width="2.2" />
+            <rect x="424" y="211" width="184" height="17" rx="4" fill="var(--bg-canvas)" />
+            <text x="516" y="222.5" text-anchor="middle" fill="var(--gold)" font-size="8.8" font-weight="700">Learner Interacts -> Emit UUIDv7 xAPI</text>
+
+            <!-- PHASE A NODES (3 Columns) -->
+            <!-- Stage 1 -->
+            <g class="stage-node selected" data-stage="host_frame" tabindex="0" role="button" aria-label="Stage 1: Host Container and CSP Gate">
+              <rect class="node-rect" x="28" y="42" width="216" height="154" rx="9" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2" />
+              <rect x="40" y="52" width="84" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="82" y="63" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">STAGE 1 • CSP</text>
+              <text x="40" y="88" fill="var(--text)" font-size="12.2" font-weight="700">Host &amp; CSP Gate</text>
+              <text id="s1Origin" x="40" y="106" fill="var(--gold)" font-size="9.2" font-weight="700">Host: AFFiNE (Web/Electron)</text>
+              <text id="s1Rule1" x="40" y="124" fill="var(--text-muted)" font-size="9">• Isolated play.synczines.org</text>
+              <text id="s1Rule2" x="40" y="140" fill="var(--text-muted)" font-size="9">• Omit XFO &amp; frame-ancestors</text>
+              <text id="s1Rule3" x="40" y="156" fill="var(--text-muted)" font-size="9">• Strict inner connect-src</text>
+              <rect id="s1BadgeBg" x="40" y="168" width="192" height="18" rx="4" fill="var(--emerald-soft)" />
+              <text id="s1BadgeTxt" x="136" y="180" text-anchor="middle" fill="var(--emerald)" font-size="8.5" font-weight="800">SCHEME SAFE: HTTPS + ELECTRON</text>
+            </g>
+
+            <!-- Stage 2 -->
+            <g class="stage-node" data-stage="fragment_auth" tabindex="0" role="button" aria-label="Stage 2: Fragment Bootstrap and Scrub">
+              <rect class="node-rect" x="272" y="42" width="230" height="154" rx="9" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="2" />
+              <rect x="284" y="52" width="104" height="16" rx="4" fill="var(--gold-soft)" />
+              <text x="336" y="63" text-anchor="middle" fill="var(--gold)" font-size="8.4" font-weight="800">STAGE 2 • IDENTITY</text>
+              <text x="284" y="88" fill="var(--text)" font-size="12.2" font-weight="700">Fragment Auth &amp; Scrub</text>
+              <text x="284" y="106" fill="var(--gold)" font-size="9.2" font-weight="700">Tick 0: history.replaceState()</text>
+              <text x="284" y="124" fill="var(--text-muted)" font-size="9">• Exchange 5m #code -&gt; NATS JWT</text>
+              <text x="284" y="140" fill="var(--text-muted)" font-size="9">• Mint ECDSA P-256 device key</text>
+              <text id="s2Storage" x="284" y="156" fill="var(--text-muted)" font-size="9">• Partitioned IDB / Electron store</text>
+              <rect x="284" y="168" width="206" height="18" rx="4" fill="var(--blue-soft)" />
+              <text x="387" y="180" text-anchor="middle" fill="var(--blue)" font-size="8.5" font-weight="800">ZERO THIRD-PARTY COOKIES</text>
+            </g>
+
+            <!-- Stage 3 -->
+            <g class="stage-node" data-stage="resize_bridge" tabindex="0" role="button" aria-label="Stage 3: Dual-Mode Resize Bridge">
+              <rect id="s3Rect" class="node-rect" x="530" y="42" width="212" height="154" rx="9" fill="var(--bg-card)" stroke="var(--amber)" stroke-width="2" />
+              <rect id="s3TagBg" x="542" y="52" width="102" height="16" rx="4" fill="var(--amber-soft)" />
+              <text id="s3TagTxt" x="593" y="63" text-anchor="middle" fill="var(--amber)" font-size="8.4" font-weight="800">STAGE 3 • LAYOUT</text>
+              <text x="542" y="88" fill="var(--text)" font-size="12.2" font-weight="700">Dual-Mode Resize</text>
+              <text id="s3ModeTitle" x="542" y="106" fill="var(--amber)" font-size="9.2" font-weight="700">No ACK (250ms) -&gt; Passive</text>
+              <text id="s3Rule1" x="542" y="124" fill="var(--text-muted)" font-size="9">• height: 100dvh; overflow: auto</text>
+              <text id="s3Rule2" x="542" y="140" fill="var(--text-muted)" font-size="9">• CSS @container responsive UI</text>
+              <text id="s3Rule3" x="542" y="156" fill="var(--text-muted)" font-size="9">• User drags AFFiNE block height</text>
+              <rect id="s3BadgeBg" x="542" y="168" width="188" height="18" rx="4" fill="var(--amber-soft)" />
+              <text id="s3BadgeTxt" x="636" y="180" text-anchor="middle" fill="var(--amber)" font-size="8.5" font-weight="800">PASSIVE HOST FALLBACK</text>
+            </g>
+
+            <!-- STAGE 4: 5-STATE INDEXEDDB XAPI OUTBOX -->
+            <g class="stage-node" data-stage="idb_outbox" tabindex="0" role="button" aria-label="Stage 4: 5-State IndexedDB xAPI Outbox">
+              <rect id="s4Rect" class="node-rect" x="28" y="258" width="714" height="142" rx="10" fill="var(--bg-card)" stroke="var(--blue)" stroke-width="2" />
+              <rect x="42" y="268" width="166" height="17" rx="4" fill="var(--blue-soft)" />
+              <text x="125" y="279.5" text-anchor="middle" fill="var(--blue)" font-size="8.6" font-weight="800">STAGE 4 • INDEXEDDB OUTBOX</text>
+              <rect x="520" y="268" width="208" height="17" rx="4" fill="var(--gold-soft)" />
+              <text x="624" y="279.5" text-anchor="middle" fill="var(--gold)" font-size="8.4" font-weight="800">WEB LOCK: navigator.locks()</text>
+
+              <!-- 5 State Pills Inside Stage 4 -->
+              <!-- PENDING -->
+              <rect id="st-pending" x="44" y="302" width="108" height="36" rx="7" fill="var(--bg-canvas)" stroke="var(--blue)" stroke-width="1.6" />
+              <text x="98" y="319" text-anchor="middle" fill="var(--blue)" font-size="9.5" font-weight="800">PENDING</text>
+              <text x="98" y="331" text-anchor="middle" fill="var(--text-dim)" font-size="8">UUIDv7 Saved</text>
+
+              <!-- IN_FLIGHT -->
+              <rect id="st-inflight" x="196" y="302" width="128" height="36" rx="7" fill="var(--bg-canvas)" stroke="var(--gold)" stroke-width="1.8" />
+              <text x="260" y="319" text-anchor="middle" fill="var(--gold)" font-size="9.5" font-weight="800">IN_FLIGHT</text>
+              <text x="260" y="331" text-anchor="middle" fill="var(--text-dim)" font-size="8">inFlightAt = now()</text>
+
+              <!-- ACKED -->
+              <rect id="st-acked" x="382" y="302" width="124" height="36" rx="7" fill="var(--emerald-soft)" stroke="var(--emerald)" stroke-width="1.8" />
+              <text x="444" y="319" text-anchor="middle" fill="var(--emerald)" font-size="9.5" font-weight="800">ACKED</text>
+              <text x="444" y="331" text-anchor="middle" fill="var(--emerald)" font-size="8">PubAck / 200 Prune</text>
+
+              <!-- RETRYABLE_ERROR -->
+              <rect id="st-retry" x="196" y="356" width="170" height="34" rx="7" fill="var(--amber-soft)" stroke="var(--amber)" stroke-width="1.6" />
+              <text x="281" y="371" text-anchor="middle" fill="var(--amber)" font-size="9" font-weight="800">RETRYABLE_ERROR</text>
+              <text x="281" y="383" text-anchor="middle" fill="var(--text-muted)" font-size="7.8">Backoff + Jitter | &gt;30s Crash Sweep</text>
+
+              <!-- FATAL_ERROR (DLQ) -->
+              <rect id="st-dlq" x="556" y="302" width="170" height="36" rx="7" fill="var(--crimson-soft)" stroke="var(--crimson)" stroke-width="1.6" />
+              <text x="641" y="319" text-anchor="middle" fill="var(--crimson)" font-size="9.2" font-weight="800">FATAL_ERROR (DLQ)</text>
+              <text x="641" y="331" text-anchor="middle" fill="var(--crimson)" font-size="8">HTTP 400 / 413 / 422</text>
+
+              <!-- Internal State Arrows -->
+              <path id="ae-p-i" class="edge-path" d="M 152 320 L 194 320" stroke="var(--blue)" stroke-width="1.8" marker-end="url(#arrBlue)" />
+              <path id="ae-i-a" class="edge-path" d="M 324 320 L 380 320" stroke="var(--emerald)" stroke-width="2" marker-end="url(#arrEmerald)" />
+              <path id="ae-i-r" class="edge-path" d="M 240 338 L 240 354" stroke="var(--amber)" stroke-width="1.8" marker-end="url(#arrAmber)" />
+              <path id="ae-r-i" class="edge-path" d="M 294 356 L 294 340" stroke="var(--amber)" stroke-width="1.8" stroke-dasharray="4 3" marker-end="url(#arrAmber)" />
+              <path id="ae-i-d" class="edge-path" d="M 260 302 L 260 291 L 641 291 L 641 300" stroke="var(--crimson)" stroke-width="1.6" stroke-dasharray="4 3" marker-end="url(#arrCrimson)" />
+              <text id="ae-dlq-lbl" x="452" y="287" text-anchor="middle" fill="var(--crimson)" font-size="8" font-weight="700">Poison Schema / Too Large (Stop Retrying)</text>
+
+              <text x="556" y="368" fill="var(--text-muted)" font-size="8.3">• 401/403: Pause, refresh JWT via ECDSA key</text>
+              <text x="556" y="382" fill="var(--text-muted)" font-size="8.3">• Wake: online, visibilitychange, pagehide</text>
+            </g>
+
+            <!-- Connectors Stage 4 -> Stage 5 -> Stage 6 -->
+            <path id="e-4-5" class="edge-path" d="M 206 400 L 206 440" stroke="var(--emerald)" stroke-width="2.2" marker-end="url(#arrEmerald)" />
+            <path id="f-4-5" class="edge-flow" d="M 206 400 L 206 438" stroke="var(--emerald)" stroke-width="2.2" />
+
+            <path id="e-5-6" class="edge-path" d="M 386 504 L 424 504" stroke="var(--blue)" stroke-width="2.4" marker-end="url(#arrBlue)" />
+            <path id="f-5-6" class="edge-flow" d="M 386 504 L 422 504" stroke="var(--blue)" stroke-width="2.4" />
+
+            <!-- Stage 5: Transport Cascade -->
+            <g class="stage-node" data-stage="transport_gate" tabindex="0" role="button" aria-label="Stage 5: Transport Cascade">
+              <rect id="s5Rect" class="node-rect" x="28" y="442" width="358" height="124" rx="9" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2" />
+              <rect id="s5TagBg" x="42" y="452" width="152" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text id="s5TagTxt" x="118" y="463" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">STAGE 5 • TRANSPORT</text>
+              <text x="42" y="487" fill="var(--text)" font-size="12.5" font-weight="700">Dual Transport Cascade</text>
+              <text id="s5Line1" x="42" y="506" fill="var(--emerald)" font-size="9.3" font-weight="700">1. Primary: nats.ws (wss://nats.synczines.org)</text>
+              <text id="s5Line2" x="42" y="523" fill="var(--text-muted)" font-size="9.1">2. Fallback (&gt;3s fail): HTTPS POST /xapi/statements</text>
+              <text x="42" y="540" fill="var(--text-muted)" font-size="9.1">3. Unload: navigator.sendBeacon() micro-batch</text>
+              <text id="s5Status" x="42" y="556" fill="var(--gold)" font-size="8.6" font-weight="700">Active: Real-Time WebSocket PubAck</text>
+            </g>
+
+            <!-- Stage 6: NATS JetStream & SYNCZINE Core -->
+            <g class="stage-node" data-stage="jetstream_lrs" tabindex="0" role="button" aria-label="Stage 6: NATS JetStream and SYNCZINE Core">
+              <rect class="node-rect" x="428" y="442" width="314" height="124" rx="9" fill="var(--bg-card)" stroke="var(--blue)" stroke-width="2" />
+              <rect x="442" y="452" width="174" height="16" rx="4" fill="var(--blue-soft)" />
+              <text x="529" y="463" text-anchor="middle" fill="var(--blue)" font-size="8.4" font-weight="800">STAGE 6 • AUTHORITATIVE SINK</text>
+              <text x="442" y="487" fill="var(--text)" font-size="12.5" font-weight="700">NATS JetStream &amp; SYNCZINE</text>
+              <text x="442" y="506" fill="var(--blue)" font-size="9.3" font-weight="700">Nats-Msg-Id = statementId (UUIDv7)</text>
+              <text x="442" y="523" fill="var(--text-muted)" font-size="9.1">• Auth Callout verifies subject scope</text>
+              <text x="442" y="540" fill="var(--text-muted)" font-size="9.1">• Server deduplicates stale crash replays</text>
+              <text x="442" y="556" fill="var(--emerald)" font-size="8.6" font-weight="700">Exactly-Once LRS &amp; Live Progress Update</text>
+            </g>
+
+            <!-- Animated Packets -->
+            <circle id="pkt-a1" r="3.8" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="1.4s" repeatCount="indefinite" path="M 244 108 L 268 108" />
+            </circle>
+            <circle id="pkt-a2" r="3.8" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="1.4s" repeatCount="indefinite" path="M 502 108 L 526 108" />
+            </circle>
+            <circle id="pkt-ab" r="4" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="2.1s" repeatCount="indefinite" path="M 638 196 L 638 220 L 385 220 L 385 256" />
+            </circle>
+            <circle id="pkt-45" r="4.1" fill="#2ec27e" filter="url(#glow)">
+              <animateMotion dur="1.6s" repeatCount="indefinite" path="M 206 400 L 206 440" />
+            </circle>
+            <circle id="pkt-56" r="4.1" fill="#58a6ff" filter="url(#glow)">
+              <animateMotion dur="1.4s" repeatCount="indefinite" path="M 386 504 L 424 504" />
+            </circle>
+
+            <!-- Flash FX Layer -->
+            <g id="fxLayer"></g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Stage Inspector Panel -->
+      <aside class="inspector" aria-live="polite">
+        <div class="inspector-header">
+          <div class="inspector-eyebrow">
+            <span id="insStage">STAGE 1 OF 6 • FRAMING</span>
+            <span id="insContextTag">AFFINE</span>
+          </div>
+          <h2 class="inspector-title" id="insTitle">Host Container &amp; CSP Gate</h2>
+          <div class="pill-row" id="insPills"></div>
+        </div>
+
+        <div class="inspector-section">
+          <h3>Contract Behavior</h3>
+          <p id="insDesc"></p>
+        </div>
+
+        <div class="inspector-section">
+          <h3 id="insCodeTitle">HTTP Header / Wire Artifact</h3>
+          <div class="code-box" id="insCode"></div>
+        </div>
+
+        <div class="rule-callout" id="insCallout"></div>
+
+        <div class="inspector-footer">
+          <span id="insFootLeft">Click stages 1–6 to inspect artifacts</span>
+          <span>SYNCZ-SRLO Contract v1</span>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const HOSTS = {
+        affine: {
+          name: "AFFiNE",
+          short: "AFFiNE (Web/Electron)",
+          origin: "https://app.affine.pro / Electron scheme",
+          cspSummary: "Omit frame-ancestors",
+          cspSub: "Allows AFFiNE Web, self-hosted & Electron schemes",
+          cspBadge: "SCHEME SAFE: HTTPS + ELECTRON",
+          storageLine: "• Partitioned web / isolated Electron",
+          resizeActive: false,
+          resizeRule3: "• User drags AFFiNE block height",
+          cspNote: "Never send X-Frame-Options or wildcard frame-ancestors *; AFFiNE Desktop uses custom/local Electron schemes."
+        },
+        obsidian: {
+          name: "Obsidian",
+          short: "Obsidian (Desktop/Mobile)",
+          origin: "app://obsidian.md / capacitor://localhost",
+          cspSummary: "Omit frame-ancestors *",
+          cspSub: "Chromium blocks app:// if frame-ancestors * is set!",
+          cspBadge: "ALLOWS app:// & capacitor://",
+          storageLine: "• Persistent Electron/WebView IDB",
+          resizeActive: false,
+          resizeRule3: "• Fixed HTML <iframe> height attr",
+          cspNote: "Chromium's frame-ancestors * matches only http(s)/ws(s) and silently blocks app://obsidian.md. Omit it on /embed/* or list app://obsidian.md explicitly."
+        },
+        notion: {
+          name: "Notion",
+          short: "Notion (Web/Desktop)",
+          origin: "https://www.notion.so + Iframely proxy",
+          cspSummary: "No XFO / No Restrictive CSP",
+          cspSub: "Notion /embed fails silently on restrictive framing",
+          cspBadge: "NOTION /EMBED COMPATIBLE",
+          storageLine: "• No shared browser cookies -> ECDSA",
+          resizeActive: false,
+          resizeRule3: "• Manual Notion drag handles",
+          cspNote: "Notion desktop and mobile apps do not share system browser cookies; zero-cookie ECDSA device keys + one-tap pairing eliminate broken login walls."
+        },
+        sovraelex: {
+          name: "SOVRÆLEX",
+          short: "Aware Host (SOVRÆLEX / Plugin)",
+          origin: "https://app.synczines.org / Plugin Bridge",
+          cspSummary: "Active Host Handshake",
+          cspSub: "Supports locked targetOrigin + ResizeObserver",
+          cspBadge: "ACTIVE HOST CAPABILITIES",
+          storageLine: "• First-party or linked wallet IDB",
+          resizeActive: true,
+          resizeRule3: "• Parent expands frame smoothly (4px guard)",
+          cspNote: "Aware hosts reply with host:ack within 250ms, locking postMessage targetOrigin and letting ResizeObserver drive exact height without inner scrollbars."
+        }
+      };
+
+      const SCENARIOS = {
+        online_nats: {
+          label: "Online: nats.ws",
+          queueVal: "PENDING -> IN_FLIGHT -> ACKED",
+          queueCls: "emerald",
+          queueSub: "navigator.locks prevents multi-tab collision",
+          transVal: "nats.ws (WSS) + UUIDv7",
+          transCls: "blue",
+          transSub: "Nats-Msg-Id = statementId (Zero Duplicates)",
+          s5Status: "Active: Real-Time WebSocket PubAck",
+          s5Color: "var(--emerald)"
+        },
+        offline_fallback: {
+          label: "Offline / Firewall",
+          queueVal: "PENDING -> RETRYABLE -> IN_FLIGHT -> ACKED",
+          queueCls: "amber",
+          queueSub: "Buffered in IDB; backoff + full jitter on drop",
+          transVal: "HTTPS POST /xapi/statements",
+          transCls: "amber",
+          transSub: "WSS blocked (>3s) -> Edge LRS publishes to NATS",
+          s5Status: "Active: HTTPS Batch Fallback (Proxy Bypass)",
+          s5Color: "var(--amber)"
+        },
+        crash_recovery: {
+          label: "Tab Crash & DLQ",
+          queueVal: "Stale IN_FLIGHT (>30s) -> RETRY | 422 -> DLQ",
+          queueCls: "crimson",
+          queueSub: "Reboot sweep rescues crashed writes; isolates 4xx",
+          transVal: "Idempotent Replay + DLQ Halt",
+          transCls: "crimson",
+          transSub: "JetStream drops duplicate UUIDv7 safely",
+          s5Status: "Active: Stale Sweep Recovery + 4xx DLQ Guard",
+          s5Color: "var(--crimson)"
+        }
+      };
+
+      let host = "affine";
+      let scenario = "online_nats";
+      let selectedStage = "host_frame";
+      let isPaused = false;
+      let tracing = false;
+
+      const appRoot = document.getElementById("appRoot");
+      const hostBtns = document.querySelectorAll("[data-host]");
+      const scenBtns = document.querySelectorAll("[data-scenario]");
+      const stageNodes = document.querySelectorAll(".stage-node");
+      const runBootBtn = document.getElementById("runBootBtn");
+      const animBtn = document.getElementById("animToggleBtn");
+      const themeBtn = document.getElementById("themeToggleBtn");
+
+      function getStageData(stageId) {
+        const h = HOSTS[host];
+        const s = SCENARIOS[scenario];
+
+        switch (stageId) {
+          case "host_frame":
+            return {
+              eyebrow: "STAGE 1 OF 6 • FRAMING & CSP",
+              title: "Host Container & CSP Gate",
+              pills: [
+                { txt: "Origin: play.synczines.org", cls: "gold" },
+                { txt: h.cspBadge, cls: "emerald" }
+              ],
+              desc: `Isolates embeddable SRLOs from authoring (SOVRÆGIX) and billing origins. For ${h.name} (${h.origin}), omitting X-Frame-Options and frame-ancestors on /embed/* guarantees universal framing across web, Electron, and mobile wrappers while enforcing strict inner CSP fetch directives.`,
+              codeTitle: "HTTP Response Headers (/embed/*)",
+              code:
+                host === "obsidian"
+                  ? `Content-Security-Policy: default-src 'self'; script-src 'self';\n  connect-src 'self' wss://nats.synczines.org https://lrs.synczines.org;\n  # Omit frame-ancestors (or explicitly list app://obsidian.md)\nReferrer-Policy: no-referrer\nPermissions-Policy: microphone=(self), clipboard-write=(self)\nCross-Origin-Opener-Policy: same-origin-allow-popups`
+                  : `Content-Security-Policy: default-src 'self'; script-src 'self';\n  img-src 'self' data: blob: https://cdn.synczines.org;\n  connect-src 'self' wss://nats.synczines.org https://lrs.synczines.org;\n  object-src 'none'; base-uri 'none'; form-action 'none';\nReferrer-Policy: no-referrer\nCross-Origin-Opener-Policy: same-origin-allow-popups`,
+              callout: h.cspNote
+            };
+
+          case "fragment_auth":
+            return {
+              eyebrow: "STAGE 2 OF 6 • ZERO-COOKIE IDENTITY",
+              title: "URL Fragment Bootstrap & Scrub",
+              pills: [
+                { txt: "Tick-0 Scrub", cls: "gold" },
+                { txt: "ECDSA P-256 Device Key", cls: "blue" },
+                { txt: "Anonymous-First Safe", cls: "emerald" }
+              ],
+              desc: "Reads the single-use ephemeral #code from window.location.hash on tick 0—never hitting host server logs—and immediately wipes it via history.replaceState(). Exchanges the code for a short-lived scoped NATS JWT and stores a non-extractable Web Crypto ECDSA P-256 keypair in IndexedDB for cookie-less reloads.",
+              codeTitle: "Tick-0 Bootstrap & Scrub Logic",
+              code: `const params = new URLSearchParams(location.hash.slice(1));\nconst code = params.get("code"); // 5-min single-use TTL\nhistory.replaceState(null, "", location.pathname + location.search);\n\n// Exchange -> Ephemeral NATS JWT + Non-extractable ECDSA Key\n// If partitioned store is empty in ${h.name}: run anonymous urn:uuid\n// and offer One-Tap Sovereign Profile Pairing popup.`,
+              callout: `Storage Reality in ${h.name}: ${h.storageLine.replace("• ", "")}. Never store static NATS credentials or long-lived tokens in any iframe URL.`
+            };
+
+          case "resize_bridge":
+            return {
+              eyebrow: "STAGE 3 OF 6 • DUAL-MODE LAYOUT",
+              title: "postMessage Resize Bridge (syncz.srlo.v1)",
+              pills: h.resizeActive
+                ? [
+                    { txt: "host:ack Received (<250ms)", cls: "emerald" },
+                    { txt: "Active ResizeObserver", cls: "blue" }
+                  ]
+                : [
+                    { txt: "No ACK (>250ms Timeout)", cls: "amber" },
+                    { txt: "100dvh + @container Fallback", cls: "gold" }
+                  ],
+              desc: h.resizeActive
+                ? "SOVRÆLEX (or an aware plugin) replies with host:ack within 250ms. The SRLO locks event.origin as targetOrigin, sets overflow-y: hidden, and observes .srlo-root with a 4px delta guard to prevent resize feedback loops."
+                : `Stock ${h.name} is a passive container and does not reply to syncz.srlo.v1 ready within 250ms. The SRLO seamlessly activates Passive Mode: height: 100dvh; overflow-y: auto; container-type: inline-size; so it fits narrow columns or zoomed canvases gracefully.`,
+              codeTitle: h.resizeActive ? "Active Handshake Envelope" : "Passive Fallback CSS & Ready Probe",
+              code: h.resizeActive
+                ? `// Parent -> Child ACK (Locks targetOrigin)\n{\n  "protocol": "syncz.srlo.v1",\n  "instanceId": "srlo_8f3a2c",\n  "type": "host:ack",\n  "payload": { "supportsResize": true, "theme": "dark" }\n}`
+                : `/* Triggered automatically after 250ms without host:ack */\n.srlo-viewport {\n  height: 100dvh;\n  overflow-y: auto;\n  container-type: inline-size;\n}\n@container (max-width: 480px) { .srlo-grid { grid-template-columns: 1fr; } }`,
+              callout: "Security rule: Only non-sensitive layout metrics (width/height) may use targetOrigin '*'. Never send auth tokens or learner PII over postMessage."
+            };
+
+          case "idb_outbox":
+            return {
+              eyebrow: "STAGE 4 OF 6 • LOCAL STATE MACHINE",
+              title: "5-State IndexedDB xAPI Outbox",
+              pills: [
+                { txt: `Scenario: ${s.label}`, cls: s.queueCls },
+                { txt: "Web Locks API", cls: "gold" },
+                { txt: "UUIDv7 KeyPath", cls: "blue" }
+              ],
+              desc:
+                scenario === "crash_recovery"
+                  ? "On boot, the outbox sweeps IN_FLIGHT records older than 30s (e.g., closed tab mid-send) back to RETRYABLE_ERROR for immediate replay. Poison payloads returning HTTP 400, 413, or 422 jump straight to FATAL_ERROR (DLQ) so they never loop infinitely."
+                  : "Every interaction writes a deterministic UUIDv7 xAPI 2.0 record into syncz_srlo_db.xapi_outbox before network transmission. Multi-embed canvases coordinate flushing via navigator.locks('syncz-xapi-flush') so two iframes never race.",
+              codeTitle: "xapi_outbox Record Shape (IndexedDB v1)",
+              code:
+                scenario === "crash_recovery"
+                  ? `{\n  "statementId": "019a9f12-7c40-7b1a-8e31-9d2a1c4f0001",\n  "status": "FATAL_ERROR", // 422 Invalid Schema -> DLQ\n  "attemptCount": 1,\n  "inFlightAt": null,\n  "lastErrorCode": 422,\n  "recoveryNote": "Stale IN_FLIGHT >30s swept to RETRYABLE_ERROR"\n}`
+                  : `{\n  "statementId": "019a9f12-7c40-7b1a-8e31-9d2a1c4f0001",\n  "synczineId": "sz_ielts_w2",\n  "srloId": "srlo_cohesion_04",\n  "status": "${scenario === "offline_fallback" ? "RETRYABLE_ERROR" : "PENDING"}",\n  "attemptCount": ${scenario === "offline_fallback" ? 2 : 0},\n  "nextAttemptAt": 1795418040000\n}`,
+              callout: "HTTP 401/403 (expired JWT) pauses flushing, refreshes the ephemeral JWT silently via the stored ECDSA device key, and resumes without burning retry counts."
+            };
+
+          case "transport_gate":
+            return {
+              eyebrow: "STAGE 5 OF 6 • DELIVERY CASCADE",
+              title: "Dual Transport Cascade (nats.ws / HTTPS)",
+              pills: [
+                { txt: scenario === "offline_fallback" ? "HTTPS Fallback Active" : "nats.ws WSS Primary", cls: scenario === "offline_fallback" ? "amber" : "emerald" },
+                { txt: "sendBeacon on pagehide", cls: "blue" }
+              ],
+              desc:
+                scenario === "offline_fallback"
+                  ? "When corporate or school proxies block WebSockets (>3s connect failure) or the learner reconnects after offline study, the runner posts queued xAPI batches over standard HTTPS to the Edge LRS gateway, which forwards them into NATS JetStream."
+                  : "Publishes micro-batched or individual xAPI 2.0 statements directly over wss://nats.synczines.org using nats.ws and waits for explicit JetStream PubAck before pruning IndexedDB.",
+              codeTitle: "Transport Cascade Policy",
+              code: `1. Primary:  nats.ws -> pub("syncz.v1.sz_ielts_w2.srlo04.u1.xapi",\n             payload, { msgID: record.statementId })\n2. Fallback: (>3s WSS fail) POST https://lrs.synczines.org/xapi/statements\n3. Wake:     window 'online' | 'visibilitychange' | 30s heartbeat\n4. Unload:   'pagehide' -> navigator.sendBeacon() for small batches`,
+              callout: "Both transport paths feed the exact same NATS JetStream subject with the identical UUIDv7 statementId—keeping NATS as your single downstream event backbone."
+            };
+
+          case "jetstream_lrs":
+          default:
+            return {
+              eyebrow: "STAGE 6 OF 6 • AUTHORITATIVE SINK",
+              title: "NATS JetStream & SYNCZINE Core",
+              pills: [
+                { txt: "Exactly-Once Dedup", cls: "emerald" },
+                { txt: "Nats-Msg-Id = UUIDv7", cls: "blue" }
+              ],
+              desc: "Validates NATS Auth Callout permissions and deduplicates incoming messages via Nats-Msg-Id. Even if a tab-crash sweep replays an already-delivered statement or two tabs reconnect simultaneously, JetStream and LRS idempotency guarantee zero duplicate records.",
+              codeTitle: "JetStream Ingestion & Idempotency",
+              code: `Subject:     syncz.v1.sz_ielts_w2.srlo_cohesion_04.{actorId}.xapi\nHeader:      Nats-Msg-Id: 019a9f12-7c40-7b1a-8e31-9d2a1c4f0001\nAuthZ Check: Scoped User JWT matches exact {synczineId}.{srloId}.{actorId}\nOutcome:     PubAck -> Client prunes IndexedDB -> LRS + SYNCZINE Updated`,
+              callout: "Formative xAPI updates live progress immediately; summative mastery verification runs server-side downstream of JetStream before issuing credentials."
+            };
+        }
+      }
+
+      function pulseStage(stageId, color) {
+        const g = document.querySelector(`.stage-node[data-stage="${stageId}"]`);
+        if (!g) return;
+        const rect = g.querySelector(".node-rect");
+        const fx = document.getElementById("fxLayer");
+        const ring = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        ring.setAttribute("x", rect.getAttribute("x"));
+        ring.setAttribute("y", rect.getAttribute("y"));
+        ring.setAttribute("width", rect.getAttribute("width"));
+        ring.setAttribute("height", rect.getAttribute("height"));
+        ring.setAttribute("rx", "9");
+        ring.setAttribute("stroke", color);
+        ring.setAttribute("class", "flash-ring");
+        fx.appendChild(ring);
+        setTimeout(() => ring.remove(), 720);
+      }
+
+      function renderInspector(stageId) {
+        selectedStage = stageId;
+        stageNodes.forEach((n) => n.classList.toggle("selected", n.dataset.stage === stageId));
+        const d = getStageData(stageId);
+
+        document.getElementById("insStage").textContent = d.eyebrow;
+        document.getElementById("insContextTag").textContent = `${HOSTS[host].name.toUpperCase()} • ${SCENARIOS[scenario].label.toUpperCase()}`;
+        document.getElementById("insTitle").textContent = d.title;
+        document.getElementById("insDesc").textContent = d.desc;
+        document.getElementById("insCodeTitle").textContent = d.codeTitle;
+        document.getElementById("insCode").textContent = d.code;
+        document.getElementById("insCallout").textContent = d.callout;
+        document.getElementById("insPills").innerHTML = d.pills
+          .map((p) => `<span class="pill ${p.cls}">${p.txt}</span>`)
+          .join("");
+      }
+
+      function updateView() {
+        const h = HOSTS[host];
+        const s = SCENARIOS[scenario];
+
+        // Top Metrics
+        document.getElementById("mCspVal").innerHTML = `<span class="dot emerald"></span>${h.cspSummary}`;
+        document.getElementById("mCspSub").textContent = h.cspSub;
+
+        document.getElementById("mResizeVal").innerHTML = h.resizeActive
+          ? `<span class="dot emerald"></span>Active postMessage Resize`
+          : `<span class="dot amber"></span>Passive Fallback Mode`;
+        document.getElementById("mResizeSub").textContent = h.resizeActive
+          ? "host:ack locked targetOrigin + ResizeObserver"
+          : "No ACK (>250ms) -> 100dvh scroll + @container";
+
+        document.getElementById("mQueueVal").innerHTML = `<span class="dot ${s.queueCls}"></span>${s.queueVal}`;
+        document.getElementById("mQueueSub").textContent = s.queueSub;
+
+        document.getElementById("mTransVal").innerHTML = `<span class="dot ${s.transCls}"></span>${s.transVal}`;
+        document.getElementById("mTransSub").textContent = s.transSub;
+
+        // Stage 1 Dynamic SVG labels
+        document.getElementById("s1Origin").textContent = `Host: ${h.short}`;
+        document.getElementById("s1BadgeTxt").textContent = h.cspBadge;
+
+        // Stage 2 Storage note
+        document.getElementById("s2Storage").textContent = h.storageLine;
+
+        // Stage 3 Dynamic Active vs Passive styling
+        const s3Col = h.resizeActive ? "var(--emerald)" : "var(--amber)";
+        const s3Soft = h.resizeActive ? "var(--emerald-soft)" : "var(--amber-soft)";
+        document.getElementById("s3Rect").setAttribute("stroke", s3Col);
+        document.getElementById("s3TagBg").setAttribute("fill", s3Soft);
+        document.getElementById("s3TagTxt").setAttribute("fill", s3Col);
+        document.getElementById("s3ModeTitle").setAttribute("fill", s3Col);
+        document.getElementById("s3ModeTitle").textContent = h.resizeActive ? "ACK (<250ms) -> Active Resize" : "No ACK (250ms) -> Passive";
+        document.getElementById("s3Rule1").textContent = h.resizeActive ? "• overflow-y: hidden on .srlo-root" : "• height: 100dvh; overflow: auto";
+        document.getElementById("s3Rule2").textContent = h.resizeActive ? "• ResizeObserver (4px delta guard)" : "• CSS @container responsive UI";
+        document.getElementById("s3Rule3").textContent = h.resizeRule3;
+        document.getElementById("s3BadgeBg").setAttribute("fill", s3Soft);
+        document.getElementById("s3BadgeTxt").setAttribute("fill", s3Col);
+        document.getElementById("s3BadgeTxt").textContent = h.resizeActive ? "LOCKED TARGETORIGIN RESIZE" : "PASSIVE HOST FALLBACK";
+
+        // Stage 4 State Machine Dimming by Scenario
+        const isOnline = scenario === "online_nats";
+        const isOffline = scenario === "offline_fallback";
+        const isCrash = scenario === "crash_recovery";
+
+        document.getElementById("st-acked").classList.toggle("dimmed", false);
+        document.getElementById("st-retry").classList.toggle("dimmed", isOnline);
+        document.getElementById("ae-i-r").classList.toggle("dimmed", isOnline);
+        document.getElementById("ae-r-i").classList.toggle("dimmed", isOnline);
+        document.getElementById("st-dlq").classList.toggle("dimmed", !isCrash);
+        document.getElementById("ae-i-d").classList.toggle("dimmed", !isCrash);
+        document.getElementById("ae-dlq-lbl").classList.toggle("dimmed", !isCrash);
+
+        // Stage 5 Dynamic Styling
+        document.getElementById("s5Rect").setAttribute("stroke", s.s5Color);
+        document.getElementById("s5Status").textContent = s.s5Status;
+        document.getElementById("s5Line1").setAttribute("fill", isOffline ? "var(--text-muted)" : "var(--emerald)");
+        document.getElementById("s5Line2").setAttribute("fill", isOffline ? "var(--amber)" : "var(--text-muted)");
+        document.getElementById("e-4-5").setAttribute("stroke", s.s5Color);
+        document.getElementById("f-4-5").setAttribute("stroke", s.s5Color);
+        document.getElementById("pkt-45").setAttribute("fill", isOnline ? "#2ec27e" : isOffline ? "#f0a830" : "#ef5350");
+
+        renderInspector(selectedStage);
+      }
+
+      // Interactive Step-by-Step Boot & Scrub Trace
+      runBootBtn.addEventListener("click", () => {
+        if (tracing) return;
+        tracing = true;
+        runBootBtn.disabled = true;
+        runBootBtn.innerHTML = "&#9203; Tracing Contract...";
+
+        const frag = document.getElementById("urlFragment");
+        const badge = document.getElementById("urlStateBadge");
+        const note = document.getElementById("urlScrubNote");
+
+        // Reset fragment visually before scrubbing
+        frag.classList.remove("scrubbed");
+        frag.textContent = "#v=1&code=ephem_9x7kQ4mP&theme=auto";
+        badge.textContent = "LAUNCHING";
+        note.textContent = "Step 1: Host mounts isolated origin play.synczines.org...";
+
+        const steps = [
+          {
+            stage: "host_frame",
+            color: "#2ec27e",
+            fn: () => {
+              badge.textContent = "CSP PASSED";
+              note.textContent = `Step 1/6: ${HOSTS[host].name} framed play.synczines.org safely.`;
+            }
+          },
+          {
+            stage: "fragment_auth",
+            color: "#d4af37",
+            fn: () => {
+              frag.classList.add("scrubbed");
+              badge.textContent = "SCRUBBED";
+              note.textContent = "Step 2/6: history.replaceState() wiped #code -> ECDSA P-256 key stored in IndexedDB!";
+            }
+          },
+          {
+            stage: "resize_bridge",
+            color: HOSTS[host].resizeActive ? "#2ec27e" : "#f0a830",
+            fn: () => {
+              note.textContent = HOSTS[host].resizeActive
+                ? "Step 3/6: host:ack received (<250ms) -> Active ResizeObserver locked."
+                : "Step 3/6: 250ms timeout -> Passive 100dvh + @container layout engaged.";
+            }
+          },
+          {
+            stage: "idb_outbox",
+            color: "#58a6ff",
+            fn: () => {
+              note.textContent = "Step 4/6: Web Lock acquired -> UUIDv7 xAPI statement persisted to IndexedDB.";
+            }
+          },
+          {
+            stage: "transport_gate",
+            color: scenario === "offline_fallback" ? "#f0a830" : "#2ec27e",
+            fn: () => {
+              note.textContent =
+                scenario === "offline_fallback"
+                  ? "Step 5/6: WSS blocked (>3s) -> Flushed signed batch via HTTPS LRS fallback."
+                  : "Step 5/6: Published xAPI statement over wss://nats.synczines.org (nats.ws).";
+            }
+          },
+          {
+            stage: "jetstream_lrs",
+            color: "#58a6ff",
+            fn: () => {
+              badge.textContent = "SYNCED";
+              note.textContent = "Step 6/6: JetStream deduplicated Nats-Msg-Id -> PubAck pruned IndexedDB!";
+            }
+          }
+        ];
+
+        steps.forEach((st, idx) => {
+          setTimeout(() => {
+            renderInspector(st.stage);
+            pulseStage(st.stage, st.color);
+            st.fn();
+            if (idx === steps.length - 1) {
+              setTimeout(() => {
+                tracing = false;
+                runBootBtn.disabled = false;
+                runBootBtn.innerHTML = "&#9654; Simulate Boot &amp; Sync Trace";
+              }, 700);
+            }
+          }, idx * 850);
+        });
+      });
+
+      hostBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          host = btn.dataset.host;
+          hostBtns.forEach((b) => b.classList.toggle("active", b === btn));
+          pulseStage("host_frame", "#d4af37");
+          pulseStage("resize_bridge", HOSTS[host].resizeActive ? "#2ec27e" : "#f0a830");
+          updateView();
+        });
+      });
+
+      scenBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          scenario = btn.dataset.scenario;
+          scenBtns.forEach((b) => b.classList.toggle("active", b === btn));
+          pulseStage("idb_outbox", "#58a6ff");
+          pulseStage("transport_gate", SCENARIOS[scenario].s5Color);
+          updateView();
+        });
+      });
+
+      stageNodes.forEach((n) => {
+        n.addEventListener("click", () => renderInspector(n.dataset.stage));
+        n.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            renderInspector(n.dataset.stage);
+          }
+        });
+      });
+
+      animBtn.addEventListener("click", () => {
+        isPaused = !isPaused;
+        appRoot.classList.toggle("paused", isPaused);
+        const svg = document.getElementById("contractSvg");
+        if (isPaused) {
+          svg.pauseAnimations();
+          animBtn.innerHTML = `<span>&#9654;</span> Resume Flow`;
+        } else {
+          svg.unpauseAnimations();
+          animBtn.innerHTML = `<span>&#10074;&#10074;</span> Pause Flow`;
+        }
+      });
+
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light` : `<span>&#9790;</span> Dark`;
+      });
+
+      updateView();
+    })();
+  </script>
+</body>
+</html>
