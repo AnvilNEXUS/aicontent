@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZ-SRLO — Three-Tier Sovereign Policy Intersection & Projection Gate</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.15);
+
+      --hex-stroke: rgba(212, 175, 55, 0.05);
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+      --violet: #6d28d9;
+      --violet-soft: rgba(109, 40, 217, 0.11);
+
+      --hex-stroke: rgba(154, 116, 17, 0.08);
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hex-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .title-group h1 {
+      font-size: 1.04rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 7px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .icon-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .icon-btn.primary {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .icon-btn.danger {
+      background: var(--crimson-soft);
+      border-color: rgba(239, 83, 80, 0.5);
+      color: var(--crimson);
+    }
+
+    .icon-btn.emerald {
+      background: var(--emerald-soft);
+      border-color: rgba(46, 194, 126, 0.5);
+      color: var(--emerald);
+    }
+
+    /* Three-Tier Control Grid */
+    .policy-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .tier-panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .tier-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .tier-panel-title {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-panel-title.pub { color: var(--blue); }
+    .tier-panel-title.inst { color: var(--violet); }
+    .tier-panel-title.lrn { color: var(--emerald); }
+
+    .tier-panel-sub {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .t-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 6px 4px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+    }
+
+    .t-btn:hover { color: var(--text); }
+
+    .t-btn.active.pub {
+      background: var(--blue-soft);
+      color: var(--blue);
+      box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.45);
+    }
+
+    .t-btn.active.inst {
+      background: var(--violet-soft);
+      color: var(--violet);
+      box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.45);
+    }
+
+    .t-btn.active.lrn {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      box-shadow: inset 0 0 0 1px rgba(46, 194, 126, 0.45);
+    }
+
+    .tier-caption {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    /* Intersection Formula & Negotiation Banner */
+    .status-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      border-radius: 10px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .status-banner.active-ok {
+      border-color: rgba(46, 194, 126, 0.45);
+      background: linear-gradient(90deg, var(--emerald-soft), var(--bg-elevated) 55%);
+    }
+
+    .status-banner.negotiate {
+      border-color: rgba(240, 168, 48, 0.55);
+      background: linear-gradient(90deg, var(--amber-soft), var(--bg-elevated) 60%);
+    }
+
+    .status-banner.airlock {
+      border-color: rgba(239, 83, 80, 0.5);
+      background: linear-gradient(90deg, var(--crimson-soft), var(--bg-elevated) 60%);
+    }
+
+    .status-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .formula-line {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .status-note {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+    }
+
+    .status-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    /* Main Split Workspace */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.54fr) minmax(320px, 0.96fr);
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .diagram-panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .svg-wrap {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    svg#policySvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    .node-group.dimmed { opacity: 0.28; }
+    .node-group:hover .node-rect { filter: brightness(1.12); }
+    .node-group.selected .node-rect {
+      stroke-width: 2.6;
+      filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.38));
+    }
+
+    .edge-path {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: opacity 0.3s ease, stroke 0.3s ease;
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke-dasharray: 7 9;
+      animation: flowDash 1.3s linear infinite;
+      transition: opacity 0.3s ease;
+    }
+
+    .dimmed { opacity: 0.14 !important; }
+    .paused .edge-flow { animation-play-state: paused; }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 32; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes pulseRing {
+      0% { stroke-opacity: 1; stroke-width: 3.5; }
+      100% { stroke-opacity: 0; stroke-width: 13; }
+    }
+
+    .flash-ring {
+      fill: none;
+      pointer-events: none;
+      animation: pulseRing 0.72s ease-out forwards;
+    }
+
+    /* Right Inspector Panel */
+    .inspector {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.35);
+    }
+
+    .pane { display: none; flex-direction: column; gap: 11px; flex: 1; }
+    .pane.active { display: flex; }
+
+    .inspector-header {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .inspector-eyebrow {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--gold);
+    }
+
+    .inspector-title {
+      font-size: 0.98rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .field-block {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-block h3 {
+      font-size: 0.69rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      font-weight: 700;
+    }
+
+    .field-block p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .pill-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .pill {
+      font-size: 0.69rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .pill.proj { background: var(--violet-soft); color: var(--violet); border-color: rgba(167, 139, 250, 0.35); }
+    .pill.sov { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46, 194, 126, 0.35); }
+    .pill.blocked { background: var(--crimson-soft); color: var(--crimson); border-color: rgba(239, 83, 80, 0.35); }
+    .pill.gold { background: var(--gold-soft); color: var(--gold); border-color: rgba(212, 175, 55, 0.35); }
+
+    .code-box {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 9px 10px;
+      overflow: auto;
+      white-space: pre;
+      line-height: 1.44;
+      flex: 1;
+      max-height: 365px;
+    }
+
+    .crypto-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--gold);
+      border-radius: 7px;
+      padding: 8px 10px;
+      font-size: 0.76rem;
+      color: var(--text);
+    }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+      .policy-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 580px) {
+      body { padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.8" />
+            <text x="20" y="24" text-anchor="middle" fill="var(--gold)" font-size="12" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div class="title-group">
+          <h1>Three-Tier Sovereign Policy Intersection &amp; Projection Gate</h1>
+          <p>Policy-enforced data projection: Publisher Ceiling &cap; Institution Request &cap; Sovereign Learner Consent</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="icon-btn primary" id="simMilestoneBtn">&#9654; Simulate Verified Milestone</button>
+        <button class="icon-btn danger" id="revokeBtn">&#9888; Revoke LMS Bridge</button>
+        <button class="icon-btn" id="animToggleBtn"><span>&#10074;&#10074;</span> Pause Flow</button>
+        <button class="icon-btn" id="themeToggleBtn"><span>&#9788;</span> Light</button>
+      </div>
+    </header>
+
+    <!-- Three Stakeholder Controls -->
+    <section class="policy-grid" aria-label="Three-Tier Governance Controls">
+      <!-- Layer 1: Publisher Ceiling -->
+      <div class="tier-panel">
+        <div class="tier-panel-head">
+          <span class="tier-panel-title pub">Layer 1: Publisher Ceiling</span>
+          <span class="tier-panel-sub">Signed SRLO Manifest</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Publisher Ceiling Tier">
+          <button class="t-btn pub" data-layer="pub" data-tier="0">Tier 0</button>
+          <button class="t-btn pub" data-layer="pub" data-tier="1">Tier 1</button>
+          <button class="t-btn pub" data-layer="pub" data-tier="2">Tier 2</button>
+          <button class="t-btn pub active" data-layer="pub" data-tier="3">Tier 3</button>
+        </div>
+        <div class="tier-caption">
+          <span id="pubCapName">Up to Tier 3: Formative Coaching</span>
+          <span style="color: var(--blue); font-weight: 700;">Hard Upper Bound</span>
+        </div>
+      </div>
+
+      <!-- Layer 2: Institution Request -->
+      <div class="tier-panel">
+        <div class="tier-panel-head">
+          <span class="tier-panel-title inst">Layer 2: Institution Request</span>
+          <span class="tier-panel-sub">LTI Deep Linking 2.0</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Institution Request Tier">
+          <button class="t-btn inst" data-layer="inst" data-tier="0">Tier 0</button>
+          <button class="t-btn inst" data-layer="inst" data-tier="1">Tier 1</button>
+          <button class="t-btn inst active" data-layer="inst" data-tier="2">Tier 2</button>
+          <button class="t-btn inst" data-layer="inst" data-tier="3">Tier 3</button>
+        </div>
+        <div class="tier-caption">
+          <span id="instCapName">Requests Tier 2: Verified Summative</span>
+          <span id="instClampFlag" style="color: var(--violet); font-weight: 700;">Within Ceiling</span>
+        </div>
+      </div>
+
+      <!-- Layer 3: Sovereign Learner Consent -->
+      <div class="tier-panel">
+        <div class="tier-panel-head">
+          <span class="tier-panel-title lrn">Layer 3: Sovereign Learner Consent</span>
+          <span class="tier-panel-sub">UCAN Wallet Gate</span>
+        </div>
+        <div class="segmented" role="group" aria-label="Sovereign Learner Consent Tier">
+          <button class="t-btn lrn" data-layer="lrn" data-tier="0">Tier 0</button>
+          <button class="t-btn lrn" data-layer="lrn" data-tier="1">Tier 1</button>
+          <button class="t-btn lrn active" data-layer="lrn" data-tier="2">Tier 2</button>
+          <button class="t-btn lrn" data-layer="lrn" data-tier="3">Tier 3</button>
+        </div>
+        <div class="tier-caption">
+          <span id="lrnCapName">Approves Tier 2: Verified Summative</span>
+          <span style="color: var(--emerald); font-weight: 700;">Final Veto</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Intersection & Conflict Resolution Banner -->
+    <section class="status-banner active-ok" id="statusBanner" aria-live="polite">
+      <div class="status-left">
+        <div class="formula-line" id="formulaLine">Effective Projection = min(Pub T3, Inst T2, Learner T2) = TIER 2 (Verified Summative)</div>
+        <div class="status-note" id="statusNote">Zero-Friction Auto-Match: Credit-bearing AGS passback active while formative xAPI drafts remain 100% sovereign.</div>
+      </div>
+      <div class="status-actions" id="statusActions"></div>
+    </section>
+
+    <!-- Main Split Workspace -->
+    <main class="workspace">
+      <!-- Interactive SVG Policy Gate Diagram -->
+      <section class="diagram-panel" aria-label="Sovereign Policy Gate Diagram">
+        <div class="svg-wrap">
+          <svg id="policySvg" viewBox="0 0 780 572" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three-Tier Sovereign Policy Intersection and Thin LTI Projection Gate Diagram">
+            <defs>
+              <pattern id="hexPattern" width="48" height="41.57" patternUnits="userSpaceOnUse">
+                <path d="M24 0 L48 13.85 L48 27.71 L24 41.57 L0 27.71 L0 13.85 Z" fill="none" stroke="var(--hex-stroke)" stroke-width="1" />
+              </pattern>
+
+              <marker id="arrEmerald" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#2ec27e" />
+              </marker>
+              <marker id="arrGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37" />
+              </marker>
+              <marker id="arrViolet" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#a78bfa" />
+              </marker>
+              <marker id="arrBlue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#58a6ff" />
+              </marker>
+              <marker id="arrCrimson" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef5350" />
+              </marker>
+
+              <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="2.4" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+
+            <rect width="780" height="572" fill="url(#hexPattern)" />
+
+            <!-- Zone Backdrops -->
+            <!-- Left Zone: Sovereign Core -->
+            <rect x="14" y="122" width="328" height="436" rx="10" fill="rgba(46, 194, 126, 0.045)" stroke="rgba(46, 194, 126, 0.28)" stroke-width="1" />
+            <text x="26" y="138" fill="var(--emerald)" font-size="9.2" font-weight="800" letter-spacing="0.8">SOVEREIGN LEARNER CORE (ALWAYS ACTIVE)</text>
+
+            <!-- Right Zone: Policy & Institutional Projection Aperture -->
+            <rect x="362" y="122" width="404" height="436" rx="10" fill="rgba(167, 139, 250, 0.04)" stroke="rgba(167, 139, 250, 0.28)" stroke-width="1" />
+            <text x="374" y="138" fill="var(--violet)" font-size="9.2" font-weight="800" letter-spacing="0.8">SOVEREIGN APERTURE — POLICY-GATED LMS PROJECTION</text>
+
+            <!-- EDGES -->
+            <!-- 1. SRLO -> Sovereign Vault (ALWAYS UNRESTRICTED) -->
+            <path class="edge-path" d="M 260 94 L 260 112 L 178 112 L 178 198" stroke="var(--emerald)" stroke-width="2.6" marker-end="url(#arrEmerald)" />
+            <path class="edge-flow" d="M 260 94 L 260 112 L 178 112 L 178 196" stroke="var(--emerald)" stroke-width="2.6" />
+            <rect x="48" y="148" width="260" height="32" rx="6" fill="var(--bg-canvas)" stroke="rgba(46, 194, 126, 0.35)" stroke-width="1" />
+            <text x="178" y="162" text-anchor="middle" fill="var(--emerald)" font-size="9.1" font-weight="800">Unrestricted Canonical xAPI 2.0</text>
+            <text x="178" y="174" text-anchor="middle" fill="var(--text-muted)" font-size="8.1">Full CODE+V Record • Never Blocked by LMS Policy</text>
+
+            <!-- 2. SRLO -> Policy Resolver -->
+            <path id="e-srlo-pol" class="edge-path" d="M 520 94 L 520 112 L 566 112 L 566 148" stroke="var(--gold)" stroke-width="2.2" marker-end="url(#arrGold)" />
+            <path id="f-srlo-pol" class="edge-flow" d="M 520 94 L 520 112 L 566 112 L 566 146" stroke="var(--gold)" stroke-width="2.2" />
+
+            <!-- 3. Policy Resolver -> NATS Projection Filter -->
+            <path id="e-pol-nats" class="edge-path" d="M 566 226 L 566 258" stroke="var(--blue)" stroke-width="2.2" marker-end="url(#arrBlue)" />
+            <path id="f-pol-nats" class="edge-flow" d="M 566 226 L 566 256" stroke="var(--blue)" stroke-width="2.2" />
+            <rect x="462" y="232" width="208" height="17" rx="4" fill="var(--bg-canvas)" />
+            <text id="lblPolFilter" x="566" y="243.5" text-anchor="middle" fill="var(--blue)" font-size="8.7" font-weight="700">Signed UCAN Effective Policy (Tier 2)</text>
+
+            <!-- 4. NATS Projection Filter -> Thin LTI Edge Adapter -->
+            <path id="e-nats-lti" class="edge-path" d="M 566 336 L 566 368" stroke="var(--violet)" stroke-width="2.2" marker-end="url(#arrViolet)" />
+            <path id="f-nats-lti" class="edge-flow" d="M 566 336 L 566 366" stroke="var(--violet)" stroke-width="2.2" />
+            <rect x="448" y="342" width="236" height="17" rx="4" fill="var(--bg-canvas)" />
+            <text id="lblFilterLti" x="566" y="353.5" text-anchor="middle" fill="var(--violet)" font-size="8.7" font-weight="700">Filtered Slice: completion, score, vc_hash</text>
+
+            <!-- 5. Thin LTI Edge Adapter -> Institutional LMS (GATED / SEVERABLE) -->
+            <path id="e-lti-lms" class="edge-path" d="M 566 448 L 566 482" stroke="var(--violet)" stroke-width="2.6" marker-end="url(#arrViolet)" />
+            <path id="f-lti-lms" class="edge-flow" d="M 566 448 L 566 480" stroke="var(--violet)" stroke-width="2.6" />
+            <rect id="gateBadgeBg" x="446" y="454" width="240" height="20" rx="5" fill="var(--bg-canvas)" stroke="var(--violet)" stroke-width="1.2" />
+            <text id="gateBadgeTxt" x="566" y="467" text-anchor="middle" fill="var(--violet)" font-size="8.8" font-weight="800">LTI AGS 2.0 PROJECTION ACTIVE</text>
+
+            <!-- 6. Reverse Disclosure Audit Receipt (LTI Edge -> Sovereign Vault) -->
+            <path id="e-audit" class="edge-path" d="M 382 408 L 178 408 L 178 342" stroke="var(--gold)" stroke-width="2" stroke-dasharray="5 4" marker-end="url(#arrGold)" />
+            <path id="f-audit" class="edge-flow" d="M 382 408 L 178 408 L 178 344" stroke="var(--gold)" stroke-width="2" />
+            <rect x="196" y="397" width="168" height="21" rx="5" fill="var(--bg-canvas)" stroke="rgba(212, 175, 55, 0.45)" stroke-width="1" />
+            <text id="lblAudit" x="280" y="410.5" text-anchor="middle" fill="var(--gold)" font-size="8.3" font-weight="800">Reverse Disclosure Receipt</text>
+
+            <!-- Animated Packets -->
+            <circle id="p-sov" r="4.3" fill="#2ec27e" filter="url(#glow)">
+              <animateMotion dur="1.8s" repeatCount="indefinite" path="M 260 94 L 260 112 L 178 112 L 178 198" />
+            </circle>
+            <circle id="p-g1" class="gate-pkt" r="3.8" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="1.5s" repeatCount="indefinite" path="M 520 94 L 520 112 L 566 112 L 566 148" />
+            </circle>
+            <circle id="p-g2" class="gate-pkt" r="3.8" fill="#58a6ff" filter="url(#glow)">
+              <animateMotion dur="1.4s" repeatCount="indefinite" path="M 566 226 L 566 258" />
+            </circle>
+            <circle id="p-g3" class="gate-pkt" r="3.8" fill="#a78bfa" filter="url(#glow)">
+              <animateMotion dur="1.4s" repeatCount="indefinite" path="M 566 336 L 566 368" />
+            </circle>
+            <circle id="p-lms" class="gate-pkt" r="4.2" fill="#a78bfa" filter="url(#glow)">
+              <animateMotion dur="1.3s" repeatCount="indefinite" path="M 566 448 L 566 482" />
+            </circle>
+            <circle id="p-audit" class="gate-pkt" r="3.8" fill="#d4af37" filter="url(#glow)">
+              <animateMotion dur="2.1s" repeatCount="indefinite" path="M 382 408 L 178 408 L 178 342" />
+            </circle>
+
+            <!-- Flash FX Layer -->
+            <g id="fxLayer"></g>
+
+            <!-- NODES -->
+            <!-- 1. SYNCZ-SRLO Player -->
+            <g class="node-group selected" data-node="srlo_player" tabindex="0" role="button" aria-label="Inspect SYNCZ-SRLO Runtime">
+              <rect class="node-rect" x="165" y="18" width="450" height="76" rx="10" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="2.2" />
+              <rect x="180" y="28" width="134" height="16" rx="4" fill="var(--gold-soft)" />
+              <text x="247" y="39" text-anchor="middle" fill="var(--gold)" font-size="8.4" font-weight="800">POLYMORPHIC CORE</text>
+              <rect x="454" y="28" width="146" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="527" y="39" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">NEVER BLOCKS LEARNING</text>
+              <text x="180" y="65" fill="var(--text)" font-size="13.2" font-weight="700">SYNCZ-SRLO Runtime (Unchanged Execution)</text>
+              <text x="180" y="81" fill="var(--text-muted)" font-size="9.5">Owned by Sovereign Learner &amp; SYNCZINE • Always runs identically</text>
+            </g>
+
+            <!-- 2. Sovereign Learner Vault -->
+            <g class="node-group" data-node="sovereign_vault" tabindex="0" role="button" aria-label="Inspect Sovereign Learner Vault">
+              <rect class="node-rect" x="28" y="200" width="300" height="140" rx="10" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="2.2" />
+              <rect x="42" y="211" width="130" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text x="107" y="222" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">AUTHORITATIVE OWNER</text>
+              <text x="42" y="249" fill="var(--text)" font-size="12.8" font-weight="700">Sovereign Learner Vault</text>
+              <text x="42" y="265" fill="var(--emerald)" font-size="9.4" font-weight="700">&amp; Originating Official SYNCZINE</text>
+              <text x="42" y="286" fill="var(--text-muted)" font-size="9.1">• Complete CODE+V xAPI 2.0 record</text>
+              <text x="42" y="302" fill="var(--text-muted)" font-size="9.1">• Private drafts, retries &amp; study notes</text>
+              <text x="42" y="318" fill="var(--text-muted)" font-size="9.1">• Portable VCs &amp; Disclosure Audit Log</text>
+            </g>
+
+            <!-- Mini Audit Receipt Log Card on Canvas (Bottom Left) -->
+            <rect x="28" y="434" width="300" height="110" rx="9" fill="var(--bg-card)" stroke="var(--border-strong)" stroke-width="1.2" />
+            <rect x="40" y="444" width="154" height="16" rx="4" fill="var(--gold-soft)" />
+            <text x="117" y="455" text-anchor="middle" fill="var(--gold)" font-size="8.2" font-weight="800">DISCLOSURE AUDIT RECEIPT</text>
+            <text id="svgReceiptLine1" x="40" y="481" fill="var(--text)" font-size="9.6" font-weight="700">Ready — click Simulate Verified Milestone</text>
+            <text id="svgReceiptLine2" x="40" y="499" fill="var(--text-muted)" font-size="8.8">Bridge ID: brg_9c4a1e (Pairwise Pseudonymous)</text>
+            <text id="svgReceiptLine3" x="40" y="516" fill="var(--text-muted)" font-size="8.8">TTL: Term End + 14d • Instant Revocation Ready</text>
+            <text id="svgReceiptLine4" x="40" y="533" fill="var(--emerald)" font-size="8.6" font-weight="700">Root DID Hidden from LMS</text>
+
+            <!-- 3. Three-Tier Policy Intersection Engine -->
+            <g class="node-group" data-node="policy_resolver" tabindex="0" role="button" aria-label="Inspect Three-Tier Policy Intersection Engine">
+              <rect id="n3Rect" class="node-rect" x="382" y="150" width="368" height="76" rx="9" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="2" />
+              <rect x="396" y="160" width="136" height="16" rx="4" fill="var(--gold-soft)" />
+              <text x="464" y="171" text-anchor="middle" fill="var(--gold)" font-size="8.4" font-weight="800">GOVERNANCE GATE</text>
+              <rect id="n3BadgeBg" x="598" y="160" width="138" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text id="n3BadgeTxt" x="667" y="171" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">EFFECTIVE: TIER 2</text>
+              <text x="396" y="196" fill="var(--text)" font-size="12.3" font-weight="700">Three-Tier Policy Intersection Engine</text>
+              <text id="n3Sub" x="396" y="212" fill="var(--text-muted)" font-size="9.1">Verifies UCAN Signature • Pub T3 &cap; Inst T2 &cap; Learner T2</text>
+            </g>
+
+            <!-- 4. NATS JetStream Projection Filter -->
+            <g class="node-group" data-node="nats_projection" tabindex="0" role="button" aria-label="Inspect NATS JetStream Projection Filter">
+              <rect id="n4Rect" class="node-rect" x="382" y="260" width="368" height="76" rx="9" fill="var(--bg-card)" stroke="var(--blue)" stroke-width="2" />
+              <rect x="396" y="270" width="134" height="16" rx="4" fill="var(--blue-soft)" />
+              <text x="463" y="281" text-anchor="middle" fill="var(--blue)" font-size="8.4" font-weight="800">ZERO-TRUST FILTER</text>
+              <rect x="614" y="270" width="122" height="16" rx="4" fill="var(--blue-soft)" />
+              <text x="675" y="281" text-anchor="middle" fill="var(--blue)" font-size="8.4" font-weight="800">SD-JWT / STRIP</text>
+              <text x="396" y="306" fill="var(--text)" font-size="12.3" font-weight="700">NATS JetStream Projection Filter</text>
+              <text id="n4Sub" x="396" y="322" fill="var(--text-muted)" font-size="9.1">Strips formative attempts, timings &amp; private notes</text>
+            </g>
+
+            <!-- 5. Thin LTI 1.3 Edge Adapter -->
+            <g class="node-group" data-node="lti_edge_adapter" tabindex="0" role="button" aria-label="Inspect Thin LTI 1.3 Edge Adapter">
+              <rect id="n5Rect" class="node-rect" x="382" y="370" width="368" height="78" rx="9" fill="var(--bg-card)" stroke="var(--violet)" stroke-width="2" />
+              <rect x="396" y="380" width="136" height="16" rx="4" fill="var(--violet-soft)" />
+              <text x="464" y="391" text-anchor="middle" fill="var(--violet)" font-size="8.4" font-weight="800">SOVEREIGN APERTURE</text>
+              <rect id="n5BadgeBg" x="606" y="380" width="130" height="16" rx="4" fill="var(--emerald-soft)" />
+              <text id="n5BadgeTxt" x="671" y="391" text-anchor="middle" fill="var(--emerald)" font-size="8.4" font-weight="800">BRIDGE ACTIVE</text>
+              <text x="396" y="416" fill="var(--text)" font-size="12.3" font-weight="700">Thin LTI 1.3 Edge Adapter</text>
+              <text id="n5Sub" x="396" y="432" fill="var(--text-muted)" font-size="9.1">Pairwise ID Bridge • Semester TTL • Emits Audit Receipt</text>
+            </g>
+
+            <!-- 6. Institutional LMS Gradebook -->
+            <g class="node-group" data-node="institutional_lms" tabindex="0" role="button" aria-label="Inspect Institutional LMS Gradebook">
+              <rect id="n6Rect" class="node-rect" x="382" y="484" width="368" height="60" rx="9" fill="var(--bg-card)" stroke="var(--violet)" stroke-width="2" />
+              <rect x="396" y="493" width="120" height="15" rx="4" fill="var(--violet-soft)" />
+              <text x="456" y="503.5" text-anchor="middle" fill="var(--violet)" font-size="8.2" font-weight="800">EXTERNAL HOST</text>
+              <text id="n6Title" x="396" y="524" fill="var(--text)" font-size="12.2" font-weight="700">Institutional LMS Gradebook (Canvas / Moodle)</text>
+              <text id="n6Sub" x="396" y="537" fill="var(--text-muted)" font-size="9">Receives ONLY authorized projection • Never sees Root DID</text>
+            </g>
+          </svg>
+        </div>
+      </section>
+
+      <!-- Dual-Tab Right Inspector -->
+      <aside class="inspector" aria-live="polite">
+        <div class="tab-row" role="tablist">
+          <button class="tab-btn active" data-tab="node" role="tab" aria-selected="true">Node &amp; Field Gate</button>
+          <button class="tab-btn" data-tab="json" role="tab" aria-selected="false">Live syncz.policy.v1 JSON</button>
+        </div>
+
+        <!-- Tab 1: Node Inspector + Projected vs Retained Pills -->
+        <div class="pane active" id="pane-node">
+          <div class="inspector-header">
+            <span class="inspector-eyebrow" id="insLayer">POLYMORPHIC CORE</span>
+            <h2 class="inspector-title" id="insTitle">SYNCZ-SRLO Runtime (Unchanged)</h2>
+          </div>
+
+          <div class="field-block">
+            <h3>Projected to LMS (Authorized Slice)</h3>
+            <div class="pill-wrap" id="projectedPills"></div>
+          </div>
+
+          <div class="field-block">
+            <h3>Locked Sovereign-Only (Blocked from LMS)</h3>
+            <div class="pill-wrap" id="retainedPills"></div>
+          </div>
+
+          <div class="field-block">
+            <h3>Selected Component Behavior</h3>
+            <p id="insDetails"></p>
+          </div>
+
+          <div class="crypto-box" id="insCrypto"></div>
+        </div>
+
+        <!-- Tab 2: Compiled syncz.policy.v1 JSON -->
+        <div class="pane" id="pane-json">
+          <div class="inspector-header">
+            <span class="inspector-eyebrow">COMPILED EDGE EVALUATION RECORD</span>
+            <h2 class="inspector-title">syncz.policy.v1 Envelope</h2>
+          </div>
+          <div class="code-box" id="jsonPreview"></div>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const TIERS = [
+        {
+          tier: 0,
+          name: "Sovereign Airlock",
+          short: "Zero Projection",
+          projected: [],
+          retained: ["completion", "verified_score", "vc_proof_hash", "selected_artifacts", "formative_xapi", "raw_keystrokes", "private_notes"],
+          filterText: "AIRLOCK: 0 fields leave sovereign boundary"
+        },
+        {
+          tier: 1,
+          name: "Blind Proof",
+          short: "Pass / Fail Only",
+          projected: ["completion (Pass/Fail 1/1)"],
+          retained: ["verified_score", "vc_proof_hash", "selected_artifacts", "formative_xapi", "raw_keystrokes", "private_notes"],
+          filterText: "Filtered Slice: completion boolean (1/1 or 0/1)"
+        },
+        {
+          tier: 2,
+          name: "Verified Summative",
+          short: "Score + VC Hash",
+          projected: ["completion", "verified_score", "vc_proof_hash"],
+          retained: ["selected_artifacts", "formative_xapi", "raw_keystrokes", "private_notes"],
+          filterText: "Filtered Slice: completion, verified_score, vc_proof_hash"
+        },
+        {
+          tier: 3,
+          name: "Formative Coaching",
+          short: "Score + Opt-In Artifacts",
+          projected: ["completion", "verified_score", "vc_proof_hash", "selected_artifacts"],
+          retained: ["formative_xapi", "raw_keystrokes", "attempt_timings", "private_notes"],
+          filterText: "Filtered Slice: score + opt-in distilled artifacts"
+        }
+      ];
+
+      const NODES = {
+        srlo_player: {
+          layer: "Polymorphic Core",
+          title: "SYNCZ-SRLO Runtime (Unchanged)",
+          details:
+            "Executes identically in every LMS or PKM host regardless of institutional disclosure policies. Always writes complete rich xAPI 2.0 statements and CODE+V artifacts to the learner's local IndexedDB outbox and private NATS stream.",
+          crypto: "Invariant: Even if the learner declines LMS sharing or revokes the bridge, the SYNCZ-SRLO never blocks learning."
+        },
+        sovereign_vault: {
+          layer: "Sovereign Core",
+          title: "Sovereign Learner Vault & Official SYNCZINE",
+          details:
+            "Authoritative owner of the learner's full CODE+V record, verifiable credentials, private study notes, and immutable Disclosure Audit Receipts. Survives graduation and institutional LMS account deletion.",
+          crypto: "Cryptographic Ownership: Anchored to the learner's sovereign DID / ECDSA device keys—never surrendered to the LMS."
+        },
+        policy_resolver: {
+          layer: "Governance Gate",
+          title: "Three-Tier Policy Intersection Engine",
+          details:
+            "Evaluates Publisher Ceiling ∩ Institution Request ∩ Sovereign Learner Consent at launch time. Clamps over-reaching course requests to the signed Publisher Manifest and triggers a non-blocking Consent Receipt Card when learner consent is stricter.",
+          crypto: "Zero-Trust Rule: Compiles a signed Delegation Capability Token (UCAN). An LMS admin cannot silently escalate disclosure after launch."
+        },
+        nats_projection: {
+          layer: "Zero-Trust Filter",
+          title: "NATS JetStream Projection Filter",
+          details:
+            "Subscribes to canonical private xAPI subjects, validates the learner's unexpired UCAN capability signature, strips all unauthorized fields, and transforms mastery outcomes into minimal proofs (such as an SD-JWT threshold proof) before routing outbound.",
+          crypto: "Hard Boundary: Fields marked never_export (raw_keystrokes, attempt_timings, private_notes) are unconditionally dropped."
+        },
+        lti_edge_adapter: {
+          layer: "Sovereign Aperture",
+          title: "Thin LTI 1.3 Edge Adapter",
+          details:
+            "Maintains an ephemeral pairwise course-scoped mapping (lms_iss, lms_sub, context_id <-> bridge_id) with automatic semester TTL expiry and instant learner revocation. Pushes only authorized fields via LTI AGS 2.0 and writes a signed Disclosure Receipt back to the learner.",
+          crypto: "Privacy Guarantee: The learner's root sovereign DID is never transmitted to Canvas or Moodle."
+        },
+        institutional_lms: {
+          layer: "External Host",
+          title: "Institutional LMS Gradebook (Canvas / Moodle)",
+          details:
+            "Receives strictly the authorized projection (e.g., AGS 2.0 score or pass/fail boolean) mapped to the course roster. Cannot read raw formative retries, drafts, or cross-institution learner history.",
+          crypto: "Airlock Behavior: At Effective Tier 0 or after Bridge Revocation, inbound LMS projection halts immediately (0 bytes transmitted)."
+        }
+      };
+
+      let pubTier = 3;
+      let instTier = 2;
+      let lrnTier = 2;
+      let revoked = false;
+      let selectedNode = "srlo_player";
+      let isPaused = false;
+      let receiptCount = 0;
+
+      const appRoot = document.getElementById("appRoot");
+      const tierBtns = document.querySelectorAll(".t-btn");
+      const nodeGroups = document.querySelectorAll(".node-group");
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const revokeBtn = document.getElementById("revokeBtn");
+      const simBtn = document.getElementById("simMilestoneBtn");
+      const animBtn = document.getElementById("animToggleBtn");
+      const themeBtn = document.getElementById("themeToggleBtn");
+
+      function pulseNode(nodeId, color) {
+        const g = document.querySelector(`.node-group[data-node="${nodeId}"]`);
+        if (!g) return;
+        const rect = g.querySelector(".node-rect");
+        const fx = document.getElementById("fxLayer");
+        const ring = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        ring.setAttribute("x", rect.getAttribute("x"));
+        ring.setAttribute("y", rect.getAttribute("y"));
+        ring.setAttribute("width", rect.getAttribute("width"));
+        ring.setAttribute("height", rect.getAttribute("height"));
+        ring.setAttribute("rx", "9");
+        ring.setAttribute("stroke", color);
+        ring.setAttribute("class", "flash-ring");
+        fx.appendChild(ring);
+        setTimeout(() => ring.remove(), 750);
+      }
+
+      function computeState() {
+        const clampedByPublisher = instTier > pubTier;
+        const effectiveRequest = Math.min(pubTier, instTier);
+        const creditConflict = !revoked && lrnTier < effectiveRequest;
+        const effectiveTier = revoked ? 0 : Math.min(pubTier, instTier, lrnTier);
+        return { clampedByPublisher, effectiveRequest, creditConflict, effectiveTier };
+      }
+
+      function renderInspector(nodeId) {
+        selectedNode = nodeId;
+        nodeGroups.forEach((g) => g.classList.toggle("selected", g.dataset.node === nodeId));
+        const n = NODES[nodeId];
+        document.getElementById("insLayer").textContent = n.layer.toUpperCase();
+        document.getElementById("insTitle").textContent = n.title;
+        document.getElementById("insDetails").textContent = n.details;
+        document.getElementById("insCrypto").textContent = n.crypto;
+      }
+
+      function buildJsonPreview(st) {
+        const eff = TIERS[st.effectiveTier];
+        const statusStr = revoked
+          ? "BRIDGE_REVOKED_BY_LEARNER"
+          : st.effectiveTier === 0
+          ? "SOVEREIGN_AIRLOCK_AUDIT_MODE"
+          : st.creditConflict
+          ? "NEGOTIATED_PARTIAL_PROJECTION"
+          : "CREDIT_BEARING_ACTIVE";
+
+        const obj = {
+          policyVersion: "syncz.policy.v1",
+          srloManifestHash: "sha256:9f84c2e14a9b",
+          layers: {
+            publisherCeiling: {
+              maxTier: pubTier,
+              allowedProjections: TIERS[pubTier].projected,
+              neverExport: ["raw_keystrokes", "attempt_timings", "private_notes"]
+            },
+            institutionRequest: {
+              lmsIssuer: "https://lms.example.edu",
+              contextId: "course_402",
+              requestedTier: instTier,
+              clampedToPublisherCeiling: st.clampedByPublisher,
+              bridgeTtl: "2027-01-31T23:59:59Z"
+            },
+            learnerConsent: {
+              actorMode: "pairwise_pseudonymous",
+              approvedTier: revoked ? 0 : lrnTier,
+              bridgeRevoked: revoked,
+              signedCapabilityRef: revoked ? null : "ucan:eyJhbGciOiJFUzI1NiJ9..."
+            }
+          },
+          resolvedEffectivePolicy: {
+            effectiveTier: st.effectiveTier,
+            status: statusStr,
+            projectedToLmsAgs: eff.projected,
+            retainedSovereignOnly: eff.retained,
+            revocableByLearner: true
+          }
+        };
+        return JSON.stringify(obj, null, 2);
+      }
+
+      function updateAll() {
+        const st = computeState();
+        const eff = TIERS[st.effectiveTier];
+
+        // Sync button active states
+        tierBtns.forEach((b) => {
+          const l = b.dataset.layer;
+          const t = Number(b.dataset.tier);
+          const match = (l === "pub" && t === pubTier) || (l === "inst" && t === instTier) || (l === "lrn" && t === lrnTier);
+          b.classList.toggle("active", match);
+        });
+
+        // Layer captions
+        document.getElementById("pubCapName").textContent = `Up to Tier ${pubTier}: ${TIERS[pubTier].name}`;
+        document.getElementById("instCapName").textContent = `Requests Tier ${instTier}: ${TIERS[instTier].name}`;
+        document.getElementById("instClampFlag").textContent = st.clampedByPublisher
+          ? `Clamped to Pub Tier ${pubTier}`
+          : "Within Ceiling";
+        document.getElementById("instClampFlag").style.color = st.clampedByPublisher ? "var(--amber)" : "var(--violet)";
+        document.getElementById("lrnCapName").textContent = revoked
+          ? "Bridge Revoked (Tier 0 Airlock)"
+          : `Approves Tier ${lrnTier}: ${TIERS[lrnTier].name}`;
+
+        // Revoke button label
+        revokeBtn.innerHTML = revoked ? "&#8635; Restore LMS Bridge" : "&#9888; Revoke LMS Bridge";
+        revokeBtn.className = revoked ? "icon-btn emerald" : "icon-btn danger";
+
+        // Status Banner & Negotiation Actions
+        const banner = document.getElementById("statusBanner");
+        const actions = document.getElementById("statusActions");
+        actions.innerHTML = "";
+
+        document.getElementById("formulaLine").textContent = revoked
+          ? `BRIDGE REVOKED -> Effective Projection = TIER 0 (Sovereign Airlock • Pairwise Mapping Destroyed)`
+          : `Effective Projection = min(Pub T${pubTier}, Inst T${instTier}, Learner T${lrnTier}) = TIER ${st.effectiveTier} (${eff.name})`;
+
+        if (revoked) {
+          banner.className = "status-banner airlock";
+          document.getElementById("statusNote").textContent =
+            "Instant learner revocation destroyed the pairwise bridge. LMS projection is halted while the SYNCZ-SRLO and Sovereign Vault remain 100% functional.";
+        } else if (st.creditConflict) {
+          banner.className = "status-banner negotiate";
+          document.getElementById("statusNote").textContent =
+            `Negotiated Launch: Course requests Tier ${st.effectiveRequest} (${TIERS[st.effectiveRequest].name}), but learner default is Tier ${lrnTier}. Learning is NOT blocked — choose an action:`;
+
+          const elevateBtn = document.createElement("button");
+          elevateBtn.className = "icon-btn emerald";
+          elevateBtn.textContent = `Sign Course Exception (Elevate to Tier ${st.effectiveRequest})`;
+          elevateBtn.addEventListener("click", () => {
+            lrnTier = st.effectiveRequest;
+            pulseNode("policy_resolver", "#2ec27e");
+            updateAll();
+          });
+
+          const auditBtn = document.createElement("button");
+          auditBtn.className = "icon-btn danger";
+          auditBtn.textContent = "Decline LMS Sharing (Tier 0 Audit)";
+          auditBtn.addEventListener("click", () => {
+            lrnTier = 0;
+            pulseNode("sovereign_vault", "#2ec27e");
+            updateAll();
+          });
+
+          actions.appendChild(elevateBtn);
+          if (lrnTier !== 0) actions.appendChild(auditBtn);
+        } else if (st.effectiveTier === 0) {
+          banner.className = "status-banner airlock";
+          document.getElementById("statusNote").textContent =
+            "Sovereign Airlock Active (Tier 0): SYNCZ-SRLO executes normally and records full xAPI privately; zero data leaves through the LTI Edge Adapter.";
+        } else {
+          banner.className = "status-banner active-ok";
+          document.getElementById("statusNote").textContent = st.clampedByPublisher
+            ? `Publisher Clamped & Active: Institution asked for Tier ${instTier}, capped by Publisher Manifest to Tier ${pubTier}. Projection active with UCAN signature.`
+            : `Zero-Friction Auto-Match: Credit-bearing Tier ${st.effectiveTier} (${eff.short}) projection active; formative xAPI drafts remain 100% sovereign.`;
+        }
+
+        // Update SVG diagram states
+        const blocked = st.effectiveTier === 0 || revoked;
+
+        document.getElementById("n3BadgeTxt").textContent = `EFFECTIVE: TIER ${st.effectiveTier}`;
+        document.getElementById("n3BadgeBg").setAttribute("fill", blocked ? "var(--crimson-soft)" : st.creditConflict ? "var(--amber-soft)" : "var(--emerald-soft)");
+        document.getElementById("n3BadgeTxt").setAttribute("fill", blocked ? "var(--crimson)" : st.creditConflict ? "var(--amber)" : "var(--emerald)");
+        document.getElementById("n3Sub").textContent = revoked
+          ? "UCAN Revoked • Pairwise LMS Mapping Deleted"
+          : `Verifies UCAN Signature • Pub T${pubTier} ∩ Inst T${instTier} ∩ Learner T${lrnTier}`;
+
+        document.getElementById("lblPolFilter").textContent = blocked
+          ? "Policy Gate: HALTED (Tier 0 Airlock)"
+          : `Signed UCAN Effective Policy (Tier ${st.effectiveTier})`;
+        document.getElementById("lblFilterLti").textContent = eff.filterText;
+        document.getElementById("n4Sub").textContent = blocked
+          ? "All outbound fields blocked — 0 bytes forwarded"
+          : `Projects ${eff.projected.length} field(s); drops ${eff.retained.length} private field(s)`;
+
+        document.getElementById("n5BadgeTxt").textContent = revoked ? "REVOKED" : blocked ? "AIRLOCK T0" : "BRIDGE ACTIVE";
+        document.getElementById("n5BadgeBg").setAttribute("fill", blocked ? "var(--crimson-soft)" : "var(--emerald-soft)");
+        document.getElementById("n5BadgeTxt").setAttribute("fill", blocked ? "var(--crimson)" : "var(--emerald)");
+
+        // Gate outbound edge styling
+        const gateCol = blocked ? "var(--crimson)" : "var(--violet)";
+        document.getElementById("e-lti-lms").setAttribute("stroke", gateCol);
+        document.getElementById("e-lti-lms").setAttribute("stroke-dasharray", blocked ? "5 5" : "none");
+        document.getElementById("e-lti-lms").setAttribute("marker-end", blocked ? "url(#arrCrimson)" : "url(#arrViolet)");
+        document.getElementById("gateBadgeBg").setAttribute("stroke", gateCol);
+        document.getElementById("gateBadgeTxt").setAttribute("fill", gateCol);
+        document.getElementById("gateBadgeTxt").textContent = revoked
+          ? "X BRIDGE REVOKED — 0 BYTES SENT"
+          : blocked
+          ? "X SOVEREIGN AIRLOCK — PAUSED"
+          : `LTI AGS 2.0 ACTIVE (TIER ${st.effectiveTier})`;
+
+        // Dim gated packets and LMS node when Airlock/Revoked
+        document.getElementById("f-lti-lms").classList.toggle("dimmed", blocked);
+        document.getElementById("p-lms").classList.toggle("dimmed", blocked);
+        document.getElementById("e-audit").classList.toggle("dimmed", blocked);
+        document.getElementById("f-audit").classList.toggle("dimmed", blocked);
+        document.getElementById("p-audit").classList.toggle("dimmed", blocked);
+        document.getElementById("f-nats-lti").classList.toggle("dimmed", blocked);
+        document.getElementById("p-g3").classList.toggle("dimmed", blocked);
+        document.querySelector('.node-group[data-node="institutional_lms"]').classList.toggle("dimmed", blocked);
+
+        document.getElementById("n6Sub").textContent = blocked
+          ? "No data projected • Gradebook passback paused safely"
+          : `Receives ONLY: ${eff.projected.join(", ")}`;
+
+        // Update Projected vs Retained Pills in Inspector
+        const projEl = document.getElementById("projectedPills");
+        projEl.innerHTML =
+          eff.projected.length === 0
+            ? `<span class="pill blocked">None — Sovereign Airlock (0 Fields Sent)</span>`
+            : eff.projected.map((f) => `<span class="pill proj">${f}</span>`).join("");
+
+        document.getElementById("retainedPills").innerHTML = eff.retained
+          .map((f) => `<span class="pill sov">${f}</span>`)
+          .join("");
+
+        // Update JSON Preview
+        document.getElementById("jsonPreview").textContent = buildJsonPreview(st);
+      }
+
+      // Simulate Verified Milestone Trace
+      simBtn.addEventListener("click", () => {
+        const st = computeState();
+        const eff = TIERS[st.effectiveTier];
+        const blocked = st.effectiveTier === 0 || revoked;
+        receiptCount++;
+        const ts = new Date().toLocaleTimeString([], { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+        pulseNode("srlo_player", "#d4af37");
+        setTimeout(() => pulseNode("sovereign_vault", "#2ec27e"), 260);
+        setTimeout(() => pulseNode("policy_resolver", "#d4af37"), 300);
+
+        if (blocked) {
+          setTimeout(() => {
+            pulseNode("lti_edge_adapter", "#ef5350");
+            document.getElementById("svgReceiptLine1").textContent = `[${ts}] #${receiptCount}: Saved to Vault • LMS Blocked (T0)`;
+            document.getElementById("svgReceiptLine2").textContent = revoked
+              ? "Bridge status: REVOKED by Sovereign Learner"
+              : "Airlock active: 0 fields projected to LMS";
+          }, 620);
+        } else {
+          setTimeout(() => pulseNode("nats_projection", "#58a6ff"), 580);
+          setTimeout(() => pulseNode("lti_edge_adapter", "#a78bfa"), 860);
+          setTimeout(() => {
+            pulseNode("institutional_lms", "#a78bfa");
+            pulseNode("sovereign_vault", "#d4af37");
+            document.getElementById("svgReceiptLine1").textContent = `[${ts}] Receipt #${receiptCount}: Projected Tier ${st.effectiveTier} to LMS`;
+            document.getElementById("svgReceiptLine2").textContent = `Fields: ${eff.projected.slice(0, 3).join(", ")}`;
+            document.getElementById("svgReceiptLine3").textContent = `Stripped: ${eff.retained.length} sovereign-only fields retained`;
+          }, 1150);
+        }
+      });
+
+      // Listeners
+      tierBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const layer = btn.dataset.layer;
+          const tier = Number(btn.dataset.tier);
+          if (layer === "pub") pubTier = tier;
+          if (layer === "inst") instTier = tier;
+          if (layer === "lrn") {
+            lrnTier = tier;
+            revoked = false;
+          }
+          pulseNode("policy_resolver", "#d4af37");
+          updateAll();
+        });
+      });
+
+      revokeBtn.addEventListener("click", () => {
+        revoked = !revoked;
+        pulseNode("lti_edge_adapter", revoked ? "#ef5350" : "#2ec27e");
+        updateAll();
+      });
+
+      nodeGroups.forEach((g) => {
+        g.addEventListener("click", () => {
+          renderInspector(g.dataset.node);
+          // Switch to node tab automatically when clicking diagram
+          tabBtns.forEach((t) => {
+            const active = t.dataset.tab === "node";
+            t.classList.toggle("active", active);
+            t.setAttribute("aria-selected", String(active));
+          });
+          document.getElementById("pane-node").classList.add("active");
+          document.getElementById("pane-json").classList.remove("active");
+        });
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            renderInspector(g.dataset.node);
+          }
+        });
+      });
+
+      tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.tab;
+          tabBtns.forEach((t) => {
+            const active = t === btn;
+            t.classList.toggle("active", active);
+            t.setAttribute("aria-selected", String(active));
+          });
+          document.getElementById("pane-node").classList.toggle("active", target === "node");
+          document.getElementById("pane-json").classList.toggle("active", target === "json");
+        });
+      });
+
+      animBtn.addEventListener("click", () => {
+        isPaused = !isPaused;
+        appRoot.classList.toggle("paused", isPaused);
+        const svg = document.getElementById("policySvg");
+        if (isPaused) {
+          svg.pauseAnimations();
+          animBtn.innerHTML = `<span>&#9654;</span> Resume Flow`;
+        } else {
+          svg.unpauseAnimations();
+          animBtn.innerHTML = `<span>&#10074;&#10074;</span> Pause Flow`;
+        }
+      });
+
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light` : `<span>&#9790;</span> Dark`;
+      });
+
+      renderInspector("srlo_player");
+      updateAll();
+    })();
+  </script>
+</body>
+</html>
