@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZ-SRLO — LTI Deep Linking 2.0 Teacher Policy Picker &amp; Payload Inspector</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.15);
+
+      --hex-stroke: rgba(212, 175, 55, 0.05);
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+      --violet: #6d28d9;
+      --violet-soft: rgba(109, 40, 217, 0.11);
+
+      --hex-stroke: rgba(154, 116, 17, 0.08);
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 16px;
+      transition: background 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hex-badge {
+      width: 38px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .title-group h1 {
+      font-size: 1.04rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .title-group p {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 7px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .icon-btn:hover:not(:disabled) {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .icon-btn:disabled { opacity: 0.5; cursor: wait; }
+
+    .icon-btn.primary {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .icon-btn.danger-active {
+      background: var(--crimson-soft);
+      border-color: var(--crimson);
+      color: var(--crimson);
+    }
+
+    .icon-btn.emerald {
+      background: var(--emerald-soft);
+      border-color: rgba(46, 194, 126, 0.5);
+      color: var(--emerald);
+    }
+
+    /* Animated 30s Flow Strip */
+    .flow-strip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      overflow: hidden;
+    }
+
+    svg#flowSvg {
+      width: 100%;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .edge-flow {
+      fill: none;
+      stroke-dasharray: 6 8;
+      animation: flowDash 1.25s linear infinite;
+    }
+
+    .paused .edge-flow { animation-play-state: paused; }
+
+    @keyframes flowDash {
+      from { stroke-dashoffset: 28; }
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes flashHighlight {
+      0% { background: rgba(212, 175, 55, 0.34); }
+      100% { background: transparent; }
+    }
+
+    .row-flash {
+      animation: flashHighlight 0.85s ease-out;
+    }
+
+    @keyframes cardPulse {
+      0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.5); }
+      100% { box-shadow: 0 0 0 10px rgba(212, 175, 55, 0); }
+    }
+
+    .box-flash {
+      animation: cardPulse 0.7s ease-out;
+    }
+
+    /* Two-Panel Simulator Grid */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.05fr);
+      gap: 14px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 10px;
+    }
+
+    .panel-title {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-badge {
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+
+    /* Control Sections Inside Left Picker */
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .field-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-dim);
+    }
+
+    .field-hint {
+      font-size: 0.71rem;
+      color: var(--text-muted);
+    }
+
+    .sim-bar-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+      width: 100%;
+    }
+
+    .seg-btn {
+      flex: 1;
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 6px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+    }
+
+    .seg-btn:hover { color: var(--text); }
+
+    .seg-btn.active {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.42);
+    }
+
+    .seg-btn.active.violet {
+      background: var(--violet-soft);
+      color: var(--violet);
+      box-shadow: inset 0 0 0 1px rgba(167, 139, 250, 0.45);
+    }
+
+    .seg-btn.active.blue {
+      background: var(--blue-soft);
+      color: var(--blue);
+      box-shadow: inset 0 0 0 1px rgba(88, 166, 255, 0.45);
+    }
+
+    .seg-btn.active.emerald {
+      background: var(--emerald-soft);
+      color: var(--emerald);
+      box-shadow: inset 0 0 0 1px rgba(46, 194, 126, 0.45);
+    }
+
+    /* SRLO Mini Card */
+    .srlo-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      border-left: 3px solid var(--gold);
+      border-radius: 9px;
+      padding: 10px 12px;
+    }
+
+    .srlo-meta h3 {
+      font-size: 0.87rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .srlo-meta p {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* 4 Disclosure Tier Cards */
+    .tier-cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .tier-card {
+      appearance: none;
+      text-align: left;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 11px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.2s ease;
+      position: relative;
+      font-family: var(--font-sans);
+    }
+
+    .tier-card:hover:not(:disabled) {
+      border-color: var(--gold);
+      transform: translateY(-1px);
+    }
+
+    .tier-card.selected {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.35);
+    }
+
+    .tier-card:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+      background: var(--bg-canvas);
+      border-style: dashed;
+    }
+
+    .tier-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .tier-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .tier-tag {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: var(--bg-canvas);
+      color: var(--text-muted);
+    }
+
+    .tier-card.selected .tier-tag {
+      background: var(--gold);
+      color: #0d1117;
+    }
+
+    .tier-card:disabled .tier-tag {
+      background: var(--crimson-soft);
+      color: var(--crimson);
+    }
+
+    .tier-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* TTL Chips */
+    .chip-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .chip-btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 7px 6px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      text-align: center;
+    }
+
+    .chip-btn:hover { border-color: var(--gold); color: var(--text); }
+
+    .chip-btn.active {
+      background: var(--blue-soft);
+      border-color: var(--blue);
+      color: var(--blue);
+    }
+
+    /* Footer Preview & Primary CTA inside Picker */
+    .picker-footer {
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .preview-line {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .embed-cta {
+      appearance: none;
+      border: 1px solid var(--gold);
+      background: linear-gradient(135deg, var(--gold), #b99324);
+      color: #10141b;
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 800;
+      padding: 9px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: filter 0.2s ease, transform 0.15s ease;
+    }
+
+    .embed-cta:hover { filter: brightness(1.08); transform: translateY(-1px); }
+
+    .tamper-alert {
+      display: none;
+      background: var(--crimson-soft);
+      border: 1px solid var(--crimson);
+      color: var(--crimson);
+      border-radius: 8px;
+      padding: 8px 11px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .tamper-alert.visible { display: block; }
+
+    /* Right Panel: Readout Cards + Payload Inspector */
+    .impact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+    }
+
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .info-card-eyebrow {
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--gold);
+    }
+
+    .info-card-title {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .info-card p {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* LineItem Status Card */
+    .lineitem-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.25s ease;
+    }
+
+    .lineitem-box.present { border-left: 3px solid var(--emerald); }
+    .lineitem-box.omitted { border-left: 3px solid var(--amber); }
+
+    .lineitem-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .pill {
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .pill.emerald { background: var(--emerald-soft); color: var(--emerald); }
+    .pill.amber { background: var(--amber-soft); color: var(--amber); }
+    .pill.crimson { background: var(--crimson-soft); color: var(--crimson); }
+    .pill.violet { background: var(--violet-soft); color: var(--violet); }
+    .pill.blue { background: var(--blue-soft); color: var(--blue); }
+
+    .lineitem-code {
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+      color: var(--text-muted);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 7px 9px;
+      white-space: pre-wrap;
+    }
+
+    /* Inspector Tabs (Table vs Raw JWT) */
+    .tab-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tab-row {
+      display: inline-flex;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .tab-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.73rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--gold-soft);
+      color: var(--gold);
+    }
+
+    .pane { display: none; flex-direction: column; gap: 8px; }
+    .pane.active { display: flex; }
+
+    /* Custom Params Table */
+    .table-wrap {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--bg-canvas);
+    }
+
+    table.kv-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-mono);
+      font-size: 0.71rem;
+    }
+
+    table.kv-table th {
+      text-align: left;
+      font-family: var(--font-sans);
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-dim);
+      background: var(--bg-card);
+      padding: 7px 9px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.kv-table td {
+      padding: 5.5px 9px;
+      border-bottom: 1px solid rgba(128, 128, 128, 0.12);
+      vertical-align: top;
+      word-break: break-all;
+    }
+
+    table.kv-table tr:last-child td { border-bottom: none; }
+
+    .kv-key { color: var(--gold); font-weight: 700; white-space: nowrap; }
+    .kv-val { color: var(--text); }
+    .kv-val.tampered { color: var(--crimson); font-weight: 800; }
+
+    .jwt-box {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      color: var(--text);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 335px;
+      overflow: auto;
+      white-space: pre;
+      line-height: 1.42;
+    }
+
+    @media (max-width: 980px) {
+      .workspace { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 10px; }
+      .sim-bar-grid, .tier-cards, .impact-grid, .chip-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="appRoot">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="38" height="38">
+            <polygon points="20,2 36,11 36,29 20,38 4,29 4,11" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="1.8" />
+            <text x="20" y="24" text-anchor="middle" fill="var(--gold)" font-size="12" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div class="title-group">
+          <h1>LTI Deep Linking 2.0: 30-Second Teacher Policy Picker</h1>
+          <p>Configure Disclosure Tier, Credit Mode, and Bridge TTL with live Publisher Clamping &amp; signed <code>ltiResourceLink</code> output</p>
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <button class="icon-btn" id="tamperBtn" title="Simulate manual parameter editing in Moodle Activity Settings">
+          <span>&#9888;</span> Simulate Moodle Tamper
+        </button>
+        <button class="icon-btn" id="animToggleBtn"><span>&#10074;&#10074;</span> Pause Flow</button>
+        <button class="icon-btn" id="themeToggleBtn"><span>&#9788;</span> Light</button>
+      </div>
+    </header>
+
+    <!-- Animated 30-Second Deep Linking Flow Strip -->
+    <section class="flow-strip" aria-label="30-Second Deep Linking Workflow">
+      <svg id="flowSvg" viewBox="0 0 1120 74" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="4-step 30-second LTI Deep Linking 2.0 round trip">
+        <defs>
+          <marker id="arrGold" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 1 L 10 5 L 0 9 z" fill="#d4af37" />
+          </marker>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        <!-- Step 1 -->
+        <rect id="st1" x="6" y="10" width="236" height="54" rx="8" fill="var(--bg-card)" stroke="var(--violet)" stroke-width="1.6" />
+        <text x="18" y="28" fill="var(--violet)" font-size="10" font-weight="800">0–5s • LAUNCH PICKER</text>
+        <text id="st1Sub" x="18" y="45" fill="var(--text)" font-size="11.5" font-weight="700">Canvas LtiDeepLinkingRequest</text>
+        <text x="18" y="57" fill="var(--text-dim)" font-size="9.2">Signed JWT + accept_lineitem</text>
+
+        <!-- Arrow 1->2 -->
+        <path d="M 244 37 L 288 37" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrGold)" />
+        <path class="edge-flow" d="M 244 37 L 286 37" stroke="var(--gold)" stroke-width="2" />
+
+        <!-- Step 2 -->
+        <rect id="st2" x="294" y="10" width="236" height="54" rx="8" fill="var(--bg-card)" stroke="var(--blue)" stroke-width="1.6" />
+        <text x="306" y="28" fill="var(--blue)" font-size="10" font-weight="800">5–13s • PICK &amp; CLAMP</text>
+        <text x="306" y="45" fill="var(--text)" font-size="11.5" font-weight="700">Verify Publisher Manifest</text>
+        <text id="st2Sub" x="306" y="57" fill="var(--text-dim)" font-size="9.2">Locks tiers above Ceiling (Tier 3)</text>
+
+        <!-- Arrow 2->3 -->
+        <path d="M 532 37 L 576 37" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrGold)" />
+        <path class="edge-flow" d="M 532 37 L 574 37" stroke="var(--gold)" stroke-width="2" />
+
+        <!-- Step 3 -->
+        <rect id="st3" x="582" y="10" width="240" height="54" rx="8" fill="var(--bg-card)" stroke="var(--gold)" stroke-width="1.8" />
+        <text x="594" y="28" fill="var(--gold)" font-size="10" font-weight="800">13–24s • 3 SMART CONTROLS</text>
+        <text x="594" y="45" fill="var(--text)" font-size="11.5" font-weight="700">Tier • Credit Mode • Bridge TTL</text>
+        <text x="594" y="57" fill="var(--text-dim)" font-size="9.2">Zero JSON or OIDC editing</text>
+
+        <!-- Arrow 3->4 -->
+        <path d="M 824 37 L 868 37" stroke="var(--gold)" stroke-width="2" marker-end="url(#arrGold)" />
+        <path class="edge-flow" d="M 824 37 L 866 37" stroke="var(--gold)" stroke-width="2" />
+
+        <!-- Step 4 -->
+        <rect id="st4" x="874" y="10" width="240" height="54" rx="8" fill="var(--bg-card)" stroke="var(--emerald)" stroke-width="1.6" />
+        <text x="886" y="28" fill="var(--emerald)" font-size="10" font-weight="800">24–30s • SIGN &amp; AUTO-POST</text>
+        <text x="886" y="45" fill="var(--text)" font-size="11.5" font-weight="700">LtiDeepLinkingResponse JWT</text>
+        <text id="st4Sub" x="886" y="57" fill="var(--text-dim)" font-size="9.2">ed25519 syncz_policy_sig + lineItem</text>
+
+        <!-- Animated Packets -->
+        <circle r="3.5" fill="#d4af37" filter="url(#glow)">
+          <animateMotion dur="1.5s" repeatCount="indefinite" path="M 244 37 L 288 37" />
+        </circle>
+        <circle r="3.5" fill="#d4af37" filter="url(#glow)">
+          <animateMotion dur="1.5s" repeatCount="indefinite" path="M 532 37 L 576 37" />
+        </circle>
+        <circle r="3.5" fill="#2ec27e" filter="url(#glow)">
+          <animateMotion dur="1.5s" repeatCount="indefinite" path="M 824 37 L 868 37" />
+        </circle>
+      </svg>
+    </section>
+
+    <!-- Main Two-Panel Workspace -->
+    <main class="workspace">
+      <!-- LEFT PANEL: 30-Second Teacher Policy Picker Modal -->
+      <section class="panel" aria-label="Teacher Policy Picker Modal">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="step-badge">TEACHER PICKER</span>
+            <span>Embed SYNCZ-SRLO into Course</span>
+          </div>
+          <span id="postStatusPill" class="pill blue">READY TO SIGN</span>
+        </div>
+
+        <!-- LMS Target & Publisher Ceiling Simulator Controls -->
+        <div class="sim-bar-grid">
+          <div class="field-group">
+            <div class="field-label-row">
+              <span class="field-label">LMS Host Target</span>
+            </div>
+            <div class="segmented" role="group" aria-label="LMS Target">
+              <button class="seg-btn active violet" data-lms="canvas">Canvas LMS</button>
+              <button class="seg-btn violet" data-lms="moodle">Moodle LMS</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <div class="field-label-row">
+              <span class="field-label">Publisher Ceiling (Manifest)</span>
+            </div>
+            <div class="segmented" role="group" aria-label="Publisher Ceiling Cap">
+              <button class="seg-btn blue" data-cap="1">Cap: T1</button>
+              <button class="seg-btn blue" data-cap="2">Cap: T2</button>
+              <button class="seg-btn active blue" data-cap="3">Cap: T3</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas Placement Option (visible only when Canvas is selected) -->
+        <div class="field-group" id="canvasPlacementGroup">
+          <div class="field-label-row">
+            <span class="field-label">Canvas Placement Context</span>
+            <span class="field-hint" id="acceptLineItemHint">accept_lineitem: true</span>
+          </div>
+          <div class="segmented" role="group" aria-label="Canvas Placement">
+            <button class="seg-btn active emerald" data-placement="assignment">Assignment / Module (Graded OK)</button>
+            <button class="seg-btn" data-placement="rce">Rich Content Editor (accept_lineitem: false)</button>
+          </div>
+        </div>
+
+        <!-- Selected SRLO Card -->
+        <div class="srlo-card">
+          <div class="srlo-meta">
+            <h3>Cohesion &amp; Discourse Markers Studio (SYNCZ-SRLO)</h3>
+            <p>sz_ielts_w2 :: srlo_cohesion_04 &bull; sha256:9f84c2e14a9b</p>
+          </div>
+          <span class="pill emerald" id="manifestCapBadge">Max Tier 3</span>
+        </div>
+
+        <!-- Control 1: Disclosure Tier Cards -->
+        <div class="field-group">
+          <div class="field-label-row">
+            <span class="field-label">1. Institutional Disclosure Tier</span>
+            <span class="field-hint">Capped automatically by Publisher Manifest</span>
+          </div>
+          <div class="tier-cards" role="radiogroup" aria-label="Disclosure Tier">
+            <button class="tier-card" data-tier="0">
+              <div class="tier-card-top">
+                <span class="tier-name">Tier 0: Sovereign Airlock</span>
+                <span class="tier-tag">NO LMS DATA</span>
+              </div>
+              <span class="tier-desc">Omits lineItem. Plays normally; 0 bytes sent to LMS gradebook.</span>
+            </button>
+
+            <button class="tier-card" data-tier="1">
+              <div class="tier-card-top">
+                <span class="tier-name">Tier 1: Blind Proof</span>
+                <span class="tier-tag">PASS / FAIL</span>
+              </div>
+              <span class="tier-desc">1-pt lineItem (1/1 verified). Raw score &amp; attempts stay private.</span>
+            </button>
+
+            <button class="tier-card selected" data-tier="2">
+              <div class="tier-card-top">
+                <span class="tier-name">Tier 2: Verified Summative</span>
+                <span class="tier-tag">DEFAULT</span>
+              </div>
+              <span class="tier-desc">100-pt AGS score + VC hash. Formative drafts stay sovereign.</span>
+            </button>
+
+            <button class="tier-card" data-tier="3">
+              <div class="tier-card-top">
+                <span class="tier-name">Tier 3: Formative Coaching</span>
+                <span class="tier-tag">OPT-IN ARTIFACT</span>
+              </div>
+              <span class="tier-desc">100-pt AGS score + learner-approved distilled artifacts.</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Control 2: Credit Mode -->
+        <div class="field-group">
+          <div class="field-label-row">
+            <span class="field-label">2. Credit Requirement Mode</span>
+            <span class="field-hint">Non-blocking: Audit Mode always allowed</span>
+          </div>
+          <div class="segmented" role="group" aria-label="Credit Mode">
+            <button class="seg-btn active" data-credit="required">Required for Credit (Flagged in Consent Card)</button>
+            <button class="seg-btn" data-credit="optional">Optional / Ungraded Practice</button>
+          </div>
+        </div>
+
+        <!-- Control 3: Bridge Expiry TTL -->
+        <div class="field-group">
+          <div class="field-label-row">
+            <span class="field-label">3. Pairwise Bridge Expiry TTL</span>
+            <span class="field-hint">Fallback 120d if course end unset</span>
+          </div>
+          <div class="chip-row" role="group" aria-label="Bridge Expiry TTL">
+            <button class="chip-btn active" data-ttl="term_end_plus_14d">Term End + 14d</button>
+            <button class="chip-btn" data-ttl="fixed_days:30">30 Days</button>
+            <button class="chip-btn" data-ttl="fixed_days:90">90 Days</button>
+            <button class="chip-btn" data-ttl="fixed_iso:2027-01-31T23:59:59Z">Jan 31, 2027</button>
+          </div>
+        </div>
+
+        <!-- Moodle Tamper Alert -->
+        <div class="tamper-alert" id="tamperAlert" role="alert">
+          <strong>ANTI-TAMPER TRIPPED (Moodle Manual Edit):</strong> Someone edited <code>syncz_req_tier</code> in Moodle <em>Activity Settings &rarr; Show more</em> without re-signing! <code>syncz_policy_sig</code> fails verification at launch &rarr; Edge Adapter blocks escalation &amp; launches safely in Tier 0 Audit Mode.
+        </div>
+
+        <!-- Live Footer Preview & Embed CTA -->
+        <div class="picker-footer">
+          <div class="preview-line">
+            <span style="color: var(--gold); font-weight: 800;">PREVIEW:</span>
+            <span id="footerPreviewText">Creates a 100-pt graded Canvas Assignment • Student retains private xAPI drafts • Bridge auto-expires 14 days after term end.</span>
+          </div>
+          <div class="cta-row">
+            <span style="font-size: 0.71rem; color: var(--text-dim);">Total setup time: ~18–26 seconds</span>
+            <button class="embed-cta" id="embedBtn">Embed SYNCZ-SRLO &amp; Sign JWT &rarr;</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: Live Impact & ltiResourceLink Payload Inspector -->
+      <section class="panel" aria-label="Live Payload Inspector" aria-live="polite">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="step-badge">LIVE OUTPUT</span>
+            <span><code>ltiResourceLink</code> &amp; LMS Behavior</span>
+          </div>
+          <span class="pill violet" id="sigStatusPill">ed25519 VALID</span>
+        </div>
+
+        <!-- LMS Gradebook & Student Launch Cards -->
+        <div class="impact-grid">
+          <div class="info-card">
+            <span class="info-card-eyebrow" id="lmsCardEyebrow">CANVAS LMS GRADEBOOK EFFECT</span>
+            <div class="info-card-title" id="lmsCardTitle">Creates 100-pt Graded Assignment</div>
+            <p id="lmsCardDesc"></p>
+          </div>
+
+          <div class="info-card">
+            <span class="info-card-eyebrow">STUDENT LAUNCH EXPERIENCE</span>
+            <div class="info-card-title" id="stuCardTitle">Tier 2 Auto-Match / Scoped Prompt</div>
+            <p id="stuCardDesc"></p>
+          </div>
+        </div>
+
+        <!-- Conditional lineItem Readout -->
+        <div class="lineitem-box present" id="lineItemBox">
+          <div class="lineitem-head">
+            <span style="font-size: 0.76rem; font-weight: 800; color: var(--text);">Conditional <code>lineItem</code> Object</span>
+            <span class="pill emerald" id="lineItemPill">INCLUDED IN JWT</span>
+          </div>
+          <div class="lineitem-code" id="lineItemCode"></div>
+        </div>
+
+        <!-- Payload Inspector Tabs -->
+        <div class="tab-header">
+          <div class="tab-row" role="tablist">
+            <button class="tab-btn active" data-tab="kv" role="tab" aria-selected="true">Flat String <code>custom</code> Map</button>
+            <button class="tab-btn" data-tab="jwt" role="tab" aria-selected="false">Full Signed JWT JSON</button>
+          </div>
+          <button class="icon-btn" id="copyJwtBtn" style="padding: 5px 10px; font-size: 0.72rem;">&#128203; Copy JWT JSON</button>
+        </div>
+
+        <!-- Tab 1: Flat String custom Map Table -->
+        <div class="pane active" id="pane-kv">
+          <div class="table-wrap">
+            <table class="kv-table" aria-label="LTI Deep Linking custom parameters">
+              <thead>
+                <tr>
+                  <th style="width: 40%;">Custom Key (Flat String Only)</th>
+                  <th>Resolved String Value</th>
+                </tr>
+              </thead>
+              <tbody id="kvBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Complete LtiDeepLinkingResponse JWT -->
+        <div class="pane" id="pane-jwt">
+          <div class="jwt-box" id="jwtCode"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      let lmsTarget = "canvas";
+      let canvasPlacement = "assignment"; // assignment | rce
+      let publisherCap = 3;
+      let selectedTier = 2;
+      let creditMode = "required"; // required | optional
+      let ttlPolicy = "term_end_plus_14d";
+      let moodleTampered = false;
+      let isPaused = false;
+      let prevCustomMap = {};
+
+      const appRoot = document.getElementById("appRoot");
+      const lmsBtns = document.querySelectorAll("[data-lms]");
+      const capBtns = document.querySelectorAll("[data-cap]");
+      const placeBtns = document.querySelectorAll("[data-placement]");
+      const tierCards = document.querySelectorAll(".tier-card");
+      const creditBtns = document.querySelectorAll("[data-credit]");
+      const ttlBtns = document.querySelectorAll("[data-ttl]");
+      const tabBtns = document.querySelectorAll(".tab-btn");
+      const tamperBtn = document.getElementById("tamperBtn");
+      const embedBtn = document.getElementById("embedBtn");
+      const copyJwtBtn = document.getElementById("copyJwtBtn");
+      const animBtn = document.getElementById("animToggleBtn");
+      const themeBtn = document.getElementById("themeToggleBtn");
+
+      function deterministicSig(input) {
+        let h1 = 0x811c9dc5;
+        let h2 = 0x243f6a88;
+        for (let i = 0; i < input.length; i++) {
+          const ch = input.charCodeAt(i);
+          h1 ^= ch;
+          h1 = Math.imul(h1, 0x01000193) >>> 0;
+          h2 ^= ch + (i << 3);
+          h2 = Math.imul(h2, 0x85ebca6b) >>> 0;
+        }
+        const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789";
+        let out = "";
+        let seed = (h1 ^ h2) >>> 0;
+        for (let i = 0; i < 24; i++) {
+          seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+          out += alphabet[seed % alphabet.length];
+        }
+        return "ed25519:" + out;
+      }
+
+      function getEffectiveMaxTier() {
+        if (lmsTarget === "canvas" && canvasPlacement === "rce") return 0;
+        return publisherCap;
+      }
+
+      function computePayload() {
+        const effCap = getEffectiveMaxTier();
+        if (selectedTier > effCap) selectedTier = effCap;
+
+        const isGraded = selectedTier > 0 && creditMode === "required" && !(lmsTarget === "canvas" && canvasPlacement === "rce");
+
+        // Compute req_fields & opt_fields
+        let reqFields = "";
+        let optFields = "";
+        if (selectedTier === 1) {
+          reqFields = creditMode === "required" ? "completion" : "";
+          optFields = creditMode === "required" ? "" : "completion";
+        } else if (selectedTier === 2) {
+          reqFields = creditMode === "required" ? "completion,verified_score" : "";
+          optFields = creditMode === "required" ? "vc_proof_hash" : "completion,verified_score,vc_proof_hash";
+        } else if (selectedTier === 3) {
+          reqFields = creditMode === "required" ? "completion,verified_score" : "";
+          optFields = creditMode === "required" ? "vc_proof_hash,selected_artifacts" : "completion,verified_score,vc_proof_hash,selected_artifacts";
+        }
+
+        const baseCustom = {
+          syncz_v: "1",
+          syncz_id: "sz_ielts_w2",
+          syncz_srlo_id: "srlo_cohesion_04",
+          syncz_manifest_hash: "sha256:9f84c2e14a9b",
+          syncz_req_tier: String(selectedTier),
+          syncz_req_fields: reqFields,
+          syncz_opt_fields: optFields,
+          syncz_audit_mode: "allow",
+          syncz_ttl_policy: ttlPolicy,
+          syncz_course_end: "$CourseSection.timeFrame.end",
+          syncz_ttl_fallback_days: "120",
+          syncz_policy_id: "pol_019a9f88c2f4"
+        };
+
+        const validSig = deterministicSig(lmsTarget + "|" + JSON.stringify(baseCustom));
+        const custom = { ...baseCustom, syncz_policy_sig: validSig };
+
+        // If Moodle manual tamper simulated, mutate syncz_req_tier AFTER signature creation
+        if (moodleTampered && lmsTarget === "moodle") {
+          custom.syncz_req_tier = "3 (TAMPERED IN MOODLE)";
+          custom.syncz_opt_fields = "raw_keystrokes,private_notes";
+        }
+
+        let lineItem = null;
+        if (isGraded) {
+          const scoreMax = selectedTier === 1 ? 1 : 100;
+          const tagMap = {
+            1: "syncz-tier1-passfail",
+            2: "syncz-tier2-summative",
+            3: "syncz-tier3-coaching"
+          };
+          lineItem = {
+            label: "Cohesion & Discourse Markers Studio",
+            scoreMaximum: scoreMax,
+            resourceId: "sz_ielts_w2::srlo_cohesion_04",
+            tag: tagMap[selectedTier],
+            gradesReleased: true
+          };
+        }
+
+        const tierTextMap = {
+          0: "Tier 0 (Sovereign Airlock • Zero LMS Projection)",
+          1: "Tier 1 (Blind Proof • Pass/Fail Only)",
+          2: "Tier 2 (Verified Score Only)",
+          3: "Tier 3 (Verified Score + Opt-In Coaching Artifacts)"
+        };
+
+        const contentItem = {
+          type: "ltiResourceLink",
+          title: "Cohesion & Discourse Markers Studio (SYNCZ-SRLO)",
+          text: `Interactive SYNCZ-SRLO • Institutional Projection: ${tierTextMap[selectedTier]} • TTL: ${ttlPolicy}.`,
+          url: "https://lti.synczines.org/launch",
+          iframe: { width: 960, height: 640 },
+          ...(lineItem ? { lineItem } : {}),
+          custom
+        };
+
+        const fullJwt = {
+          iss: lmsTarget === "canvas" ? "canvas_client_104920000000018" : "moodle_client_syncz_01",
+          aud: lmsTarget === "canvas" ? "https://canvas.example.edu" : "https://moodle.example.edu",
+          iat: 1795419600,
+          exp: 1795419900,
+          nonce: "dl_019a9f89-2c10-7e41-a110-8f3a2c0091ab",
+          "https://purl.imsglobal.org/spec/lti/claim/deployment_id": "1:b82229c6e10bcb87beb1f1b287faee560ddc3109",
+          "https://purl.imsglobal.org/spec/lti/claim/message_type": "LtiDeepLinkingResponse",
+          "https://purl.imsglobal.org/spec/lti/claim/version": "1.3.0",
+          "https://purl.imsglobal.org/spec/lti-dl/claim/data": "opaque_platform_state_echoed_verbatim",
+          "https://purl.imsglobal.org/spec/lti-dl/claim/content_items": [contentItem]
+        };
+
+        return { effCap, isGraded, lineItem, custom, fullJwt };
+      }
+
+      function renderAll() {
+        const { effCap, isGraded, lineItem, custom, fullJwt } = computePayload();
+        const isTampered = moodleTampered && lmsTarget === "moodle";
+
+        // Show/hide Canvas placement bar
+        document.getElementById("canvasPlacementGroup").style.display = lmsTarget === "canvas" ? "flex" : "none";
+        document.getElementById("acceptLineItemHint").textContent =
+          canvasPlacement === "assignment" ? "accept_lineitem: true" : "accept_lineitem: false (Locked to Tier 0)";
+
+        // Tamper button visibility & state
+        tamperBtn.style.display = lmsTarget === "moodle" ? "inline-flex" : "none";
+        tamperBtn.classList.toggle("danger-active", isTampered);
+        tamperBtn.innerHTML = isTampered ? "&#10003; Fix Moodle Tamper" : "&#9888; Simulate Moodle Tamper";
+        document.getElementById("tamperAlert").classList.toggle("visible", isTampered);
+
+        // Flow strip updates
+        document.getElementById("st1Sub").textContent =
+          lmsTarget === "canvas" ? "Canvas LtiDeepLinkingRequest" : "Moodle LtiDeepLinkingRequest";
+        document.getElementById("st2Sub").textContent =
+          lmsTarget === "canvas" && canvasPlacement === "rce"
+            ? "accept_lineitem=false -> Locked T0"
+            : `Locks tiers above Ceiling (Tier ${publisherCap})`;
+        document.getElementById("manifestCapBadge").textContent = `Max Tier ${publisherCap}`;
+
+        // Sync active buttons
+        lmsBtns.forEach((b) => b.classList.toggle("active", b.dataset.lms === lmsTarget));
+        capBtns.forEach((b) => b.classList.toggle("active", Number(b.dataset.cap) === publisherCap));
+        placeBtns.forEach((b) => b.classList.toggle("active", b.dataset.placement === canvasPlacement));
+        creditBtns.forEach((b) => b.classList.toggle("active", b.dataset.credit === creditMode));
+        ttlBtns.forEach((b) => b.classList.toggle("active", b.dataset.ttl === ttlPolicy));
+
+        // Update 4 Disclosure Tier cards (lock disallowed tiers)
+        const defaultTags = ["NO LMS DATA", "PASS / FAIL", "DEFAULT", "OPT-IN ARTIFACT"];
+        tierCards.forEach((card) => {
+          const t = Number(card.dataset.tier);
+          const lockedByRce = lmsTarget === "canvas" && canvasPlacement === "rce" && t > 0;
+          const lockedByPub = t > publisherCap;
+          const isDisabled = lockedByRce || lockedByPub;
+
+          card.disabled = isDisabled;
+          card.classList.toggle("selected", t === selectedTier);
+
+          const tagEl = card.querySelector(".tier-tag");
+          if (lockedByRce) {
+            tagEl.textContent = "RCE UNGRADED";
+          } else if (lockedByPub) {
+            tagEl.textContent = "CAPPED BY PUB";
+          } else {
+            tagEl.textContent = defaultTags[t];
+          }
+        });
+
+        // Footer preview text
+        const ttlLabel =
+          ttlPolicy === "term_end_plus_14d"
+            ? "14 days after term end (120d fallback)"
+            : ttlPolicy.startsWith("fixed_days:")
+            ? ttlPolicy.split(":")[1] + " days after first launch"
+            : "Jan 31, 2027 (fixed UTC)";
+        const lmsName = lmsTarget === "canvas" ? "Canvas" : "Moodle";
+        const gradeSummary = !isGraded
+          ? `Creates an ungraded ${lmsName} item (no gradebook column)`
+          : `Creates a ${lineItem.scoreMaximum}-pt graded ${lmsName} ${lmsTarget === "canvas" ? "Assignment" : "Activity"}`;
+        document.getElementById("footerPreviewText").textContent =
+          `${gradeSummary} • Student retains private xAPI drafts • Bridge expires ${ttlLabel}.`;
+
+        // Right Panel: LMS Gradebook Card
+        document.getElementById("lmsCardEyebrow").textContent =
+          lmsTarget === "canvas" ? "CANVAS LMS GRADEBOOK EFFECT" : "MOODLE LMS GRADEBOOK EFFECT";
+
+        if (isTampered) {
+          document.getElementById("lmsCardTitle").textContent = "Blocked: Signature Mismatch";
+          document.getElementById("lmsCardDesc").textContent =
+            "Moodle allows editing custom parameters under Show more. Because syncz_policy_sig fails ed25519 verification, lti.synczines.org rejects unsigned elevation and fails safe to Tier 0.";
+        } else if (!isGraded) {
+          document.getElementById("lmsCardTitle").textContent =
+            lmsTarget === "canvas" ? "Ungraded Module / RCE Item" : "Ungraded External Tool Activity";
+          document.getElementById("lmsCardDesc").textContent =
+            lmsTarget === "canvas"
+              ? "Omitting lineItem prevents Canvas from creating a gradebook column. Ideal for Tier 0 Airlock, optional practice, or Rich Content Editor embeds."
+              : "Omitting lineItem provisions a clean External Tool activity in Moodle without cluttering the course gradebook.";
+        } else {
+          document.getElementById("lmsCardTitle").textContent =
+            lmsTarget === "canvas"
+              ? `Graded ${lineItem.scoreMaximum}-pt Canvas Assignment`
+              : `Moodle ${lineItem.scoreMaximum}-pt AGS Column (FullyGraded)`;
+          document.getElementById("lmsCardDesc").textContent =
+            lmsTarget === "canvas"
+              ? `Canvas automatically provisions a ${lineItem.scoreMaximum}-point Assignment bound to resourceId "${lineItem.resourceId}" for async AGS 2.0 score passback.`
+              : `Moodle creates a ${lineItem.scoreMaximum}-point grade item. The NATS-to-AGS worker submits gradingProgress: "FullyGraded" so Moodle surfaces scores reliably.`;
+        }
+
+        // Right Panel: Student Launch Experience Card
+        if (isTampered) {
+          document.getElementById("stuCardTitle").textContent = "Safe Sovereign-Only Fallback";
+          document.getElementById("stuCardDesc").textContent =
+            "Learner is protected from unauthorized scope creep. SRLO plays normally in Sovereign-Only mode while flagging the teacher to re-sign via the picker.";
+        } else if (selectedTier === 0) {
+          document.getElementById("stuCardTitle").textContent = "Instant Zero-Prompt Airlock";
+          document.getElementById("stuCardDesc").textContent =
+            "Launches immediately with zero LMS data sharing. All CODE+V xAPI statements remain strictly inside the learner's Sovereign Vault and official SYNCZINE.";
+        } else if (creditMode === "optional") {
+          document.getElementById("stuCardTitle").textContent = "Optional Practice (Soft Consent)";
+          document.getElementById("stuCardDesc").textContent =
+            `No fields are marked requiredForCredit. Learners share Tier ${selectedTier} only if their standing defaults allow it; declining carries zero credit warning.`;
+        } else {
+          document.getElementById("stuCardTitle").textContent = `Tier ${selectedTier} Auto-Match or 1-Click Consent`;
+          document.getElementById("stuCardDesc").textContent =
+            `Auto-matches silently if learner defaults approve Tier ${selectedTier}; otherwise shows a non-blocking Consent Receipt Card with a "Launch Privately" Audit escape hatch.`;
+        }
+
+        // Signature Pill
+        const sigPill = document.getElementById("sigStatusPill");
+        sigPill.className = isTampered ? "pill crimson" : "pill emerald";
+        sigPill.textContent = isTampered ? "SIG INVALID (TAMPER)" : "ed25519 VALID";
+
+        // Conditional lineItem box
+        const liBox = document.getElementById("lineItemBox");
+        const liPill = document.getElementById("lineItemPill");
+        const liCode = document.getElementById("lineItemCode");
+        liBox.className = "lineitem-box " + (lineItem ? "present" : "omitted");
+        liPill.className = "pill " + (lineItem ? "emerald" : "amber");
+        liPill.textContent = lineItem ? `INCLUDED (${lineItem.scoreMaximum} PTS)` : "OMITTED FROM JWT";
+        liCode.textContent = lineItem
+          ? JSON.stringify(lineItem, null, 2)
+          : "// lineItem intentionally omitted (Tier 0 Airlock, Optional Practice, or accept_lineitem: false)\n// Result: No gradebook column provisioned in " + lmsName + ".";
+
+        // Render Flat String custom Map Table with flash animation on changed rows
+        const tbody = document.getElementById("kvBody");
+        tbody.innerHTML = "";
+        Object.entries(custom).forEach(([k, v]) => {
+          const tr = document.createElement("tr");
+          const changed = prevCustomMap[k] !== undefined && prevCustomMap[k] !== v;
+          if (changed) tr.classList.add("row-flash");
+          const isBadRow = isTampered && (k === "syncz_req_tier" || k === "syncz_opt_fields" || k === "syncz_policy_sig");
+          tr.innerHTML = `<td class="kv-key">${k}</td><td class="kv-val ${isBadRow ? "tampered" : ""}">"${v}"</td>`;
+          tbody.appendChild(tr);
+        });
+        prevCustomMap = { ...custom };
+
+        // Full JWT JSON
+        document.getElementById("jwtCode").textContent = JSON.stringify(fullJwt, null, 2);
+      }
+
+      // Event Listeners
+      lmsBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          lmsTarget = btn.dataset.lms;
+          if (lmsTarget !== "moodle") moodleTampered = false;
+          renderAll();
+        });
+      });
+
+      capBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          publisherCap = Number(btn.dataset.cap);
+          renderAll();
+        });
+      });
+
+      placeBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          canvasPlacement = btn.dataset.placement;
+          renderAll();
+        });
+      });
+
+      tierCards.forEach((card) => {
+        card.addEventListener("click", () => {
+          if (card.disabled) return;
+          selectedTier = Number(card.dataset.tier);
+          moodleTampered = false;
+          renderAll();
+        });
+      });
+
+      creditBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          creditMode = btn.dataset.credit;
+          renderAll();
+        });
+      });
+
+      ttlBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          ttlPolicy = btn.dataset.ttl;
+          renderAll();
+        });
+      });
+
+      tamperBtn.addEventListener("click", () => {
+        moodleTampered = !moodleTampered;
+        renderAll();
+      });
+
+      embedBtn.addEventListener("click", () => {
+        const pill = document.getElementById("postStatusPill");
+        const liBox = document.getElementById("lineItemBox");
+        pill.className = "pill amber";
+        pill.textContent = "SIGNING JWT...";
+
+        const steps = ["st1", "st2", "st3", "st4"];
+        steps.forEach((id, i) => {
+          setTimeout(() => {
+            const el = document.getElementById(id);
+            const orig = el.getAttribute("stroke-width");
+            el.setAttribute("stroke-width", "3.2");
+            setTimeout(() => el.setAttribute("stroke-width", orig), 380);
+          }, i * 210);
+        });
+
+        setTimeout(() => {
+          pill.className = moodleTampered && lmsTarget === "moodle" ? "pill crimson" : "pill emerald";
+          pill.textContent =
+            moodleTampered && lmsTarget === "moodle"
+              ? "TAMPER DETECTED"
+              : `POSTED TO ${lmsTarget.toUpperCase()} (26s)`;
+          liBox.classList.remove("box-flash");
+          void liBox.offsetWidth;
+          liBox.classList.add("box-flash");
+        }, 900);
+      });
+
+      tabBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const target = btn.dataset.tab;
+          tabBtns.forEach((b) => {
+            const active = b === btn;
+            b.classList.toggle("active", active);
+            b.setAttribute("aria-selected", String(active));
+          });
+          document.getElementById("pane-kv").classList.toggle("active", target === "kv");
+          document.getElementById("pane-jwt").classList.toggle("active", target === "jwt");
+        });
+      });
+
+      copyJwtBtn.addEventListener("click", () => {
+        const text = document.getElementById("jwtCode").textContent;
+        const done = () => {
+          copyJwtBtn.innerHTML = "&#10003; Copied JWT!";
+          setTimeout(() => {
+            copyJwtBtn.innerHTML = "&#128203; Copy JWT JSON";
+          }, 1600);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done).catch(() => {
+            fallbackCopy(text);
+            done();
+          });
+        } else {
+          fallbackCopy(text);
+          done();
+        }
+      });
+
+      function fallbackCopy(str) {
+        const ta = document.createElement("textarea");
+        ta.value = str;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+      }
+
+      animBtn.addEventListener("click", () => {
+        isPaused = !isPaused;
+        appRoot.classList.toggle("paused", isPaused);
+        const svg = document.getElementById("flowSvg");
+        if (isPaused) {
+          svg.pauseAnimations();
+          animBtn.innerHTML = `<span>&#9654;</span> Resume Flow`;
+        } else {
+          svg.unpauseAnimations();
+          animBtn.innerHTML = `<span>&#10074;&#10074;</span> Pause Flow`;
+        }
+      });
+
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light` : `<span>&#9790;</span> Dark`;
+      });
+
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
