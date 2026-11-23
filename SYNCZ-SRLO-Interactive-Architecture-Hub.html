@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SYNCZINES &amp; SYNCZ-SRLO — Interactive Architecture Hub</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg-elevated: #141a23;
+      --bg-card: #18202c;
+      --bg-canvas: #0b0f15;
+      --border: #283344;
+      --border-strong: #394860;
+      --text: #eef2f7;
+      --text-muted: #9aa7b8;
+      --text-dim: #6f7d91;
+
+      --gold: #d4af37;
+      --gold-soft: rgba(212, 175, 55, 0.14);
+      --emerald: #2ec27e;
+      --emerald-soft: rgba(46, 194, 126, 0.14);
+      --amber: #f0a830;
+      --amber-soft: rgba(240, 168, 48, 0.15);
+      --crimson: #ef5350;
+      --crimson-soft: rgba(239, 83, 80, 0.15);
+      --blue: #58a6ff;
+      --blue-soft: rgba(88, 166, 255, 0.14);
+      --violet: #a78bfa;
+      --violet-soft: rgba(167, 139, 250, 0.15);
+
+      --hex-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48.5' viewBox='0 0 56 48.5'%3E%3Cpath d='M28 0 L56 16.16 L56 32.33 L28 48.5 L0 32.33 L0 16.16 Z' fill='none' stroke='rgba(212,175,55,0.055)' stroke-width='1'/%3E%3C/svg%3E");
+      --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+      --radius: 12px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #f6f1e6;
+      --bg-elevated: #fdfaf2;
+      --bg-card: #ffffff;
+      --bg-canvas: #f2ecde;
+      --border: #dfd6c3;
+      --border-strong: #c8bca4;
+      --text: #1c222b;
+      --text-muted: #515d6e;
+      --text-dim: #7b8696;
+
+      --gold: #9a7411;
+      --gold-soft: rgba(154, 116, 17, 0.12);
+      --emerald: #138a53;
+      --emerald-soft: rgba(19, 138, 83, 0.12);
+      --amber: #b86f00;
+      --amber-soft: rgba(184, 111, 0, 0.13);
+      --crimson: #c62828;
+      --crimson-soft: rgba(198, 40, 40, 0.12);
+      --blue: #1f6feb;
+      --blue-soft: rgba(31, 111, 235, 0.11);
+      --violet: #6d28d9;
+      --violet-soft: rgba(109, 40, 217, 0.11);
+
+      --hex-svg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='48.5' viewBox='0 0 56 48.5'%3E%3Cpath d='M28 0 L56 16.16 L56 32.33 L28 48.5 L0 32.33 L0 16.16 Z' fill='none' stroke='rgba(154,116,17,0.08)' stroke-width='1'/%3E%3C/svg%3E");
+      --shadow: 0 10px 26px rgba(34, 28, 16, 0.08);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      background-image: var(--hex-svg);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      padding: 18px 16px 36px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .app {
+      max-width: 1260px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header */
+    .hero {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      max-width: 720px;
+    }
+
+    .hex-badge {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+
+    .brand-eyebrow {
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .brand h1 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.25;
+    }
+
+    .brand p {
+      font-size: 0.83rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.77rem;
+      font-weight: 700;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      border-color: var(--gold);
+      color: var(--text);
+    }
+
+    .btn.primary {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn.primary:hover {
+      filter: brightness(1.1);
+    }
+
+    .btn.solid-gold {
+      background: linear-gradient(135deg, var(--gold), #b99324);
+      border-color: var(--gold);
+      color: #10141b;
+    }
+
+    .btn.solid-gold:hover {
+      filter: brightness(1.07);
+      color: #10141b;
+    }
+
+    /* Architectural Reading Path Strip */
+    .path-strip {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 11px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .path-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .path-step {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: var(--bg-canvas);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .path-step:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .path-arrow {
+      color: var(--gold);
+      font-weight: 800;
+      user-select: none;
+    }
+
+    /* Filter & Search Bar */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .segmented {
+      display: inline-flex;
+      flex-wrap: wrap;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .filter-btn {
+      appearance: none;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 11px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .filter-btn:hover { color: var(--text); }
+
+    .filter-btn.active {
+      background: var(--gold-soft);
+      color: var(--gold);
+      box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.4);
+    }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      max-width: 340px;
+      min-width: 210px;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 7px 11px;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.79rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .search-input:focus {
+      border-color: var(--gold);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* Card Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+      position: relative;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-strong);
+    }
+
+    .card-accent {
+      position: absolute;
+      top: 0;
+      left: 16px;
+      right: 16px;
+      height: 2.5px;
+      border-radius: 0 0 4px 4px;
+    }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .card-index {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .num-pill {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: var(--gold-soft);
+      color: var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+    }
+
+    .cat-pill {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .cat-pill.emerald { background: var(--emerald-soft); color: var(--emerald); }
+    .cat-pill.blue { background: var(--blue-soft); color: var(--blue); }
+    .cat-pill.amber { background: var(--amber-soft); color: var(--amber); }
+    .cat-pill.violet { background: var(--violet-soft); color: var(--violet); }
+    .cat-pill.crimson { background: var(--crimson-soft); color: var(--crimson); }
+    .cat-pill.gold { background: var(--gold-soft); color: var(--gold); }
+
+    .file-tag {
+      font-family: var(--font-mono);
+      font-size: 0.69rem;
+      color: var(--text-dim);
+      background: var(--bg-canvas);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 2px 7px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .feature-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .feat {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .card-actions .btn {
+      font-size: 0.74rem;
+      padding: 6px 10px;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--bg-elevated);
+      border: 1px dashed var(--border-strong);
+      border-radius: var(--radius);
+      color: var(--text-muted);
+    }
+
+    /* Footer */
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    .footer code {
+      font-family: var(--font-mono);
+      color: var(--gold);
+    }
+
+    /* Live Preview Stage Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 8, 13, 0.82);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 14px;
+      z-index: 1000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-shell {
+      width: min(1320px, 100%);
+      height: min(92vh, 920px);
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold);
+      border-radius: 14px;
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.65);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .modal-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 11px 15px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .modal-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .modal-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-frame-wrap {
+      flex: 1;
+      background: var(--bg-canvas);
+      position: relative;
+    }
+
+    .modal-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: var(--bg-canvas);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--emerald);
+      color: var(--emerald);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 10px 14px;
+      border-radius: 9px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: all 0.22s ease;
+      z-index: 1100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 880px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 10px 10px 24px; }
+      .hero { padding: 14px; }
+      .search-wrap { max-width: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Hero Header -->
+    <header class="hero">
+      <div class="brand">
+        <div class="hex-badge" aria-hidden="true">
+          <svg viewBox="0 0 46 46" width="46" height="46">
+            <polygon points="23,2 42,12.5 42,33.5 23,44 4,33.5 4,12.5" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="2" />
+            <text x="23" y="28" text-anchor="middle" fill="var(--gold)" font-size="14" font-weight="800" font-family="sans-serif">Æ</text>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-eyebrow">SOVRÆG LABS &bull; ALCHEMOSAIC ARCHITECTURE SUITE</div>
+          <h1>SYNCZINES &amp; SYNCZ-SRLO Interactive Architecture Hub</h1>
+          <p>Six standalone simulations covering AFFiNE/BlockSuite licensing, polymorphic xAPI/NATS.io pipelines, embed contracts, LTI 1.3 edge adapters, and sovereign learner policy gates.</p>
+        </div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="btn primary" id="copyAllObsidianBtn" title="Copy all 6 collapsed Obsidian iframe callouts at once">
+          &#128203; Copy All 6 Obsidian Callouts
+        </button>
+        <button class="btn" id="themeToggleBtn" title="Toggle Sovereign Dark / Warm Parchment Light">
+          <span>&#9788;</span> Light Mode
+        </button>
+      </div>
+    </header>
+
+    <!-- Recommended Reading Sequence Strip -->
+    <section class="path-strip" aria-label="Recommended Architecture Walkthrough Order">
+      <div class="path-flow">
+        <span style="font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--gold); margin-right: 4px;">Walkthrough Order:</span>
+        <button class="path-step" data-jump="0">01 Licensing</button>
+        <span class="path-arrow">&rarr;</span>
+        <button class="path-step" data-jump="1">02 Polymorphic NATS</button>
+        <span class="path-arrow">&rarr;</span>
+        <button class="path-step" data-jump="2">03 Embed Contract</button>
+        <span class="path-arrow">&rarr;</span>
+        <button class="path-step" data-jump="3">04 Hybrid LTI Edge</button>
+        <span class="path-arrow">&rarr;</span>
+        <button class="path-step" data-jump="4">05 Sovereign Gate</button>
+        <span class="path-arrow">&rarr;</span>
+        <button class="path-step" data-jump="5">06 Deep Linking 2.0</button>
+      </div>
+      <span style="font-size: 0.71rem; color: var(--text-dim);">Click any step to launch live preview</span>
+    </section>
+
+    <!-- Filter & Search Bar -->
+    <section class="toolbar" aria-label="Filter and Search Widgets">
+      <div class="segmented" role="tablist" aria-label="Filter by architectural layer">
+        <button class="filter-btn active" data-filter="all" role="tab" aria-selected="true">All (6)</button>
+        <button class="filter-btn" data-filter="licensing" role="tab" aria-selected="false">Licensing &amp; Hosts</button>
+        <button class="filter-btn" data-filter="embed" role="tab" aria-selected="false">Embed &amp; Telemetry</button>
+        <button class="filter-btn" data-filter="lti" role="tab" aria-selected="false">LTI 1.3 &amp; Sovereignty</button>
+      </div>
+
+      <div class="search-wrap">
+        <input type="search" id="searchInput" class="search-input" placeholder="Search NATS, CSP, UCAN, Moodle, BlockSuite..." aria-label="Search interactive architecture widgets" />
+      </div>
+    </section>
+
+    <!-- Widget Cards Grid -->
+    <main class="grid" id="cardGrid" aria-live="polite"></main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>Published base URL: <code>https://anvilnexus.github.io/aicontent/</code></span>
+      <span>Self-contained HTML5 &bull; Zero external CDN dependencies &bull; Ready for Obsidian &amp; GitHub Pages</span>
+    </footer>
+  </div>
+
+  <!-- Live Preview Stage Modal -->
+  <div class="modal-backdrop" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-shell">
+      <div class="modal-bar">
+        <div class="modal-title-group">
+          <span class="num-pill" id="modalNum">01</span>
+          <h2 class="modal-title" id="modalTitle">Widget Preview</h2>
+        </div>
+
+        <div class="modal-controls">
+          <button class="btn" id="prevModalBtn" title="Previous widget (Left Arrow)">&larr; Prev</button>
+          <button class="btn" id="nextModalBtn" title="Next widget (Right Arrow)">Next &rarr;</button>
+          <button class="btn primary" id="modalCopyBtn">&#128203; Copy Obsidian Callout</button>
+          <a class="btn" id="modalOpenLink" href="#" target="_blank" rel="noopener noreferrer">&#8599; Open Tab</a>
+          <button class="btn" id="closeModalBtn" title="Close preview (Esc)">&#10005; Close</button>
+        </div>
+      </div>
+
+      <div class="modal-frame-wrap">
+        <iframe id="modalFrame" class="modal-frame" title="Interactive Architecture Widget Preview" allowfullscreen></iframe>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copy Confirmation Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      const BASE_URL = "https://anvilnexus.github.io/aicontent/";
+
+      const WIDGETS = [
+        {
+          num: "01",
+          file: "affine-blocksuite-boundary.html",
+          height: 740,
+          category: "licensing",
+          categoryLabel: "Licensing & Boundary",
+          badgeClass: "crimson",
+          accentColor: "var(--crimson)",
+          calloutTitle: "Architectural & Licensing Boundary: BlockSuite vs. Full AFFiNE Stack",
+          title: "AFFiNE & BlockSuite Architectural & Licensing Boundary",
+          desc: "Compares embedding MIT-licensed BlockSuite with a custom Yjs backend against adopting the full AFFiNE open-core stack (MPL 2.0, 10-seat EE cap, and Commercial OEM boundary).",
+          features: ["3-Mode Path Explorer", "y-octo Transitive Leak Test", "SBOM Risk Metrics", "Node Legal Inspector"]
+        },
+        {
+          num: "02",
+          file: "syncz-srlo-polymorphic-pipeline.html",
+          height: 780,
+          category: "embed",
+          categoryLabel: "Polymorphic Pipeline",
+          badgeClass: "emerald",
+          accentColor: "var(--emerald)",
+          calloutTitle: "Polymorphic SYNCZ-SRLO Runtime & xAPI / NATS.io Telemetry Pipeline",
+          title: "Polymorphic SYNCZ-SRLO Runtime Across Second Brains",
+          desc: "Demonstrates inverting the integration: learners run SYNCZ-SRLO inside their own AFFiNE, Obsidian, or Notion workspace while streaming deduplicated xAPI 2.0 statements over NATS.io JetStream.",
+          features: ["AFFiNE / Obsidian / Notion Switcher", "Live UUIDv7 xAPI Emitter", "HTTPS Outbox Flush", "Nats-Msg-Id Dedup Test"]
+        },
+        {
+          num: "03",
+          file: "syncz-srlo-embed-contract.html",
+          height: 820,
+          category: "embed",
+          categoryLabel: "Embed Contract",
+          badgeClass: "blue",
+          accentColor: "var(--blue)",
+          calloutTitle: "Full SYNCZ-SRLO Embed Contract Lifecycle (CSP, Fragment Auth, Resize & IndexedDB Outbox)",
+          title: "Full SYNCZ-SRLO Host-Agnostic Embed Contract Lifecycle",
+          desc: "End-to-end 6-stage protocol visualizer covering desktop-scheme-safe CSP headers, Tick-0 URL fragment scrubbing, 250ms dual-mode postMessage resize, and a 5-state IndexedDB xAPI outbox with DLQ recovery.",
+          features: ["Live Tick-0 Fragment Scrub", "Passive vs. Active Resize", "5-State IDB & DLQ Simulator", "Wire Artifact Inspector"]
+        },
+        {
+          num: "04",
+          file: "syncz-srlo-hybrid-lti-topology.html",
+          height: 800,
+          category: "lti",
+          categoryLabel: "Hybrid LTI Topology",
+          badgeClass: "violet",
+          accentColor: "var(--violet)",
+          calloutTitle: "Hybrid Core + Thin LTI 1.3 Edge Adapter Topology",
+          title: "Hybrid Core + Thin LTI 1.3 Edge Adapter Topology",
+          desc: "Illustrates how one 100% LTI-agnostic SYNCZ-SRLO player serves passive PKM Second Brains and institutional LMS gradebooks via an isolated edge adapter and async NATS-to-AGS 2.0 bridge worker.",
+          features: ["3-Way Topology Switcher", "PKM Direct Launch Trace", "LMS + Async AGS Trace", "Trust-Zone Inspector"]
+        },
+        {
+          num: "05",
+          file: "syncz-srlo-sovereign-policy-gate.html",
+          height: 860,
+          category: "lti",
+          categoryLabel: "Sovereign Governance",
+          badgeClass: "gold",
+          accentColor: "var(--gold)",
+          calloutTitle: "Three-Tier Sovereign Policy Intersection & Thin LTI Projection Gate",
+          title: "Three-Tier Sovereign Policy Intersection & Projection Gate",
+          desc: "Interactive simulator for Publisher Ceiling ∩ Institution Request ∩ Sovereign Learner Consent—featuring non-blocking negotiated launch prompts, instant LMS bridge revocation, and reverse disclosure receipts.",
+          features: ["Live Tier 0–3 Intersection", "Negotiated Consent Bar", "Instant Bridge Revocation", "Live syncz.policy.v1 JSON"]
+        },
+        {
+          num: "06",
+          file: "syncz-srlo-lti-deep-linking-picker.html",
+          height: 880,
+          category: "lti",
+          categoryLabel: "LTI Deep Linking 2.0",
+          badgeClass: "amber",
+          accentColor: "var(--amber)",
+          calloutTitle: "SYNCZ-SRLO LTI Deep Linking 2.0: 30-Second Teacher Policy Picker & Live Payload Inspector",
+          title: "LTI Deep Linking 2.0: 30-Second Teacher Policy Picker",
+          desc: "Simulates the Canvas and Moodle teacher embed flow with live Publisher Ceiling clamping, Canvas RCE accept_lineitem locking, Moodle anti-tamper signature verification, and copyable signed JWT output.",
+          features: ["Canvas vs. Moodle Quirks", "Live Publisher Cap Lock", "Moodle Tamper Guard Test", "Copy Signed JWT JSON"]
+        }
+      ];
+
+      let activeFilter = "all";
+      let searchTerm = "";
+      let activeModalIdx = 0;
+      let toastTimer = null;
+
+      const cardGrid = document.getElementById("cardGrid");
+      const filterBtns = document.querySelectorAll(".filter-btn");
+      const searchInput = document.getElementById("searchInput");
+      const themeBtn = document.getElementById("themeToggleBtn");
+      const copyAllBtn = document.getElementById("copyAllObsidianBtn");
+      const modal = document.getElementById("previewModal");
+      const modalFrame = document.getElementById("modalFrame");
+      const modalNum = document.getElementById("modalNum");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalOpenLink = document.getElementById("modalOpenLink");
+      const modalCopyBtn = document.getElementById("modalCopyBtn");
+      const prevModalBtn = document.getElementById("prevModalBtn");
+      const nextModalBtn = document.getElementById("nextModalBtn");
+      const closeModalBtn = document.getElementById("closeModalBtn");
+      const toastEl = document.getElementById("toast");
+
+      function buildObsidianCallout(w) {
+        const fullUrl = BASE_URL + w.file;
+        return [
+          `> [!INFO]- ${w.num}. ${w.calloutTitle}`,
+          `> <iframe src="${fullUrl}" width="100%" height="${w.height}" style="border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 12px; background: #0d1117;" loading="lazy" allowfullscreen></iframe>`,
+          `> `,
+          `> [Open Interactive Widget in Browser](${fullUrl})`
+        ].join("\n");
+      }
+
+      function showToast(message) {
+        toastEl.textContent = message;
+        toastEl.classList.add("show");
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toastEl.classList.remove("show"), 2200);
+      }
+
+      function copyText(text, successMsg) {
+        const fallback = () => {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand("copy");
+          ta.remove();
+          showToast(successMsg);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => showToast(successMsg)).catch(fallback);
+        } else {
+          fallback();
+        }
+      }
+
+      function openPreview(index) {
+        activeModalIdx = (index + WIDGETS.length) % WIDGETS.length;
+        const w = WIDGETS[activeModalIdx];
+        modalNum.textContent = w.num;
+        modalTitle.textContent = w.title;
+        modalOpenLink.href = "./" + w.file;
+        modalFrame.src = "./" + w.file;
+        modal.classList.add("open");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closePreview() {
+        modal.classList.remove("open");
+        modalFrame.src = "about:blank";
+        document.body.style.overflow = "";
+      }
+
+      function renderCards() {
+        const q = searchTerm.trim().toLowerCase();
+        const filtered = WIDGETS.filter((w) => {
+          const matchCat = activeFilter === "all" || w.category === activeFilter;
+          const haystack = [w.num, w.title, w.desc, w.file, w.categoryLabel, ...w.features].join(" ").toLowerCase();
+          const matchQ = !q || haystack.includes(q);
+          return matchCat && matchQ;
+        });
+
+        cardGrid.innerHTML = "";
+
+        if (filtered.length === 0) {
+          cardGrid.innerHTML = `<div class="empty-state">No architecture widgets matched "<strong>${searchTerm.replace(/</g, "&lt;")}</strong>". Clear the search filter to view all 6 components.</div>`;
+          return;
+        }
+
+        filtered.forEach((w) => {
+          const realIndex = WIDGETS.indexOf(w);
+          const article = document.createElement("article");
+          article.className = "card";
+          article.innerHTML = `
+            <div class="card-accent" style="background: ${w.accentColor};"></div>
+            <div class="card-top">
+              <div class="card-index">
+                <span class="num-pill">${w.num}</span>
+                <span class="cat-pill ${w.badgeClass}">${w.categoryLabel}</span>
+              </div>
+              <span class="file-tag" title="${w.file}">${w.file}</span>
+            </div>
+            <h2 class="card-title">${w.title}</h2>
+            <p class="card-desc">${w.desc}</p>
+            <div class="feature-pills">
+              ${w.features.map((f) => `<span class="feat">${f}</span>`).join("")}
+            </div>
+            <div class="card-actions">
+              <button class="btn solid-gold" data-preview="${realIndex}">&#9654; Live Preview</button>
+              <a class="btn" href="./${w.file}" target="_blank" rel="noopener noreferrer">&#8599; Launch Standalone</a>
+              <button class="btn primary" data-copy="${realIndex}">&#128203; Obsidian Callout</button>
+            </div>
+          `;
+          cardGrid.appendChild(article);
+        });
+
+        cardGrid.querySelectorAll("[data-preview]").forEach((btn) => {
+          btn.addEventListener("click", () => openPreview(Number(btn.dataset.preview)));
+        });
+
+        cardGrid.querySelectorAll("[data-copy]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const w = WIDGETS[Number(btn.dataset.copy)];
+            copyText(buildObsidianCallout(w), `Copied Obsidian callout for ${w.num} (${w.file})`);
+          });
+        });
+      }
+
+      // Filter buttons
+      filterBtns.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeFilter = btn.dataset.filter;
+          filterBtns.forEach((b) => {
+            const isActive = b === btn;
+            b.classList.toggle("active", isActive);
+            b.setAttribute("aria-selected", String(isActive));
+          });
+          renderCards();
+        });
+      });
+
+      // Walkthrough step shortcuts
+      document.querySelectorAll("[data-jump]").forEach((btn) => {
+        btn.addEventListener("click", () => openPreview(Number(btn.dataset.jump)));
+      });
+
+      // Search
+      searchInput.addEventListener("input", (e) => {
+        searchTerm = e.target.value;
+        renderCards();
+      });
+
+      // Copy All 6 Obsidian Callouts
+      copyAllBtn.addEventListener("click", () => {
+        const allBlock = WIDGETS.map(buildObsidianCallout).join("\n\n");
+        copyText(allBlock, "Copied all 6 collapsed Obsidian callouts to clipboard!");
+      });
+
+      // Modal Controls
+      prevModalBtn.addEventListener("click", () => openPreview(activeModalIdx - 1));
+      nextModalBtn.addEventListener("click", () => openPreview(activeModalIdx + 1));
+      closeModalBtn.addEventListener("click", closePreview);
+      modalCopyBtn.addEventListener("click", () => {
+        const w = WIDGETS[activeModalIdx];
+        copyText(buildObsidianCallout(w), `Copied Obsidian callout for ${w.num} (${w.file})`);
+      });
+
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closePreview();
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (!modal.classList.contains("open")) return;
+        if (e.key === "Escape") closePreview();
+        if (e.key === "ArrowLeft") openPreview(activeModalIdx - 1);
+        if (e.key === "ArrowRight") openPreview(activeModalIdx + 1);
+      });
+
+      // Theme Toggle
+      themeBtn.addEventListener("click", () => {
+        const html = document.documentElement;
+        const next = html.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        html.setAttribute("data-theme", next);
+        themeBtn.innerHTML = next === "dark" ? `<span>&#9788;</span> Light Mode` : `<span>&#9790;</span> Dark Mode`;
+      });
+
+      renderCards();
+    })();
+  </script>
+</body>
+</html>
