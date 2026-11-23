@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SOVRÆGIS / SOVRÆG LABS — Empirical Hardware & Statistical Bounds (Edge AI, Usability & Privacy)</title>
+<style>
+  :root {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, sans-serif;
+    --font-serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    --scale: 1;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --transition: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* DARK MODE: Charcoal, Deep Emerald, Brushed Gold */
+  [data-theme="dark"] {
+    --bg: #0c1112;
+    --bg-elev: #121a1c;
+    --bg-card: #162124;
+    --bg-card-hover: #1c2a2e;
+    --bg-subtle: #0f1618;
+    --border: rgba(212, 175, 95, 0.22);
+    --border-strong: rgba(212, 175, 95, 0.48);
+    --text: #edf2f0;
+    --text-muted: #9eb2ad;
+    --text-faint: #6c827d;
+    --gold: #d9b25f;
+    --gold-bright: #f0cf82;
+    --gold-soft: rgba(217, 178, 95, 0.14);
+    --emerald: #2ea87e;
+    --emerald-soft: rgba(46, 168, 126, 0.16);
+    --teal: #38bdf8;
+    --teal-soft: rgba(56, 189, 248, 0.15);
+    --violet: #a78bfa;
+    --violet-soft: rgba(167, 139, 250, 0.16);
+    --amber: #f59e0b;
+    --amber-soft: rgba(245, 158, 11, 0.16);
+    --rose: #fb7185;
+    --rose-soft: rgba(251, 113, 133, 0.16);
+    --shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+    --svg-grid: rgba(212, 175, 95, 0.13);
+    --svg-track: #1b282b;
+  }
+
+  /* LIGHT MODE: Antique Parchment, Warm Cream, Forest Ink & Burnished Gold */
+  [data-theme="light"] {
+    --bg: #f6f1e6;
+    --bg-elev: #fbf8f1;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f3ecdc;
+    --bg-subtle: #efe7d6;
+    --border: rgba(133, 98, 35, 0.24);
+    --border-strong: rgba(133, 98, 35, 0.52);
+    --text: #182622;
+    --text-muted: #4a5e58;
+    --text-faint: #6f807a;
+    --gold: #9a6e1c;
+    --gold-bright: #7d5610;
+    --gold-soft: rgba(154, 110, 28, 0.12);
+    --emerald: #13795b;
+    --emerald-soft: rgba(19, 121, 91, 0.12);
+    --teal: #0369a1;
+    --teal-soft: rgba(3, 105, 161, 0.11);
+    --violet: #6d28d9;
+    --violet-soft: rgba(109, 40, 217, 0.11);
+    --amber: #b45309;
+    --amber-soft: rgba(180, 83, 9, 0.12);
+    --rose: #be123c;
+    --rose-soft: rgba(190, 18, 60, 0.11);
+    --shadow: 0 8px 22px rgba(24, 38, 34, 0.08);
+    --svg-grid: rgba(133, 98, 35, 0.16);
+    --svg-track: #e6decb;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale));
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .app {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 18px 20px 28px;
+  }
+
+  body.embed-mode .app {
+    padding: 10px 12px 18px;
+    max-width: 100%;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px;
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .topbar::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--rose), var(--gold), var(--emerald));
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+  }
+  .brand-title {
+    font-family: var(--font-serif);
+    font-size: 1.12rem;
+    font-weight: 700;
+    letter-spacing: 0.015em;
+  }
+  .brand-title span { color: var(--gold); }
+  .brand-sub {
+    font-size: 0.77rem;
+    color: var(--text-muted);
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn {
+    background: var(--bg-card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all var(--transition);
+    font-family: inherit;
+  }
+  .btn:hover {
+    border-color: var(--gold);
+    background: var(--bg-card-hover);
+    color: var(--gold-bright);
+  }
+  .btn.primary {
+    background: var(--gold-soft);
+    border-color: var(--border-strong);
+    color: var(--gold-bright);
+  }
+  .btn.active {
+    background: var(--gold);
+    color: #0c1112;
+    border-color: var(--gold);
+  }
+  [data-theme="light"] .btn.active { color: #ffffff; }
+
+  /* HEADLINE METRIC STRIP */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  @media (max-width: 880px) {
+    .kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .kpi-card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .kpi-card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .kpi-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .kpi-val {
+    font-family: var(--font-serif);
+    font-size: 1.42rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+  .kpi-foot {
+    font-size: 0.72rem;
+    color: var(--text-faint);
+    margin-top: 3px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+  }
+  .tab-btn {
+    padding: 8px 13px;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.83rem;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--text); background: var(--bg-elev); border-color: var(--border); }
+  .tab-btn.active { color: var(--gold-bright); background: var(--gold-soft); border-color: var(--border-strong); }
+  .tab-pill {
+    font-size: 0.68rem;
+    padding: 1px 6px;
+    border-radius: 99px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 180ms ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+
+  /* LAYOUT */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1.35fr 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .grid-eq {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    align-items: start;
+  }
+  @media (max-width: 940px) {
+    .grid-2, .grid-eq { grid-template-columns: 1fr; }
+  }
+  .card {
+    background: var(--bg-elev);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .card-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    font-weight: 700;
+  }
+  .card-sub {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+  }
+
+  .svg-box {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px;
+  }
+  .svg-box svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-width: 560px;
+  }
+
+  /* SLIDERS & CONTROLS */
+  .control-group {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 11px 12px;
+    margin-bottom: 10px;
+  }
+  .control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+  }
+  .control-row strong { color: var(--gold-bright); font-family: var(--font-mono); }
+  input[type="range"] {
+    width: 100%;
+    accent-color: var(--gold);
+    cursor: pointer;
+  }
+  .preset-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+
+  /* TAGS & BADGES */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 99px;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+  }
+  .tag-pass { background: var(--emerald-soft); color: var(--emerald); border-color: rgba(46,168,126,0.4); }
+  .tag-warn { background: var(--amber-soft); color: var(--amber); border-color: rgba(245,158,11,0.4); }
+  .tag-fail { background: var(--rose-soft); color: var(--rose); border-color: rgba(251,113,133,0.4); }
+  .tag-info { background: var(--teal-soft); color: var(--teal); border-color: rgba(56,189,248,0.4); }
+  .tag-gold { background: var(--gold-soft); color: var(--gold-bright); border-color: var(--border-strong); }
+
+  /* TIER CARDS */
+  .tier-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .tier-row {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+  .tier-row:hover { border-color: var(--border-strong); }
+  .tier-row.selected {
+    border-color: var(--gold);
+    background: var(--gold-soft);
+  }
+  .tier-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .tier-title { font-weight: 700; font-size: 0.86rem; }
+  .tier-desc { font-size: 0.77rem; color: var(--text-muted); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 9px 11px;
+  }
+  .stat-box label {
+    display: block;
+    font-size: 0.67rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-faint);
+  }
+  .stat-box .val {
+    font-family: var(--font-mono);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .callout-box {
+    padding: 11px 13px;
+    border-radius: var(--radius-sm);
+    border-left: 3px solid var(--gold);
+    background: var(--bg-card);
+    font-size: 0.79rem;
+    color: var(--text-muted);
+    margin-top: 10px;
+  }
+  .callout-box strong { color: var(--text); }
+
+  /* TABLES & GATE CARDS */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.79rem;
+  }
+  .data-table th, .data-table td {
+    text-align: left;
+    padding: 8px 9px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .data-table th {
+    font-size: 0.69rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: var(--bg-subtle);
+  }
+  .gate-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+    gap: 10px;
+  }
+  .gate-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gate-card.y2 { border-style: dashed; }
+
+  /* MODAL */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: none;
+    place-items: center;
+    padding: 16px;
+    z-index: 999;
+  }
+  .modal-backdrop.open { display: grid; }
+  .modal {
+    background: var(--bg-elev);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    max-width: 680px;
+    width: 100%;
+    padding: 18px;
+    box-shadow: var(--shadow);
+  }
+  .code-block {
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 220px;
+    overflow-y: auto;
+    margin: 8px 0 12px;
+  }
+  .footer-note {
+    margin-top: 14px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.73rem;
+    color: var(--text-faint);
+  }
+  .toast {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    background: var(--gold);
+    color: #0c1112;
+    font-weight: 700;
+    font-size: 0.78rem;
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: all 200ms ease;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 44 44" width="40" height="40" aria-hidden="true">
+        <polygon points="22,2 40,12 40,32 22,42 4,32 4,12" fill="none" stroke="var(--gold)" stroke-width="2"/>
+        <polygon points="22,8 34,15 34,29 22,36 10,29 10,15" fill="var(--gold-soft)" stroke="var(--emerald)" stroke-width="1.2"/>
+        <text x="22" y="26" text-anchor="middle" fill="var(--gold-bright)" font-family="Georgia, serif" font-size="13" font-weight="700">Æ</text>
+      </svg>
+      <div>
+        <div class="brand-title">SOVR<span>Æ</span>GIS — Empirical Hardware &amp; Statistical Bounds Lab</div>
+        <div class="brand-sub">Calibrating Tiered Edge AI (42× Mobile Cliff), Gate 5 Wilson Bounds &amp; Factor 52 Local Differential Privacy</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="btn" id="btnFontDec" title="Decrease font size">A−</button>
+      <button class="btn" id="btnFontInc" title="Increase font size">A+</button>
+      <button class="btn" id="btnTheme" title="Toggle Light / Dark theme">☀ Light</button>
+      <button class="btn primary" id="btnExport">⬇ Obsidian &amp; Report</button>
+    </div>
+  </header>
+
+  <!-- HEADLINE METRICS -->
+  <section class="kpi-strip">
+    <div class="kpi-card" data-jump="edge">
+      <div class="kpi-label"><span>Edge AI Decode Cliff</span><span class="tag tag-fail">42× Gap</span></div>
+      <div class="kpi-val">72 → 1.7 <span style="font-size:0.78rem;color:var(--text-muted);">tok/s</span></div>
+      <div class="kpi-foot">OnePlus 15 vs. Redmi 9A (Qwen3-0.6B 4-bit CPU)</div>
+    </div>
+    <div class="kpi-card" data-jump="usability">
+      <div class="kpi-label"><span>Gate 5 Uncertainty (n=20)</span><span class="tag tag-warn">58.4% LCB</span></div>
+      <div class="kpi-val">16/20 <span style="font-size:0.78rem;color:var(--text-muted);">→ [58.4%, 91.9%]</span></div>
+      <div class="kpi-foot">Production certification needs n≥50 (≥42/50)</div>
+    </div>
+    <div class="kpi-card" data-jump="privacy">
+      <div class="kpi-label"><span>LDP Noise at Pilot Scale</span><span class="tag tag-fail">±33.0 pp MoE</span></div>
+      <div class="kpi-val">±16.8 pp <span style="font-size:0.78rem;color:var(--text-muted);">SE (n=40, ε=1)</span></div>
+      <div class="kpi-foot">Reserve formal LDP for n ≥ 1,000 (±3.9 pp MoE)</div>
+    </div>
+    <div class="kpi-card" data-jump="gates">
+      <div class="kpi-label"><span>Hardened Charter Gates</span><span class="tag tag-pass">6 + 2 Y2</span></div>
+      <div class="kpi-val">16 KB <span style="font-size:0.78rem;color:var(--text-muted);">Bitstring Herd</span></div>
+      <div class="kpi-foot">OWASP MASVS · WCAG 2.2 AA · EU AI Act Art. 50</div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="edge" role="tab">
+      <span>1. Edge AI &amp; 42× Hardware Cliff</span>
+      <span class="tab-pill">4-Tier Stack</span>
+    </button>
+    <button class="tab-btn" data-tab="usability" role="tab">
+      <span>2. Gate 5 Wilson CI Calculator</span>
+      <span class="tab-pill">30s Dignity Bar</span>
+    </button>
+    <button class="tab-btn" data-tab="privacy" role="tab">
+      <span>3. Factor 52 LDP Noise Lab</span>
+      <span class="tab-pill">Scale-Tiered</span>
+    </button>
+    <button class="tab-btn" data-tab="gates" role="tab">
+      <span>4. Hardened 6+2 Gates &amp; Cryptography</span>
+      <span class="tab-pill">Status Lists · Recovery</span>
+    </button>
+  </nav>
+
+  <!-- PANEL 1: EDGE AI & MOBILE CLIFF -->
+  <section class="panel active" id="panel-edge">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">2026 Mobile LLM Compute Cliff &amp; CPU/GPU Routing Inversions</div>
+            <div class="card-sub">Empirical mobile-inference benchmarks proving why Gate 1 Equity forbids mandating local LLMs on budget devices.</div>
+          </div>
+          <div style="display:flex;gap:6px;">
+            <button class="btn active" id="btnMetricDecode">Decode (tok/s)</button>
+            <button class="btn" id="btnMetricPrefill">Prefill &amp; Inversion</button>
+          </div>
+        </div>
+        <div class="svg-box" id="edgeSvgWrap"></div>
+        <div class="callout-box">
+          <strong>Runtime RAM &amp; On-Device ASR Reality:</strong> Model weights systematically underestimate runtime memory—on Apple Silicon MLX, 4-bit <code>Qwen2.5-0.5B-Instruct</code> still consumed <strong>1.23 GB peak unified RAM</strong> (vs. 1.66 GB BFloat16). For speech (Living Lab 0), Whisper pads clips to 30s and exhibits ~1% hallucinations, while <code>sherpa-onnx</code> int8 streaming (Moonshine v2 / Parakeet) logs ~50,000 English monthly downloads vs. ~100 non-English—making local Vietnamese-English ASR benchmarking mandatory before production reliance.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">4-Tier Progressive Fiduciary AI Capability Negotiator</div>
+            <div class="card-sub">Select a learner device tier to inspect negotiated AI stack, memory budget, and EU AI Act obligations.</div>
+          </div>
+        </div>
+        <div class="tier-stack" id="aiTierStack"></div>
+        <div id="aiTierDetail" style="margin-top:12px;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 2: GATE 5 WILSON CI -->
+  <section class="panel" id="panel-usability">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Gate 5 (30-Second Dignity Test) — Two-Sided 95% Wilson Score Intervals</div>
+            <div class="card-sub">Visualizing why n = 20 cannot certify ≥70% true usability unless 19/20 pass, driving the Two-Tier Gate 5 architecture.</div>
+          </div>
+        </div>
+        <div class="svg-box" id="wilsonSvgWrap"></div>
+        <div class="callout-box">
+          <strong>W3C Accessibility Anchors (Gate 5):</strong> Every UI passing the 30-Second Dignity Test must also satisfy <strong>WCAG 2.2 Level AA</strong> (<code>2.4.11 Focus Not Obscured</code>, <code>2.5.8 Target Size</code>, <code>3.2.6 Consistent Help</code>, <code>3.3.8 Accessible Authentication</code>, Redundant Entry) plus <strong>W3C COGA "Content Usable"</strong> cognitive accessibility patterns, tested natively in Vietnamese and each local language—never post-hoc translated.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interactive Wilson Confidence Simulator</div>
+            <div class="card-sub">Adjust sample size (n) and observed pass count (k) or load a Charter benchmark preset.</div>
+          </div>
+        </div>
+
+        <div class="preset-row">
+          <button class="btn" data-wpreset="20,16">Pilot n=20 (16/20 · 80%)</button>
+          <button class="btn" data-wpreset="20,19">High-Bar n=20 (19/20 · 95%)</button>
+          <button class="btn" data-wpreset="50,42">Cert n=50 (42/50 · 84%)</button>
+          <button class="btn" data-wpreset="100,80">Scale n=100 (80/100 · 80%)</button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row"><span>Cohort Sample Size (n)</span><strong id="lblWN">20</strong></div>
+          <input type="range" id="rngWN" min="10" max="200" step="1" value="20">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Observed Unassisted Passes (k)</span><strong id="lblWK">16 (80.0%)</strong></div>
+          <input type="range" id="rngWK" min="5" max="20" step="1" value="16">
+        </div>
+
+        <div id="wilsonVerdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 3: FACTOR 52 LDP NOISE -->
+  <section class="panel" id="panel-privacy">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Factor 52 — Local Differential Privacy (Randomized Response) Error Curve</div>
+            <div class="card-sub">95% Margin of Error (± percentage points) vs. cohort size n (log scale) comparing Raw Binomial vs. LDP budgets (ε).</div>
+          </div>
+        </div>
+        <div class="svg-box" id="ldpSvgWrap"></div>
+        <div class="callout-box">
+          <strong>Scale-Tiered Measurement Rule:</strong> At Living Lab 0 pilot scale (<code>n = 40</code>, true completion <code>70%</code>), applying LDP at <code>ε = 1.0</code> inflates standard error from ±7.2 pp to <strong>±16.8 pp (±33.0 pp 95% MoE)</strong>—making outcome measurement statistically blind. Use <strong>consented, de-identified learner exports</strong> below <code>n = 200</code>, and activate formal LDP / cryptographic secure aggregation once rollouts reach <code>n ≥ 1,000</code>.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Interactive LDP Signal-to-Noise Simulator</div>
+            <div class="card-sub">Explore how sample size (n), privacy budget (ε), and true metric rate (p) govern statistical usability.</div>
+          </div>
+        </div>
+
+        <div class="preset-row">
+          <button class="btn" data-lpreset="40,1.0,70">Pilot n=40 · ε=1.0</button>
+          <button class="btn" data-lpreset="40,2.0,70">Pilot n=40 · ε=2.0</button>
+          <button class="btn" data-lpreset="200,2.0,70">Mid n=200 · ε=2.0</button>
+          <button class="btn" data-lpreset="1000,2.0,70">Scale n=1000 · ε=2.0</button>
+        </div>
+
+        <div class="control-group">
+          <div class="control-row"><span>Cohort Size (n)</span><strong id="lblLN">40</strong></div>
+          <input type="range" id="rngLN" min="20" max="2000" step="10" value="40">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>Privacy Budget (ε — lower = stronger privacy)</span><strong id="lblLEps">1.0</strong></div>
+          <input type="range" id="rngLEps" min="0.5" max="4.0" step="0.1" value="1.0">
+        </div>
+        <div class="control-group">
+          <div class="control-row"><span>True Underlying Metric Rate (p, e.g., completion)</span><strong id="lblLP">70%</strong></div>
+          <input type="range" id="rngLP" min="20" max="90" step="5" value="70">
+        </div>
+
+        <div id="ldpVerdict"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL 4: HARDENED GATES & CRYPTO TENSIONS -->
+  <section class="panel" id="panel-gates">
+    <div class="card" style="margin-bottom:14px;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Hardened 6 Prime Directive Release Gates + 2 Year-2 Gates</div>
+          <div class="card-sub">Bounded, independently testable 2026 verification thresholds replacing unfalsifiable Charter absolutes.</div>
+        </div>
+      </div>
+      <div class="gate-grid" id="gateGrid"></div>
+    </div>
+
+    <div class="grid-eq">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Offline Revocation &amp; Herd Privacy (W3C Bitstring Status List v1.0)</div>
+            <div class="card-sub">Balancing zero phone-home issuer tracking with stale-revocation risk.</div>
+          </div>
+          <span class="tag tag-info">W3C Rec · May 2025</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Verifier Context</th><th>Policy</th><th>Freshness &amp; Privacy Mechanic</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Formative / Classroom / Peer</strong></td>
+              <td><span class="tag tag-pass">Fail Open</span></td>
+              <td>Displays cryptographic signature status + explicit <strong>"Verified-As-Of"</strong> timestamp from cached GZIP Bitstring (≥16 KB / 131,072 entries herd privacy).</td>
+            </tr>
+            <tr>
+              <td><strong>High-Stakes Licensing / Hiring / Aid</strong></td>
+              <td><span class="tag tag-fail">Fail Closed</span></td>
+              <td>Requires fresh status-list sync within policy TTL or short-lived re-attestable credential; refuses stale offline assertions.</td>
+            </tr>
+            <tr>
+              <td><strong>Century Longevity (Factor 15)</strong></td>
+              <td><span class="tag tag-gold">Crypto Agility</span></td>
+              <td>Human-readable JSON-LD/Markdown + dual-custody archives + re-attestation chains bridging <code>eddsa-rdfc-2022</code> toward NIST <strong>FIPS 204 (ML-DSA)</strong>.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Circles of Trust Social Recovery: Shamir SSS vs. Guardian Rotation</div>
+            <div class="card-sub">Hardening Factor 12 against attrition, domestic coercion, and LearnCard overlap.</div>
+          </div>
+          <span class="tag tag-gold">DID-webVH Synergy</span>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Dimension</th><th>Shamir / SLIP-39 (LearnCard Current)</th><th>Timelocked Guardian Rotation (Target)</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Key Exposure</strong></td>
+              <td>Reconstructing K-of-N shares momentarily recreates the static seed; cannot rotate compromised keys.</td>
+              <td>Guardians approve active signing-key rotation only; <strong>never reconstruct old seed or decrypt vault</strong>.</td>
+            </tr>
+            <tr>
+              <td><strong>Coercion Defense</strong></td>
+              <td>Single-party coercion resisted; no built-in cancellation window once K shares assemble.</td>
+              <td>Enforces <strong>24–48 hour timelock</strong> letting the legitimate learner cancel coerced or collusive takeover.</td>
+            </tr>
+            <tr>
+              <td><strong>Guardian Diversity</strong></td>
+              <td>Device + cloud server + passkey split.</td>
+              <td><strong>Heterogeneous circle:</strong> secondary device/sealed backup + mutually unknown personal contacts + optional steward.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer-note">
+    <span>SOVRÆGIS Commons &amp; SOVRÆG LABS · Zero-Dependency Interactive Bounds Lab (Offline-Ready)</span>
+    <span>URL Params: <code>?theme=dark|light&amp;embed=true&amp;tab=edge|usability|privacy|gates</code></span>
+  </footer>
+</div>
+
+<!-- EXPORT MODAL -->
+<div class="modal-backdrop" id="exportModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="card-header">
+      <div>
+        <div class="card-title" id="modalTitle">Obsidian Embed &amp; Statistical Calibration Export</div>
+        <div class="card-sub">Copy the collapsed Obsidian callout for GitHub Pages or download your active simulation parameters.</div>
+      </div>
+      <button class="btn" id="btnCloseModal">✕ Close</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">1. Collapsed Obsidian Callout (GitHub Pages Embed)</div>
+    <pre class="code-block" id="obsidianSnippet"></pre>
+    <div style="display:flex;gap:8px;margin-bottom:14px;">
+      <button class="btn primary" id="btnCopyObsidian">Copy Callout</button>
+      <button class="btn" id="btnDownloadMd">⬇ Download Calibration Summary (.md)</button>
+    </div>
+
+    <div style="font-size:0.78rem;font-weight:700;color:var(--gold-bright);">2. Active Simulation Markdown Snapshot</div>
+    <pre class="code-block" id="mdPreview"></pre>
+  </div>
+</div>
+
+<div class="toast" id="toast">Copied to clipboard</div>
+
+<script>
+(function() {
+  const Z95 = 1.959963984540054;
+  const STORAGE_KEY = "sovraegis_bounds_state_v1";
+
+  const DEVICES = [
+    { name: "OnePlus 15 (Flagship)", ram: "12–16 GB", decode: 72.0, prefill: 309.0, tier: 2, color: "#2ea87e", note: "GPU prefill 5.4× faster than CPU" },
+    { name: "Galaxy S23 (Upper-Mid)", ram: "8 GB", decode: 50.0, prefill: 185.0, tier: 2, color: "#38bdf8", note: "SmolLM2-135M MNN: 224 CPU vs 9 GPU (25× inversion)" },
+    { name: "OnePlus 8 Pro (Older Flagship)", ram: "8–12 GB", decode: 48.0, prefill: 140.0, tier: 2, color: "#a78bfa", note: "GPU prefill 7.4× SLOWER than CPU" },
+    { name: "Redmi 9A (Gate 1 Budget Ref)", ram: "2–3 GB", decode: 1.7, prefill: 3.3, tier: 0, color: "#fb7185", note: "42× decode cliff · 94× prefill gap · 0 SLMs passed <1s" }
+  ];
+
+  const AI_TIERS = [
+    {
+      id: 0, badge: "Tier 0 · Mandatory Equity Baseline", ram: "2 GB RAM · 0 MB AI", status: "pass",
+      title: "Deterministic Zero-AI Core (Gate 1 Floor)",
+      desc: "100% of core SYNCZINE study, spaced repetition, local audio capture, rubric self-checks, and QR credential exchange execute cleanly with zero AI models.",
+      models: "None (Pure deterministic web/WASM runtime)",
+      euAct: "Zero AI risk surface; guarantees Gate 1 Equity & one-tap AI off-switch compliance."
+    },
+    {
+      id: 1, badge: "Tier 1 · Lightweight Edge ML", ram: "2–4 GB RAM · <120 MB", status: "info",
+      title: "CPU-Only Acoustic & Rule Helpers",
+      desc: "Adds Voice Activity Detection (VAD), silence trimming, and compact int8 streaming ASR via sherpa-onnx (Moonshine v2 / Parakeet) strictly on CPU.",
+      models: "sherpa-onnx int8 VAD + benchmarked Moonshine/Parakeet (verify VN-EN WER first)",
+      euAct: "Disclose assistive speech tooling under EU AI Act Art. 50; audio never leaves device."
+    },
+    {
+      id: 2, badge: "Tier 2 · Local Small Language Model", ram: "6–8+ GB RAM · 1.2–2.2 GB Peak", status: "gold",
+      title: "Device-Profiled Quantized On-Device SLM",
+      desc: "Runs 0.5B–1.7B 4-bit quantized SLMs (Qwen2.5/3, SmolLM2, Gemma) using explicit CPU/GPU device lookup tables to avoid 7.4×–25× GPU slowdown inversions.",
+      models: "Qwen2.5-0.5B (1.23 GB peak MLX) · Qwen3-0.6B · SmolLM2 (CPU-verified)",
+      euAct: "Art. 50 AI interaction notice + model provenance card; zero training on learner traces."
+    },
+    {
+      id: 3, badge: "Tier 3 · Opt-In Enclave / HCP Node", ram: "Any Device + User Server / Cloud", status: "warn",
+      title: "Learner-Controlled Enclave or Scoped LearnCloud MCP",
+      desc: "Optional encrypted connection to a learner-owned personal server or consent-scoped LearnCloud AI / HCP endpoint with upstream PII tokenization and Sovereignty Radar kill-switch.",
+      models: "User-selected frontier model via HCP / MCP with strict zero-retention contract",
+      euAct: "Requires explicit consent receipt, Data-Flow Map match, and Annex III readiness (Dec 2, 2027) if used for formal assessment."
+    }
+  ];
+
+  const GATES = [
+    { num: "Gate 1", name: "Edge-Autonomy Gate", y2: false, std: "2–3 GB Android · Airplane Mode", crit: "5 core tasks offline (open vault, SYNCZINE activity, capture multimodal evidence, @learncard/vpqr-plugin QR exchange, full export). Cold-start & storage published." },
+    { num: "Gate 2", name: "Zero-Surveillance Gate", y2: false, std: "OWASP MASVS-PRIVACY 1–4", crit: "100% network egress matches versioned Data-Flow Map; zero undeclared analytics SDKs; capability-broker grants enforced; revocable consent receipts." },
+    { num: "Gate 3", name: "Fiduciary AI Gate", y2: false, std: "4-Tier Edge AI · EU AI Act Art. 50", crit: "Data-flow diagram + model provenance card per feature; no training on learner traces; visible off-switch; 100% core workflow complete at Tier 0." },
+    { num: "Gate 4", name: "One-Click Exit Gate", y2: false, std: "W3C VC 2.0 · OB 3.0 · CLR 2.0", crit: "Single action exports credentials, evidence, knowledge graph & consent receipts; lossless round-trip import into LearnCard + ≥2 independent wallets." },
+    { num: "Gate 5", name: "30-Second Dignity Gate", y2: false, std: "WCAG 2.2 AA · W3C COGA · Wilson CI", crit: "Native-language scripted task: Pilot Calibration (n≥20, ≥80% point est.) & Production Certification (n≥50, ≥84% observed so 95% Wilson LCB ≥ 70%)." },
+    { num: "Gate 6", name: "Annual Sovereignty Impact Audit", y2: false, std: "Ombuds Reserve · Public Diff", crit: "Independent Ombuds selects external auditor (Cure53/Trail of Bits/Least Authority/OSTIF) from ring-fenced reserve; raw findings & fixes published." },
+    { num: "Gate 7 (Year 2)", name: "Security & Threat-Model Gate", y2: true, std: "Factor 49 Threat Model v1", crit: "External white-box code, cryptography, and social-recovery audit with zero unmitigated Critical/High vulnerabilities before major Rung 3/4 releases." },
+    { num: "Gate 8 (Year 2)", name: "Learning-Efficacy Gate", y2: true, std: "Pre-Registered Empirical Design", crit: "Pedagogical claims (including CODE+V) backed by pre-registered evaluations with blind dual-rater ICC[2,2]—publishing null/negative outcomes openly." }
+  ];
+
+  let state = {
+    theme: null,
+    scale: 1,
+    edgeMetric: "decode",
+    selectedAiTier: 0,
+    wN: 20,
+    wK: 16,
+    lN: 40,
+    lEps: 1.0,
+    lP: 70
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+    if (saved) state = Object.assign(state, saved);
+  } catch (e) {}
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+  }
+
+  // URL params
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "true") document.body.classList.add("embed-mode");
+  const initTheme = params.get("theme") || state.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+  applyTheme(initTheme);
+  document.documentElement.style.setProperty("--scale", state.scale);
+
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    state.theme = t;
+    document.getElementById("btnTheme").textContent = t === "dark" ? "☀ Light" : "☾ Dark";
+    saveState();
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById("toast");
+    el.textContent = msg;
+    el.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => el.classList.remove("show"), 2000);
+  }
+
+  // Tabs
+  function switchTab(id) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+    document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + id));
+  }
+  document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+  document.querySelectorAll("[data-jump]").forEach(c => c.addEventListener("click", () => switchTab(c.dataset.jump)));
+  if (["edge", "usability", "privacy", "gates"].includes(params.get("tab"))) switchTab(params.get("tab"));
+
+  // =========================================================
+  // PANEL 1: EDGE AI BENCHMARKS & 4-TIER NEGOTIATOR
+  // =========================================================
+  function renderEdgeChart() {
+    const W = 680, H = 275;
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+
+    if (state.edgeMetric === "decode") {
+      const padL = 190, padR = 75, padT = 34, rowH = 50;
+      const maxVal = 80;
+      const plotW = W - padL - padR;
+
+      svg += `<text x="12" y="20" fill="var(--gold-bright)" font-size="11" font-weight="700">Qwen3-0.6B (4-bit, llama.cpp CPU) — Decode Throughput (tokens/sec)</text>`;
+      [0, 20, 40, 60, 80].forEach(v => {
+        const x = padL + (v / maxVal) * plotW;
+        svg += `<line x1="${x}" y1="${padT}" x2="${x}" y2="${H - 28}" stroke="var(--svg-grid)" stroke-dasharray="3,3"/>`;
+        svg += `<text x="${x}" y="${H - 12}" text-anchor="middle" fill="var(--text-faint)" font-size="9.5" font-family="var(--font-mono)">${v} tok/s</text>`;
+      });
+
+      // Interactive readability threshold (15 tok/s)
+      const tx = padL + (15 / maxVal) * plotW;
+      svg += `<line x1="${tx}" y1="${padT - 4}" x2="${tx}" y2="${H - 28}" stroke="var(--gold)" stroke-width="1.4" stroke-dasharray="4,3"/>`;
+      svg += `<text x="${tx + 4}" y="${padT + 8}" fill="var(--gold-bright)" font-size="9" font-weight="700">~15 tok/s reading pace</text>`;
+
+      DEVICES.forEach((d, i) => {
+        const y = padT + 14 + i * rowH;
+        const bw = Math.max(6, (d.decode / maxVal) * plotW);
+        svg += `<text x="12" y="${y + 13}" fill="var(--text)" font-size="11" font-weight="700">${d.name}</text>`;
+        svg += `<text x="12" y="${y + 26}" fill="var(--text-faint)" font-size="9.2">${d.ram} · ${d.note.slice(0, 34)}</text>`;
+        svg += `<rect x="${padL}" y="${y + 3}" width="${plotW}" height="20" rx="4" fill="var(--svg-track)"/>`;
+        svg += `<rect x="${padL}" y="${y + 3}" width="${bw}" height="20" rx="4" fill="${d.color}" fill-opacity="0.82"/>`;
+        svg += `<text x="${padL + bw + 8}" y="${y + 17}" fill="${d.decode < 5 ? 'var(--rose)' : 'var(--text)'}" font-size="11" font-family="var(--font-mono)" font-weight="700">${d.decode.toFixed(1)} tok/s</text>`;
+      });
+    } else {
+      // Prefill & GPU Inversion View
+      const padL = 215, padR = 70, padT = 36, rowH = 52;
+      const plotW = W - padL - padR;
+      const rows = [
+        { label: "OnePlus 15 · Prefill (CPU)", val: 309, max: 320, col: "#2ea87e", tag: "309 tok/s (94× Redmi 9A)" },
+        { label: "Redmi 9A · Prefill (CPU)", val: 3.3, max: 320, col: "#fb7185", tag: "3.3 tok/s (0 models <1s)" },
+        { label: "Galaxy S23 · SmolLM2 CPU (MNN)", val: 224, max: 240, col: "#38bdf8", tag: "224 tok/s CPU" },
+        { label: "Galaxy S23 · SmolLM2 GPU (MNN)", val: 9, max: 240, col: "#f59e0b", tag: "9 tok/s GPU (25× inversion!)" }
+      ];
+      svg += `<text x="12" y="20" fill="var(--gold-bright)" font-size="11" font-weight="700">94× Prefill Gap &amp; Non-Monotonic CPU/GPU Speed Inversion</text>`;
+      rows.forEach((r, i) => {
+        const y = padT + 10 + i * rowH;
+        const bw = Math.max(8, (r.val / r.max) * plotW);
+        svg += `<text x="12" y="${y + 16}" fill="var(--text)" font-size="10.8" font-weight="700">${r.label}</text>`;
+        svg += `<rect x="${padL}" y="${y + 3}" width="${plotW}" height="20" rx="4" fill="var(--svg-track)"/>`;
+        svg += `<rect x="${padL}" y="${y + 3}" width="${bw}" height="20" rx="4" fill="${r.col}" fill-opacity="0.82"/>`;
+        svg += `<text x="${Math.min(W - 145, padL + bw + 8)}" y="${y + 17}" fill="var(--text)" font-size="10" font-family="var(--font-mono)" font-weight="700">${r.tag}</text>`;
+      });
+      svg += `<text x="12" y="${H - 12}" fill="var(--text-muted)" font-size="9.6">Note: GPU prefill ran 5.4× faster than CPU on OnePlus 15, yet 7.4× slower than CPU on OnePlus 8 Pro — naive GPU acceleration breaks older devices.</text>`;
+    }
+
+    svg += `</svg>`;
+    document.getElementById("edgeSvgWrap").innerHTML = svg;
+  }
+
+  function renderAiTiers() {
+    const stack = document.getElementById("aiTierStack");
+    stack.innerHTML = AI_TIERS.map(t => `
+      <div class="tier-row ${state.selectedAiTier === t.id ? 'selected' : ''}" data-aitier="${t.id}">
+        <div class="tier-head">
+          <span class="tier-title">${t.title}</span>
+          <span class="tag tag-${t.status}">${t.ram}</span>
+        </div>
+        <div class="tier-desc">${t.badge}</div>
+      </div>
+    `).join("");
+
+    stack.querySelectorAll("[data-aitier]").forEach(row => {
+      row.addEventListener("click", () => {
+        state.selectedAiTier = Number(row.dataset.aitier);
+        saveState();
+        renderAiTiers();
+      });
+    });
+
+    const active = AI_TIERS.find(t => t.id === state.selectedAiTier) || AI_TIERS[0];
+    document.getElementById("aiTierDetail").innerHTML = `
+      <div class="stat-box" style="margin-bottom:8px;">
+        <label>Architectural Mandate</label>
+        <div style="font-size:0.81rem;margin-top:3px;color:var(--text);">${active.desc}</div>
+      </div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>Runtime / Model Profile</label>
+          <div style="font-size:0.78rem;margin-top:3px;font-weight:600;color:var(--gold-bright);">${active.models}</div>
+        </div>
+        <div class="stat-box">
+          <label>EU AI Act &amp; Fiduciary Guardrail</label>
+          <div style="font-size:0.78rem;margin-top:3px;color:var(--text-muted);">${active.euAct}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  document.getElementById("btnMetricDecode").addEventListener("click", () => {
+    state.edgeMetric = "decode";
+    document.getElementById("btnMetricDecode").classList.add("active");
+    document.getElementById("btnMetricPrefill").classList.remove("active");
+    renderEdgeChart();
+  });
+  document.getElementById("btnMetricPrefill").addEventListener("click", () => {
+    state.edgeMetric = "prefill";
+    document.getElementById("btnMetricPrefill").classList.add("active");
+    document.getElementById("btnMetricDecode").classList.remove("active");
+    renderEdgeChart();
+  });
+
+  // =========================================================
+  // PANEL 2: WILSON SCORE CONFIDENCE INTERVALS (GATE 5)
+  // =========================================================
+  function wilsonCI(k, n) {
+    const p = k / n;
+    const z2 = Z95 * Z95;
+    const denom = 1 + z2 / n;
+    const center = (p + z2 / (2 * n)) / denom;
+    const half = (Z95 * Math.sqrt((p * (1 - p) + z2 / (4 * n)) / n)) / denom;
+    return { p: p * 100, low: Math.max(0, (center - half) * 100), high: Math.min(100, (center + half) * 100) };
+  }
+
+  function minPassesForLCB(n, targetPct) {
+    for (let k = 0; k <= n; k++) {
+      if (wilsonCI(k, n).low >= targetPct) return k;
+    }
+    return n;
+  }
+
+  function renderWilson() {
+    const n = state.wN;
+    if (state.wK > n) state.wK = n;
+    const k = state.wK;
+    const rngK = document.getElementById("rngWK");
+    rngK.max = n;
+    rngK.value = k;
+    document.getElementById("rngWN").value = n;
+
+    const res = wilsonCI(k, n);
+    const minK = minPassesForLCB(n, 70);
+    document.getElementById("lblWN").textContent = `${n} users`;
+    document.getElementById("lblWK").textContent = `${k}/${n} (${res.p.toFixed(1)}%)`;
+
+    const passesPilot = n >= 20 && res.p >= 80;
+    const passesProd = n >= 50 && res.low >= 70;
+    let statusTag = '<span class="tag tag-fail">Below Calibration Bar</span>';
+    let summary = `Point estimate (${res.p.toFixed(1)}%) or sample size (n=${n}) falls below Gate 5 Pilot Calibration (n≥20, ≥80%).`;
+    if (passesProd) {
+      statusTag = '<span class="tag tag-pass">Passes Production Certification</span>';
+      summary = `95% Wilson lower bound (${res.low.toFixed(1)}%) clears the 70.0% floor at n≥50. Cleared for Commons Gate 5 mark.`;
+    } else if (passesPilot) {
+      statusTag = '<span class="tag tag-warn">Passes Pilot Calibration Only</span>';
+      summary = `Meets Pilot Calibration (≥80% at n≥20), but ${n < 50 ? 'requires n≥50 cumulative users' : '95% Wilson lower bound (' + res.low.toFixed(1) + '%) sits below 70.0%'} for Production Certification.`;
+    }
+
+    document.getElementById("wilsonVerdict").innerHTML = `
+      <div style="margin-bottom:8px;">${statusTag}</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>95% Wilson Lower Bound</label>
+          <div class="val" style="color:${res.low >= 70 ? 'var(--emerald)' : 'var(--rose)'};">${res.low.toFixed(1)}%</div>
+        </div>
+        <div class="stat-box">
+          <label>95% Wilson Upper Bound</label>
+          <div class="val" style="color:var(--teal);">${res.high.toFixed(1)}%</div>
+        </div>
+        <div class="stat-box">
+          <label>Interval Width</label>
+          <div class="val">${(res.high - res.low).toFixed(1)} pp</div>
+        </div>
+        <div class="stat-box">
+          <label>Min Passes for ≥70% LCB (at n=${n})</label>
+          <div class="val" style="color:var(--gold-bright);">${minK}/${n} (${((minK/n)*100).toFixed(1)}%)</div>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;">${summary}</div>
+    `;
+
+    // Render SVG comparison chart
+    const W = 680, H = 295;
+    const padL = 175, padR = 30, padT = 34, rowH = 44;
+    const plotW = W - padL - padR;
+    const minX = 40, maxX = 100;
+    const xOf = pct => padL + ((Math.max(minX, Math.min(maxX, pct)) - minX) / (maxX - minX)) * plotW;
+
+    const benchmarks = [
+      { label: "Active Simulation", k: k, n: n, active: true },
+      { label: "Pilot n=20 (16/20 · 80%)", k: 16, n: 20 },
+      { label: "High-Bar n=20 (19/20 · 95%)", k: 19, n: 20 },
+      { label: "Prod Cert n=50 (42/50 · 84%)", k: 42, n: 50 },
+      { label: "Scale n=100 (80/100 · 80%)", k: 80, n: 100 }
+    ];
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<text x="12" y="20" fill="var(--gold-bright)" font-size="11" font-weight="700">95% Wilson Confidence Intervals vs. 70% Lower-Bound Certification Floor</text>`;
+
+    // Red shaded fail zone (<70%)
+    const x70 = xOf(70);
+    svg += `<rect x="${padL}" y="${padT}" width="${x70 - padL}" height="${H - padT - 30}" fill="var(--rose)" fill-opacity="0.08"/>`;
+
+    [40, 50, 60, 70, 80, 90, 100].forEach(v => {
+      const gx = xOf(v);
+      const is70 = v === 70;
+      svg += `<line x1="${gx}" y1="${padT}" x2="${gx}" y2="${H - 30}" stroke="${is70 ? 'var(--rose)' : 'var(--svg-grid)'}" stroke-width="${is70 ? 1.8 : 1}" stroke-dasharray="${is70 ? '5,3' : '3,3'}"/>`;
+      svg += `<text x="${gx}" y="${H - 13}" text-anchor="middle" fill="${is70 ? 'var(--rose)' : 'var(--text-faint)'}" font-size="9.5" font-weight="${is70 ? '700' : '400'}" font-family="var(--font-mono)">${v}%</text>`;
+    });
+    svg += `<text x="${x70 - 5}" y="${padT + 12}" text-anchor="end" fill="var(--rose)" font-size="9" font-weight="700">◀ 70% Floor</text>`;
+
+    benchmarks.forEach((b, i) => {
+      const y = padT + 18 + i * rowH;
+      const ci = wilsonCI(b.k, b.n);
+      const ok = ci.low >= 70;
+      const col = b.active ? (ok ? "#2ea87e" : "#f59e0b") : (ok ? "#38bdf8" : "#fb7185");
+      const xL = xOf(ci.low), xH = xOf(ci.high), xP = xOf(ci.p);
+
+      if (b.active) {
+        svg += `<rect x="4" y="${y - 12}" width="${W - 8}" height="34" rx="5" fill="var(--gold-soft)" stroke="var(--border-strong)"/>`;
+      }
+      svg += `<text x="12" y="${y + 5}" fill="${b.active ? 'var(--gold-bright)' : 'var(--text)'}" font-size="10.5" font-weight="${b.active ? '700' : '600'}">${b.label}</text>`;
+      svg += `<text x="12" y="${y + 17}" fill="var(--text-faint)" font-size="9" font-family="var(--font-mono)">[${ci.low.toFixed(1)}%, ${ci.high.toFixed(1)}%]</text>`;
+
+      // Whisker line
+      svg += `<line x1="${xL}" y1="${y + 4}" x2="${xH}" y2="${y + 4}" stroke="${col}" stroke-width="${b.active ? 4 : 3}" stroke-linecap="round"/>`;
+      svg += `<line x1="${xL}" y1="${y - 3}" x2="${xL}" y2="${y + 11}" stroke="${col}" stroke-width="2"/>`;
+      svg += `<line x1="${xH}" y1="${y - 3}" x2="${xH}" y2="${y + 11}" stroke="${col}" stroke-width="2"/>`;
+      svg += `<circle cx="${xP}" cy="${y + 4}" r="${b.active ? 6 : 4.5}" fill="${col}" stroke="var(--bg)" stroke-width="1.5"/>`;
+    });
+
+    svg += `</svg>`;
+    document.getElementById("wilsonSvgWrap").innerHTML = svg;
+  }
+
+  document.getElementById("rngWN").addEventListener("input", e => {
+    const oldRatio = state.wK / state.wN;
+    state.wN = Number(e.target.value);
+    state.wK = Math.max(1, Math.min(state.wN, Math.round(state.wN * oldRatio)));
+    saveState();
+    renderWilson();
+  });
+  document.getElementById("rngWK").addEventListener("input", e => {
+    state.wK = Number(e.target.value);
+    saveState();
+    renderWilson();
+  });
+  document.querySelectorAll("[data-wpreset]").forEach(b => {
+    b.addEventListener("click", () => {
+      const [n, k] = b.dataset.wpreset.split(",").map(Number);
+      state.wN = n; state.wK = k;
+      saveState();
+      renderWilson();
+    });
+  });
+
+  // =========================================================
+  // PANEL 3: FACTOR 52 LDP SIGNAL-TO-NOISE SIMULATOR
+  // =========================================================
+  function calcLdp(pPct, n, eps) {
+    const p = pPct / 100;
+    const rawSE = Math.sqrt((p * (1 - p)) / n) * 100;
+    const rawMoE = Z95 * rawSE;
+    const q = Math.exp(eps) / (Math.exp(eps) + 1);
+    const pTilde = p * q + (1 - p) * (1 - q);
+    const denom = 2 * q - 1;
+    const ldpSE = Math.sqrt((pTilde * (1 - pTilde)) / (n * denom * denom)) * 100;
+    const ldpMoE = Z95 * ldpSE;
+    return { rawSE, rawMoE, ldpSE, ldpMoE, q: q * 100, infl: ldpSE / rawSE };
+  }
+
+  function renderLdp() {
+    const n = state.lN, eps = state.lEps, pPct = state.lP;
+    document.getElementById("rngLN").value = n;
+    document.getElementById("rngLEps").value = eps;
+    document.getElementById("rngLP").value = pPct;
+    document.getElementById("lblLN").textContent = `n = ${n}`;
+    document.getElementById("lblLEps").textContent = `ε = ${eps.toFixed(1)}`;
+    document.getElementById("lblLP").textContent = `${pPct}%`;
+
+    const r = calcLdp(pPct, n, eps);
+    let modeTag = '<span class="tag tag-fail">Unusable LDP Noise — Use Consented Cohort</span>';
+    let advice = `At n=${n} and ε=${eps.toFixed(1)}, randomized-response noise inflates uncertainty ${r.infl.toFixed(2)}× (±${r.ldpMoE.toFixed(1)} pp 95% MoE). Use explicit consented de-identified local exports instead.`;
+    if (r.ldpMoE <= 6.0 && n >= 500) {
+      modeTag = '<span class="tag tag-pass">Viable Formal LDP / Secure Aggregation Zone</span>';
+      advice = `At n=${n} and ε=${eps.toFixed(1)}, LDP 95% MoE narrows to ±${r.ldpMoE.toFixed(1)} pp — practically informative for regional EducationOS dashboards.`;
+    } else if (r.ldpMoE <= 12.0) {
+      modeTag = '<span class="tag tag-warn">Marginal LDP Zone — Prefer On-Device Consented Summaries</span>';
+      advice = `95% MoE of ±${r.ldpMoE.toFixed(1)} pp can only detect very large shifts. Reserve formal LDP until cohorts exceed n ≥ 1,000.`;
+    }
+
+    document.getElementById("ldpVerdict").innerHTML = `
+      <div style="margin-bottom:8px;">${modeTag}</div>
+      <div class="stat-grid">
+        <div class="stat-box">
+          <label>LDP Standard Error (SE)</label>
+          <div class="val" style="color:${r.ldpMoE > 12 ? 'var(--rose)' : r.ldpMoE > 6 ? 'var(--amber)' : 'var(--emerald)'};">±${r.ldpSE.toFixed(1)} pp</div>
+        </div>
+        <div class="stat-box">
+          <label>LDP 95% Margin of Error</label>
+          <div class="val" style="color:${r.ldpMoE > 12 ? 'var(--rose)' : r.ldpMoE > 6 ? 'var(--amber)' : 'var(--emerald)'};">±${r.ldpMoE.toFixed(1)} pp</div>
+        </div>
+        <div class="stat-box">
+          <label>Raw Binomial SE (No LDP)</label>
+          <div class="val" style="color:var(--teal);">±${r.rawSE.toFixed(1)} pp</div>
+        </div>
+        <div class="stat-box">
+          <label>Truth Probability (q = e^ε / (e^ε+1))</label>
+          <div class="val" style="color:var(--gold-bright);">${r.q.toFixed(1)}% (${r.infl.toFixed(2)}× SE)</div>
+        </div>
+      </div>
+      <div style="font-size:0.78rem;color:var(--text-muted);background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:9px 11px;">${advice}</div>
+    `;
+
+    // Render SVG log-scale curve
+    const W = 680, H = 295;
+    const padL = 56, padR = 24, padT = 34, padB = 38;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const logMin = Math.log10(20), logMax = Math.log10(2000);
+    const maxY = 45;
+    const xOf = nv => padL + ((Math.log10(nv) - logMin) / (logMax - logMin)) * plotW;
+    const yOf = moe => padT + plotH - (Math.min(maxY, moe) / maxY) * plotH;
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">`;
+    svg += `<text x="12" y="19" fill="var(--gold-bright)" font-size="11" font-weight="700">95% Margin of Error (± pp) Across Cohort Size n (Log Scale, p = ${pPct}%)</text>`;
+
+    // Zone shading
+    const x200 = xOf(200), x1000 = xOf(1000);
+    svg += `<rect x="${padL}" y="${padT}" width="${x200 - padL}" height="${plotH}" fill="var(--rose)" fill-opacity="0.07"/>`;
+    svg += `<rect x="${x1000}" y="${padT}" width="${padL + plotW - x1000}" height="${plotH}" fill="var(--emerald)" fill-opacity="0.09"/>`;
+    svg += `<text x="${(padL + x200)/2}" y="${padT + 14}" text-anchor="middle" fill="var(--rose)" font-size="9" font-weight="700">Living Lab Zone (n&lt;200): Consented</text>`;
+    svg += `<text x="${(x1000 + padL + plotW)/2}" y="${padT + 14}" text-anchor="middle" fill="var(--emerald)" font-size="9" font-weight="700">LDP Zone (n≥1,000)</text>`;
+
+    // Horizontal grid
+    [0, 5, 10, 20, 30, 40].forEach(v => {
+      const gy = yOf(v);
+      svg += `<line x1="${padL}" y1="${gy}" x2="${W - padR}" y2="${gy}" stroke="var(--svg-grid)" stroke-dasharray="${v===5?'5,3':'3,3'}" stroke-width="${v===5?1.3:1}"/>`;
+      svg += `<text x="${padL - 8}" y="${gy + 3}" text-anchor="end" fill="var(--text-faint)" font-size="9.2" font-family="var(--font-mono)">±${v}</text>`;
+    });
+
+    // Vertical grid
+    [20, 40, 100, 200, 500, 1000, 2000].forEach(nv => {
+      const gx = xOf(nv);
+      svg += `<line x1="${gx}" y1="${padT}" x2="${gx}" y2="${padT + plotH}" stroke="var(--svg-grid)" stroke-dasharray="3,3"/>`;
+      svg += `<text x="${gx}" y="${H - 16}" text-anchor="middle" fill="var(--text-faint)" font-size="9.2" font-family="var(--font-mono)">${nv}</text>`;
+    });
+
+    const samplePts = [20, 30, 40, 60, 80, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000];
+    const curves = [
+      { label: "LDP ε=1.0", col: "#fb7185", dash: "", fn: nv => calcLdp(pPct, nv, 1.0).ldpMoE },
+      { label: "LDP ε=2.0", col: "#f59e0b", dash: "", fn: nv => calcLdp(pPct, nv, 2.0).ldpMoE },
+      { label: "Raw Binomial", col: "#38bdf8", dash: "4,3", fn: nv => calcLdp(pPct, nv, 2.0).rawMoE }
+    ];
+
+    curves.forEach(c => {
+      const d = samplePts.map((nv, i) => `${i === 0 ? 'M' : 'L'}${xOf(nv).toFixed(1)},${yOf(c.fn(nv)).toFixed(1)}`).join(" ");
+      svg += `<path d="${d}" fill="none" stroke="${c.col}" stroke-width="2.2" stroke-dasharray="${c.dash}"/>`;
+    });
+
+    // Active point marker
+    const ax = xOf(n), ay = yOf(r.ldpMoE);
+    svg += `<line x1="${ax}" y1="${padT}" x2="${ax}" y2="${padT + plotH}" stroke="var(--gold)" stroke-width="1.2" stroke-dasharray="2,2"/>`;
+    svg += `<circle cx="${ax}" cy="${ay}" r="6.5" fill="var(--gold)" stroke="var(--bg)" stroke-width="2"/>`;
+    svg += `<text x="${Math.min(W - 125, ax + 10)}" y="${Math.max(padT + 26, ay - 8)}" fill="var(--gold-bright)" font-size="10" font-family="var(--font-mono)" font-weight="700">n=${n}, ε=${eps.toFixed(1)}: ±${r.ldpMoE.toFixed(1)}pp</text>`;
+
+    // Legend
+    svg += `<rect x="${padL + 10}" y="${padT + plotH - 22}" width="295" height="18" rx="4" fill="var(--bg-elev)" fill-opacity="0.88" stroke="var(--border)"/>`;
+    svg += `<text x="${padL + 18}" y="${padT + plotH - 10}" fill="#fb7185" font-size="9" font-weight="700">━ ε=1.0</text>`;
+    svg += `<text x="${padL + 84}" y="${padT + plotH - 10}" fill="#f59e0b" font-size="9" font-weight="700">━ ε=2.0</text>`;
+    svg += `<text x="${padL + 150}" y="${padT + plotH - 10}" fill="#38bdf8" font-size="9" font-weight="700">╌ Raw Binomial</text>`;
+    svg += `<text x="${padL + 245}" y="${padT + plotH - 10}" fill="var(--gold-bright)" font-size="9" font-weight="700">● Active</text>`;
+
+    svg += `</svg>`;
+    document.getElementById("ldpSvgWrap").innerHTML = svg;
+  }
+
+  document.getElementById("rngLN").addEventListener("input", e => { state.lN = Number(e.target.value); saveState(); renderLdp(); });
+  document.getElementById("rngLEps").addEventListener("input", e => { state.lEps = Number(e.target.value); saveState(); renderLdp(); });
+  document.getElementById("rngLP").addEventListener("input", e => { state.lP = Number(e.target.value); saveState(); renderLdp(); });
+  document.querySelectorAll("[data-lpreset]").forEach(b => {
+    b.addEventListener("click", () => {
+      const [n, eps, p] = b.dataset.lpreset.split(",").map(Number);
+      state.lN = n; state.lEps = eps; state.lP = p;
+      saveState();
+      renderLdp();
+    });
+  });
+
+  // =========================================================
+  // PANEL 4: HARDENED GATES
+  // =========================================================
+  function renderGates() {
+    document.getElementById("gateGrid").innerHTML = GATES.map(g => `
+      <article class="gate-card ${g.y2 ? 'y2' : ''}">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:6px;">
+          <strong style="font-family:var(--font-mono);font-size:0.75rem;color:var(--gold);">${g.num}</strong>
+          <span class="tag ${g.y2 ? 'tag-gold' : 'tag-pass'}">${g.std}</span>
+        </div>
+        <div style="font-weight:700;font-size:0.88rem;">${g.name}</div>
+        <div style="font-size:0.77rem;color:var(--text-muted);">${g.crit}</div>
+      </article>
+    `).join("");
+  }
+
+  // Theme & Font
+  document.getElementById("btnTheme").addEventListener("click", () => {
+    applyTheme(document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark");
+  });
+  document.getElementById("btnFontInc").addEventListener("click", () => {
+    state.scale = Math.min(1.25, +(state.scale + 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+  document.getElementById("btnFontDec").addEventListener("click", () => {
+    state.scale = Math.max(0.84, +(state.scale - 0.08).toFixed(2));
+    document.documentElement.style.setProperty("--scale", state.scale);
+    saveState();
+  });
+
+  // Export Modal
+  const EMBED_SNIPPET = `> [!note]- Empirical Hardware and Statistical Bounds Governing Tiered Edge AI, Usability, and Privacy\n> \n> https://anvilnexus.github.io/aicontent/sovraegis_hardware_statistical_bounds.html\n> \n> <iframe src="https://anvilnexus.github.io/aicontent/sovraegis_hardware_statistical_bounds.html?embed=true" width="100%" height="740px" style="border: 1px solid var(--background-modifier-border); border-radius: 8px;" loading="lazy"></iframe>`;
+
+  function buildMdSnapshot() {
+    const w = wilsonCI(state.wK, state.wN);
+    const l = calcLdp(state.lP, state.lN, state.lEps);
+    const ai = AI_TIERS.find(t => t.id === state.selectedAiTier);
+    return `# SOVRÆGIS — Empirical Hardware & Statistical Bounds Snapshot\n\n## Active Tiered Edge AI Profile\n- **Selected Tier:** ${ai.badge} — ${ai.title} (${ai.ram})\n- **Models:** ${ai.models}\n- **Compliance:** ${ai.euAct}\n\n## Gate 5 (30-Second Dignity Test) Wilson Simulation\n- **Sample:** ${state.wK}/${state.wN} (${w.p.toFixed(1)}%)\n- **95% Wilson CI:** [${w.low.toFixed(1)}%, ${w.high.toFixed(1)}%]\n- **Min Passes for ≥70% LCB at n=${state.wN}:** ${minPassesForLCB(state.wN, 70)}/${state.wN}\n\n## Factor 52 (Privacy-Preserving Measurement) LDP Simulation\n- **Parameters:** n = ${state.lN}, ε = ${state.lEps.toFixed(1)}, true rate p = ${state.lP}%\n- **Raw Binomial SE:** ±${l.rawSE.toFixed(1)} pp (95% MoE ±${l.rawMoE.toFixed(1)} pp)\n- **LDP Randomized Response SE:** ±${l.ldpSE.toFixed(1)} pp (95% MoE ±${l.ldpMoE.toFixed(1)} pp; ${l.infl.toFixed(2)}× inflation)\n`;
+  }
+
+  document.getElementById("btnExport").addEventListener("click", () => {
+    document.getElementById("obsidianSnippet").textContent = EMBED_SNIPPET;
+    document.getElementById("mdPreview").textContent = buildMdSnapshot();
+    document.getElementById("exportModal").classList.add("open");
+  });
+  document.getElementById("btnCloseModal").addEventListener("click", () => document.getElementById("exportModal").classList.remove("open"));
+  document.getElementById("exportModal").addEventListener("click", e => { if (e.target.id === "exportModal") document.getElementById("exportModal").classList.remove("open"); });
+  document.getElementById("btnCopyObsidian").addEventListener("click", () => {
+    navigator.clipboard && navigator.clipboard.writeText(EMBED_SNIPPET);
+    showToast("Obsidian callout copied");
+  });
+  document.getElementById("btnDownloadMd").addEventListener("click", () => {
+    const blob = new Blob([buildMdSnapshot()], { type: "text/markdown;charset=utf-8" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "SOVRAEGIS_Hardware_Statistical_Bounds_Snapshot.md";
+    a.click();
+    URL.revokeObjectURL(a.href);
+    showToast("Downloaded Markdown snapshot");
+  });
+
+  // Init
+  renderEdgeChart();
+  renderAiTiers();
+  renderWilson();
+  renderLdp();
+  renderGates();
+})();
+</script>
+</body>
+</html>
