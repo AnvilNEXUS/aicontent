@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FLUX Anti-Gaming Safeguards &amp; Governance Power Simulator — SYNCZINES / SOVRAEGOS</title>
+  <style>
+    :root {
+      --bg-app: #f5f7fb;
+      --bg-surface: #ffffff;
+      --bg-elevated: #eef2f8;
+      --bg-code: #0f172a;
+      --text-code: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #d7e0ec;
+      --border-strong: #b4c3d8;
+
+      --c-good: #059669;
+      --c-good-soft: rgba(5, 150, 105, 0.14);
+      --c-good-border: rgba(5, 150, 105, 0.42);
+
+      --c-collude: #d97706;
+      --c-collude-soft: rgba(217, 119, 6, 0.15);
+      --c-collude-border: rgba(217, 119, 6, 0.44);
+
+      --c-stamp: #ea580c;
+      --c-stamp-soft: rgba(234, 88, 12, 0.14);
+      --c-stamp-border: rgba(234, 88, 12, 0.44);
+
+      --c-sybil: #dc2626;
+      --c-sybil-soft: rgba(220, 38, 38, 0.13);
+      --c-sybil-border: rgba(220, 38, 38, 0.42);
+
+      --c-accent: #0d9488;
+      --c-accent-soft: rgba(13, 148, 136, 0.14);
+      --c-accent-border: rgba(13, 148, 136, 0.44);
+
+      --c-indigo: #4f46e5;
+      --c-indigo-soft: rgba(79, 70, 229, 0.14);
+      --c-indigo-border: rgba(79, 70, 229, 0.44);
+
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0a0f1a;
+      --bg-surface: #111827;
+      --bg-elevated: #192235;
+      --bg-code: #070b14;
+      --text-code: #e2e8f0;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #233149;
+      --border-strong: #374b6e;
+
+      --c-good: #34d399;
+      --c-good-soft: rgba(52, 211, 153, 0.16);
+      --c-good-border: rgba(52, 211, 153, 0.45);
+
+      --c-collude: #fbbf24;
+      --c-collude-soft: rgba(251, 191, 36, 0.16);
+      --c-collude-border: rgba(251, 191, 36, 0.45);
+
+      --c-stamp: #fb923c;
+      --c-stamp-soft: rgba(251, 146, 60, 0.16);
+      --c-stamp-border: rgba(251, 146, 60, 0.45);
+
+      --c-sybil: #f87171;
+      --c-sybil-soft: rgba(248, 113, 113, 0.16);
+      --c-sybil-border: rgba(248, 113, 113, 0.45);
+
+      --c-accent: #2dd4bf;
+      --c-accent-soft: rgba(45, 212, 191, 0.17);
+      --c-accent-border: rgba(45, 212, 191, 0.46);
+
+      --c-indigo: #818cf8;
+      --c-indigo-soft: rgba(129, 140, 248, 0.18);
+      --c-indigo-border: rgba(129, 140, 248, 0.48);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+    }
+
+    .title-group { display: flex; flex-direction: column; gap: 2px; }
+    .title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .title-row h1 { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .chip-mono {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--c-accent-soft);
+      color: var(--c-accent);
+      border: 1px solid var(--c-accent-border);
+    }
+
+    .subtitle { font-size: 11.5px; color: var(--text-muted); }
+
+    .controls-right { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+
+    .master-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--c-good-border);
+      background: var(--c-good-soft);
+      color: var(--c-good);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .master-switch.naive {
+      border-color: var(--c-sybil-border);
+      background: var(--c-sybil-soft);
+      color: var(--c-sybil);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.08);
+    }
+
+    .kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* KPI Strip */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 860px) {
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .kpi-lbl {
+      font-size: 9.8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .kpi-val {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .kpi-sub { font-size: 10.6px; color: var(--text-secondary); }
+
+    /* Tuning Controls Bar */
+    .controls-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 9px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .sliders-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .sliders-grid { grid-template-columns: 1fr; gap: 8px; }
+    }
+
+    .slider-box {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: opacity 0.2s ease;
+    }
+
+    .slider-box.disabled { opacity: 0.42; pointer-events: none; }
+
+    .slider-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.4px;
+      font-weight: 700;
+    }
+
+    .slider-val {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      color: var(--c-accent);
+      background: var(--c-accent-soft);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--c-accent);
+      cursor: pointer;
+    }
+
+    .safeguard-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      padding-top: 7px;
+      border-top: 1px solid var(--border);
+    }
+
+    .pills-label {
+      font-size: 10.2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-right: 2px;
+    }
+
+    .sg-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+      font-size: 10.8px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .sg-pill.on {
+      background: var(--c-accent-soft);
+      border-color: var(--c-accent-border);
+      color: var(--c-accent);
+    }
+
+    /* Main Workspace Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 880px) {
+      .main-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 7px;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .b-good { background: var(--c-good-soft); color: var(--c-good); border-color: var(--c-good-border); }
+    .b-collude { background: var(--c-collude-soft); color: var(--c-collude); border-color: var(--c-collude-border); }
+    .b-stamp { background: var(--c-stamp-soft); color: var(--c-stamp); border-color: var(--c-stamp-border); }
+    .b-sybil { background: var(--c-sybil-soft); color: var(--c-sybil); border-color: var(--c-sybil-border); }
+    .b-accent { background: var(--c-accent-soft); color: var(--c-accent); border-color: var(--c-accent-border); }
+    .b-indigo { background: var(--c-indigo-soft); color: var(--c-indigo); border-color: var(--c-indigo-border); }
+
+    /* Horizontal Bar Chart */
+    .chart-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      position: relative;
+    }
+
+    .axis-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 9.8px;
+      color: var(--text-muted);
+      padding: 0 2px;
+    }
+
+    .persona-row {
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: border-color 0.18s ease, transform 0.15s ease, background 0.18s ease;
+    }
+
+    .persona-row:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+    .persona-row.selected { border-color: var(--c-accent); }
+
+    .p-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .p-name-group {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .p-name { font-size: 12.2px; font-weight: 800; color: var(--text-primary); }
+    .p-share {
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .majority-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      border-left: 1.5px dashed var(--border-strong);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.36s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease;
+      position: relative;
+      z-index: 1;
+    }
+
+    .p-metrics {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-family: var(--font-mono);
+      font-variant-numeric: tabular-nums;
+      font-size: 10.4px;
+      color: var(--text-secondary);
+    }
+
+    .p-reason {
+      font-family: var(--font-sans);
+      font-size: 10.6px;
+      color: var(--text-muted);
+    }
+
+    /* Right Panel Tabs */
+    .tabs { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .tab-btn {
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11.2px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-elevated);
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    /* Equation Breakdown */
+    .eq-box {
+      background: var(--bg-code);
+      color: var(--text-code);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      font-family: var(--font-mono);
+      font-size: 10.7px;
+      line-height: 1.5;
+      overflow-x: auto;
+    }
+
+    .factor-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .factor-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .f-k { font-size: 9.5px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); }
+    .f-v { font-family: var(--font-mono); font-size: 12px; font-weight: 800; color: var(--text-primary); }
+    .f-sub { font-size: 10px; color: var(--text-muted); }
+
+    /* Decay Curve */
+    .decay-svg-wrap {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px;
+    }
+
+    svg.decay-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Vectors & Privileges */
+    .vector-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .vector-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--c-accent);
+      border-radius: var(--radius-sm);
+      padding: 7px 9px;
+      font-size: 11.2px;
+      color: var(--text-secondary);
+    }
+
+    .vector-card strong {
+      display: block;
+      font-size: 11.5px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .footer-hint {
+      font-size: 10.4px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="title-group">
+        <div class="title-row">
+          <h1>FLUX Anti-Gaming Safeguards &amp; Governance Power Simulator</h1>
+          <span class="chip-mono">Soulbound · Non-Monetary · Zero-PII</span>
+        </div>
+        <div class="subtitle">Blind-Claim 1:1 Cap · Canary Calibration · Pairwise Damping · Outcome-Coupled Vesting · Quadratic W_gov = √FLUX</div>
+      </div>
+
+      <div class="controls-right">
+        <button id="masterToggle" class="master-switch" type="button" title="Toggle Full FLUX Engine vs Naive Linear Points (Hotkey: S)">
+          <span class="status-dot"></span>
+          <span id="masterLabel">FLUX Safeguards: ON</span>
+          <span class="kbd">S</span>
+        </button>
+        <button id="resetBtn" class="btn" type="button" title="Reset Defaults (Hotkey: R)">↺ Reset</button>
+        <button id="themeToggle" class="btn" type="button" title="Toggle Light / Dark Theme (Hotkey: T)">
+          <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Live KPI Summary Cards -->
+    <section class="kpi-grid" aria-label="Simulation Headline Metrics">
+      <div class="kpi-card">
+        <span class="kpi-lbl">Majority / Leading Voice</span>
+        <span id="kpiLeader" class="kpi-val" style="color:var(--c-good);">Calibrated (62.2%)</span>
+        <span id="kpiLeaderSub" class="kpi-sub">Honest reviewer holds &gt;50% classroom share</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-lbl">Calibrated vs. 3 Adversaries</span>
+        <span id="kpiRatio" class="kpi-val">62.2% vs 37.8%</span>
+        <span id="kpiRatioSub" class="kpi-sub">Gaming personas mathematically suppressed</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-lbl">Governance Weighting Curve</span>
+        <span id="kpiCurve" class="kpi-val">Quadratic (√FLUX)</span>
+        <span id="kpiCurveSub" class="kpi-sub">100 FLUX = 10 weight (neutralizes whales)</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-lbl">Sybil Avatars Rejected</span>
+        <span id="kpiSybil" class="kpi-val" style="color:var(--c-accent);">3 of 4 Blocked</span>
+        <span id="kpiSybilSub" class="kpi-sub">Blind-Claim 1:1 cap via air-gapped roster</span>
+      </div>
+    </section>
+
+    <!-- Tuning Controls & Modular Safeguard Layer Toggles -->
+    <section class="controls-bar" aria-label="FLUX Parameter Controls">
+      <div class="sliders-grid">
+        <div id="alphaWrap" class="slider-box">
+          <div class="slider-top">
+            <label for="alphaSlider">Pairwise Collusion Damping (α)</label>
+            <span id="alphaVal" class="slider-val">α = 0.8</span>
+          </div>
+          <input id="alphaSlider" type="range" min="0.0" max="2.0" step="0.1" value="0.8" />
+        </div>
+
+        <div id="strictWrap" class="slider-box">
+          <div class="slider-top">
+            <label for="strictSlider">Canary Calibration Strictness</label>
+            <span id="strictVal" class="slider-val">1.0×</span>
+          </div>
+          <input id="strictSlider" type="range" min="0.0" max="1.5" step="0.1" value="1.0" />
+        </div>
+      </div>
+
+      <div class="safeguard-pills" id="sgPills" aria-label="Individual Safeguard Toggles">
+        <span class="pills-label">Active Layers:</span>
+        <button class="sg-pill on" data-sg="sybil" type="button">✓ Blind-Claim 1:1 Cap</button>
+        <button class="sg-pill on" data-sg="canary" type="button">✓ Canary Calibration</button>
+        <button class="sg-pill on" data-sg="damping" type="button">✓ Pairwise Damping (α)</button>
+        <button class="sg-pill on" data-sg="vesting" type="button">✓ Outcome Vesting (30/70)</button>
+        <button class="sg-pill on" data-sg="quadratic" type="button">✓ Quadratic √W_gov</button>
+      </div>
+    </section>
+
+    <!-- Main Split: Horizontal Bar Chart + Multi-Tab Deep-Dive -->
+    <div class="main-grid">
+      <!-- Left: Grouped Horizontal Bar Chart -->
+      <section class="panel" aria-label="Classroom Governance Power Comparison Chart">
+        <div class="panel-header">
+          <strong style="font-size:12.2px;">Share of Classroom Governance Power (%)</strong>
+          <span id="modeBadge" class="badge b-good">Full FLUX Engine Active</span>
+        </div>
+
+        <div class="axis-header">
+          <span>0%</span>
+          <span>25%</span>
+          <span style="color:var(--text-primary); font-weight:700;">50% Majority</span>
+          <span>75%</span>
+          <span>100%</span>
+        </div>
+
+        <div id="chartRows" class="chart-wrap"></div>
+
+        <div class="footer-hint">
+          <span>Click any persona bar (<span class="kbd">1</span>–<span class="kbd">4</span>) to inspect its exact FLUX multiplier breakdown</span>
+        </div>
+      </section>
+
+      <!-- Right: Formula Inspector / Decay Curve / SOVRAEGOS Privileges -->
+      <section class="panel" aria-label="FLUX Mathematical & Governance Inspector">
+        <div class="panel-header">
+          <div class="tabs">
+            <button id="tabFormula" class="tab-btn active" type="button">Formula Audit</button>
+            <button id="tabDecay" class="tab-btn" type="button">Half-Life Decay (τ)</button>
+            <button id="tabGov" class="tab-btn" type="button">Vectors &amp; SOVRAEGOS</button>
+          </div>
+          <span id="rightBadge" class="badge b-good">Selected Persona</span>
+        </div>
+
+        <!-- Tab 1: Formula Breakdown -->
+        <div id="viewFormula" style="display:flex; flex-direction:column; gap:8px;">
+          <div id="personaSummary" style="font-size:11.6px; color:var(--text-secondary);"></div>
+          <div id="eqReadout" class="eq-box"></div>
+          <div id="factorGrid" class="factor-grid"></div>
+        </div>
+
+        <!-- Tab 2: Active Half-Life Decay (tau = 30 days) -->
+        <div id="viewDecay" style="display:none; flex-direction:column; gap:8px;">
+          <div style="font-size:11.5px; color:var(--text-secondary);">
+            Governance weight decays exponentially over inactivity epochs (<strong style="font-family:var(--font-mono);">τ = 30 days</strong> in a 14-week semester):
+            <span style="font-family:var(--font-mono); color:var(--c-accent);">W_gov(t) = √(FLUX · 2^(-(t - t_k)/30))</span>. Early bursts cannot capture end-of-term polls.
+          </div>
+
+          <div class="slider-box">
+            <div class="slider-top">
+              <label for="decaySlider">Days Since Last Verified Contribution (t − t_k)</label>
+              <span id="decayDaysVal" class="slider-val">30 days</span>
+            </div>
+            <input id="decaySlider" type="range" min="0" max="90" step="1" value="30" />
+          </div>
+
+          <div class="decay-svg-wrap">
+            <svg class="decay-svg" viewBox="0 0 360 128" role="img" aria-label="Exponential Half-Life Decay Curve">
+              <!-- Gridlines -->
+              <line x1="34" y1="14" x2="346" y2="14" stroke="var(--border)" stroke-dasharray="3 3" />
+              <line x1="34" y1="58" x2="346" y2="58" stroke="var(--border)" stroke-dasharray="3 3" />
+              <line x1="34" y1="102" x2="346" y2="102" stroke="var(--border-strong)" />
+              <line x1="34" y1="14" x2="34" y2="102" stroke="var(--border-strong)" />
+
+              <text x="29" y="17" text-anchor="end" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">100%</text>
+              <text x="29" y="61" text-anchor="end" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">50%</text>
+              <text x="29" y="105" text-anchor="end" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">0%</text>
+
+              <text x="34" y="117" text-anchor="middle" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">0d</text>
+              <text x="138" y="117" text-anchor="middle" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">30d (τ)</text>
+              <text x="242" y="117" text-anchor="middle" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">60d</text>
+              <text x="346" y="117" text-anchor="end" font-size="8.5" font-family="var(--font-mono)" fill="var(--text-muted)">90d</text>
+
+              <!-- Raw FLUX decay curve & Quadratic W_gov decay curve -->
+              <path id="decayFluxPath" fill="none" stroke="var(--c-indigo)" stroke-width="2" stroke-dasharray="4 3" />
+              <path id="decayWgovPath" fill="none" stroke="var(--c-accent)" stroke-width="2.6" />
+
+              <!-- Active Day Marker -->
+              <line id="decayMarkerLine" x1="138" y1="14" x2="138" y2="102" stroke="var(--c-collude)" stroke-width="1.4" stroke-dasharray="3 2" />
+              <circle id="decayFluxDot" cx="138" cy="58" r="4" fill="var(--c-indigo)" />
+              <circle id="decayWgovDot" cx="138" cy="40" r="4.5" fill="var(--c-accent)" />
+            </svg>
+          </div>
+
+          <div class="factor-grid">
+            <div class="factor-card">
+              <span class="f-k">Remaining Active FLUX</span>
+              <span id="decayFluxOut" class="f-v" style="color:var(--c-indigo);">50.0%</span>
+              <span class="f-sub">From 100.0 early FLUX</span>
+            </div>
+            <div class="factor-card">
+              <span class="f-k">Remaining W_gov (√FLUX)</span>
+              <span id="decayWgovOut" class="f-v" style="color:var(--c-accent);">70.7%</span>
+              <span class="f-sub">Gentle decay rewards consistency</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: 3 Vectors & SOVRAEGOS Privileges -->
+        <div id="viewGov" style="display:none; flex-direction:column; gap:7px;">
+          <div class="vector-list">
+            <div class="vector-card" style="border-left-color:var(--c-good);">
+              <strong>FLUX_Verify · Calibration &amp; Critique Rigor</strong>
+              Earned in CODE+V Stage 5 when scoring aligns with calibrated consensus and critique drives measurable draft gains. Unlocks <em>Blind Tie-Breaker Panel</em>.
+            </div>
+            <div class="vector-card" style="border-left-color:var(--c-accent);">
+              <strong>FLUX_Commons · Alchemosaic Stewardship (CATALYZATION)</strong>
+              Earned for flagging ambiguous SYNCTESS prompts, bilingual EN–VI glossary fixes, validated exemplars, or opt-in ε-LDP telemetry. Unlocks <em>Courseware PR Curation &amp; Co-Authoring</em>.
+            </div>
+            <div class="vector-card" style="border-left-color:var(--c-indigo);">
+              <strong>FLUX_Synergy · Peer Scaffolding (SYNERGIZATION &amp; SOVEREIGNIZATION)</strong>
+              Earned when mentored peers improve across Express v1 → v2. Powers <em>Quadratic Pacing/Clinic Polls</em> and portable <em>Non-Academic SYNTHCRED</em> endorsements (never alters FAP grades).
+            </div>
+          </div>
+        </div>
+
+        <div class="footer-hint">
+          <span>Zero monetary value · Never modifies FAP grades · Scoped strictly to course did:peer</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const PERSONAS = [
+        {
+          id: "calibrated",
+          name: "Calibrated Reviewer",
+          tag: "Honest Peer Evaluator",
+          colorVar: "var(--c-good)",
+          badgeClass: "b-good",
+          naivePoints: 100,
+          naiveAvatars: 1,
+          rounds: 10,
+          baseCal: 1.25,
+          alignment: 0.92,
+          mutualCount: 0.2,
+          vestingGate: 0.95,
+          summary: "Passes hidden teacher-graded canary benchmarks cleanly, aligns tightly with consensus (0.92), avoids mutual cliques, and writes specific critiques that unlock 95% of outcome-coupled vesting.",
+          reasonOn: "Boosted by 1.25× canary accuracy & 95% outcome vesting",
+          reasonOff: "Drowned out by raw spam & multi-avatar farmers"
+        },
+        {
+          id: "collusion",
+          name: "Mutual Collusion Ring",
+          tag: "Zalo Upvote Clique",
+          colorVar: "var(--c-collude)",
+          badgeClass: "b-collude",
+          naivePoints: 180,
+          naiveAvatars: 1,
+          rounds: 10,
+          baseCal: 0.60,
+          alignment: 0.45,
+          mutualCount: 6.0,
+          vestingGate: 0.30,
+          summary: "Coordinates over Zalo to trade maximum scores with friends (6.0 repeated mutual interactions). Crushed by Double-Blind Ephemeral Aliases, exponential Pairwise Affinity Damping (1 / (1 + α·C)), and low vesting.",
+          reasonOn: "Crushed by pairwise affinity damping (C=6.0) & 30% vesting cap",
+          reasonOff: "Mutual 100% upvote ring inflates naive score to 180 pts"
+        },
+        {
+          id: "stamper",
+          name: "Lazy Rubber-Stamper",
+          tag: "5-Second 100% Clicker",
+          colorVar: "var(--c-stamp)",
+          badgeClass: "b-stamp",
+          naivePoints: 150,
+          naiveAvatars: 1,
+          rounds: 15,
+          baseCal: 0.15,
+          alignment: 0.35,
+          mutualCount: 0.3,
+          vestingGate: 0.30,
+          summary: "Spams 15 rapid reviews awarding blind 100% scores with boilerplate AI-slop praise. Fails hidden Calibration Canaries (M_cal → 0.15) and stalls at the 30% Outcome-Coupled Vesting Gate.",
+          reasonOn: "Fails hidden canary benchmarks (M_cal collapses) & 30% vesting",
+          reasonOff: "Volume grinding (15 rapid clicks) beats honest reviewer"
+        },
+        {
+          id: "sybil",
+          name: "Sybil Avatar Farmer",
+          tag: "4 Fake Wallets Attempted",
+          colorVar: "var(--c-sybil)",
+          badgeClass: "b-sybil",
+          naivePoints: 240,
+          naiveAvatars: 4,
+          rounds: 6,
+          baseCal: 0.80,
+          alignment: 0.65,
+          mutualCount: 0.5,
+          vestingGate: 0.50,
+          summary: "Spins up 4 did:peer wallets in SOVRAELEX to stuff classroom polls. Blind-Claim 1:1 Enrollment Cap rejects 3 unverified seats immediately; the single real seat earns modest low-effort FLUX damped further by √W_gov.",
+          reasonOn: "3 of 4 fake avatars rejected at Blind-Claim 1:1 cap",
+          reasonOff: "4 uncapped fake wallets hijack 35.8% of classroom vote"
+        }
+      ];
+
+      // Simulation State
+      let alpha = 0.8;
+      let strictness = 1.0;
+      let flags = {
+        sybil: true,
+        canary: true,
+        damping: true,
+        vesting: true,
+        quadratic: true
+      };
+      let selectedPersonaId = "calibrated";
+      let activeRightTab = "formula";
+      let decayDays = 30;
+
+      // DOM Refs
+      const masterToggle = document.getElementById("masterToggle");
+      const masterLabel = document.getElementById("masterLabel");
+      const resetBtn = document.getElementById("resetBtn");
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      const kpiLeader = document.getElementById("kpiLeader");
+      const kpiLeaderSub = document.getElementById("kpiLeaderSub");
+      const kpiRatio = document.getElementById("kpiRatio");
+      const kpiRatioSub = document.getElementById("kpiRatioSub");
+      const kpiCurve = document.getElementById("kpiCurve");
+      const kpiCurveSub = document.getElementById("kpiCurveSub");
+      const kpiSybil = document.getElementById("kpiSybil");
+      const kpiSybilSub = document.getElementById("kpiSybilSub");
+
+      const alphaWrap = document.getElementById("alphaWrap");
+      const strictWrap = document.getElementById("strictWrap");
+      const alphaSlider = document.getElementById("alphaSlider");
+      const strictSlider = document.getElementById("strictSlider");
+      const alphaVal = document.getElementById("alphaVal");
+      const strictVal = document.getElementById("strictVal");
+      const sgPills = document.getElementById("sgPills");
+
+      const modeBadge = document.getElementById("modeBadge");
+      const chartRows = document.getElementById("chartRows");
+
+      const tabFormula = document.getElementById("tabFormula");
+      const tabDecay = document.getElementById("tabDecay");
+      const tabGov = document.getElementById("tabGov");
+      const rightBadge = document.getElementById("rightBadge");
+      const viewFormula = document.getElementById("viewFormula");
+      const viewDecay = document.getElementById("viewDecay");
+      const viewGov = document.getElementById("viewGov");
+
+      const personaSummary = document.getElementById("personaSummary");
+      const eqReadout = document.getElementById("eqReadout");
+      const factorGrid = document.getElementById("factorGrid");
+
+      const decaySlider = document.getElementById("decaySlider");
+      const decayDaysVal = document.getElementById("decayDaysVal");
+      const decayFluxPath = document.getElementById("decayFluxPath");
+      const decayWgovPath = document.getElementById("decayWgovPath");
+      const decayMarkerLine = document.getElementById("decayMarkerLine");
+      const decayFluxDot = document.getElementById("decayFluxDot");
+      const decayWgovDot = document.getElementById("decayWgovDot");
+      const decayFluxOut = document.getElementById("decayFluxOut");
+      const decayWgovOut = document.getElementById("decayWgovOut");
+
+      // Theme Sync (shared key across all 4 components)
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+        themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
+        try { localStorage.setItem("sovraeg-theme", theme); } catch (_) {}
+      }
+
+      (function initTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem("sovraeg-theme"); } catch (_) {}
+        if (saved === "light" || saved === "dark") {
+          applyTheme(saved);
+        } else {
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          applyTheme(prefersLight ? "light" : "dark");
+        }
+      })();
+
+      function isNaiveMode() {
+        return !flags.sybil && !flags.canary && !flags.damping && !flags.vesting && !flags.quadratic;
+      }
+
+      function isFullMode() {
+        return flags.sybil && flags.canary && flags.damping && flags.vesting && flags.quadratic;
+      }
+
+      function computeResults() {
+        const naive = isNaiveMode();
+        const computed = PERSONAS.map((p) => {
+          if (naive) {
+            return {
+              ...p,
+              validAvatars: p.naiveAvatars,
+              mCal: 1.0,
+              alignEff: 1.0,
+              dampingEff: 1.0,
+              vestingEff: 1.0,
+              earnedFlux: p.naivePoints,
+              govWeight: p.naivePoints
+            };
+          }
+
+          const validAvatars = flags.sybil ? 1 : p.naiveAvatars;
+          const mCal = flags.canary ? Math.max(0.05, 1 + strictness * (p.baseCal - 1)) : 1.0;
+          const alignEff = p.alignment;
+          const dampingEff = flags.damping ? (1 / (1 + alpha * p.mutualCount)) : 1.0;
+          const vestingEff = flags.vesting ? p.vestingGate : 1.0;
+
+          const earnedFlux = validAvatars * p.rounds * 10 * mCal * alignEff * dampingEff * vestingEff;
+          const govWeight = flags.quadratic ? Math.sqrt(earnedFlux) : earnedFlux;
+
+          return {
+            ...p,
+            validAvatars,
+            mCal,
+            alignEff,
+            dampingEff,
+            vestingEff,
+            earnedFlux,
+            govWeight
+          };
+        });
+
+        const totalWeight = computed.reduce((sum, r) => sum + r.govWeight, 0) || 1;
+        return computed.map((r) => ({
+          ...r,
+          sharePct: (r.govWeight / totalWeight) * 100
+        }));
+      }
+
+      function buildDecayCurves() {
+        const tau = 30;
+        const x0 = 34, x1 = 346, yTop = 14, yBot = 102;
+        const ptsFlux = [];
+        const ptsWgov = [];
+
+        for (let d = 0; d <= 90; d += 3) {
+          const fracFlux = Math.pow(2, -d / tau);
+          const fracWgov = Math.sqrt(fracFlux);
+          const x = x0 + (d / 90) * (x1 - x0);
+          const yF = yBot - fracFlux * (yBot - yTop);
+          const yW = yBot - fracWgov * (yBot - yTop);
+          ptsFlux.push(`${d === 0 ? "M" : "L"} ${x.toFixed(1)} ${yF.toFixed(1)}`);
+          ptsWgov.push(`${d === 0 ? "M" : "L"} ${x.toFixed(1)} ${yW.toFixed(1)}`);
+        }
+
+        decayFluxPath.setAttribute("d", ptsFlux.join(" "));
+        decayWgovPath.setAttribute("d", ptsWgov.join(" "));
+      }
+
+      function renderDecay() {
+        const tau = 30;
+        const x0 = 34, x1 = 346, yTop = 14, yBot = 102;
+        const fracFlux = Math.pow(2, -decayDays / tau);
+        const fracWgov = Math.sqrt(fracFlux);
+
+        const x = x0 + (decayDays / 90) * (x1 - x0);
+        const yF = yBot - fracFlux * (yBot - yTop);
+        const yW = yBot - fracWgov * (yBot - yTop);
+
+        decayDaysVal.textContent = `${decayDays} day${decayDays === 1 ? "" : "s"}`;
+        decayMarkerLine.setAttribute("x1", x.toFixed(1));
+        decayMarkerLine.setAttribute("x2", x.toFixed(1));
+        decayFluxDot.setAttribute("cx", x.toFixed(1));
+        decayFluxDot.setAttribute("cy", yF.toFixed(1));
+        decayWgovDot.setAttribute("cx", x.toFixed(1));
+        decayWgovDot.setAttribute("cy", yW.toFixed(1));
+
+        decayFluxOut.textContent = `${(fracFlux * 100).toFixed(1)}%`;
+        decayWgovOut.textContent = `${(fracWgov * 100).toFixed(1)}%`;
+      }
+
+      function renderRightPanel(results) {
+        tabFormula.classList.toggle("active", activeRightTab === "formula");
+        tabDecay.classList.toggle("active", activeRightTab === "decay");
+        tabGov.classList.toggle("active", activeRightTab === "gov");
+
+        viewFormula.style.display = activeRightTab === "formula" ? "flex" : "none";
+        viewDecay.style.display = activeRightTab === "decay" ? "flex" : "none";
+        viewGov.style.display = activeRightTab === "gov" ? "flex" : "none";
+
+        const sel = results.find((r) => r.id === selectedPersonaId) || results[0];
+
+        if (activeRightTab === "formula") {
+          rightBadge.textContent = sel.name;
+          rightBadge.className = `badge ${sel.badgeClass}`;
+          personaSummary.innerHTML = `<strong>${sel.name}</strong> (${sel.tag}): ${sel.summary}`;
+
+          const naive = isNaiveMode();
+          if (naive) {
+            eqReadout.textContent =
+`// NAIVE LINEAR POINTS (ALL SAFEGUARDS OFF)
+Points = ${sel.earnedFlux.toFixed(0)} raw points (${sel.validAvatars} avatar${sel.validAvatars > 1 ? "s" : ""})
+W_gov  = ${sel.govWeight.toFixed(0)} (linear 1:1 — no √ damping)
+Share  = ${sel.sharePct.toFixed(1)}% of classroom vote`;
+          } else {
+            eqReadout.textContent =
+`ΔFLUX = Seats(${sel.validAvatars}) × Rounds(${sel.rounds}) × B_base(10)
+      × M_cal(${sel.mCal.toFixed(2)}) × Align(${sel.alignEff.toFixed(2)})
+      × Damp(${sel.dampingEff.toFixed(2)}) × Vest(${sel.vestingEff.toFixed(2)})
+      = ${sel.earnedFlux.toFixed(1)} FLUX
+W_gov = ${flags.quadratic ? `√(${sel.earnedFlux.toFixed(1)})` : `${sel.earnedFlux.toFixed(1)} (linear)`} = ${sel.govWeight.toFixed(2)}  →  ${sel.sharePct.toFixed(1)}% Share`;
+          }
+
+          factorGrid.innerHTML = `
+            <div class="factor-card">
+              <span class="f-k">Canary Multiplier (M_cal)</span>
+              <span class="f-v" style="color:${sel.mCal >= 1 ? "var(--c-good)" : "var(--c-sybil)"};">${sel.mCal.toFixed(2)}×</span>
+              <span class="f-sub">Base accuracy: ${sel.baseCal.toFixed(2)}</span>
+            </div>
+            <div class="factor-card">
+              <span class="f-k">Collusion Damping</span>
+              <span class="f-v" style="color:${sel.dampingEff >= 0.7 ? "var(--c-good)" : "var(--c-collude)"};">${sel.dampingEff.toFixed(2)}×</span>
+              <span class="f-sub">1 / (1 + ${alpha.toFixed(1)} × ${sel.mutualCount.toFixed(1)})</span>
+            </div>
+            <div class="factor-card">
+              <span class="f-k">Outcome Vesting Gate</span>
+              <span class="f-v" style="color:${sel.vestingEff >= 0.8 ? "var(--c-good)" : "var(--c-stamp)"};">${(sel.vestingEff * 100).toFixed(0)}%</span>
+              <span class="f-sub">30% submit + 70% impact</span>
+            </div>
+            <div class="factor-card">
+              <span class="f-k">Admitted Seats (1:1 Cap)</span>
+              <span class="f-v">${sel.validAvatars} / ${sel.naiveAvatars}</span>
+              <span class="f-sub">${sel.naiveAvatars > sel.validAvatars ? "3 fake DIDs rejected" : "Verified seat active"}</span>
+            </div>
+          `;
+        } else if (activeRightTab === "decay") {
+          rightBadge.textContent = "τ = 30 Days";
+          rightBadge.className = "badge b-accent";
+          renderDecay();
+        } else {
+          rightBadge.textContent = "SOVRAEGOS Triad";
+          rightBadge.className = "badge b-indigo";
+        }
+      }
+
+      function render() {
+        const results = computeResults();
+        const naive = isNaiveMode();
+        const full = isFullMode();
+
+        // Master Switch & Sliders
+        masterToggle.classList.toggle("naive", naive);
+        masterLabel.textContent = full
+          ? "FLUX Safeguards: ON"
+          : (naive ? "Naive Linear Mode (OFF)" : "Custom Safeguards");
+
+        alphaVal.textContent = `α = ${alpha.toFixed(1)}`;
+        strictVal.textContent = `${strictness.toFixed(1)}×`;
+        alphaWrap.classList.toggle("disabled", !flags.damping || naive);
+        strictWrap.classList.toggle("disabled", !flags.canary || naive);
+
+        sgPills.querySelectorAll(".sg-pill").forEach((pill) => {
+          const key = pill.getAttribute("data-sg");
+          const isOn = !!flags[key];
+          pill.classList.toggle("on", isOn);
+          const clean = pill.textContent.replace(/^[✓✕]\s*/, "");
+          pill.textContent = `${isOn ? "✓" : "✕"} ${clean}`;
+        });
+
+        // Mode Badge
+        if (full) {
+          modeBadge.textContent = "Full FLUX Engine Active";
+          modeBadge.className = "badge b-good";
+        } else if (naive) {
+          modeBadge.textContent = "Naive Linear Points (Vulnerable)";
+          modeBadge.className = "badge b-sybil";
+        } else {
+          modeBadge.textContent = "Partial Safeguards Active";
+          modeBadge.className = "badge b-collude";
+        }
+
+        // Headline KPIs
+        const sorted = [...results].sort((a, b) => b.sharePct - a.sharePct);
+        const top = sorted[0];
+        const cal = results.find((r) => r.id === "calibrated");
+        const advShare = 100 - cal.sharePct;
+
+        kpiLeader.textContent = `${top.name.split(" ")[0]} (${top.sharePct.toFixed(1)}%)`;
+        kpiLeader.style.color = top.colorVar;
+        kpiLeaderSub.textContent = top.id === "calibrated"
+          ? (top.sharePct >= 50 ? "Honest reviewer holds >50% majority voice" : "Honest reviewer leads classroom voice")
+          : `Warning: ${top.name} hijacks classroom polls`;
+
+        kpiRatio.textContent = `${cal.sharePct.toFixed(1)}% vs ${advShare.toFixed(1)}%`;
+        kpiRatioSub.textContent = cal.sharePct > advShare
+          ? "Calibrated reviewer beats all 3 adversaries combined"
+          : "Adversaries outvote the calibrated reviewer";
+
+        kpiCurve.textContent = flags.quadratic ? "Quadratic (√FLUX)" : "Linear (1:1 Raw)";
+        kpiCurveSub.textContent = flags.quadratic
+          ? "100 FLUX = 10 weight (neutralizes whales)"
+          : "Uncapped linear scaling favors volume whales";
+
+        kpiSybil.textContent = flags.sybil ? "3 of 4 Blocked" : "0 Blocked (4 Active)";
+        kpiSybil.style.color = flags.sybil ? "var(--c-accent)" : "var(--c-sybil)";
+        kpiSybilSub.textContent = flags.sybil
+          ? "Blind-Claim 1:1 cap via air-gapped roster"
+          : "Unverified did:peer wallets flood polls";
+
+        // Render Bar Chart Rows
+        chartRows.innerHTML = "";
+        results.forEach((r) => {
+          const row = document.createElement("div");
+          row.className = `persona-row ${r.id === selectedPersonaId ? "selected" : ""}`;
+          row.setAttribute("tabindex", "0");
+          row.setAttribute("role", "button");
+          row.setAttribute("aria-label", `${r.name}: ${r.sharePct.toFixed(1)}% classroom governance power`);
+
+          const clampedWidth = Math.max(2, Math.min(100, r.sharePct));
+          const reason = naive ? r.reasonOff : r.reasonOn;
+
+          row.innerHTML = `
+            <div class="p-top">
+              <div class="p-name-group">
+                <span class="p-name">${r.name}</span>
+                <span class="badge ${r.badgeClass}">${r.tag}</span>
+              </div>
+              <span class="p-share" style="color:${r.colorVar};">${r.sharePct.toFixed(1)}%</span>
+            </div>
+            <div class="bar-track" title="Earned FLUX: ${r.earnedFlux.toFixed(1)} | W_gov: ${r.govWeight.toFixed(2)} | Vote Share: ${r.sharePct.toFixed(1)}%">
+              <div class="majority-line"></div>
+              <div class="bar-fill" style="width:${clampedWidth.toFixed(1)}%; background:${r.colorVar};"></div>
+            </div>
+            <div class="p-metrics">
+              <span>${naive ? "Raw Points" : "Earned FLUX"}: <strong>${r.earnedFlux.toFixed(1)}</strong> · W_gov: <strong>${r.govWeight.toFixed(1)}</strong></span>
+              <span class="p-reason">${reason}</span>
+            </div>
+          `;
+
+          const selectPersona = () => {
+            selectedPersonaId = r.id;
+            activeRightTab = "formula";
+            render();
+          };
+          row.addEventListener("click", selectPersona);
+          row.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectPersona(); }
+          });
+
+          chartRows.appendChild(row);
+        });
+
+        renderRightPanel(results);
+      }
+
+      // Event Listeners
+      masterToggle.addEventListener("click", () => {
+        const turnOn = isNaiveMode() || !isFullMode();
+        flags = {
+          sybil: turnOn,
+          canary: turnOn,
+          damping: turnOn,
+          vesting: turnOn,
+          quadratic: turnOn
+        };
+        render();
+      });
+
+      resetBtn.addEventListener("click", () => {
+        alpha = 0.8;
+        strictness = 1.0;
+        decayDays = 30;
+        alphaSlider.value = "0.8";
+        strictSlider.value = "1.0";
+        decaySlider.value = "30";
+        flags = { sybil: true, canary: true, damping: true, vesting: true, quadratic: true };
+        selectedPersonaId = "calibrated";
+        render();
+      });
+
+      alphaSlider.addEventListener("input", (e) => {
+        alpha = parseFloat(e.target.value);
+        render();
+      });
+
+      strictSlider.addEventListener("input", (e) => {
+        strictness = parseFloat(e.target.value);
+        render();
+      });
+
+      decaySlider.addEventListener("input", (e) => {
+        decayDays = parseInt(e.target.value, 10);
+        renderDecay();
+      });
+
+      sgPills.querySelectorAll(".sg-pill").forEach((pill) => {
+        pill.addEventListener("click", () => {
+          const key = pill.getAttribute("data-sg");
+          flags[key] = !flags[key];
+          render();
+        });
+      });
+
+      tabFormula.addEventListener("click", () => { activeRightTab = "formula"; render(); });
+      tabDecay.addEventListener("click", () => { activeRightTab = "decay"; render(); });
+      tabGov.addEventListener("click", () => { activeRightTab = "gov"; render(); });
+
+      themeToggle.addEventListener("click", () => {
+        const curr = document.documentElement.getAttribute("data-theme");
+        applyTheme(curr === "dark" ? "light" : "dark");
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+        const k = e.key.toLowerCase();
+        if (k === "s") {
+          masterToggle.click();
+        } else if (k === "r") {
+          resetBtn.click();
+        } else if (k === "t") {
+          const curr = document.documentElement.getAttribute("data-theme");
+          applyTheme(curr === "dark" ? "light" : "dark");
+        } else if (["1", "2", "3", "4"].includes(e.key)) {
+          selectedPersonaId = PERSONAS[parseInt(e.key, 10) - 1].id;
+          activeRightTab = "formula";
+          render();
+        }
+      });
+
+      buildDecayCurves();
+      renderDecay();
+      render();
+    })();
+  </script>
+</body>
+</html>
