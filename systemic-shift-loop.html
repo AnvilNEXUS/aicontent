@@ -1,0 +1,1490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapping the Systemic Shift — Compliance vs. Sovereign Learning</title>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-elevated: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      /* Regime Palettes - Light */
+      --compliance-accent: #dc2626;
+      --compliance-accent-soft: #fef2f2;
+      --compliance-accent-mid: #fca5a5;
+      --compliance-accent-text: #991b1b;
+      --compliance-glow: rgba(220, 38, 38, 0.22);
+
+      --sovereign-accent: #0d9488;
+      --sovereign-accent-soft: #f0fdfa;
+      --sovereign-accent-mid: #5eead4;
+      --sovereign-accent-text: #115e59;
+      --sovereign-glow: rgba(13, 148, 136, 0.22);
+
+      /* Layer Badge Colors - Light */
+      --layer-structural-bg: #eef2ff;
+      --layer-structural-fg: #3730a3;
+      --layer-psychological-bg: #f3e8ff;
+      --layer-psychological-fg: #6b21a8;
+      --layer-sociological-bg: #fff7ed;
+      --layer-sociological-fg: #9a3412;
+      --layer-behavioral-bg: #ecfeff;
+      --layer-behavioral-fg: #155e75;
+      --layer-institutional-bg: #fefce8;
+      --layer-institutional-fg: #854d0e;
+
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 7px;
+      --transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-surface: #111827;
+      --bg-subtle: #1e293b;
+      --bg-elevated: #172033;
+      --border: #263248;
+      --border-strong: #3b4b66;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+
+      /* Regime Palettes - Dark */
+      --compliance-accent: #f87171;
+      --compliance-accent-soft: rgba(248, 113, 113, 0.14);
+      --compliance-accent-mid: rgba(248, 113, 113, 0.45);
+      --compliance-accent-text: #fecaca;
+      --compliance-glow: rgba(248, 113, 113, 0.32);
+
+      --sovereign-accent: #2dd4bf;
+      --sovereign-accent-soft: rgba(45, 212, 191, 0.14);
+      --sovereign-accent-mid: rgba(45, 212, 191, 0.45);
+      --sovereign-accent-text: #99f6e4;
+      --sovereign-glow: rgba(45, 212, 191, 0.32);
+
+      /* Layer Badge Colors - Dark */
+      --layer-structural-bg: rgba(129, 140, 248, 0.18);
+      --layer-structural-fg: #c7d2fe;
+      --layer-psychological-bg: rgba(192, 132, 252, 0.18);
+      --layer-psychological-fg: #e9d5ff;
+      --layer-sociological-bg: rgba(251, 146, 60, 0.18);
+      --layer-sociological-fg: #fed7aa;
+      --layer-behavioral-bg: rgba(34, 211, 238, 0.18);
+      --layer-behavioral-fg: #a5f3fc;
+      --layer-institutional-bg: rgba(250, 204, 21, 0.16);
+      --layer-institutional-fg: #fef08a;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      --active-accent: var(--compliance-accent);
+      --active-soft: var(--compliance-accent-soft);
+      --active-mid: var(--compliance-accent-mid);
+      --active-text: var(--compliance-accent-text);
+      --active-glow: var(--compliance-glow);
+
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 16px 16px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app[data-regime="sovereign"] {
+      --active-accent: var(--sovereign-accent);
+      --active-soft: var(--sovereign-accent-soft);
+      --active-mid: var(--sovereign-accent-mid);
+      --active-text: var(--sovereign-accent-text);
+      --active-glow: var(--sovereign-glow);
+    }
+
+    /* Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .brand p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .controls-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Segmented Regime Switch */
+    .regime-switch {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .regime-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .regime-btn .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .regime-btn[data-target="compliance"] .dot {
+      background: var(--compliance-accent);
+    }
+
+    .regime-btn[data-target="sovereign"] .dot {
+      background: var(--sovereign-accent);
+    }
+
+    .regime-btn[aria-pressed="true"] {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .regime-btn[data-target="compliance"][aria-pressed="true"] {
+      color: var(--compliance-accent);
+    }
+
+    .regime-btn[data-target="sovereign"][aria-pressed="true"] {
+      color: var(--sovereign-accent);
+    }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all var(--transition);
+    }
+
+    .icon-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+    }
+
+    .icon-btn[aria-pressed="true"] {
+      border-color: var(--active-accent);
+      color: var(--active-accent);
+      background: var(--active-soft);
+    }
+
+    /* Main Workspace */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(340px, 1.12fr) minmax(320px, 1fr);
+      gap: 12px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Diagram Panel */
+    .diagram-panel {
+      position: relative;
+      justify-content: space-between;
+    }
+
+    .diagram-stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 10px 2px;
+      min-height: 360px;
+    }
+
+    svg#loopSvg {
+      width: 100%;
+      max-width: 560px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .edge-path {
+      fill: none;
+      stroke: var(--border-strong);
+      stroke-width: 2.2;
+      stroke-linecap: round;
+      transition: stroke var(--transition), stroke-width var(--transition), opacity var(--transition);
+      cursor: pointer;
+    }
+
+    .edge-path.is-active {
+      stroke: var(--active-accent);
+      stroke-width: 3.4;
+      filter: drop-shadow(0 0 6px var(--active-glow));
+    }
+
+    .edge-hit {
+      fill: none;
+      stroke: transparent;
+      stroke-width: 18;
+      cursor: pointer;
+    }
+
+    .node-group {
+      cursor: pointer;
+      outline: none;
+    }
+
+    .node-card-bg {
+      fill: var(--bg-elevated);
+      stroke: var(--border-strong);
+      stroke-width: 1.5;
+      rx: 12;
+      ry: 12;
+      transition: all var(--transition);
+    }
+
+    .node-group:hover .node-card-bg,
+    .node-group:focus-visible .node-card-bg {
+      stroke: var(--active-accent);
+      stroke-width: 2;
+    }
+
+    .node-group.is-active .node-card-bg {
+      fill: var(--active-soft);
+      stroke: var(--active-accent);
+      stroke-width: 2.5;
+      filter: drop-shadow(0 6px 14px var(--active-glow));
+    }
+
+    .node-group.is-next .node-card-bg {
+      stroke: var(--active-mid);
+      stroke-dasharray: 5 3;
+      stroke-width: 1.8;
+    }
+
+    .node-title-text {
+      font-size: 12.2px;
+      font-weight: 700;
+      fill: var(--text-primary);
+    }
+
+    .node-badge-text {
+      font-size: 9.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .node-index-circle {
+      fill: var(--bg-subtle);
+      stroke: var(--border-strong);
+      stroke-width: 1.2;
+      transition: all var(--transition);
+    }
+
+    .node-group.is-active .node-index-circle {
+      fill: var(--active-accent);
+      stroke: var(--active-accent);
+    }
+
+    .node-index-text {
+      font-size: 10px;
+      font-weight: 800;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .node-group.is-active .node-index-text {
+      fill: #ffffff;
+    }
+
+    .hub-ring {
+      fill: var(--bg-subtle);
+      stroke: var(--border);
+      stroke-width: 1.5;
+      transition: all var(--transition);
+    }
+
+    .hub-ring-accent {
+      fill: none;
+      stroke: var(--active-mid);
+      stroke-width: 2;
+      stroke-dasharray: 4 4;
+    }
+
+    .hub-eyebrow {
+      font-size: 9.5px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      fill: var(--active-accent);
+      text-anchor: middle;
+    }
+
+    .hub-edge-label {
+      font-size: 12.5px;
+      font-weight: 700;
+      fill: var(--text-primary);
+      text-anchor: middle;
+    }
+
+    .hub-flow-sub {
+      font-size: 10px;
+      font-weight: 600;
+      fill: var(--text-muted);
+      text-anchor: middle;
+    }
+
+    .pulse-dot {
+      fill: var(--active-accent);
+      filter: drop-shadow(0 0 6px var(--active-accent));
+    }
+
+    .pulse-halo {
+      fill: var(--active-accent);
+      opacity: 0.28;
+    }
+
+    /* Diagram Footer Controls */
+    .step-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+
+    .step-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-dots {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border-strong);
+      cursor: pointer;
+      transition: all var(--transition);
+      padding: 0;
+    }
+
+    .step-dot.is-active {
+      width: 24px;
+      border-radius: 999px;
+      background: var(--active-accent);
+    }
+
+    .kbd-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Inspector Panel */
+    .inspector-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 16px 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .view-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .view-tab[aria-selected="true"] {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .regime-pill {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--active-soft);
+      color: var(--active-text);
+      border: 1px solid var(--active-mid);
+      white-space: nowrap;
+    }
+
+    .inspector-body {
+      padding: 14px 16px 16px;
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .node-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .layer-chip {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .layer-Structural { background: var(--layer-structural-bg); color: var(--layer-structural-fg); }
+    .layer-Psychological { background: var(--layer-psychological-bg); color: var(--layer-psychological-fg); }
+    .layer-Sociological { background: var(--layer-sociological-bg); color: var(--layer-sociological-fg); }
+    .layer-Behavioral { background: var(--layer-behavioral-bg); color: var(--layer-behavioral-fg); }
+    .layer-Institutional { background: var(--layer-institutional-bg); color: var(--layer-institutional-fg); }
+
+    .node-step-counter {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .inspector-title {
+      font-size: 1.22rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      line-height: 1.25;
+    }
+
+    .inspector-summary {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .detail-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .detail-card.lever-card {
+      background: var(--active-soft);
+      border-color: var(--active-mid);
+    }
+
+    .detail-label {
+      font-size: 0.69rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .lever-card .detail-label {
+      color: var(--active-text);
+    }
+
+    .detail-text {
+      font-size: 0.85rem;
+      color: var(--text-primary);
+    }
+
+    .causal-link-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--active-mid);
+      background: var(--bg-surface);
+    }
+
+    .causal-link-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .causal-link-info span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .causal-link-info strong {
+      font-size: 0.84rem;
+      color: var(--text-primary);
+    }
+
+    .jump-btn {
+      border: 1px solid var(--active-accent);
+      background: var(--active-accent);
+      color: #ffffff;
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: opacity var(--transition);
+    }
+
+    .jump-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* Compare Mode Cards */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .compare-card {
+      border-radius: var(--radius-md);
+      padding: 11px 13px;
+      border: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .compare-card.is-compliance {
+      background: var(--compliance-accent-soft);
+      border-color: var(--compliance-accent-mid);
+    }
+
+    .compare-card.is-sovereign {
+      background: var(--sovereign-accent-soft);
+      border-color: var(--sovereign-accent-mid);
+    }
+
+    .compare-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .compare-tag {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .is-compliance .compare-tag { color: var(--compliance-accent-text); }
+    .is-sovereign .compare-tag { color: var(--sovereign-accent-text); }
+
+    .compare-card h3 {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .compare-card p {
+      font-size: 0.81rem;
+      color: var(--text-secondary);
+    }
+
+    .compare-divider {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* All 5 Layers Matrix View */
+    .matrix-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .matrix-row {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 11px;
+      background: var(--bg-subtle);
+      cursor: pointer;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .matrix-row:hover,
+    .matrix-row.is-selected {
+      border-color: var(--active-accent);
+      background: var(--bg-surface);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .matrix-pair {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .matrix-left { color: var(--compliance-accent-text); }
+    .matrix-right { color: var(--sovereign-accent-text); text-align: right; }
+    .matrix-arrow { color: var(--text-muted); font-size: 0.85rem; }
+
+    /* Key Takeaway Footer */
+    .takeaway-bar {
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--active-accent);
+      border-radius: var(--radius-md);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .takeaway-bar strong {
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 840px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .diagram-stage {
+        min-height: 310px;
+      }
+      .kbd-hint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app" data-regime="compliance">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Mapping the Systemic Shift</h1>
+        <p>Toggle system regimes or inspect any node to trace how structure drives psychology, peer norms, and AI behavior.</p>
+      </div>
+      <div class="controls-cluster">
+        <div class="regime-switch" role="group" aria-label="System Regime Toggle">
+          <button class="regime-btn" data-target="compliance" aria-pressed="true" type="button">
+            <span class="dot"></span>Compliance Loop
+          </button>
+          <button class="regime-btn" data-target="sovereign" aria-pressed="false" type="button">
+            <span class="dot"></span>Sovereign Mastery Loop
+          </button>
+        </div>
+        <button class="icon-btn" id="autoPlayBtn" aria-pressed="false" type="button" title="Toggle auto-step cycle (Space)">
+          <span id="autoPlayIcon">&#9654;</span><span id="autoPlayLabel">Auto-Cycle</span>
+        </button>
+        <button class="icon-btn" id="themeBtn" type="button" title="Toggle Light / Dark Mode">
+          <span id="themeIcon">&#9790;</span><span id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <!-- Interactive Circular Loop Diagram -->
+      <section class="panel diagram-panel" aria-label="Causal Feedback Loop Diagram">
+        <div class="diagram-stage">
+          <svg id="loopSvg" viewBox="0 0 640 540" role="img" aria-label="5-node circular causal feedback loop"></svg>
+        </div>
+        <div class="step-bar">
+          <div class="step-nav">
+            <button class="icon-btn" id="prevBtn" type="button" aria-label="Previous node">&larr; Prev</button>
+            <button class="icon-btn" id="nextBtn" type="button" aria-label="Next node">Next &rarr;</button>
+          </div>
+          <div class="step-dots" id="stepDots" role="tablist" aria-label="Loop step selector"></div>
+          <span class="kbd-hint">Keys: &larr; / &rarr; &middot; Space</span>
+        </div>
+      </section>
+
+      <!-- Node Inspector & Regime Diff -->
+      <section class="panel" aria-label="Node Inspector Panel">
+        <div class="inspector-header">
+          <div class="view-tabs" role="tablist" aria-label="Inspector View Mode">
+            <button class="view-tab" data-view="inspect" role="tab" aria-selected="true" type="button">Inspect Node</button>
+            <button class="view-tab" data-view="compare" role="tab" aria-selected="false" type="button">Compare Layer</button>
+            <button class="view-tab" data-view="matrix" role="tab" aria-selected="false" type="button">All 5 Layers</button>
+          </div>
+          <span class="regime-pill" id="regimePill">Extrinsic Compliance</span>
+        </div>
+        <div class="inspector-body" id="inspectorBody"></div>
+      </section>
+    </main>
+
+    <footer class="takeaway-bar">
+      <strong>Key takeaway:</strong> You cannot ask students to hold Sovereign Learning attitudes while keeping a Compliance Loop intact. Start by changing <em>how competence is verified</em> (Node 1)—once live, authentic mastery replaces take-home point chasing, peer norms and internal motivation begin reinforcing sovereignty on their own.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const DATA = {
+        compliance: {
+          name: "Extrinsic Compliance Loop",
+          shortName: "Extrinsic Compliance",
+          nodes: [
+            {
+              id: "c1",
+              layer: "Structural",
+              label: "Artifact-Based Grades",
+              lines: ["Artifact-Based", "Grades"],
+              summary: "Points are traded for unsupervised take-home outputs.",
+              mechanism: "Reduces learning to a transaction where the submitted product matters more than internal skill.",
+              shiftLever: "Replace take-home artifact grades with ungraded practice plus live mastery verification.",
+              edgeLabel: "Turns learning into currency"
+            },
+            {
+              id: "c2",
+              layer: "Psychological",
+              label: "Fear of Error & Extrinsic Pressure",
+              lines: ["Fear of Error &", "Extrinsic Pressure"],
+              summary: "Grades dominate motivation and punish early mistakes.",
+              mechanism: "Triggers the overjustification effect; confusion feels like a GPA threat rather than growth.",
+              shiftLever: "Decouple feedback from scoring so early failure is free and revisable.",
+              edgeLabel: "Frames struggle as danger"
+            },
+            {
+              id: "c3",
+              layer: "Sociological",
+              label: "Shortcut & Gaming Norms",
+              lines: ["Shortcut &", "Gaming Norms"],
+              summary: "Peers reward maximum score for minimum effort.",
+              mechanism: "School becomes a game to beat rather than a craft to master.",
+              shiftLever: "Introduce public defenses, studio critiques, and real audiences where live skill carries status.",
+              edgeLabel: "Normalizes outsourcing effort"
+            },
+            {
+              id: "c4",
+              layer: "Behavioral",
+              label: "AI Offloading & Cheating",
+              lines: ["AI Offloading &", "Cheating"],
+              summary: "Learners delegate core thinking to external tools.",
+              mechanism: "Rational arbitrage inside a score-driven system, causing silent skill atrophy.",
+              shiftLever: "Separate Gym Mode (deliberate unassisted training) from Field Mode (audited AI collaboration).",
+              edgeLabel: "Erodes institutional trust"
+            },
+            {
+              id: "c5",
+              layer: "Institutional",
+              label: "Surveillance & Policing",
+              lines: ["Surveillance &", "Policing"],
+              summary: "Schools deploy AI detectors, locks, and proctoring.",
+              mechanism: "Signals baseline distrust, hardening an adversarial cop-and-robber culture.",
+              shiftLever: "Shift educators from compliance enforcers to coaches who verify authentic competence.",
+              edgeLabel: "Hardens rigid scoring rules"
+            }
+          ]
+        },
+        sovereign: {
+          name: "Sovereign Mastery Loop",
+          shortName: "Sovereign Mastery",
+          nodes: [
+            {
+              id: "s1",
+              layer: "Structural",
+              label: "Iterative Mastery Verification",
+              lines: ["Iterative Mastery", "Verification"],
+              summary: "Ungraded practice loops paired with live skill checks.",
+              mechanism: "Removes score anxiety while making authentic understanding non-negotiable.",
+              shiftLever: "Use short oral defenses, live problem-solving, and revision cycles.",
+              edgeLabel: "Makes mistakes safe to examine"
+            },
+            {
+              id: "s2",
+              layer: "Psychological",
+              label: "Internalized Autonomy",
+              lines: ["Internalized", "Autonomy"],
+              summary: "Learners author goals and value cognitive friction.",
+              mechanism: "Satisfies autonomy and competence needs; struggle is seen as mental strength training.",
+              shiftLever: "Require metacognitive self-audits and student-owned mastery contracts.",
+              edgeLabel: "Reframes struggle as strength"
+            },
+            {
+              id: "s3",
+              layer: "Sociological",
+              label: "Craft & Peer Accountability",
+              lines: ["Craft & Peer", "Accountability"],
+              summary: "Communities of practice celebrate visible capability.",
+              mechanism: "Social status attaches to genuine skill and helping peers solve hard problems.",
+              shiftLever: "Anchor units in peer teaching, critiques, and authentic community stakes.",
+              edgeLabel: "Rewards genuine competence"
+            },
+            {
+              id: "s4",
+              layer: "Behavioral",
+              label: "Deliberate Unassisted Practice",
+              lines: ["Deliberate Unassisted", "Practice"],
+              summary: "Students voluntarily protect their own skill-building.",
+              mechanism: "Learners restrict AI during Gym Mode so their own judgment remains sovereign.",
+              shiftLever: "Have students document when they deliberately turned tools off and why.",
+              edgeLabel: "Produces demonstrable mastery"
+            },
+            {
+              id: "s5",
+              layer: "Institutional",
+              label: "High-Trust Agency",
+              lines: ["High-Trust", "Agency"],
+              summary: "Demonstrated competence earns expanded freedom.",
+              mechanism: "Replaces policing with mutual respect, deepening ownership over future learning.",
+              shiftLever: "Grant proven learners self-paced pathways and self-directed capstone projects.",
+              edgeLabel: "Expands learner-led goals"
+            }
+          ]
+        }
+      };
+
+      const LAYER_COLORS = {
+        Structural: { bg: "var(--layer-structural-bg)", fg: "var(--layer-structural-fg)" },
+        Psychological: { bg: "var(--layer-psychological-bg)", fg: "var(--layer-psychological-fg)" },
+        Sociological: { bg: "var(--layer-sociological-bg)", fg: "var(--layer-sociological-fg)" },
+        Behavioral: { bg: "var(--layer-behavioral-bg)", fg: "var(--layer-behavioral-fg)" },
+        Institutional: { bg: "var(--layer-institutional-bg)", fg: "var(--layer-institutional-fg)" }
+      };
+
+      // Pentagon Geometry (viewBox 640x540)
+      const CX = 320;
+      const CY = 274;
+      const RADIUS = 186;
+      const CARD_W = 158;
+      const CARD_H = 74;
+
+      const POSITIONS = [0, 1, 2, 3, 4].map((i) => {
+        const angle = (-90 + i * 72) * (Math.PI / 180);
+        return {
+          x: Math.round(CX + RADIUS * Math.cos(angle)),
+          y: Math.round(CY + RADIUS * Math.sin(angle)),
+          angle
+        };
+      });
+
+      const state = {
+        regime: "compliance",
+        activeIndex: 0,
+        view: "inspect",
+        autoPlay: false,
+        autoTimer: null,
+        pulseRaf: null,
+        pulseProgress: 0
+      };
+
+      const appEl = document.getElementById("app");
+      const svgEl = document.getElementById("loopSvg");
+      const inspectorBody = document.getElementById("inspectorBody");
+      const regimePill = document.getElementById("regimePill");
+      const stepDotsEl = document.getElementById("stepDots");
+      const autoPlayBtn = document.getElementById("autoPlayBtn");
+      const autoPlayIcon = document.getElementById("autoPlayIcon");
+      const autoPlayLabel = document.getElementById("autoPlayLabel");
+      const themeBtn = document.getElementById("themeBtn");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      // Theme Initialization (URL param > localStorage > OS preference)
+      function initTheme() {
+        const params = new URLSearchParams(window.location.search);
+        const paramTheme = params.get("theme");
+        let saved = null;
+        try { saved = localStorage.getItem("sovereign-shift-theme"); } catch (e) {}
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const theme = (paramTheme === "dark" || paramTheme === "light")
+          ? paramTheme
+          : (saved || (prefersDark ? "dark" : "light"));
+        applyTheme(theme, false);
+      }
+
+      function applyTheme(theme, persist = true) {
+        document.documentElement.setAttribute("data-theme", theme);
+        const isDark = theme === "dark";
+        themeIcon.innerHTML = isDark ? "&#9728;" : "&#9790;";
+        themeLabel.textContent = isDark ? "Light" : "Dark";
+        if (persist) {
+          try { localStorage.setItem("sovereign-shift-theme", theme); } catch (e) {}
+        }
+      }
+
+      function createSvgEl(tag, attrs = {}) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          el.setAttribute(k, v);
+        }
+        return el;
+      }
+
+      // Compute clean curved arc from node i to node (i+1)%5, trimmed to card edges
+      function computeEdgePath(i) {
+        const from = POSITIONS[i];
+        const to = POSITIONS[(i + 1) % 5];
+
+        let midAngle = (from.angle + to.angle) / 2;
+        if (Math.abs(to.angle - from.angle) > Math.PI) {
+          midAngle += Math.PI;
+        }
+        const ctrlR = RADIUS + 48;
+        const ctrlX = CX + ctrlR * Math.cos(midAngle);
+        const ctrlY = CY + ctrlR * Math.sin(midAngle);
+
+        const trimPoint = (origin, towards, pad) => {
+          const dx = towards.x - origin.x;
+          const dy = towards.y - origin.y;
+          const hw = CARD_W / 2 + pad;
+          const hh = CARD_H / 2 + pad;
+          const tx = Math.abs(dx) > 0.001 ? hw / Math.abs(dx) : Infinity;
+          const ty = Math.abs(dy) > 0.001 ? hh / Math.abs(dy) : Infinity;
+          const t = Math.min(tx, ty);
+          return { x: origin.x + dx * t, y: origin.y + dy * t };
+        };
+
+        const start = trimPoint(from, { x: ctrlX, y: ctrlY }, 4);
+        const end = trimPoint(to, { x: ctrlX, y: ctrlY }, 9);
+        return `M ${start.x.toFixed(1)} ${start.y.toFixed(1)} Q ${ctrlX.toFixed(1)} ${ctrlY.toFixed(1)} ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+      }
+
+      function wrapHubText(text, maxChars = 19) {
+        const words = text.split(" ");
+        const lines = [];
+        let current = "";
+        words.forEach((w) => {
+          if ((current + " " + w).trim().length <= maxChars) {
+            current = (current + " " + w).trim();
+          } else {
+            if (current) lines.push(current);
+            current = w;
+          }
+        });
+        if (current) lines.push(current);
+        return lines;
+      }
+
+      function renderDiagram() {
+        const regimeData = DATA[state.regime];
+        const nodes = regimeData.nodes;
+        const activeIdx = state.activeIndex;
+        const nextIdx = (activeIdx + 1) % 5;
+
+        svgEl.innerHTML = "";
+
+        // Defs: Arrow markers
+        const defs = createSvgEl("defs");
+
+        const mkMuted = createSvgEl("marker", {
+          id: "arrow-muted",
+          viewBox: "0 0 10 10",
+          refX: "8",
+          refY: "5",
+          markerWidth: "6",
+          markerHeight: "6",
+          orient: "auto-start-reverse"
+        });
+        mkMuted.appendChild(createSvgEl("path", { d: "M 0 1.5 L 9 5 L 0 8.5 z", fill: "var(--border-strong)" }));
+        defs.appendChild(mkMuted);
+
+        const mkActive = createSvgEl("marker", {
+          id: "arrow-active",
+          viewBox: "0 0 10 10",
+          refX: "8",
+          refY: "5",
+          markerWidth: "7",
+          markerHeight: "7",
+          orient: "auto-start-reverse"
+        });
+        mkActive.appendChild(createSvgEl("path", { d: "M 0 1.2 L 9.5 5 L 0 8.8 z", fill: "var(--active-accent)" }));
+        defs.appendChild(mkActive);
+
+        svgEl.appendChild(defs);
+
+        // Subtle guide ring
+        svgEl.appendChild(createSvgEl("circle", {
+          cx: CX,
+          cy: CY,
+          r: RADIUS,
+          fill: "none",
+          stroke: "var(--border)",
+          "stroke-width": "1",
+          "stroke-dasharray": "3 6",
+          opacity: "0.7"
+        }));
+
+        // Edges
+        const edgesGroup = createSvgEl("g", { id: "edgesGroup" });
+        nodes.forEach((node, i) => {
+          const d = computeEdgePath(i);
+          const isActive = i === activeIdx;
+
+          const path = createSvgEl("path", {
+            d,
+            id: `edge-${i}`,
+            class: `edge-path${isActive ? " is-active" : ""}`,
+            "marker-end": isActive ? "url(#arrow-active)" : "url(#arrow-muted)"
+          });
+
+          const hit = createSvgEl("path", { d, class: "edge-hit" });
+          hit.addEventListener("click", () => selectNode(i));
+          edgesGroup.appendChild(path);
+          edgesGroup.appendChild(hit);
+        });
+        svgEl.appendChild(edgesGroup);
+
+        // Signal pulse elements (animated along active edge)
+        const pulseHalo = createSvgEl("circle", { id: "pulseHalo", r: "10", class: "pulse-halo" });
+        const pulseDot = createSvgEl("circle", { id: "pulseDot", r: "4.5", class: "pulse-dot" });
+        svgEl.appendChild(pulseHalo);
+        svgEl.appendChild(pulseDot);
+
+        // Center Hub showing active causal transition
+        const hubGroup = createSvgEl("g", { class: "hub-group" });
+        hubGroup.appendChild(createSvgEl("circle", { cx: CX, cy: CY, r: "84", class: "hub-ring" }));
+        hubGroup.appendChild(createSvgEl("circle", { cx: CX, cy: CY, r: "76", class: "hub-ring-accent" }));
+
+        const eyebrow = createSvgEl("text", { x: CX, y: CY - 34, class: "hub-eyebrow" });
+        eyebrow.textContent = "ACTIVE CAUSAL LINK";
+        hubGroup.appendChild(eyebrow);
+
+        const edgeLines = wrapHubText(nodes[activeIdx].edgeLabel, 18);
+        const startY = edgeLines.length === 1 ? CY + 2 : CY - (edgeLines.length - 1) * 7;
+        edgeLines.forEach((line, idx) => {
+          const t = createSvgEl("text", { x: CX, y: startY + idx * 16, class: "hub-edge-label" });
+          t.textContent = line;
+          hubGroup.appendChild(t);
+        });
+
+        const sub = createSvgEl("text", { x: CX, y: CY + 42, class: "hub-flow-sub" });
+        sub.textContent = `Node ${activeIdx + 1} \u2192 Node ${nextIdx + 1}`;
+        hubGroup.appendChild(sub);
+
+        svgEl.appendChild(hubGroup);
+
+        // Nodes
+        const nodesGroup = createSvgEl("g", { id: "nodesGroup" });
+        nodes.forEach((node, i) => {
+          const pos = POSITIONS[i];
+          const isActive = i === activeIdx;
+          const isNext = i === nextIdx;
+          const layerStyle = LAYER_COLORS[node.layer];
+
+          const g = createSvgEl("g", {
+            class: `node-group${isActive ? " is-active" : ""}${isNext ? " is-next" : ""}`,
+            tabindex: "0",
+            role: "button",
+            "aria-label": `Node ${i + 1}: ${node.label} (${node.layer})`
+          });
+
+          g.addEventListener("click", () => selectNode(i));
+          g.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              selectNode(i);
+            }
+          });
+
+          const left = pos.x - CARD_W / 2;
+          const top = pos.y - CARD_H / 2;
+
+          g.appendChild(createSvgEl("rect", {
+            x: left,
+            y: top,
+            width: CARD_W,
+            height: CARD_H,
+            class: "node-card-bg"
+          }));
+
+          // Layer Badge Pill inside top of card
+          const badgeW = node.layer.length * 6.4 + 16;
+          g.appendChild(createSvgEl("rect", {
+            x: left + 10,
+            y: top + 9,
+            width: badgeW,
+            height: 17,
+            rx: 8.5,
+            fill: layerStyle.bg
+          }));
+
+          const badgeTxt = createSvgEl("text", {
+            x: left + 10 + badgeW / 2,
+            y: top + 20.5,
+            "text-anchor": "middle",
+            class: "node-badge-text",
+            fill: layerStyle.fg
+          });
+          badgeTxt.textContent = node.layer;
+          g.appendChild(badgeTxt);
+
+          // Step Index Circle (top right of card)
+          g.appendChild(createSvgEl("circle", {
+            cx: left + CARD_W - 18,
+            cy: top + 17.5,
+            r: 9.5,
+            class: "node-index-circle"
+          }));
+          const idxTxt = createSvgEl("text", {
+            x: left + CARD_W - 18,
+            y: top + 17.5,
+            class: "node-index-text"
+          });
+          idxTxt.textContent = String(i + 1);
+          g.appendChild(idxTxt);
+
+          // Node Title (1 or 2 lines)
+          const baseTextY = node.lines.length === 1 ? top + 50 : top + 43;
+          node.lines.forEach((line, lineIdx) => {
+            const titleEl = createSvgEl("text", {
+              x: left + 12,
+              y: baseTextY + lineIdx * 15,
+              class: "node-title-text"
+            });
+            titleEl.textContent = line;
+            g.appendChild(titleEl);
+          });
+
+          nodesGroup.appendChild(g);
+        });
+        svgEl.appendChild(nodesGroup);
+
+        startPulseAnimation();
+      }
+
+      function startPulseAnimation() {
+        if (state.pulseRaf) cancelAnimationFrame(state.pulseRaf);
+        const path = document.getElementById(`edge-${state.activeIndex}`);
+        const dot = document.getElementById("pulseDot");
+        const halo = document.getElementById("pulseHalo");
+        if (!path || !dot || !halo) return;
+
+        const totalLen = path.getTotalLength();
+        let startTime = null;
+        const duration = 1750;
+
+        function tick(ts) {
+          if (!startTime) startTime = ts;
+          const elapsed = (ts - startTime) % duration;
+          const t = elapsed / duration;
+          // Smooth ease-in-out
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          const pt = path.getPointAtLength(eased * totalLen);
+
+          dot.setAttribute("cx", pt.x.toFixed(1));
+          dot.setAttribute("cy", pt.y.toFixed(1));
+          halo.setAttribute("cx", pt.x.toFixed(1));
+          halo.setAttribute("cy", pt.y.toFixed(1));
+          halo.setAttribute("r", (7 + Math.sin(t * Math.PI) * 5).toFixed(1));
+
+          state.pulseRaf = requestAnimationFrame(tick);
+        }
+
+        state.pulseRaf = requestAnimationFrame(tick);
+      }
+
+      function renderInspector() {
+        const regimeData = DATA[state.regime];
+        const idx = state.activeIndex;
+        const nextIdx = (idx + 1) % 5;
+        const node = regimeData.nodes[idx];
+        const nextNode = regimeData.nodes[nextIdx];
+
+        regimePill.textContent = regimeData.shortName;
+
+        if (state.view === "inspect") {
+          inspectorBody.innerHTML = `
+            <div class="node-meta-row">
+              <span class="layer-chip layer-${node.layer}">${node.layer} Layer</span>
+              <span class="node-step-counter">Node ${idx + 1} of 5 &middot; ${node.id.toUpperCase()}</span>
+            </div>
+            <h2 class="inspector-title">${node.label}</h2>
+            <p class="inspector-summary">${node.summary}</p>
+            <div class="detail-card">
+              <span class="detail-label">Underlying Mechanism</span>
+              <p class="detail-text">${node.mechanism}</p>
+            </div>
+            <div class="detail-card lever-card">
+              <span class="detail-label">Actionable Shift Lever</span>
+              <p class="detail-text">${node.shiftLever}</p>
+            </div>
+            <div class="causal-link-box">
+              <div class="causal-link-info">
+                <span>Outgoing Causal Effect</span>
+                <strong>"${node.edgeLabel}" &rarr; ${nextNode.label}</strong>
+              </div>
+              <button class="jump-btn" id="followArrowBtn" type="button">Follow &rarr;</button>
+            </div>
+          `;
+          document.getElementById("followArrowBtn").addEventListener("click", () => selectNode(nextIdx));
+        } else if (state.view === "compare") {
+          const cNode = DATA.compliance.nodes[idx];
+          const sNode = DATA.sovereign.nodes[idx];
+          inspectorBody.innerHTML = `
+            <div class="node-meta-row">
+              <span class="layer-chip layer-${cNode.layer}">${cNode.layer} Layer Comparison</span>
+              <span class="node-step-counter">Node ${idx + 1} Counterparts</span>
+            </div>
+            <div class="compare-grid">
+              <div class="compare-card is-compliance">
+                <div class="compare-card-head">
+                  <span class="compare-tag">Compliance Loop (${cNode.id.toUpperCase()})</span>
+                </div>
+                <h3>${cNode.label}</h3>
+                <p><strong>Dynamic:</strong> ${cNode.summary} ${cNode.mechanism}</p>
+                <p><strong>Shift Lever:</strong> ${cNode.shiftLever}</p>
+              </div>
+              <div class="compare-divider">&darr; Systemic Redesign &darr;</div>
+              <div class="compare-card is-sovereign">
+                <div class="compare-card-head">
+                  <span class="compare-tag">Sovereign Mastery Loop (${sNode.id.toUpperCase()})</span>
+                </div>
+                <h3>${sNode.label}</h3>
+                <p><strong>Dynamic:</strong> ${sNode.summary} ${sNode.mechanism}</p>
+                <p><strong>Reinforcement:</strong> ${sNode.shiftLever}</p>
+              </div>
+            </div>
+          `;
+        } else {
+          inspectorBody.innerHTML = `
+            <div class="node-meta-row">
+              <span class="detail-label">All 5 Equivalent Leverage Points</span>
+              <span class="node-step-counter">Click any row to focus</span>
+            </div>
+            <div class="matrix-list">
+              ${DATA.compliance.nodes.map((cNode, i) => {
+                const sNode = DATA.sovereign.nodes[i];
+                return `
+                  <div class="matrix-row${i === idx ? " is-selected" : ""}" data-row-idx="${i}">
+                    <div class="node-meta-row">
+                      <span class="layer-chip layer-${cNode.layer}">${i + 1}. ${cNode.layer}</span>
+                    </div>
+                    <div class="matrix-pair">
+                      <span class="matrix-left">${cNode.label}</span>
+                      <span class="matrix-arrow">&rarr;</span>
+                      <span class="matrix-right">${sNode.label}</span>
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `;
+          inspectorBody.querySelectorAll(".matrix-row").forEach((row) => {
+            row.addEventListener("click", () => {
+              selectNode(Number(row.dataset.rowIdx));
+            });
+          });
+        }
+      }
+
+      function renderStepDots() {
+        stepDotsEl.innerHTML = "";
+        for (let i = 0; i < 5; i++) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `step-dot${i === state.activeIndex ? " is-active" : ""}`;
+          btn.setAttribute("aria-label", `Go to Node ${i + 1}`);
+          btn.addEventListener("click", () => selectNode(i));
+          stepDotsEl.appendChild(btn);
+        }
+      }
+
+      function selectNode(idx) {
+        state.activeIndex = ((idx % 5) + 5) % 5;
+        renderDiagram();
+        renderInspector();
+        renderStepDots();
+      }
+
+      function setRegime(regime) {
+        state.regime = regime;
+        appEl.setAttribute("data-regime", regime);
+        document.querySelectorAll(".regime-btn").forEach((btn) => {
+          btn.setAttribute("aria-pressed", String(btn.dataset.target === regime));
+        });
+        renderDiagram();
+        renderInspector();
+      }
+
+      function setView(view) {
+        state.view = view;
+        document.querySelectorAll(".view-tab").forEach((tab) => {
+          tab.setAttribute("aria-selected", String(tab.dataset.view === view));
+        });
+        renderInspector();
+      }
+
+      function toggleAutoPlay() {
+        state.autoPlay = !state.autoPlay;
+        autoPlayBtn.setAttribute("aria-pressed", String(state.autoPlay));
+        autoPlayIcon.innerHTML = state.autoPlay ? "&#10074;&#10074;" : "&#9654;";
+        autoPlayLabel.textContent = state.autoPlay ? "Pause" : "Auto-Cycle";
+        if (state.autoPlay) {
+          state.autoTimer = setInterval(() => selectNode(state.activeIndex + 1), 3600);
+        } else if (state.autoTimer) {
+          clearInterval(state.autoTimer);
+          state.autoTimer = null;
+        }
+      }
+
+      // Bindings
+      document.querySelectorAll(".regime-btn").forEach((btn) => {
+        btn.addEventListener("click", () => setRegime(btn.dataset.target));
+      });
+
+      document.querySelectorAll(".view-tab").forEach((tab) => {
+        tab.addEventListener("click", () => setView(tab.dataset.view));
+      });
+
+      document.getElementById("prevBtn").addEventListener("click", () => selectNode(state.activeIndex - 1));
+      document.getElementById("nextBtn").addEventListener("click", () => selectNode(state.activeIndex + 1));
+      autoPlayBtn.addEventListener("click", toggleAutoPlay);
+
+      themeBtn.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "light";
+        applyTheme(current === "dark" ? "light" : "dark", true);
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+        if (e.key === "ArrowRight") selectNode(state.activeIndex + 1);
+        else if (e.key === "ArrowLeft") selectNode(state.activeIndex - 1);
+        else if (e.key === " ") {
+          e.preventDefault();
+          toggleAutoPlay();
+        }
+      });
+
+      // Boot
+      initTheme();
+      renderStepDots();
+      renderDiagram();
+      renderInspector();
+    })();
+  </script>
+</body>
+</html>
