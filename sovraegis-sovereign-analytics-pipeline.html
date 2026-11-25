@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SOVRAEGIS Sovereign Analytics Pipeline — Zero-PII Telemetry &amp; Federated Intelligence</title>
+  <style>
+    :root {
+      --bg-app: #f5f7fb;
+      --bg-surface: #ffffff;
+      --bg-elevated: #eef2f8;
+      --bg-code: #0f172a;
+      --text-code: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #d7e0ec;
+      --border-strong: #b4c3d8;
+
+      --c-edge: #4f46e5;
+      --c-edge-bg: rgba(79, 70, 229, 0.07);
+      --c-edge-soft: rgba(79, 70, 229, 0.14);
+      --c-edge-border: rgba(79, 70, 229, 0.42);
+
+      --c-zk: #9333ea;
+      --c-zk-bg: rgba(147, 51, 234, 0.07);
+      --c-zk-soft: rgba(147, 51, 234, 0.14);
+      --c-zk-border: rgba(147, 51, 234, 0.42);
+
+      --c-sync: #0d9488;
+      --c-sync-bg: rgba(13, 148, 136, 0.07);
+      --c-sync-soft: rgba(13, 148, 136, 0.14);
+      --c-sync-border: rgba(13, 148, 136, 0.42);
+
+      --c-teacher: #d97706;
+      --c-teacher-bg: rgba(217, 119, 6, 0.07);
+      --c-teacher-soft: rgba(217, 119, 6, 0.15);
+      --c-teacher-border: rgba(217, 119, 6, 0.45);
+
+      --c-fed: #0284c7;
+      --c-fed-bg: rgba(2, 132, 199, 0.07);
+      --c-fed-soft: rgba(2, 132, 199, 0.15);
+      --c-fed-border: rgba(2, 132, 199, 0.45);
+
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.14);
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.14);
+      --warn: #d97706;
+      --warn-soft: rgba(217, 119, 6, 0.15);
+
+      --node-bg: #ffffff;
+      --node-border: #cbd5e1;
+
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0a0f1a;
+      --bg-surface: #111827;
+      --bg-elevated: #192235;
+      --bg-code: #070b14;
+      --text-code: #e2e8f0;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #233149;
+      --border-strong: #374b6e;
+
+      --c-edge: #818cf8;
+      --c-edge-bg: rgba(129, 140, 248, 0.08);
+      --c-edge-soft: rgba(129, 140, 248, 0.18);
+      --c-edge-border: rgba(129, 140, 248, 0.48);
+
+      --c-zk: #c084fc;
+      --c-zk-bg: rgba(192, 132, 252, 0.08);
+      --c-zk-soft: rgba(192, 132, 252, 0.18);
+      --c-zk-border: rgba(192, 132, 252, 0.48);
+
+      --c-sync: #2dd4bf;
+      --c-sync-bg: rgba(45, 212, 191, 0.08);
+      --c-sync-soft: rgba(45, 212, 191, 0.17);
+      --c-sync-border: rgba(45, 212, 191, 0.46);
+
+      --c-teacher: #fbbf24;
+      --c-teacher-bg: rgba(251, 191, 36, 0.08);
+      --c-teacher-soft: rgba(251, 191, 36, 0.17);
+      --c-teacher-border: rgba(251, 191, 36, 0.46);
+
+      --c-fed: #38bdf8;
+      --c-fed-bg: rgba(56, 189, 248, 0.08);
+      --c-fed-soft: rgba(56, 189, 248, 0.18);
+      --c-fed-border: rgba(56, 189, 248, 0.48);
+
+      --success: #34d399;
+      --success-soft: rgba(52, 211, 153, 0.16);
+      --danger: #f87171;
+      --danger-soft: rgba(248, 113, 113, 0.16);
+      --warn: #fbbf24;
+      --warn-soft: rgba(251, 191, 36, 0.17);
+
+      --node-bg: #151f33;
+      --node-border: #2c3e5c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+    }
+
+    .title-group { display: flex; flex-direction: column; gap: 2px; }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .title-row h1 {
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .pill-tag {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--c-fed-soft);
+      color: var(--c-fed);
+      border: 1px solid var(--c-fed-border);
+    }
+
+    .subtitle {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-accent {
+      background: var(--c-sync-soft);
+      border-color: var(--c-sync-border);
+      color: var(--c-sync);
+    }
+
+    .btn-compare.active {
+      background: var(--danger-soft);
+      border-color: rgba(248, 113, 113, 0.45);
+      color: var(--danger);
+    }
+
+    .kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Stepper */
+    .stepper-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 7px 10px;
+    }
+
+    .stage-pills {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .stage-pill:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+    .stage-pill.active {
+      background: var(--c-fed-soft);
+      border-color: var(--c-fed-border);
+      color: var(--c-fed);
+    }
+
+    .stage-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+    }
+
+    .stage-pill.active .stage-num {
+      background: var(--c-fed);
+      color: var(--bg-app);
+    }
+
+    .nav-btns { display: flex; align-items: center; gap: 5px; }
+
+    /* Telemetry vs Privacy Live Metric Strip */
+    .metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    @media (max-width: 740px) {
+      .metrics-strip { grid-template-columns: 1fr; }
+    }
+
+    .metric-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .metric-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .metric-val {
+      font-family: var(--font-mono);
+      font-size: 11.2px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .meter-track {
+      width: 100%;
+      height: 7px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .meter-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.25s ease;
+    }
+
+    .lms-compare-note {
+      font-size: 10.5px;
+      color: var(--danger);
+      font-family: var(--font-mono);
+      display: none;
+    }
+
+    .compare-on .lms-compare-note { display: block; }
+
+    /* Pipeline SVG Card */
+    .diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .svg-wrap { width: 100%; overflow-x: auto; }
+
+    svg.pipe-svg {
+      width: 100%;
+      min-width: 820px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .layer-zone {
+      rx: 11;
+      ry: 11;
+      stroke-width: 1.4;
+      stroke-dasharray: 5 4;
+    }
+
+    .z-edge { fill: var(--c-edge-bg); stroke: var(--c-edge-border); }
+    .z-zk { fill: var(--c-zk-bg); stroke: var(--c-zk-border); }
+    .z-sync { fill: var(--c-sync-bg); stroke: var(--c-sync-border); }
+    .z-teacher { fill: var(--c-teacher-bg); stroke: var(--c-teacher-border); }
+    .z-fed { fill: var(--c-fed-bg); stroke: var(--c-fed-border); }
+
+    .zone-label {
+      font-size: 9.6px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.25s ease;
+    }
+
+    .node-group.dimmed { opacity: 0.38; }
+
+    .node-box {
+      fill: var(--node-bg);
+      stroke: var(--node-border);
+      stroke-width: 1.5;
+      rx: 9;
+      ry: 9;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14));
+      transition: stroke 0.2s, stroke-width 0.2s;
+    }
+
+    .node-group:hover .node-box { stroke-width: 2.3; }
+    .node-group.active-edge .node-box { stroke: var(--c-edge); stroke-width: 2.4; }
+    .node-group.active-zk .node-box { stroke: var(--c-zk); stroke-width: 2.4; }
+    .node-group.active-sync .node-box { stroke: var(--c-sync); stroke-width: 2.4; }
+    .node-group.active-teacher .node-box { stroke: var(--c-teacher); stroke-width: 2.4; }
+    .node-group.active-fed .node-box { stroke: var(--c-fed); stroke-width: 2.4; }
+    .node-group.selected .node-box { stroke-width: 3; }
+
+    .node-title { font-size: 11.4px; font-weight: 700; fill: var(--text-primary); }
+    .node-sub { font-size: 9.4px; font-family: var(--font-mono); fill: var(--text-muted); }
+    .node-line { font-size: 9.8px; fill: var(--text-secondary); }
+
+    .pipe-edge {
+      fill: none;
+      stroke: var(--border-strong);
+      stroke-width: 2;
+      opacity: 0.18;
+      transition: opacity 0.28s, stroke 0.28s;
+    }
+
+    .pipe-edge.active {
+      opacity: 1;
+      stroke-width: 2.6;
+      stroke-dasharray: 7 5;
+      animation: dashFlow 1.05s linear infinite;
+    }
+
+    .pipe-edge.e-zk.active { stroke: var(--c-zk); }
+    .pipe-edge.e-sync.active { stroke: var(--c-sync); }
+    .pipe-edge.e-teacher.active { stroke: var(--c-teacher); }
+    .pipe-edge.e-fed.active { stroke: var(--c-fed); }
+
+    @keyframes dashFlow { to { stroke-dashoffset: -24; } }
+
+    .edge-badge { opacity: 0; transition: opacity 0.25s; pointer-events: none; }
+    .edge-badge.active { opacity: 1; }
+    .edge-badge rect { fill: var(--bg-surface); stroke: var(--border-strong); stroke-width: 1; rx: 5; }
+    .edge-badge text { font-size: 9px; font-family: var(--font-mono); font-weight: 700; fill: var(--text-primary); text-anchor: middle; }
+
+    /* Bottom Dual Panel */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 860px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 7px;
+    }
+
+    .tabs { display: flex; gap: 5px; }
+
+    .tab-btn {
+      padding: 4px 9px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-elevated);
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    .badge {
+      font-size: 10.3px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .b-edge { background: var(--c-edge-soft); color: var(--c-edge); border-color: var(--c-edge-border); }
+    .b-zk { background: var(--c-zk-soft); color: var(--c-zk); border-color: var(--c-zk-border); }
+    .b-sync { background: var(--c-sync-soft); color: var(--c-sync); border-color: var(--c-sync-border); }
+    .b-teacher { background: var(--c-teacher-soft); color: var(--c-teacher); border-color: var(--c-teacher-border); }
+    .b-fed { background: var(--c-fed-soft); color: var(--c-fed); border-color: var(--c-fed-border); }
+    .b-success { background: var(--success-soft); color: var(--success); border-color: rgba(5, 150, 105, 0.35); }
+    .b-danger { background: var(--danger-soft); color: var(--danger); border-color: rgba(220, 38, 38, 0.35); }
+
+    .desc-text { font-size: 12px; color: var(--text-secondary); }
+
+    .code-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-head {
+      padding: 5px 9px;
+      font-size: 10.3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    pre.code-body {
+      background: var(--bg-code);
+      color: var(--text-code);
+      font-family: var(--font-mono);
+      font-size: 10.6px;
+      line-height: 1.44;
+      padding: 8px 10px;
+      overflow-x: auto;
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Node Meta Boxes */
+    .meta-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .meta-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 7px 9px;
+    }
+
+    .meta-lbl {
+      font-size: 9.8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .meta-val {
+      font-size: 11.4px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .chip-wrap { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
+    .chip {
+      font-family: var(--font-mono);
+      font-size: 10.3px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    /* Interactive Micro-Lab (Right Panel) */
+    .lab-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .lab-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    /* Heatmap Bars */
+    .heat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 5px;
+    }
+
+    .heat-cell {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 4px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .heat-cell.bottleneck {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .heat-stage { font-size: 9.5px; font-weight: 700; color: var(--text-primary); }
+    .heat-pct { font-family: var(--font-mono); font-size: 11px; font-weight: 800; }
+    .heat-lbl { font-size: 8.8px; color: var(--text-muted); }
+
+    /* ZK Claims Selector */
+    .zk-list { display: flex; flex-direction: column; gap: 6px; }
+
+    .zk-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: border-color 0.16s, background 0.16s;
+    }
+
+    .zk-item.active {
+      border-color: var(--c-zk);
+      background: var(--c-zk-bg);
+    }
+
+    .zk-item-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.2px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .zk-item-sub {
+      font-size: 10.6px;
+      color: var(--text-secondary);
+    }
+
+    /* LDP Slider */
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .slider-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--c-fed);
+      cursor: pointer;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    .mini-stat {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+    }
+
+    .mini-stat .k { font-size: 9.5px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; }
+    .mini-stat .v { font-family: var(--font-mono); font-size: 12px; font-weight: 800; color: var(--text-primary); margin-top: 2px; }
+
+    .coach-bubble {
+      background: var(--bg-surface);
+      border-left: 3px solid var(--c-edge);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 7px 9px;
+      font-size: 11.4px;
+      color: var(--text-secondary);
+    }
+
+    .alert-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: var(--bg-surface);
+      border: 1px solid var(--c-teacher-border);
+      border-radius: var(--radius-sm);
+      padding: 7px 9px;
+      font-size: 11.2px;
+    }
+
+    .footer-hint {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div id="appShell" class="app-shell">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="title-group">
+        <div class="title-row">
+          <h1>SOVRAEGIS Sovereign Analytics Pipeline</h1>
+          <span class="pill-tag">Max Telemetry · Zero Network PII</span>
+        </div>
+        <div class="subtitle">Edge xAPI 2.0 Glass-Box → ZK-Telemetry Proofs → Zero-PII Heatmaps → Dual-Resolution Lens → Federated ε-LDP &amp; FLUX</div>
+      </div>
+
+      <div class="controls-right">
+        <button id="compareBtn" class="btn btn-compare" type="button" title="Compare against Traditional Centralized LMS (Hotkey: C)">
+          <span>⚖</span> <span id="compareLabel">Compare vs. Cloud LMS</span> <span class="kbd">C</span>
+        </button>
+        <button id="themeToggle" class="btn" type="button" title="Toggle Light / Dark Theme (Hotkey: T)">
+          <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stage Stepper -->
+    <nav class="stepper-bar" aria-label="Analytics Pipeline Stages">
+      <div class="stage-pills" id="stagePills"></div>
+      <div class="nav-btns">
+        <button id="prevBtn" class="btn" type="button">← Prev</button>
+        <button id="playBtn" class="btn btn-accent" type="button">▶ Auto</button>
+        <button id="nextBtn" class="btn" type="button">Next →</button>
+      </div>
+    </nav>
+
+    <!-- Live Telemetry Depth vs Privacy Strip -->
+    <section class="metrics-strip" aria-label="Telemetry Depth vs PII Exposure">
+      <div class="metric-card">
+        <div class="metric-head">
+          <span>Pedagogical Telemetry Depth</span>
+          <span id="mTelemetryVal" class="metric-val">100% Cognitive</span>
+        </div>
+        <div class="meter-track"><div id="mTelemetryBar" class="meter-fill" style="width:100%; background:var(--c-edge);"></div></div>
+        <div id="lmsTelemetryNote" class="lms-compare-note">Cloud LMS: ~22% (Click counts &amp; login timestamps only)</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <span>Network / Cloud PII Exposure</span>
+          <span id="mPiiVal" class="metric-val" style="color:var(--success);">0% (On-Device)</span>
+        </div>
+        <div class="meter-track"><div id="mPiiBar" class="meter-fill" style="width:3%; background:var(--success);"></div></div>
+        <div id="lmsPiiNote" class="lms-compare-note">Cloud LMS: 100% Centralized Honeypot (Names, IDs, Drafts)</div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <span>Active Privacy Mechanism</span>
+          <span id="mMechVal" class="metric-val">Local Air-Gap</span>
+        </div>
+        <div id="mMechSub" style="font-size:11px; color:var(--text-secondary);">Raw xAPI 2.0 never leaves SOVRAELEX</div>
+        <div id="lmsMechNote" class="lms-compare-note">Cloud LMS: Surveillance triggers compliance gaming</div>
+      </div>
+    </section>
+
+    <!-- 5-Node Layered Pipeline SVG -->
+    <section class="diagram-card" aria-label="5-Layer Sovereign Analytics Architecture">
+      <div class="svg-wrap">
+        <svg class="pipe-svg" viewBox="0 0 980 262" role="img" aria-label="SOVRAEGIS 5-Node Sovereign Analytics Pipeline">
+          <defs>
+            <marker id="arr-zk" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--c-zk)" />
+            </marker>
+            <marker id="arr-sync" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--c-sync)" />
+            </marker>
+            <marker id="arr-teacher" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--c-teacher)" />
+            </marker>
+            <marker id="arr-fed" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.2" markerHeight="6.2" orient="auto">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--c-fed)" />
+            </marker>
+          </defs>
+
+          <!-- 5 Zone Containers -->
+          <rect class="layer-zone z-edge" x="10" y="10" width="178" height="196" />
+          <text class="zone-label" x="20" y="27" fill="var(--c-edge)">Edge Learner Zone</text>
+
+          <rect class="layer-zone z-zk" x="206" y="10" width="178" height="196" />
+          <text class="zone-label" x="216" y="27" fill="var(--c-zk)">Cryptographic Gate</text>
+
+          <rect class="layer-zone z-sync" x="402" y="10" width="178" height="196" />
+          <text class="zone-label" x="412" y="27" fill="var(--c-sync)">Zero-PII SYNCZINE</text>
+
+          <rect class="layer-zone z-teacher" x="598" y="10" width="178" height="196" />
+          <text class="zone-label" x="608" y="27" fill="var(--c-teacher)">Teacher SOVRAEGIX</text>
+
+          <rect class="layer-zone z-fed" x="794" y="10" width="176" height="196" />
+          <text class="zone-label" x="804" y="27" fill="var(--c-fed)">Federated Commons</text>
+
+          <!-- Directed Pipeline Edges -->
+          <!-- 1 -> 2 -->
+          <path id="e-1-2" class="pipe-edge e-zk" d="M 178 114 L 214 114" marker-end="url(#arr-zk)" />
+          <g id="b-1-2" class="edge-badge">
+            <rect x="148" y="176" width="98" height="18" />
+            <text x="197" y="188">Private xAPI → ZK</text>
+          </g>
+
+          <!-- 2 -> 3 -->
+          <path id="e-2-3" class="pipe-edge e-sync" d="M 374 114 L 410 114" marker-end="url(#arr-sync)" />
+          <g id="b-2-3" class="edge-badge">
+            <rect x="336" y="176" width="114" height="18" />
+            <text x="393" y="188">Zero-PII + zk-SNARK</text>
+          </g>
+
+          <!-- 3 -> 4 -->
+          <path id="e-3-4" class="pipe-edge e-teacher" d="M 570 114 L 606 114" marker-end="url(#arr-teacher)" />
+          <g id="b-3-4" class="edge-badge">
+            <rect x="536" y="176" width="106" height="18" />
+            <text x="589" y="188">Cohort Heatmaps</text>
+          </g>
+
+          <!-- 4 -> 5 (Teacher Federated Aggregate) -->
+          <path id="e-4-5" class="pipe-edge e-fed" d="M 766 114 L 802 114" marker-end="url(#arr-fed)" />
+          <g id="b-4-5" class="edge-badge">
+            <rect x="734" y="176" width="102" height="18" />
+            <text x="785" y="188">Secure Agg + LDP</text>
+          </g>
+
+          <!-- 1 -> 5 (Opt-In Learner Data Dividend Bypass) -->
+          <path id="e-1-5" class="pipe-edge e-fed" d="M 99 170 L 99 234 L 882 234 L 882 174" marker-end="url(#arr-fed)" />
+          <g id="b-1-5" class="edge-badge">
+            <rect x="348" y="224" width="286" height="20" />
+            <text x="491" y="237">Opt-In Learner ε-LDP Data Dividend → FLUX Reputation</text>
+          </g>
+
+          <!-- 5 Core Nodes -->
+          <!-- Node 1 -->
+          <g id="node-edge" class="node-group" data-node="edge" tabindex="0" role="button" aria-label="Node 1 SOVRAELEX Edge Telemetry and Local AI Coach">
+            <rect class="node-box" x="20" y="38" width="158" height="132" />
+            <text class="node-title" x="30" y="57">1. SOVRAELEX Edge</text>
+            <text class="node-sub" x="30" y="71">Local xAPI 2.0 + AI Coach</text>
+            <text class="node-line" x="30" y="90">• CODE+V hesitation</text>
+            <text class="node-line" x="30" y="105">• Revision loops &amp; drafts</text>
+            <text class="node-line" x="30" y="120">• Socratic glass-box LLM</text>
+            <rect x="30" y="136" width="138" height="22" rx="4" fill="var(--c-edge-soft)" />
+            <text x="99" y="150" text-anchor="middle" font-size="9" font-weight="700" font-family="var(--font-mono)" fill="var(--c-edge)">100% FIDELITY · 0B SENT</text>
+          </g>
+
+          <!-- Node 2 -->
+          <g id="node-zk" class="node-group" data-node="zk" tabindex="0" role="button" aria-label="Node 2 Pre-Sync Sanitizer and ZK Prover">
+            <rect class="node-box" x="216" y="38" width="158" height="132" />
+            <text class="node-title" x="226" y="57">2. Sanitizer &amp; ZK Gate</text>
+            <text class="node-sub" x="226" y="71">Rust/WASM + zk-SNARK</text>
+            <text class="node-line" x="226" y="90">• Strips EXIF/PDF/IDs</text>
+            <text class="node-line" x="226" y="105">• Effort &amp; mastery proofs</text>
+            <text class="node-line" x="226" y="120">• Private accommodations</text>
+            <rect x="226" y="136" width="138" height="22" rx="4" fill="var(--c-zk-soft)" />
+            <text x="295" y="150" text-anchor="middle" font-size="9" font-weight="700" font-family="var(--font-mono)" fill="var(--c-zk)">VERIFIABLE · ZERO RAW</text>
+          </g>
+
+          <!-- Node 3 -->
+          <g id="node-sync" class="node-group" data-node="sync" tabindex="0" role="button" aria-label="Node 3 SYNCZINE Zero-PII Process Plane">
+            <rect class="node-box" x="412" y="38" width="158" height="132" />
+            <text class="node-title" x="422" y="57">3. SYNCZINE Process</text>
+            <text class="node-sub" x="422" y="71">CRDT · Pairwise did:peer</text>
+            <text class="node-line" x="422" y="90">• SYNCTESS transitions</text>
+            <text class="node-line" x="422" y="105">• Distill → Express stalls</text>
+            <text class="node-line" x="422" y="120">• Blind peer rubric graphs</text>
+            <rect x="422" y="136" width="138" height="22" rx="4" fill="var(--c-sync-soft)" />
+            <text x="491" y="150" text-anchor="middle" font-size="9" font-weight="700" font-family="var(--font-mono)" fill="var(--c-sync)">ZERO-PII PSEUDONYMS</text>
+          </g>
+
+          <!-- Node 4 -->
+          <g id="node-teacher" class="node-group" data-node="teacher" tabindex="0" role="button" aria-label="Node 4 SOVRAEGIX Dual-Resolution Privacy Lens">
+            <rect class="node-box" x="608" y="38" width="158" height="132" />
+            <text class="node-title" x="618" y="57">4. SOVRAEGIX Lens</text>
+            <text class="node-sub" x="618" y="71">Dual-Resolution (No LDP)</text>
+            <text class="node-line" x="618" y="90">• Bottleneck heatmaps</text>
+            <text class="node-line" x="618" y="105">• Early-warning triggers</text>
+            <text class="node-line" x="618" y="120">• RAM-only unmask + FAP</text>
+            <rect x="618" y="136" width="138" height="22" rx="4" fill="var(--c-teacher-soft)" />
+            <text x="687" y="150" text-anchor="middle" font-size="9" font-weight="700" font-family="var(--font-mono)" fill="var(--c-teacher)">EXACT COHORT · RAM PII</text>
+          </g>
+
+          <!-- Node 5 -->
+          <g id="node-fed" class="node-group" data-node="fed" tabindex="0" role="button" aria-label="Node 5 SOVRAEGIS Federated LDP and FLUX Commons">
+            <rect class="node-box" x="804" y="38" width="156" height="132" />
+            <text class="node-title" x="814" y="57">5. Federated Commons</text>
+            <text class="node-sub" x="814" y="71">ε-LDP + Secure Agg + FLUX</text>
+            <text class="node-line" x="814" y="90">• On-device LDP noise</text>
+            <text class="node-line" x="814" y="105">• Cross-campus analytics</text>
+            <text class="node-line" x="814" y="120">• Non-monetary FLUX</text>
+            <rect x="814" y="136" width="136" height="22" rx="4" fill="var(--c-fed-soft)" />
+            <text x="882" y="150" text-anchor="middle" font-size="9" font-weight="700" font-family="var(--font-mono)" fill="var(--c-fed)">BOUNDED ε-LDP · OPT-IN</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Bottom Dual Inspector + Stage Micro-Lab -->
+    <div class="bottom-grid">
+      <!-- Left: Signal Transformation & Node Deep-Dive -->
+      <section class="panel" aria-label="Signal Transformation Inspector">
+        <div class="panel-header">
+          <div class="tabs">
+            <button id="tabStage" class="tab-btn active" type="button">Stage Signal Transformation</button>
+            <button id="tabNode" class="tab-btn" type="button">Selected Layer Deep-Dive</button>
+          </div>
+          <span id="panelBadge" class="badge b-edge">Model 1 · Edge Sovereign</span>
+        </div>
+
+        <div id="stageView" style="display:flex; flex-direction:column; gap:8px;">
+          <div id="stageDesc" class="desc-text"></div>
+          <div class="code-card">
+            <div class="code-head">
+              <span id="payloadTitle">Concrete Signal Payload</span>
+              <span id="payloadScope" style="color:var(--c-sync);">Strictly On-Device</span>
+            </div>
+            <pre id="payloadBody" class="code-body"></pre>
+          </div>
+        </div>
+
+        <div id="nodeView" style="display:none; flex-direction:column; gap:8px;">
+          <div id="nodeDesc" class="desc-text"></div>
+          <div class="meta-grid">
+            <div class="meta-box">
+              <div class="meta-lbl">SOVRAEGIS Model</div>
+              <div id="nodeModel" class="meta-val"></div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-lbl">Privacy Guarantee</div>
+              <div id="nodePrivacy" class="meta-val"></div>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-lbl">Captured Signals &amp; Outputs</div>
+            <div id="nodeSignals" class="chip-wrap"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Dynamic Stage-Aware Interactive Lab -->
+      <section class="panel" aria-label="Interactive Sovereign Analytics Lab">
+        <div class="panel-header">
+          <strong id="labHeaderTitle" style="font-size:12px;">Interactive Layer Lab</strong>
+          <span id="labHeaderBadge" class="badge b-success">Live Sandbox</span>
+        </div>
+        <div id="labContainer" class="lab-box"></div>
+        <div class="footer-hint">
+          <span>Click any layer node to inspect · Keys: <span class="kbd">←</span> <span class="kbd">→</span> Stages · <span class="kbd">C</span> Cloud LMS Compare</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STAGES = [
+        {
+          id: 1,
+          short: "1. Edge Capture",
+          title: "Stage 1 — Ultra-High-Resolution Edge Capture (SOVRAELEX)",
+          badge: "Model 1 · Strictly On-Device",
+          badgeClass: "b-edge",
+          telemetryPct: 100,
+          telemetryText: "100% Cognitive Fidelity",
+          telemetryColor: "var(--c-edge)",
+          piiPct: 3,
+          piiText: "0% Network (On-Device)",
+          piiColor: "var(--success)",
+          mechVal: "Glass-Box Local Air-Gap",
+          mechSub: "Raw xAPI 2.0 micro-events + local LLM coach never leave device",
+          activeNodes: ["edge"],
+          activeEdges: [],
+          activeBadges: [],
+          desc: "Because raw IEEE xAPI 2.0 event streams stay encrypted inside SOVRAELEX, the learner can ethically capture deep cognitive signals—hesitation spikes, revision loops, self-rated confidence deltas, and Socratic AI dialogues—that would be legally toxic on a centralized server.",
+          payloadTitle: "Raw On-Device xAPI 2.0 Micro-Event Stream (SOVRAELEX)",
+          payloadScope: "0 Bytes Transmitted",
+          payload: `{
+  "tier": "LOCAL_SOVEREIGN_ONLY",
+  "actor_local": "did:peer:2.Ez6LSg... (CobaltFox-42)",
+  "synctess_stage": "hex-03/stage/distill",
+  "cognitive_trace": {
+    "dwell_ms": 412800,
+    "revision_loops": 5,
+    "hesitation_pauses_sec": [42, 118, 65],
+    "confidence_before_after": [2, 4],
+    "local_llm_socratic_turns": 6
+  },
+  "feedback_target": "LEARNER_GLASS_BOX_MIRROR"
+}`
+        },
+        {
+          id: 2,
+          short: "2. ZK & Sanitize",
+          title: "Stage 2 — Pre-Sync WASM Sanitizer & ZK-Telemetry Prover",
+          badge: "Model 4 · ZK-Telemetry Gate",
+          badgeClass: "b-zk",
+          telemetryPct: 92,
+          telemetryText: "High Verifiability · 0 Raw",
+          telemetryColor: "var(--c-zk)",
+          piiPct: 3,
+          piiText: "0% PII (zk-SNARK Claim)",
+          piiColor: "var(--success)",
+          mechVal: "WASM Gate + zk-SNARKs",
+          mechSub: "Proves effort, mastery & accommodations without exposing raw drafts",
+          activeNodes: ["edge", "zk"],
+          activeEdges: ["e-1-2"],
+          activeBadges: ["b-1-2"],
+          desc: "Before syncing a CODE+V checkpoint, SOVRAELEX's Rust/WASM gate strips EXIF, PDF author metadata, and accidental student IDs (turning leaks into micro-lessons) while compiling private local xAPI logs into succinct zero-knowledge proofs replacing invasive proctoring.",
+          payloadTitle: "Compiled ZK-Telemetry Claim (Replacing Invasive Proctoring)",
+          payloadScope: "Zero-PII Cryptographic Proof",
+          payload: `{
+  "sanitizer_status": "CLEAN (EXIF/PDF/SE-ID stripped)",
+  "proof_scheme": "zk-SNARK (Groth16 / BBS2023)",
+  "verified_statement": "Completed all 6 CODE+V stages across >= 3 distinct drafting sessions without bulk paste",
+  "raw_drafts_revealed": false,
+  "keystrokes_uploaded": false,
+  "root_did_exposed": false,
+  "proof_digest": "zkp:0x9f84c2b1e0a77d...42a1"
+}`
+        },
+        {
+          id: 3,
+          short: "3. Process Plane",
+          title: "Stage 3 — Zero-PII Process-Centric Telemetry (SYNCZINES)",
+          badge: "Model 2 · Process Telemetry",
+          badgeClass: "b-sync",
+          telemetryPct: 84,
+          telemetryText: "Cohort Process Fidelity",
+          telemetryColor: "var(--c-sync)",
+          piiPct: 4,
+          piiText: "0% PII (Pairwise did:peer)",
+          piiColor: "var(--success)",
+          mechVal: "Unlinkable Avatar CRDT",
+          mechSub: "Tracks learning path friction rather than surveilling individuals",
+          activeNodes: ["zk", "sync"],
+          activeEdges: ["e-2-3"],
+          activeBadges: ["b-2-3"],
+          desc: "SYNCZINES emit stripped process metrics keyed solely to course-scoped pairwise did:peer avatars and SYNCTESS node IDs. Analytics shift from policing students to diagnosing exactly where the curriculum creates cognitive friction.",
+          payloadTitle: "Zero-PII SYNCZINE Process Telemetry Packet",
+          payloadScope: "CRDT Sync Plane",
+          payload: `{
+  "actor_did": "did:peer:2.Ez6LSg...",
+  "synctess_unit": "z2v-ielts-04/hex-03",
+  "stage_transition": "distill -> express",
+  "duration_bucket": "PT30M",
+  "revision_bucket": "3-5",
+  "bottleneck_flag": true,
+  "peer_verify_agreement_delta": 0.34,
+  "zk_effort_valid": true
+}`
+        },
+        {
+          id: 4,
+          short: "4. Dual-Res Lens",
+          title: "Stage 4 — Dual-Resolution Privacy Lens (SOVRAEGIX)",
+          badge: "Model 2 · Exact Small-Cohort",
+          badgeClass: "b-teacher",
+          telemetryPct: 90,
+          telemetryText: "Actionable Intervention",
+          telemetryColor: "var(--c-teacher)",
+          piiPct: 5,
+          piiText: "RAM-Only Local (0% Net)",
+          piiColor: "var(--c-teacher)",
+          mechVal: "Dual-Resolution (No LDP)",
+          mechSub: "Exact classroom bottleneck accuracy; RAM unmask only on intervention",
+          activeNodes: ["sync", "teacher"],
+          activeEdges: ["e-3-4"],
+          activeBadges: ["b-3-4"],
+          desc: "To eliminate the small-cohort differential-privacy noise penalty, SOVRAEGIX never applies LDP inside a single teacher's local view. Class-wide Pedagogical Bottleneck Heatmaps stay avatar-only until an early-warning trigger prompts a RAM-only Privacy Lens check for human mentoring.",
+          payloadTitle: "SOVRAEGIX Classroom Bottleneck Diagnostic (Zero LDP Noise)",
+          payloadScope: "Teacher Local Device",
+          payload: `{
+  "cohort_size": 34,
+  "dp_noise_applied": false,
+  "primary_bottleneck": "Stage 3: Distill (65% cohort stall)",
+  "rubric_disagreement_peak": "Verify Criterion #2 (Evidence)",
+  "early_warning_avatars": ["AmberOwl-17", "SlateCrane-09"],
+  "privacy_lens_state": "MASKED_BY_DEFAULT (RAM-only join)"
+}`
+        },
+        {
+          id: 5,
+          short: "5. Federated LDP",
+          title: "Stage 5 — Federated ε-LDP Analytics & FLUX Commons (SOVRAEGIS)",
+          badge: "Models 3 & 5 · Federated Commons",
+          badgeClass: "b-fed",
+          telemetryPct: 88,
+          telemetryText: "Ecosystem Intelligence",
+          telemetryColor: "var(--c-fed)",
+          piiPct: 6,
+          piiText: "Mathematically Bounded ε-LDP",
+          piiColor: "var(--c-fed)",
+          mechVal: "ε-LDP + Secure Agg + FLUX",
+          mechSub: "Opt-in Data Dividends power cross-campus curriculum R&D & FLUX",
+          activeNodes: ["edge", "teacher", "fed"],
+          activeEdges: ["e-4-5", "e-1-5"],
+          activeBadges: ["b-4-5", "b-1-5"],
+          desc: "Across campuses and cohorts, opt-in SOVRAELEX and SOVRAEGIX nodes perturb telemetry vectors locally with ε-Local Differential Privacy before cryptographic Secure Aggregation—preventing gradient inference while rewarding verified commons contributors with non-monetary FLUX reputation.",
+          payloadTitle: "Opt-In Federated ε-LDP Packet + FLUX Synergization",
+          payloadScope: "Alchemosaic Commons",
+          payload: `{
+  "opt_in_consent": "EXPLICIT_UNBUNDLED_LEARNER_TOGGLE",
+  "ldp_epsilon": 1.5,
+  "secure_aggregation_cohort_n": 420,
+  "perturbed_vector": [0.19, 0.24, 0.63, 0.41, 0.28, 0.14],
+  "gradient_inference_protected": true,
+  "flux_commons_dividend": "+4.5 FLUX_Commons (non-monetary)"
+}`
+        }
+      ];
+
+      const NODES = {
+        edge: {
+          title: "1. SOVRAELEX Edge Telemetry & Local AI Coach",
+          model: "Model 1: Sovereign Edge Telemetry",
+          privacy: "Air-Gapped On-Device (0 bytes leave)",
+          badge: "Edge Learner Zone",
+          badgeClass: "b-edge",
+          desc: "Captures high-resolution IEEE xAPI 2.0 cognitive micro-traces strictly on the learner's device. A local LLM or lightweight inference engine acts as a private glass-box Socratic mirror without institutional surveillance.",
+          signals: ["CODE+V dwell times", "Revision loops before Express", "Hesitation spikes", "Confidence deltas", "Local Socratic AI turns"]
+        },
+        zk: {
+          title: "2. Pre-Sync WASM Sanitizer & ZK-Telemetry Prover",
+          model: "Model 4: ZK-Telemetry Verification",
+          privacy: "Zero-PII Cryptographic Proofs",
+          badge: "Cryptographic Boundary",
+          badgeClass: "b-zk",
+          desc: "Enforces privacy hygiene locally before any sync commit. Strips EXIF/PDF/DOCX metadata, blocks accidental student IDs as real-time coaching, and compiles local xAPI logs into succinct zk-SNARK claims.",
+          signals: ["EXIF/PDF metadata scrub", "Regex ID hygiene alert", "6-stage CODE+V effort proof", "Prerequisite mastery ZKP", "Private accommodation ZKP"]
+        },
+        sync: {
+          title: "3. SYNCZINE Zero-PII Process Plane",
+          model: "Model 2: Process-Centric Telemetry",
+          privacy: "Course-Scoped Pairwise did:peer",
+          badge: "Zero-PII SYNCZINE Plane",
+          badgeClass: "b-sync",
+          desc: "Synchronizes stripped SYNCTESS transition metrics and double-blind peer verification graphs via local-first CRDTs. Shifts focus from surveilling individuals to measuring learning-path bottlenecks.",
+          signals: ["SYNCTESS node transitions", "Distill -> Express stall flags", "Quantized duration bins", "Peer rubric divergence", "Sanitized artifact CIDs"]
+        },
+        teacher: {
+          title: "4. SOVRAEGIX Dual-Resolution Privacy Lens",
+          model: "Model 2 + Small-Cohort Inversion",
+          privacy: "RAM-Only Local Overlay (No LDP)",
+          badge: "Teacher SOVRAEGIX Zone",
+          badgeClass: "b-teacher",
+          desc: "Renders exact, noise-free Pedagogical Bottleneck Heatmaps for the 30–40 student seminar using avatars by default. Unmasks real student names strictly in RAM when early-warning thresholds fire or when exporting FAP CSVs.",
+          signals: ["Zero-noise cohort heatmaps", "Early-warning stall alerts", "RAM-only Privacy Lens", "Safe Projection Mode", "Local FAP CSV export"]
+        },
+        fed: {
+          title: "5. SOVRAEGIS Federated ε-LDP & FLUX Commons",
+          model: "Models 3 & 5: Federated LDP + FLUX",
+          privacy: "Mathematically Bounded ε-LDP + SecAgg",
+          badge: "Federated SOVRAEGIS Commons",
+          badgeClass: "b-fed",
+          desc: "Aggregates opt-in, locally perturbed curriculum vectors across campuses via cryptographic Secure Aggregation—avoiding raw data pooling and gradient leakage while awarding non-monetary FLUX governance weight.",
+          signals: ["Local Differential Privacy (ε)", "Cryptographic Secure Aggregation", "Cross-campus difficulty calibration", "Opt-in Data Dividends", "Non-monetary FLUX governance"]
+        }
+      };
+
+      const ZK_CLAIMS = [
+        {
+          id: "effort",
+          title: "CODE+V Authentic Effort Proof",
+          claim: "Completed all 6 CODE+V stages across >= 3 distinct drafting sessions without bulk paste.",
+          hidden: "Private messy drafts, pause timestamps, and failed outlines stay sealed on-device.",
+          verifyMs: "18 ms"
+        },
+        {
+          id: "prereq",
+          title: "Reverse Data Gravity (Prior Mastery)",
+          claim: "Achieved >= 85% rubric mastery across prerequisite SYNCTESS nodes from a prior semester.",
+          hidden: "Previous course Avatar DID, old teacher identity, and full transcript remain unlinkable.",
+          verifyMs: "24 ms"
+        },
+        {
+          id: "accomm",
+          title: "Private Accessibility Accommodation",
+          claim: "Holds verified institutional extended-time accommodation credential for Stage 4 Express.",
+          hidden: "Underlying medical condition, diagnosis, and sensitive personal records never disclosed.",
+          verifyMs: "21 ms"
+        }
+      ];
+
+      let currentStage = 0;
+      let selectedNode = "edge";
+      let activeTab = "stage";
+      let compareLms = false;
+      let autoTimer = null;
+
+      // Lab Interactive States
+      let selectedZk = "effort";
+      let teacherUnmasked = false;
+      let ldpEpsilon = 1.5;
+      let fedCohortN = 420;
+      let optInDividend = true;
+
+      // DOM Refs
+      const appShell = document.getElementById("appShell");
+      const stagePills = document.getElementById("stagePills");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const playBtn = document.getElementById("playBtn");
+      const compareBtn = document.getElementById("compareBtn");
+      const compareLabel = document.getElementById("compareLabel");
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      const mTelemetryVal = document.getElementById("mTelemetryVal");
+      const mTelemetryBar = document.getElementById("mTelemetryBar");
+      const mPiiVal = document.getElementById("mPiiVal");
+      const mPiiBar = document.getElementById("mPiiBar");
+      const mMechVal = document.getElementById("mMechVal");
+      const mMechSub = document.getElementById("mMechSub");
+
+      const tabStage = document.getElementById("tabStage");
+      const tabNode = document.getElementById("tabNode");
+      const panelBadge = document.getElementById("panelBadge");
+      const stageView = document.getElementById("stageView");
+      const nodeView = document.getElementById("nodeView");
+
+      const stageDesc = document.getElementById("stageDesc");
+      const payloadTitle = document.getElementById("payloadTitle");
+      const payloadScope = document.getElementById("payloadScope");
+      const payloadBody = document.getElementById("payloadBody");
+
+      const nodeDesc = document.getElementById("nodeDesc");
+      const nodeModel = document.getElementById("nodeModel");
+      const nodePrivacy = document.getElementById("nodePrivacy");
+      const nodeSignals = document.getElementById("nodeSignals");
+
+      const labHeaderTitle = document.getElementById("labHeaderTitle");
+      const labHeaderBadge = document.getElementById("labHeaderBadge");
+      const labContainer = document.getElementById("labContainer");
+
+      // Theme Sync
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+        themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
+        try { localStorage.setItem("sovraeg-theme", theme); } catch (_) {}
+      }
+
+      (function initTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem("sovraeg-theme"); } catch (_) {}
+        if (saved === "light" || saved === "dark") {
+          applyTheme(saved);
+        } else {
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          applyTheme(prefersLight ? "light" : "dark");
+        }
+      })();
+
+      // Build Pills
+      STAGES.forEach((st, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "stage-pill";
+        btn.innerHTML = `<span class="stage-num">${st.id}</span><span>${st.short.replace(/^\d+\.\s*/, "")}</span>`;
+        btn.addEventListener("click", () => {
+          stopAuto();
+          currentStage = idx;
+          setTab("stage");
+          render();
+        });
+        stagePills.appendChild(btn);
+      });
+
+      function setTab(t) {
+        activeTab = t;
+        tabStage.classList.toggle("active", t === "stage");
+        tabNode.classList.toggle("active", t === "node");
+        stageView.style.display = t === "stage" ? "flex" : "none";
+        nodeView.style.display = t === "node" ? "flex" : "none";
+        updatePanelBadge();
+      }
+
+      function updatePanelBadge() {
+        if (activeTab === "stage") {
+          const st = STAGES[currentStage];
+          panelBadge.textContent = st.badge;
+          panelBadge.className = `badge ${st.badgeClass}`;
+        } else {
+          const nd = NODES[selectedNode];
+          panelBadge.textContent = nd.badge;
+          panelBadge.className = `badge ${nd.badgeClass}`;
+        }
+      }
+
+      function renderNodePanel() {
+        const nd = NODES[selectedNode];
+        nodeDesc.innerHTML = `<strong>${nd.title}</strong> — ${nd.desc}`;
+        nodeModel.textContent = nd.model;
+        nodePrivacy.textContent = nd.privacy;
+        nodeSignals.innerHTML = "";
+        nd.signals.forEach((s) => {
+          const el = document.createElement("span");
+          el.className = "chip";
+          el.textContent = s;
+          nodeSignals.appendChild(el);
+        });
+      }
+
+      function renderLab() {
+        const stageNum = STAGES[currentStage].id;
+
+        if (stageNum === 1) {
+          labHeaderTitle.textContent = "Model 1 · Private Glass-Box AI Coach";
+          labHeaderBadge.textContent = "Strictly On-Device";
+          labHeaderBadge.className = "badge b-edge";
+          labContainer.innerHTML = `
+            <div class="lab-title">
+              <span>Live On-Device Cognitive Signal Readout</span>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--c-edge);">Local Qwen3 / Gemma</span>
+            </div>
+            <div class="stat-row">
+              <div class="mini-stat"><div class="k">Distill Hesitation</div><div class="v">118s peak pause</div></div>
+              <div class="mini-stat"><div class="k">Confidence Shift</div><div class="v">2/5 → 4/5 (+40%)</div></div>
+            </div>
+            <div class="coach-bubble">
+              <strong>Local Socratic Nudge (Never Uploaded):</strong> "You revised your counter-argument 5 times after pausing on Evidence Source #2. Before moving to <em>Express</em>, try condensing that claim into one testable 15-word sentence."
+            </div>
+            <div style="font-size:10.8px; color:var(--text-muted);">
+              Because zero drafts or hesitation traces go to the university, learners admit real confusion instead of performing compliance.
+            </div>
+          `;
+        } else if (stageNum === 2) {
+          labHeaderTitle.textContent = "Model 4 · ZK-Telemetry Claim Inspector";
+          labHeaderBadge.textContent = "zk-SNARK Verified";
+          labHeaderBadge.className = "badge b-zk";
+
+          const activeClaim = ZK_CLAIMS.find((c) => c.id === selectedZk) || ZK_CLAIMS[0];
+          labContainer.innerHTML = `
+            <div class="lab-title">
+              <span>Click a Claim to Inspect Zero-Knowledge Boundary</span>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--success);">Verify: ${activeClaim.verifyMs}</span>
+            </div>
+            <div class="zk-list" id="zkList"></div>
+            <div class="mini-stat" style="border-color:var(--c-zk-border);">
+              <div class="k" style="color:var(--c-zk);">What Stays Cryptographically Hidden</div>
+              <div style="font-size:11px; color:var(--text-secondary); margin-top:2px;">${activeClaim.hidden}</div>
+            </div>
+          `;
+
+          const listEl = document.getElementById("zkList");
+          ZK_CLAIMS.forEach((c) => {
+            const div = document.createElement("div");
+            div.className = `zk-item ${c.id === selectedZk ? "active" : ""}`;
+            div.innerHTML = `
+              <div class="zk-item-top">
+                <span>${c.title}</span>
+                <span style="font-family:var(--font-mono); font-size:10px; color:var(--success);">✓ VALID</span>
+              </div>
+              <div class="zk-item-sub">${c.claim}</div>
+            `;
+            div.addEventListener("click", () => {
+              selectedZk = c.id;
+              renderLab();
+            });
+            listEl.appendChild(div);
+          });
+        } else if (stageNum === 3 || stageNum === 4) {
+          labHeaderTitle.textContent = stageNum === 3
+            ? "Model 2 · SYNCZINE Bottleneck Heatmap"
+            : "Dual-Resolution Classroom Intervention Lens";
+          labHeaderBadge.textContent = stageNum === 3 ? "Zero-PII Cohort" : "Zero LDP Noise";
+          labHeaderBadge.className = stageNum === 3 ? "badge b-sync" : "badge b-teacher";
+
+          const heatData = [
+            { s: "Curate", p: 12, b: false },
+            { s: "Organize", p: 24, b: false },
+            { s: "Distill", p: 65, b: true },
+            { s: "Express", p: 38, b: false },
+            { s: "Verify", p: 44, b: false },
+            { s: "Validate", p: 9, b: false }
+          ];
+
+          const cellsHtml = heatData.map((d) => `
+            <div class="heat-cell ${d.b ? "bottleneck" : ""}">
+              <div class="heat-stage">${d.s}</div>
+              <div class="heat-pct" style="color:${d.b ? "var(--danger)" : "var(--text-primary)"};">${d.p}%</div>
+              <div class="heat-lbl">${d.b ? "STALL" : "friction"}</div>
+            </div>
+          `).join("");
+
+          labContainer.innerHTML = `
+            <div class="lab-title">
+              <span>CODE+V Class Stall Rate (N = 34 · Exact Local View)</span>
+              <span style="font-family:var(--font-mono); font-size:10px; color:var(--danger);">Peak: Distill 65%</span>
+            </div>
+            <div class="heat-grid">${cellsHtml}</div>
+            <div class="alert-row">
+              <div>
+                <div style="font-weight:700; color:var(--text-primary);">
+                  Early-Warning Avatar: <span style="font-family:var(--font-mono); color:var(--c-teacher);">${teacherUnmasked && stageNum === 4 ? "Tran Minh B (SS180941) · AmberOwl-17" : "AmberOwl-17 [PII Masked]"}</span>
+                </div>
+                <div style="font-size:10.5px; color:var(--text-muted);">Stalled 48h on Distill → Express transition</div>
+              </div>
+              ${stageNum === 4 ? `<button id="unmaskBtn" class="btn" type="button" style="white-space:nowrap;">${teacherUnmasked ? "Mask PII" : "RAM Unmask"}</button>` : `<span class="badge b-sync">Avatar Only</span>`}
+            </div>
+          `;
+
+          if (stageNum === 4) {
+            const btn = document.getElementById("unmaskBtn");
+            btn.addEventListener("click", () => {
+              teacherUnmasked = !teacherUnmasked;
+              renderLab();
+            });
+          }
+        } else {
+          labHeaderTitle.textContent = "Models 3 & 5 · Federated ε-LDP & FLUX Simulator";
+          labHeaderBadge.textContent = "Opt-In Commons";
+          labHeaderBadge.className = "badge b-fed";
+
+          // Error scales inversely with epsilon * sqrt(N)
+          const estErrorPct = Math.min(28, Math.max(0.8, (14 / (ldpEpsilon * Math.sqrt(fedCohortN / 40))))).toFixed(1);
+          const privacyTier = ldpEpsilon <= 1.0 ? "Strict Privacy" : (ldpEpsilon <= 2.5 ? "Balanced ε-LDP" : "Higher Utility");
+          const fluxReward = optInDividend ? "+4.5 FLUX_Commons" : "0 FLUX (Opted Out)";
+
+          labContainer.innerHTML = `
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Local Differential Privacy Budget (ε)</span>
+                <span style="font-family:var(--font-mono); color:var(--c-fed);">ε = ${ldpEpsilon.toFixed(1)} (${privacyTier})</span>
+              </div>
+              <input id="epsSlider" type="range" min="0.5" max="4.0" step="0.1" value="${ldpEpsilon}" />
+            </div>
+            <div class="slider-row">
+              <div class="slider-head">
+                <span>Federated Cross-Campus Sample Size (N)</span>
+                <span style="font-family:var(--font-mono); color:var(--c-fed);">N = ${fedCohortN} learners</span>
+              </div>
+              <input id="nSlider" type="range" min="40" max="1200" step="20" value="${fedCohortN}" />
+            </div>
+            <div class="stat-row">
+              <div class="mini-stat">
+                <div class="k">Aggregate Noise Error</div>
+                <div class="v" style="color:${parseFloat(estErrorPct) <= 4.5 ? "var(--success)" : "var(--warn)"};">±${estErrorPct}%</div>
+              </div>
+              <div class="mini-stat">
+                <div class="k">Data Dividend (Non-Monetary)</div>
+                <div class="v" style="color:${optInDividend ? "var(--c-fed)" : "var(--text-muted)"};">${fluxReward}</div>
+              </div>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+              <span style="font-size:10.6px; color:var(--text-muted);">Secure Aggregation blocks gradient inference on individual updates.</span>
+              <button id="dividendToggle" class="btn" type="button" style="white-space:nowrap;">${optInDividend ? "Opt-In: ON" : "Opt-In: OFF"}</button>
+            </div>
+          `;
+
+          document.getElementById("epsSlider").addEventListener("input", (e) => {
+            ldpEpsilon = parseFloat(e.target.value);
+            renderLab();
+          });
+          document.getElementById("nSlider").addEventListener("input", (e) => {
+            fedCohortN = parseInt(e.target.value, 10);
+            renderLab();
+          });
+          document.getElementById("dividendToggle").addEventListener("click", () => {
+            optInDividend = !optInDividend;
+            renderLab();
+          });
+        }
+      }
+
+      function render() {
+        const st = STAGES[currentStage];
+
+        // Pills & Nav
+        Array.from(stagePills.children).forEach((p, idx) => p.classList.toggle("active", idx === currentStage));
+        prevBtn.disabled = currentStage === 0;
+        nextBtn.disabled = currentStage === STAGES.length - 1;
+
+        // Compare Mode
+        appShell.classList.toggle("compare-on", compareLms);
+        compareBtn.classList.toggle("active", compareLms);
+        compareLabel.textContent = compareLms ? "Comparing vs. Cloud LMS" : "Compare vs. Cloud LMS";
+
+        // Meters
+        mTelemetryVal.textContent = st.telemetryText;
+        mTelemetryBar.style.width = `${st.telemetryPct}%`;
+        mTelemetryBar.style.background = st.telemetryColor;
+
+        mPiiVal.textContent = st.piiText;
+        mPiiVal.style.color = st.piiColor;
+        mPiiBar.style.width = `${st.piiPct}%`;
+        mPiiBar.style.background = st.piiColor;
+
+        mMechVal.textContent = st.mechVal;
+        mMechSub.textContent = st.mechSub;
+
+        // SVG Nodes
+        ["edge", "zk", "sync", "teacher", "fed"].forEach((key) => {
+          const el = document.getElementById(`node-${key}`);
+          el.classList.remove("active-edge", "active-zk", "active-sync", "active-teacher", "active-fed", "dimmed", "selected");
+          if (st.activeNodes.includes(key)) {
+            el.classList.add(`active-${key}`);
+          } else {
+            el.classList.add("dimmed");
+          }
+          if (activeTab === "node" && selectedNode === key) {
+            el.classList.add("selected");
+          }
+        });
+
+        // SVG Edges & Badges
+        document.querySelectorAll(".pipe-edge").forEach((e) => {
+          e.classList.toggle("active", st.activeEdges.includes(e.id));
+        });
+        document.querySelectorAll(".edge-badge").forEach((b) => {
+          b.classList.toggle("active", st.activeBadges.includes(b.id));
+        });
+
+        // Left Stage Inspector
+        stageDesc.innerHTML = `<strong>${st.title}:</strong> ${st.desc}`;
+        payloadTitle.textContent = st.payloadTitle;
+        payloadScope.textContent = st.payloadScope;
+        payloadBody.textContent = st.payload;
+
+        updatePanelBadge();
+        renderNodePanel();
+        renderLab();
+      }
+
+      function stopAuto() {
+        if (autoTimer) {
+          clearInterval(autoTimer);
+          autoTimer = null;
+          playBtn.textContent = "▶ Auto";
+        }
+      }
+
+      // Listeners
+      prevBtn.addEventListener("click", () => {
+        stopAuto();
+        if (currentStage > 0) { currentStage--; setTab("stage"); render(); }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        stopAuto();
+        if (currentStage < STAGES.length - 1) { currentStage++; setTab("stage"); render(); }
+      });
+
+      playBtn.addEventListener("click", () => {
+        if (autoTimer) {
+          stopAuto();
+        } else {
+          playBtn.textContent = "⏸ Pause";
+          setTab("stage");
+          autoTimer = setInterval(() => {
+            currentStage = (currentStage + 1) % STAGES.length;
+            render();
+          }, 3600);
+        }
+      });
+
+      compareBtn.addEventListener("click", () => {
+        compareLms = !compareLms;
+        render();
+      });
+
+      themeToggle.addEventListener("click", () => {
+        const curr = document.documentElement.getAttribute("data-theme");
+        applyTheme(curr === "dark" ? "light" : "dark");
+      });
+
+      tabStage.addEventListener("click", () => { setTab("stage"); render(); });
+      tabNode.addEventListener("click", () => { setTab("node"); render(); });
+
+      document.querySelectorAll(".node-group").forEach((nodeEl) => {
+        const handler = () => {
+          stopAuto();
+          selectedNode = nodeEl.getAttribute("data-node");
+          setTab("node");
+          render();
+        };
+        nodeEl.addEventListener("click", handler);
+        nodeEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); handler(); }
+        });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+        if (e.key === "ArrowRight") {
+          stopAuto();
+          if (currentStage < STAGES.length - 1) { currentStage++; setTab("stage"); render(); }
+        } else if (e.key === "ArrowLeft") {
+          stopAuto();
+          if (currentStage > 0) { currentStage--; setTab("stage"); render(); }
+        } else if (e.key.toLowerCase() === "c") {
+          compareLms = !compareLms;
+          render();
+        } else if (e.key.toLowerCase() === "t") {
+          const curr = document.documentElement.getAttribute("data-theme");
+          applyTheme(curr === "dark" ? "light" : "dark");
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
