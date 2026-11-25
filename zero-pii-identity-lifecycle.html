@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Three-Zone Zero-PII Identity Lifecycle — SOVRAEGIX / SYNCZINES / SOVRAELEX</title>
+  <style>
+    :root {
+      --bg-app: #f6f8fb;
+      --bg-surface: #ffffff;
+      --bg-elevated: #f0f4f9;
+      --bg-code: #0f172a;
+      --text-code: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #d8e1ec;
+      --border-strong: #b8c6d9;
+
+      --zone-a-bg: rgba(217, 119, 6, 0.06);
+      --zone-a-border: rgba(217, 119, 6, 0.42);
+      --zone-a-accent: #b45309;
+      --zone-a-soft: rgba(217, 119, 6, 0.14);
+
+      --zone-b-bg: rgba(13, 148, 136, 0.06);
+      --zone-b-border: rgba(13, 148, 136, 0.42);
+      --zone-b-accent: #0f766e;
+      --zone-b-soft: rgba(13, 148, 136, 0.14);
+
+      --zone-c-bg: rgba(79, 70, 229, 0.06);
+      --zone-c-border: rgba(79, 70, 229, 0.42);
+      --zone-c-accent: #4338ca;
+      --zone-c-soft: rgba(79, 70, 229, 0.14);
+
+      --node-bg: #ffffff;
+      --node-border: #cbd5e1;
+      --node-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.12);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.14);
+      --info: #2563eb;
+      --info-soft: rgba(37, 99, 235, 0.14);
+
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0b101b;
+      --bg-surface: #121929;
+      --bg-elevated: #1a2438;
+      --bg-code: #080d17;
+      --text-code: #e2e8f0;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #24324a;
+      --border-strong: #36496b;
+
+      --zone-a-bg: rgba(245, 158, 11, 0.07);
+      --zone-a-border: rgba(245, 158, 11, 0.45);
+      --zone-a-accent: #fbbf24;
+      --zone-a-soft: rgba(245, 158, 11, 0.16);
+
+      --zone-b-bg: rgba(20, 184, 166, 0.07);
+      --zone-b-border: rgba(20, 184, 166, 0.45);
+      --zone-b-accent: #2dd4bf;
+      --zone-b-soft: rgba(20, 184, 166, 0.16);
+
+      --zone-c-bg: rgba(129, 140, 248, 0.08);
+      --zone-c-border: rgba(129, 140, 248, 0.48);
+      --zone-c-accent: #a5b4fc;
+      --zone-c-soft: rgba(129, 140, 248, 0.18);
+
+      --node-bg: #151f32;
+      --node-border: #2e405e;
+      --node-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+
+      --danger: #f87171;
+      --danger-soft: rgba(248, 113, 113, 0.15);
+      --success: #34d399;
+      --success-soft: rgba(52, 211, 153, 0.16);
+      --info: #60a5fa;
+      --info-soft: rgba(96, 165, 250, 0.16);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 100%;
+    }
+
+    /* Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+    }
+
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .title-row h1 {
+      font-size: 14.5px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .law-chip {
+      font-size: 10.5px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--zone-b-soft);
+      color: var(--zone-b-accent);
+      border: 1px solid var(--zone-b-border);
+      font-family: var(--font-mono);
+    }
+
+    .subtitle {
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .controls-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Privacy Lens Switch */
+    .lens-control {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      user-select: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .lens-control:hover { border-color: var(--border-strong); }
+    .lens-control.instructor-active {
+      background: var(--zone-a-soft);
+      border-color: var(--zone-a-border);
+    }
+
+    .lens-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px var(--success-soft);
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .lens-control.instructor-active .lens-dot {
+      background: var(--zone-a-accent);
+      box-shadow: 0 0 0 3px var(--zone-a-soft);
+    }
+
+    .lens-text {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--zone-b-soft);
+      border-color: var(--zone-b-border);
+      color: var(--zone-b-accent);
+    }
+
+    /* Stage Stepper Bar */
+    .stepper-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 7px 10px;
+    }
+
+    .stage-pills {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+
+    .stage-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .stage-pill:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .stage-pill.active {
+      background: var(--zone-b-soft);
+      border-color: var(--zone-b-border);
+      color: var(--zone-b-accent);
+    }
+
+    .stage-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      background: var(--bg-elevated);
+      color: var(--text-muted);
+    }
+
+    .stage-pill.active .stage-num {
+      background: var(--zone-b-accent);
+      color: var(--bg-app);
+    }
+
+    .nav-btns {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Main Workspace */
+    .diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 8px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .svg-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    svg.arch-svg {
+      width: 100%;
+      min-width: 720px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    /* SVG Styling */
+    .zone-box {
+      rx: 12;
+      ry: 12;
+      stroke-width: 1.5;
+      stroke-dasharray: 6 4;
+      transition: opacity 0.25s ease;
+    }
+
+    .zone-a { fill: var(--zone-a-bg); stroke: var(--zone-a-border); }
+    .zone-b { fill: var(--zone-b-bg); stroke: var(--zone-b-border); }
+    .zone-c { fill: var(--zone-c-bg); stroke: var(--zone-c-border); }
+
+    .zone-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+    .zone-sub {
+      font-size: 10px;
+      fill: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    .node-group {
+      cursor: pointer;
+      transition: opacity 0.25s ease, transform 0.2s ease;
+    }
+
+    .node-group.dimmed { opacity: 0.42; }
+
+    .node-rect {
+      fill: var(--node-bg);
+      stroke: var(--node-border);
+      stroke-width: 1.5;
+      rx: 10;
+      ry: 10;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.14));
+      transition: stroke 0.2s ease, stroke-width 0.2s ease, fill 0.2s ease;
+    }
+
+    .node-group:hover .node-rect {
+      stroke-width: 2.2;
+    }
+
+    .node-group.active-a .node-rect { stroke: var(--zone-a-accent); stroke-width: 2.3; }
+    .node-group.active-b .node-rect { stroke: var(--zone-b-accent); stroke-width: 2.3; }
+    .node-group.active-c .node-rect { stroke: var(--zone-c-accent); stroke-width: 2.3; }
+    .node-group.shredded .node-rect {
+      stroke: var(--danger);
+      stroke-width: 2.2;
+      stroke-dasharray: 5 4;
+    }
+    .node-group.selected .node-rect {
+      stroke-width: 3;
+    }
+
+    .node-title {
+      font-size: 12px;
+      font-weight: 700;
+      fill: var(--text-primary);
+    }
+
+    .node-tech {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      fill: var(--text-muted);
+    }
+
+    .node-detail {
+      font-size: 10.5px;
+      fill: var(--text-secondary);
+    }
+
+    .edge-path {
+      fill: none;
+      stroke: var(--border-strong);
+      stroke-width: 2;
+      opacity: 0.16;
+      transition: opacity 0.3s ease, stroke 0.3s ease;
+    }
+
+    .edge-path.active {
+      opacity: 1;
+      stroke-width: 2.5;
+      stroke-dasharray: 7 5;
+      animation: flowDash 1.1s linear infinite;
+    }
+
+    .edge-path.edge-amber.active { stroke: var(--zone-a-accent); }
+    .edge-path.edge-teal.active { stroke: var(--zone-b-accent); }
+    .edge-path.edge-indigo.active { stroke: var(--zone-c-accent); }
+
+    @keyframes flowDash {
+      to { stroke-dashoffset: -24; }
+    }
+
+    .edge-label-group {
+      opacity: 0;
+      transition: opacity 0.25s ease;
+      pointer-events: none;
+    }
+    .edge-label-group.active { opacity: 1; }
+
+    .edge-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1;
+      rx: 6;
+    }
+
+    .edge-pill-text {
+      font-size: 9.8px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      fill: var(--text-primary);
+      text-anchor: middle;
+    }
+
+    /* Bottom Dual Panel */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 860px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 7px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 5px;
+    }
+
+    .tab-btn {
+      padding: 4px 9px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-elevated);
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    .status-badge {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+    }
+
+    .badge-amber { background: var(--zone-a-soft); color: var(--zone-a-accent); border-color: var(--zone-a-border); }
+    .badge-teal { background: var(--zone-b-soft); color: var(--zone-b-accent); border-color: var(--zone-b-border); }
+    .badge-indigo { background: var(--zone-c-soft); color: var(--zone-c-accent); border-color: var(--zone-c-border); }
+    .badge-danger { background: var(--danger-soft); color: var(--danger); border-color: rgba(220, 38, 38, 0.35); }
+    .badge-success { background: var(--success-soft); color: var(--success); border-color: rgba(5, 150, 105, 0.35); }
+
+    .stage-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .payload-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 620px) {
+      .payload-grid { grid-template-columns: 1fr; }
+    }
+
+    .code-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-card-head {
+      padding: 5px 9px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    pre.code-block {
+      background: var(--bg-code);
+      color: var(--text-code);
+      font-family: var(--font-mono);
+      font-size: 10.7px;
+      line-height: 1.45;
+      padding: 8px 10px;
+      overflow-x: auto;
+      margin: 0;
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Privacy Lens Live Preview Panel */
+    .lens-preview-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 9px;
+      border-radius: var(--radius-md);
+      font-size: 11px;
+      font-weight: 600;
+      transition: background 0.25s, border-color 0.25s;
+    }
+
+    .lens-preview-banner.safe {
+      background: var(--success-soft);
+      border: 1px solid rgba(5, 150, 105, 0.35);
+      color: var(--success);
+    }
+
+    .lens-preview-banner.instructor {
+      background: var(--zone-a-soft);
+      border: 1px solid var(--zone-a-border);
+      color: var(--zone-a-accent);
+    }
+
+    .lens-preview-banner.shredded {
+      background: var(--danger-soft);
+      border: 1px solid rgba(220, 38, 38, 0.35);
+      color: var(--danger);
+    }
+
+    .roster-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.3px;
+    }
+
+    .roster-table th {
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      padding: 5px 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .roster-table td {
+      padding: 6px 6px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .roster-table tr:last-child td { border-bottom: none; }
+
+    .avatar-cell {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .avatar-glyph {
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .pii-cell {
+      transition: opacity 0.2s ease, filter 0.2s ease;
+    }
+
+    .pii-masked {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px dashed var(--border-strong);
+      display: inline-block;
+    }
+
+    .node-meta-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .meta-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 7px 9px;
+    }
+
+    .meta-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .meta-value {
+      font-size: 11.5px;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+
+    .field-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-top: 2px;
+    }
+
+    .field-chip {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 5px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .footer-hint {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="title-group">
+        <div class="title-row">
+          <h1>Three-Zone Zero-PII Identity Lifecycle</h1>
+          <span class="law-chip">Law 91/2025/QH15 Ready</span>
+        </div>
+        <div class="subtitle">SOVRAEGIX (Air-Gapped PII) · SYNCZINES (Pairwise Avatar DIDs) · SOVRAELEX (Root Sovereign Vault)</div>
+      </div>
+
+      <div class="controls-right">
+        <button id="lensToggle" class="lens-control" type="button" title="Toggle In-Memory Privacy Lens (Hotkey: P)">
+          <span class="lens-dot"></span>
+          <span id="lensToggleText" class="lens-text">Safe Projection Mode</span>
+          <span class="kbd">P</span>
+        </button>
+        <button id="themeToggle" class="btn" type="button" title="Toggle Light / Dark Theme (Hotkey: T)">
+          <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Stage Stepper -->
+    <nav class="stepper-bar" aria-label="Lifecycle Stages">
+      <div class="stage-pills" id="stagePills"></div>
+      <div class="nav-btns">
+        <button id="prevBtn" class="btn" type="button">← Prev</button>
+        <button id="playBtn" class="btn btn-primary" type="button">▶ Auto</button>
+        <button id="nextBtn" class="btn" type="button">Next →</button>
+      </div>
+    </nav>
+
+    <!-- Interactive Architecture SVG -->
+    <section class="diagram-card" aria-label="Three-Zone Trust Boundary Diagram">
+      <div class="svg-wrap">
+        <svg class="arch-svg" viewBox="0 0 920 338" role="img" aria-label="Three-Zone Zero-PII Architecture">
+          <defs>
+            <marker id="arrow-amber" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--zone-a-accent)" />
+            </marker>
+            <marker id="arrow-teal" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--zone-b-accent)" />
+            </marker>
+            <marker id="arrow-indigo" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+              <path d="M 0 1.5 L 9 5 L 0 8.5 z" fill="var(--zone-c-accent)" />
+            </marker>
+          </defs>
+
+          <!-- Zone A: Teacher Device -->
+          <rect class="zone-box zone-a" x="14" y="12" width="286" height="314" />
+          <text class="zone-title" x="28" y="32" fill="var(--zone-a-accent)">Zone A · Teacher Device (SOVRAEGIX)</text>
+          <text class="zone-sub" x="28" y="45">Air-Gapped Local Trust Boundary</text>
+
+          <!-- Zone B: Shared SYNCZINE Plane -->
+          <rect class="zone-box zone-b" x="322" y="12" width="276" height="314" />
+          <text class="zone-title" x="336" y="32" fill="var(--zone-b-accent)">Zone B · Shared Network (SYNCZINES)</text>
+          <text class="zone-sub" x="336" y="45">Zero-PII Unlinkable Avatar Plane</text>
+
+          <!-- Zone C: Learner Device -->
+          <rect class="zone-box zone-c" x="620" y="12" width="286" height="314" />
+          <text class="zone-title" x="634" y="32" fill="var(--zone-c-accent)">Zone C · Learner Device (SOVRAELEX)</text>
+          <text class="zone-sub" x="634" y="45">Sovereign Key &amp; Edge Sanitizer</text>
+
+          <!-- EDGES -->
+          <!-- Stage 2: Blind Claim Nonce A -> C -->
+          <path id="edge-claim" class="edge-path edge-amber" d="M 286 82 C 398 54, 522 54, 634 82" marker-end="url(#arrow-amber)" />
+          <g id="lbl-claim" class="edge-label-group">
+            <rect class="edge-pill-bg" x="374" y="54" width="172" height="19" />
+            <text class="edge-pill-text" x="460" y="67">1. Blind Claim Nonce (0 PII)</text>
+          </g>
+
+          <!-- Stage 2: Signed Avatar Binding C -> A -->
+          <path id="edge-bind" class="edge-path edge-indigo" d="M 634 106 C 522 86, 398 86, 286 106" marker-end="url(#arrow-indigo)" />
+          <g id="lbl-bind" class="edge-label-group">
+            <rect class="edge-pill-bg" x="364" y="88" width="192" height="19" />
+            <text class="edge-pill-text" x="460" y="101">3. Signed {nonce, avatar_did}</text>
+          </g>
+
+          <!-- Stage 2: Local HKDF Derivation C5 -> C4 -->
+          <path id="edge-hkdf" class="edge-path edge-indigo" d="M 763 204 L 763 168" marker-end="url(#arrow-indigo)" />
+          <g id="lbl-hkdf" class="edge-label-group">
+            <rect class="edge-pill-bg" x="675" y="176" width="176" height="19" />
+            <text class="edge-pill-text" x="763" y="189">2. HKDF(Root + CourseSalt)</text>
+          </g>
+
+          <!-- Stage 3: Sanitized CODE+V Artifact C4 -> B3 -->
+          <path id="edge-sync" class="edge-path edge-teal" d="M 634 140 C 612 146, 600 156, 582 166" marker-end="url(#arrow-teal)" />
+          <g id="lbl-sync" class="edge-label-group">
+            <rect class="edge-pill-bg" x="528" y="114" width="150" height="19" />
+            <text class="edge-pill-text" x="603" y="127">Sanitized CODE+V CRDT</text>
+          </g>
+
+          <!-- Stage 4: RAM-Only Join A1 -> A2 & B3 -> A2 -->
+          <path id="edge-ram-pii" class="edge-path edge-amber" d="M 157 162 L 157 200" marker-end="url(#arrow-amber)" />
+          <g id="lbl-ram-pii" class="edge-label-group">
+            <rect class="edge-pill-bg" x="78" y="172" width="158" height="19" />
+            <text class="edge-pill-text" x="157" y="185">RAM-Only Local Join</text>
+          </g>
+
+          <path id="edge-ram-crdt" class="edge-path edge-teal" d="M 338 220 C 318 226, 306 238, 288 248" marker-end="url(#arrow-teal)" />
+          <g id="lbl-ram-crdt" class="edge-label-group">
+            <rect class="edge-pill-bg" x="242" y="271" width="166" height="19" />
+            <text class="edge-pill-text" x="325" y="284">Zero-PII Rubric Scores</text>
+          </g>
+
+          <!-- Stage 5: Unlinkable VC Issuance B3 -> C5 & ZK Link -->
+          <path id="edge-vc" class="edge-path edge-indigo" d="M 582 228 C 602 234, 614 242, 632 248" marker-end="url(#arrow-indigo)" />
+          <g id="lbl-vc" class="edge-label-group">
+            <rect class="edge-pill-bg" x="518" y="268" width="174" height="19" />
+            <text class="edge-pill-text" x="605" y="281">OID4VCI → BBS2023 ZK Proof</text>
+          </g>
+
+          <path id="edge-zk-claim" class="edge-path edge-indigo" d="M 763 164 L 763 200" marker-end="url(#arrow-indigo)" />
+          <g id="lbl-zk-claim" class="edge-label-group">
+            <rect class="edge-pill-bg" x="673" y="172" width="180" height="19" />
+            <text class="edge-pill-text" x="763" y="185">ZK Possession Proof (Local)</text>
+          </g>
+
+          <!-- NODES -->
+          <!-- Node 1: Air-Gapped PII Roster DB -->
+          <g id="node-roster" class="node-group" data-node="roster" tabindex="0" role="button" aria-label="Air-Gapped PII Roster DB">
+            <rect class="node-rect" x="28" y="58" width="258" height="104" />
+            <text class="node-title" x="42" y="80">1. Air-Gapped PII Roster DB</text>
+            <text class="node-tech" x="42" y="96">roster_pii.db · SQLCipher AES-256</text>
+            <text class="node-detail" x="42" y="116">OS Keychain sealed · 0 network hooks</text>
+            <text class="node-detail" x="42" y="132">Maps FAP ID ↔ bound_avatar_did</text>
+            <rect id="roster-status-bg" x="42" y="140" width="154" height="16" rx="4" fill="var(--zone-a-soft)" />
+            <text id="roster-status-txt" x="48" y="151" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--zone-a-accent)">AIR-GAPPED · LOCAL ONLY</text>
+          </g>
+
+          <!-- Node 2: In-Memory Privacy Lens -->
+          <g id="node-lens" class="node-group" data-node="lens" tabindex="0" role="button" aria-label="In-Memory Privacy Lens">
+            <rect class="node-rect" x="28" y="204" width="258" height="108" />
+            <text class="node-title" x="42" y="226">2. In-Memory Privacy Lens</text>
+            <text class="node-tech" x="42" y="242">RAM-Only Overlay · Never Persisted</text>
+            <text class="node-detail" x="42" y="262">Safe Projection (Avatars) vs Instructor</text>
+            <text class="node-detail" x="42" y="278">Direct local FAP CSV export bridge</text>
+            <rect id="lens-svg-badge-bg" x="42" y="286" width="166" height="16" rx="4" fill="var(--success-soft)" />
+            <text id="lens-svg-badge-txt" x="48" y="297" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--success)">MODE: SAFE PROJECTION</text>
+          </g>
+
+          <!-- Node 3: Zero-PII SYNCZINE CRDT Plane -->
+          <g id="node-synczine" class="node-group" data-node="synczine" tabindex="0" role="button" aria-label="Zero-PII SYNCZINE CRDT Plane">
+            <rect class="node-rect" x="338" y="126" width="244" height="132" />
+            <text class="node-title" x="352" y="149">3. Zero-PII SYNCZINE Plane</text>
+            <text class="node-tech" x="352" y="165">synczine_workspace.db · CRDT Sync</text>
+            <text class="node-detail" x="352" y="186">Unlinkable course-scoped did:peer</text>
+            <text class="node-detail" x="352" y="202">Procedural SVG avatars (0 photos)</text>
+            <text class="node-detail" x="352" y="218">CODE+V SYNCTESS &amp; peer rubrics</text>
+            <rect id="synczine-status-bg" x="352" y="230" width="174" height="18" rx="4" fill="var(--zone-b-soft)" />
+            <text id="synczine-status-txt" x="358" y="242" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--zone-b-accent)">ZERO-PII · NO ROOT POINTER</text>
+          </g>
+
+          <!-- Zone B Bottom Firewall Pill -->
+          <rect x="354" y="295" width="212" height="20" rx="10" fill="var(--bg-surface)" stroke="var(--zone-b-border)" stroke-width="1" />
+          <text x="460" y="308" text-anchor="middle" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--zone-b-accent)">STRICT ZERO-PII WIRE BOUNDARY</text>
+
+          <!-- Node 4: Pairwise Avatar DID Generator & WASM Sanitizer -->
+          <g id="node-avatar" class="node-group" data-node="avatar" tabindex="0" role="button" aria-label="Pairwise Avatar DID Generator and WASM Sanitizer">
+            <rect class="node-rect" x="634" y="58" width="258" height="104" />
+            <text class="node-title" x="648" y="80">4. Pairwise Avatar &amp; Sanitizer</text>
+            <text class="node-tech" x="648" y="96">HKDF Derivation · Rust/WASM Gate</text>
+            <text class="node-detail" x="648" y="116">Unique Avatar_DID per course</text>
+            <text class="node-detail" x="648" y="132">Strips EXIF, PDF author, SE\d{6} IDs</text>
+            <rect x="648" y="140" width="166" height="16" rx="4" fill="var(--zone-c-soft)" />
+            <text x="654" y="151" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--zone-c-accent)">ONE-WAY · PRE-SYNC CLEAN</text>
+          </g>
+
+          <!-- Node 5: Root Sovereign DID Vault -->
+          <g id="node-root" class="node-group" data-node="root" tabindex="0" role="button" aria-label="Root Sovereign DID Vault">
+            <rect class="node-rect" x="634" y="204" width="258" height="108" />
+            <text class="node-title" x="648" y="226">5. Root Sovereign DID Vault</text>
+            <text class="node-tech" x="648" y="242">SOVRAEPASS · Local Key Custody</text>
+            <text class="node-detail" x="648" y="262">Root_Master_Seed never leaves device</text>
+            <text class="node-detail" x="648" y="278">BBS2023 / VC 2.0 / SD-JWT Proofs</text>
+            <rect x="648" y="286" width="174" height="16" rx="4" fill="var(--zone-c-soft)" />
+            <text x="654" y="297" font-size="9.5" font-weight="700" font-family="var(--font-mono)" fill="var(--zone-c-accent)">SOVEREIGN · UNLINKABLE VC</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Bottom Inspector & Live Privacy Lens Preview -->
+    <div class="bottom-grid">
+      <!-- Left: Stage / Node Inspector -->
+      <section class="panel" aria-label="Architecture Inspector">
+        <div class="panel-header">
+          <div class="tabs">
+            <button id="tabStage" class="tab-btn active" type="button">Stage Wire &amp; State Inspector</button>
+            <button id="tabNode" class="tab-btn" type="button">Selected Node Deep-Dive</button>
+          </div>
+          <span id="stageBadge" class="status-badge badge-amber">Air-Gapped PII</span>
+        </div>
+
+        <!-- Stage Tab Content -->
+        <div id="stageInspectorView" style="display:flex; flex-direction:column; gap:8px;">
+          <div id="stageDesc" class="stage-desc"></div>
+          <div class="payload-grid">
+            <div class="code-card">
+              <div class="code-card-head">
+                <span>On-Device Local State</span>
+                <span id="localTag" style="color:var(--zone-a-accent);">Local Vault</span>
+              </div>
+              <pre id="localPayload" class="code-block"></pre>
+            </div>
+            <div class="code-card">
+              <div class="code-card-head">
+                <span>On-Wire Network Payload</span>
+                <span id="wireTag" style="color:var(--zone-b-accent);">0 Bytes</span>
+              </div>
+              <pre id="wirePayload" class="code-block"></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Node Deep-Dive Content -->
+        <div id="nodeInspectorView" style="display:none; flex-direction:column; gap:8px;">
+          <div id="nodeDesc" class="stage-desc"></div>
+          <div class="node-meta-list">
+            <div class="meta-box">
+              <div class="meta-label">Storage &amp; Runtime</div>
+              <div id="nodeStorage" class="meta-value"></div>
+            </div>
+            <div class="meta-box">
+              <div class="meta-label">Encryption &amp; Custody</div>
+              <div id="nodeCrypto" class="meta-value"></div>
+            </div>
+          </div>
+          <div class="meta-box">
+            <div class="meta-label">Stored Fields / Cryptographic Artifacts</div>
+            <div id="nodeFields" class="field-chips"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Live Teacher Privacy Lens Preview -->
+      <section class="panel" aria-label="SOVRAEGIX Privacy Lens Preview">
+        <div class="panel-header">
+          <strong style="font-size:12px;">SOVRAEGIX Live Classroom UI Preview</strong>
+          <span id="ramStatusChip" class="status-badge badge-success">RAM Overlay Off</span>
+        </div>
+
+        <div id="lensBanner" class="lens-preview-banner safe">
+          <span id="lensBannerText">Safe Projection Mode — Safe for classroom projector</span>
+          <span style="font-family:var(--font-mono); font-size:10px;">FAP Bridge Ready</span>
+        </div>
+
+        <table class="roster-table">
+          <thead>
+            <tr>
+              <th>SYNCZINE Avatar</th>
+              <th>Teacher Local PII Overlay</th>
+              <th>CODE+V</th>
+            </tr>
+          </thead>
+          <tbody id="rosterPreviewBody"></tbody>
+        </table>
+
+        <div class="footer-hint">
+          <span>Click any node to inspect · Keys: <span class="kbd">←</span> <span class="kbd">→</span> Stages · <span class="kbd">P</span> Privacy Lens</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const STAGES = [
+        {
+          id: 1,
+          short: "1. Local Roster",
+          title: "Stage 1 — Local Roster Import (Air-Gapped)",
+          badge: "Air-Gapped PII",
+          badgeClass: "badge-amber",
+          localTag: "roster_pii.db",
+          wireTag: "0 Bytes Transmitted",
+          desc: "Teacher downloads the official class roster CSV from FAP and imports it strictly into SOVRAEGIX's SQLCipher-encrypted roster_pii.db. Zero network hooks, zero CRDT adapters, and zero cloud sync.",
+          activeNodes: ["roster"],
+          activeEdges: [],
+          activeLabels: [],
+          shredded: false,
+          localPayload: `{
+  "db": "roster_pii.db (SQLCipher AES-256)",
+  "key_custody": "OS Keychain (macOS/Windows)",
+  "row_sample": {
+    "local_student_id": "SE181234",
+    "legal_name": "Nguyen Van A",
+    "class_section": "SE1804-HCM",
+    "bound_avatar_did": null,
+    "claim_nonce_hash": "sha256:8f3c...e91a"
+  }
+}`,
+          wirePayload: `// NETWORK INTERFACE: IDLE
+// BYTES TRANSMITTED: 0 B
+// FAP CSV remains strictly on teacher's local disk.
+// Encrypted recovery option: .sovx-roster
+// (Argon2id + XChaCha20-Poly1305 passphrase backup)`
+        },
+        {
+          id: 2,
+          short: "2. Blind Claim",
+          title: "Stage 2 — Blind Onboarding Handshake",
+          badge: "Zero-PII in Transit",
+          badgeClass: "badge-indigo",
+          localTag: "HKDF + Burn Nonce",
+          wireTag: "Blind Nonce + DID",
+          desc: "SOVRAEGIX issues a single-use Blind Claim Code (0 student PII). Learner's SOVRAELEX derives an unlinkable course-scoped Avatar DID via HKDF(Root_Master_Seed + Course_Salt), signs the binding payload, and SOVRAEGIX maps FPT_ID ↔ avatar_did locally before burning the nonce.",
+          activeNodes: ["roster", "avatar", "root"],
+          activeEdges: ["edge-claim", "edge-hkdf", "edge-bind"],
+          activeLabels: ["lbl-claim", "lbl-hkdf", "lbl-bind"],
+          shredded: false,
+          localPayload: `// Learner SOVRAELEX (One-Way Derivation)
+avatar_did = HKDF_SHA256(
+  ikm: Root_Master_Seed,
+  salt: "fptu-2026-fall-courseA"
+)
+// Teacher SOVRAEGIX (After Signature Verify)
+UPDATE roster_pii
+SET bound_avatar_did = "did:peer:2.Ez6LSg...",
+    claim_nonce_hash = NULL; // BURNED`,
+          wirePayload: `// Step 1 (Teacher -> Learner QR/Slip)
+{
+  "course_id": "z2v-2026-c1",
+  "nonce": "K9M4-X7Q2",
+  "teacher_ephemeral_pubkey": "z6Mkq..."
+}
+// Step 3 (Learner -> Teacher Signed Bind)
+{
+  "nonce": "K9M4-X7Q2",
+  "avatar_did": "did:peer:2.Ez6LSg...",
+  "avatar_handle": "CobaltFox-42",
+  "sig_by_avatar_did": "ed25519:4b91..."
+}`
+        },
+        {
+          id: 3,
+          short: "3. Zero-PII Sync",
+          title: "Stage 3 — Zero-PII SYNCZINE Collaboration",
+          badge: "Zero-PII Network",
+          badgeClass: "badge-teal",
+          localTag: "WASM Sanitizer",
+          wireTag: "did:peer CRDT",
+          desc: "Before any CODE+V SYNCTESS artifact commits to the SYNCZINE CRDT plane, SOVRAELEX's Rust/WASM Pre-Sync Gatekeeper strips EXIF, PDF author/creator fields, DOCX metadata, and flags accidental student IDs (SE\\d{6}) or @fpt.edu.vn emails.",
+          activeNodes: ["avatar", "synczine"],
+          activeEdges: ["edge-sync"],
+          activeLabels: ["lbl-sync"],
+          shredded: false,
+          localPayload: `// Rust/WASM Pre-Sync Gatekeeper Report
+{
+  "exif_stripped": true,
+  "pdf_author_removed": true,
+  "docx_props_cleared": true,
+  "regex_alerts": [
+    "Blocked 'SE181234' in slide footer",
+    "Blocked '@fpt.edu.vn' in filename"
+  ],
+  "commit_allowed": true
+}`,
+          wirePayload: `// SYNCZINE CRDT Commit (Zero Root Pointer)
+{
+  "actor_did": "did:peer:2.Ez6LSg...",
+  "avatar": {
+    "handle": "CobaltFox-42",
+    "svg_seed": "0x9f2a1c" // Zero biometric photo
+  },
+  "synctess_node": "hex-03/stage/express",
+  "artifact_cid": "bafybeigdyrzt5...",
+  "sig": "ed25519:91de..."
+}`
+        },
+        {
+          id: 4,
+          short: "4. Privacy Lens",
+          title: "Stage 4 — RAM-Only Privacy Lens & FAP Export",
+          badge: "RAM-Only Join",
+          badgeClass: "badge-amber",
+          localTag: "In-Memory Join",
+          wireTag: "Zero-PII Scores",
+          desc: "SOVRAEGIX joins roster_pii.db and synczine_workspace.db strictly in RAM—never persisted to disk. Default Safe Projection Mode hides all real names for classroom projectors; Touch ID unlocks Instructor Mode and writes FAP-formatted grade CSVs directly to local disk.",
+          activeNodes: ["roster", "lens", "synczine"],
+          activeEdges: ["edge-ram-pii", "edge-ram-crdt"],
+          activeLabels: ["lbl-ram-pii", "lbl-ram-crdt"],
+          shredded: false,
+          localPayload: `// Volatile RAM Presentation Overlay (Never Saved)
+JOIN roster_pii.db (Local)
+  ON roster_pii.bound_avatar_did
+   = synczine_workspace.actor_did
+
+// FAP CSV Local Export (Written to Disk Only)
+SE181234,Nguyen Van A,8.8,Verified_SYNCTESS_01-06`,
+          wirePayload: `// Synced from SYNCZINE Workspace (No PII)
+{
+  "actor_did": "did:peer:2.Ez6LSg...",
+  "avatar_handle": "CobaltFox-42",
+  "rubric_scaled": 0.88,
+  "peer_verifications": 3,
+  "status": "VALIDATED"
+}`
+        },
+        {
+          id: 5,
+          short: "5. Shred & VC",
+          title: "Stage 5 — Crypto-Shredding & Unlinkable SYNTHCRED",
+          badge: "Crypto-Shredded · Unlinkable VC",
+          badgeClass: "badge-danger",
+          localTag: "Key Destroyed + VC",
+          wireTag: "BBS2023 ZK Proof",
+          desc: "After FAP grades lock and appeals close, SOVRAEGIX destroys the semester's roster_pii.db encryption key—converting retained SYNCZINE analytics into irreversibly non-personal data under Law 91/2025/QH15. Meanwhile, the learner upgrades course SYNTHCREDS via BBS2023 / VC 2.0 ZK proofs without revealing their Root DID.",
+          activeNodes: ["roster", "synczine", "avatar", "root"],
+          activeEdges: ["edge-vc", "edge-zk-claim"],
+          activeLabels: ["lbl-vc", "lbl-zk-claim"],
+          shredded: true,
+          localPayload: `// Teacher SOVRAEGIX End-of-Semester Action
+keychain.destroy("roster_pii_2026_fall_key");
+// Re-identification is now mathematically impossible.
+
+// Learner SOVRAELEX Portfolio Upgrade
+zk_proof = bbs2023_derive_proof(
+  vc: course_synthcred,
+  holder_binding: Root_Sovereign_DID,
+  reveal_avatar_did: false
+);`,
+          wirePayload: `// Unlinkable Verifiable Presentation (W3C VC 2.0)
+{
+  "type": ["VerifiablePresentation"],
+  "proof_suite": "bbs-2023",
+  "verify_time_mobile_ms": "<250ms (Rust)",
+  "claims_disclosed": {
+    "competency": "Academic Argument Synthesis",
+    "codev_complete": true
+  },
+  "course_avatar_link_exposed": false
+}`
+        }
+      ];
+
+      const NODES = {
+        roster: {
+          title: "1. Air-Gapped PII Roster DB (Zone A — SOVRAEGIX)",
+          badge: "Air-Gapped Local Store",
+          badgeClass: "badge-amber",
+          desc: "Physically isolated SQLite database enforced at the Rust/Tauri backend boundary. Zero network hooks, zero CRDT adapters, and zero cloud sync. Supports passphrase-encrypted .sovx-roster recovery snapshots and end-of-semester crypto-shredding.",
+          storage: "roster_pii.db (SQLite + SQLCipher)",
+          crypto: "AES-256-CBC · OS Keychain + Argon2id/XChaCha20 backup",
+          fields: ["local_student_id", "legal_name", "class_section", "bound_avatar_did", "claim_nonce_hash (burned)"]
+        },
+        lens: {
+          title: "2. In-Memory Privacy Lens (Zone A — SOVRAEGIX)",
+          badge: "RAM-Only Presentation Layer",
+          badgeClass: "badge-success",
+          desc: "Joins roster_pii.db and synczine_workspace.db strictly in volatile RAM so joined PII-and-learning tables never touch disk. Defaults to Safe Projection Mode for classroom displays; unlocks Instructor Mode via Touch ID / Passcode for grading and local FAP CSV export.",
+          storage: "Volatile RAM only (Zero disk persistence)",
+          crypto: "OS Biometric / Passcode gate · Single-hotkey scrub",
+          fields: ["Safe Projection Toggle", "Instructor Mode Overlay", "FAP CSV Export Bridge", "Early-Warning Unmask"]
+        },
+        synczine: {
+          title: "3. Zero-PII SYNCZINE CRDT Plane (Zone B — Network)",
+          badge: "Unlinkable Pseudonymous Plane",
+          badgeClass: "badge-teal",
+          desc: "Shared learning-path synchronization layer operating solely on course-scoped pairwise DIDs (did:peer / did:key) and deterministic procedural SVG avatars. Never stores encrypted or hashed pointers back to any learner's Root DID.",
+          storage: "synczine_workspace.db · Local-first CRDT",
+          crypto: "Pairwise Ed25519 signatures · Zero PII schema",
+          fields: ["bound_avatar_did", "avatar_handle", "procedural_svg_seed", "SYNCTESS CODE+V artifacts", "peer_rubrics"]
+        },
+        avatar: {
+          title: "4. Pairwise Avatar Generator & WASM Sanitizer (Zone C — SOVRAELEX)",
+          badge: "Edge Privacy Gatekeeper",
+          badgeClass: "badge-indigo",
+          desc: "Derives a unique, unlinkable Avatar DID per course via one-way HKDF so two courses or teachers can never correlate learner activity. Runs a local Rust/WASM Pre-Sync Gatekeeper before any commit to strip EXIF/PDF/DOCX metadata and catch accidental student IDs or emails.",
+          storage: "SOVRAELEX Local Sandbox (Rust/WASM)",
+          crypto: "HKDF-SHA256(Root_Seed + Course_Salt) · Regex PII scan",
+          fields: ["Avatar_DID_CourseA ≠ CourseB", "EXIF / PDF / DOCX stripper", "SE\\d{6} & @fpt.edu.vn scanner", "Procedural avatar picker"]
+        },
+        root: {
+          title: "5. Root Sovereign DID Vault (Zone C — SOVRAELEX / SOVRAEPASS)",
+          badge: "Learner Self-Custody",
+          badgeClass: "badge-indigo",
+          desc: "Holds the learner's permanent Root Sovereign DID and encrypted linkage table strictly on the learner's own device. Upgrades course-scoped SYNTHCREDS into lifelong Open Badges 3.0 / W3C VC 2.0 credentials using unlinkable BBS2023 or IETF SD-JWT (RFC 9901) zero-knowledge proofs.",
+          storage: "SOVRAEPASS Encrypted Keystore",
+          crypto: "Root Master Seed · BBS2023 (<250ms Rust) / SD-JWT",
+          fields: ["Root_Sovereign_DID", "Root_Master_Seed", "Local DID Linkage Map", "Unlinkable SYNTHCRED Proofs"]
+        }
+      };
+
+      const ROSTER_ROWS = [
+        { avatar: "CobaltFox-42", color: "#0284c7", initials: "CF", pii: "Nguyen Van A (SE181234)", stage: "Validate ✓" },
+        { avatar: "AmberOwl-17", color: "#d97706", initials: "AO", pii: "Tran Minh B (SS180941)", stage: "Verify · 2/3" },
+        { avatar: "JadeLynx-88", color: "#059669", initials: "JL", pii: "Le Thi C (SE182105)", stage: "Express v3" }
+      ];
+
+      let currentStageIdx = 0;
+      let selectedNodeKey = "roster";
+      let instructorMode = false;
+      let activeTab = "stage";
+      let autoPlayTimer = null;
+
+      // DOM Refs
+      const stagePillsEl = document.getElementById("stagePills");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const playBtn = document.getElementById("playBtn");
+      const lensToggle = document.getElementById("lensToggle");
+      const lensToggleText = document.getElementById("lensToggleText");
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+      const tabStage = document.getElementById("tabStage");
+      const tabNode = document.getElementById("tabNode");
+      const stageInspectorView = document.getElementById("stageInspectorView");
+      const nodeInspectorView = document.getElementById("nodeInspectorView");
+
+      const stageBadge = document.getElementById("stageBadge");
+      const stageDesc = document.getElementById("stageDesc");
+      const localTag = document.getElementById("localTag");
+      const wireTag = document.getElementById("wireTag");
+      const localPayload = document.getElementById("localPayload");
+      const wirePayload = document.getElementById("wirePayload");
+
+      const nodeDesc = document.getElementById("nodeDesc");
+      const nodeStorage = document.getElementById("nodeStorage");
+      const nodeCrypto = document.getElementById("nodeCrypto");
+      const nodeFields = document.getElementById("nodeFields");
+
+      const ramStatusChip = document.getElementById("ramStatusChip");
+      const lensBanner = document.getElementById("lensBanner");
+      const lensBannerText = document.getElementById("lensBannerText");
+      const rosterPreviewBody = document.getElementById("rosterPreviewBody");
+
+      // Theme Init
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+        themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
+        try { localStorage.setItem("sovraeg-theme", theme); } catch (_) {}
+      }
+
+      (function initTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem("sovraeg-theme"); } catch (_) {}
+        if (saved === "light" || saved === "dark") {
+          applyTheme(saved);
+        } else {
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          applyTheme(prefersLight ? "light" : "dark");
+        }
+      })();
+
+      // Build Stage Pills
+      STAGES.forEach((st, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "stage-pill";
+        btn.innerHTML = `<span class="stage-num">${st.id}</span><span>${st.short.replace(/^\d+\.\s*/, "")}</span>`;
+        btn.addEventListener("click", () => {
+          stopAutoPlay();
+          currentStageIdx = idx;
+          setTab("stage");
+          render();
+        });
+        stagePillsEl.appendChild(btn);
+      });
+
+      function setTab(tab) {
+        activeTab = tab;
+        tabStage.classList.toggle("active", tab === "stage");
+        tabNode.classList.toggle("active", tab === "node");
+        stageInspectorView.style.display = tab === "stage" ? "flex" : "none";
+        nodeInspectorView.style.display = tab === "node" ? "flex" : "none";
+        renderInspectorBadge();
+      }
+
+      function renderInspectorBadge() {
+        if (activeTab === "stage") {
+          const st = STAGES[currentStageIdx];
+          stageBadge.textContent = st.badge;
+          stageBadge.className = `status-badge ${st.badgeClass}`;
+        } else {
+          const nd = NODES[selectedNodeKey];
+          stageBadge.textContent = nd.badge;
+          stageBadge.className = `status-badge ${nd.badgeClass}`;
+        }
+      }
+
+      function renderNodeInspector() {
+        const nd = NODES[selectedNodeKey];
+        nodeDesc.innerHTML = `<strong>${nd.title}</strong> — ${nd.desc}`;
+        nodeStorage.textContent = nd.storage;
+        nodeCrypto.textContent = nd.crypto;
+        nodeFields.innerHTML = "";
+        nd.fields.forEach((f) => {
+          const span = document.createElement("span");
+          span.className = "field-chip";
+          span.textContent = f;
+          nodeFields.appendChild(span);
+        });
+      }
+
+      function renderRosterPreview(shredded) {
+        rosterPreviewBody.innerHTML = "";
+
+        const svgLensBg = document.getElementById("lens-svg-badge-bg");
+        const svgLensTxt = document.getElementById("lens-svg-badge-txt");
+
+        if (shredded) {
+          lensBanner.className = "lens-preview-banner shredded";
+          lensBannerText.textContent = "Semester Key Destroyed — PII Mapping Irrecoverably Shredded";
+          ramStatusChip.className = "status-badge badge-danger";
+          ramStatusChip.textContent = "Key Shredded";
+          svgLensBg.setAttribute("fill", "var(--danger-soft)");
+          svgLensTxt.setAttribute("fill", "var(--danger)");
+          svgLensTxt.textContent = "KEY DESTROYED (NON-PII)";
+        } else if (instructorMode) {
+          lensBanner.className = "lens-preview-banner instructor";
+          lensBannerText.textContent = "Instructor Mode (Touch ID) — Local RAM Overlay Active";
+          ramStatusChip.className = "status-badge badge-amber";
+          ramStatusChip.textContent = "RAM Overlay ON";
+          svgLensBg.setAttribute("fill", "var(--zone-a-soft)");
+          svgLensTxt.setAttribute("fill", "var(--zone-a-accent)");
+          svgLensTxt.textContent = "MODE: INSTRUCTOR (RAM)";
+        } else {
+          lensBanner.className = "lens-preview-banner safe";
+          lensBannerText.textContent = "Safe Projection Mode — Safe for classroom projector";
+          ramStatusChip.className = "status-badge badge-success";
+          ramStatusChip.textContent = "RAM Overlay Off";
+          svgLensBg.setAttribute("fill", "var(--success-soft)");
+          svgLensTxt.setAttribute("fill", "var(--success)");
+          svgLensTxt.textContent = "MODE: SAFE PROJECTION";
+        }
+
+        ROSTER_ROWS.forEach((row) => {
+          const tr = document.createElement("tr");
+          let piiHtml = "";
+          if (shredded) {
+            piiHtml = `<span class="pii-masked" style="color:var(--danger); border-color:rgba(220,38,38,0.4);">[CRYPTO-SHREDDED]</span>`;
+          } else if (instructorMode) {
+            piiHtml = `<span style="font-weight:600; color:var(--text-primary);">${row.pii}</span>`;
+          } else {
+            piiHtml = `<span class="pii-masked">Masked · Avatar Only</span>`;
+          }
+
+          tr.innerHTML = `
+            <td>
+              <span class="avatar-cell">
+                <span class="avatar-glyph" style="background:${row.color};">${row.initials}</span>
+                <span>${row.avatar}</span>
+              </span>
+            </td>
+            <td class="pii-cell">${piiHtml}</td>
+            <td style="font-family:var(--font-mono); font-size:10.5px; color:var(--text-muted);">${row.stage}</td>
+          `;
+          rosterPreviewBody.appendChild(tr);
+        });
+      }
+
+      function render() {
+        const st = STAGES[currentStageIdx];
+
+        // Update Pills & Buttons
+        Array.from(stagePillsEl.children).forEach((el, idx) => {
+          el.classList.toggle("active", idx === currentStageIdx);
+        });
+        prevBtn.disabled = currentStageIdx === 0;
+        nextBtn.disabled = currentStageIdx === STAGES.length - 1;
+
+        // Update Lens Button
+        lensToggle.classList.toggle("instructor-active", instructorMode && !st.shredded);
+        lensToggleText.textContent = st.shredded
+          ? "Key Shredded"
+          : (instructorMode ? "Instructor Mode" : "Safe Projection Mode");
+
+        // Update SVG Nodes
+        const nodeZoneMap = { roster: "a", lens: "a", synczine: "b", avatar: "c", root: "c" };
+        Object.keys(nodeZoneMap).forEach((key) => {
+          const el = document.getElementById(`node-${key}`);
+          const isActive = st.activeNodes.includes(key);
+          el.classList.remove("active-a", "active-b", "active-c", "dimmed", "shredded", "selected");
+          if (st.shredded && key === "roster") {
+            el.classList.add("shredded");
+          } else if (isActive) {
+            el.classList.add(`active-${nodeZoneMap[key]}`);
+          } else {
+            el.classList.add("dimmed");
+          }
+          if (activeTab === "node" && selectedNodeKey === key) {
+            el.classList.add("selected");
+          }
+        });
+
+        // Update Roster & SYNCZINE SVG Status Badges for Stage 5
+        const rBg = document.getElementById("roster-status-bg");
+        const rTxt = document.getElementById("roster-status-txt");
+        const sBg = document.getElementById("synczine-status-bg");
+        const sTxt = document.getElementById("synczine-status-txt");
+        if (st.shredded) {
+          rBg.setAttribute("fill", "var(--danger-soft)");
+          rTxt.setAttribute("fill", "var(--danger)");
+          rTxt.textContent = "KEY SHREDDED · PERMANENT";
+          sBg.setAttribute("fill", "var(--success-soft)");
+          sTxt.setAttribute("fill", "var(--success)");
+          sTxt.textContent = "IRREVERSIBLY NON-PERSONAL";
+        } else {
+          rBg.setAttribute("fill", "var(--zone-a-soft)");
+          rTxt.setAttribute("fill", "var(--zone-a-accent)");
+          rTxt.textContent = "AIR-GAPPED · LOCAL ONLY";
+          sBg.setAttribute("fill", "var(--zone-b-soft)");
+          sTxt.setAttribute("fill", "var(--zone-b-accent)");
+          sTxt.textContent = "ZERO-PII · NO ROOT POINTER";
+        }
+
+        // Update SVG Edges & Labels
+        document.querySelectorAll(".edge-path").forEach((p) => {
+          p.classList.toggle("active", st.activeEdges.includes(p.id));
+        });
+        document.querySelectorAll(".edge-label-group").forEach((g) => {
+          g.classList.toggle("active", st.activeLabels.includes(g.id));
+        });
+
+        // Update Stage Inspector
+        stageDesc.innerHTML = `<strong>${st.title}:</strong> ${st.desc}`;
+        localTag.textContent = st.localTag;
+        wireTag.textContent = st.wireTag;
+        localPayload.textContent = st.localPayload;
+        wirePayload.textContent = st.wirePayload;
+
+        renderInspectorBadge();
+        renderNodeInspector();
+        renderRosterPreview(st.shredded);
+      }
+
+      function stopAutoPlay() {
+        if (autoPlayTimer) {
+          clearInterval(autoPlayTimer);
+          autoPlayTimer = null;
+          playBtn.textContent = "▶ Auto";
+        }
+      }
+
+      // Event Listeners
+      prevBtn.addEventListener("click", () => {
+        stopAutoPlay();
+        if (currentStageIdx > 0) { currentStageIdx--; setTab("stage"); render(); }
+      });
+
+      nextBtn.addEventListener("click", () => {
+        stopAutoPlay();
+        if (currentStageIdx < STAGES.length - 1) { currentStageIdx++; setTab("stage"); render(); }
+      });
+
+      playBtn.addEventListener("click", () => {
+        if (autoPlayTimer) {
+          stopAutoPlay();
+        } else {
+          playBtn.textContent = "⏸ Pause";
+          setTab("stage");
+          autoPlayTimer = setInterval(() => {
+            currentStageIdx = (currentStageIdx + 1) % STAGES.length;
+            render();
+          }, 3400);
+        }
+      });
+
+      lensToggle.addEventListener("click", () => {
+        instructorMode = !instructorMode;
+        render();
+      });
+
+      themeToggle.addEventListener("click", () => {
+        const curr = document.documentElement.getAttribute("data-theme");
+        applyTheme(curr === "dark" ? "light" : "dark");
+      });
+
+      tabStage.addEventListener("click", () => { setTab("stage"); render(); });
+      tabNode.addEventListener("click", () => { setTab("node"); render(); });
+
+      document.querySelectorAll(".node-group").forEach((nodeEl) => {
+        const selectHandler = () => {
+          stopAutoPlay();
+          selectedNodeKey = nodeEl.getAttribute("data-node");
+          setTab("node");
+          render();
+        };
+        nodeEl.addEventListener("click", selectHandler);
+        nodeEl.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            selectHandler();
+          }
+        });
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA")) return;
+        if (e.key === "ArrowRight") {
+          stopAutoPlay();
+          if (currentStageIdx < STAGES.length - 1) { currentStageIdx++; setTab("stage"); render(); }
+        } else if (e.key === "ArrowLeft") {
+          stopAutoPlay();
+          if (currentStageIdx > 0) { currentStageIdx--; setTab("stage"); render(); }
+        } else if (e.key.toLowerCase() === "p") {
+          instructorMode = !instructorMode;
+          render();
+        } else if (e.key.toLowerCase() === "t") {
+          const curr = document.documentElement.getAttribute("data-theme");
+          applyTheme(curr === "dark" ? "light" : "dark");
+        }
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
