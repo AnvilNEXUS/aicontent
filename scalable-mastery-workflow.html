@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mapping the Scalable Mastery Workflow — Seminar vs. Large Lecture</title>
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-subtle: #f1f5f9;
+      --bg-elevated: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+
+      /* Scale Mode Accents - Light */
+      --small-accent: #2563eb;
+      --small-soft: #eff6ff;
+      --small-mid: #93c5fd;
+      --small-text: #1d4ed8;
+      --small-glow: rgba(37, 99, 235, 0.22);
+
+      --large-accent: #0d9488;
+      --large-soft: #f0fdfa;
+      --large-mid: #5eead4;
+      --large-text: #115e59;
+      --large-glow: rgba(13, 148, 136, 0.22);
+
+      /* Tier Colors - Light */
+      --tier-practice-bg: #eef2ff;
+      --tier-practice-fg: #3730a3;
+      --tier-practice-bar: #6366f1;
+
+      --tier-gate-bg: #f3e8ff;
+      --tier-gate-fg: #6b21a8;
+      --tier-gate-bar: #a855f7;
+
+      --tier-verification-bg: #ecfeff;
+      --tier-verification-fg: #0e7490;
+      --tier-verification-bar: #06b6d4;
+
+      --tier-revision-bg: #fff7ed;
+      --tier-revision-fg: #c2410c;
+      --tier-revision-bar: #f97316;
+
+      --tier-certification-bg: #ecfdf5;
+      --tier-certification-fg: #047857;
+      --tier-certification-bar: #10b981;
+
+      --retry-accent: #ea580c;
+      --retry-soft: #fff7ed;
+      --retry-glow: rgba(234, 88, 12, 0.26);
+
+      --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+      --shadow-md: 0 6px 20px rgba(15, 23, 42, 0.08);
+      --radius-lg: 14px;
+      --radius-md: 10px;
+      --radius-sm: 7px;
+      --transition: 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-page: #0b1120;
+      --bg-surface: #111827;
+      --bg-subtle: #1e293b;
+      --bg-elevated: #172033;
+      --border: #263248;
+      --border-strong: #3b4b66;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+
+      /* Scale Mode Accents - Dark */
+      --small-accent: #60a5fa;
+      --small-soft: rgba(96, 165, 250, 0.14);
+      --small-mid: rgba(96, 165, 250, 0.45);
+      --small-text: #bfdbfe;
+      --small-glow: rgba(96, 165, 250, 0.32);
+
+      --large-accent: #2dd4bf;
+      --large-soft: rgba(45, 212, 191, 0.14);
+      --large-mid: rgba(45, 212, 191, 0.45);
+      --large-text: #99f6e4;
+      --large-glow: rgba(45, 212, 191, 0.32);
+
+      /* Tier Colors - Dark */
+      --tier-practice-bg: rgba(129, 140, 248, 0.18);
+      --tier-practice-fg: #c7d2fe;
+      --tier-practice-bar: #818cf8;
+
+      --tier-gate-bg: rgba(192, 132, 252, 0.18);
+      --tier-gate-fg: #e9d5ff;
+      --tier-gate-bar: #c084fc;
+
+      --tier-verification-bg: rgba(34, 211, 238, 0.18);
+      --tier-verification-fg: #a5f3fc;
+      --tier-verification-bar: #22d3ee;
+
+      --tier-revision-bg: rgba(251, 146, 60, 0.18);
+      --tier-revision-fg: #fed7aa;
+      --tier-revision-bar: #fb923c;
+
+      --tier-certification-bg: rgba(52, 211, 153, 0.18);
+      --tier-certification-fg: #a7f3d0;
+      --tier-certification-bar: #34d399;
+
+      --retry-accent: #fb923c;
+      --retry-soft: rgba(251, 146, 60, 0.16);
+      --retry-glow: rgba(251, 146, 60, 0.34);
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+      --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app {
+      --active-accent: var(--small-accent);
+      --active-soft: var(--small-soft);
+      --active-mid: var(--small-mid);
+      --active-text: var(--small-text);
+      --active-glow: var(--small-glow);
+
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 16px 14px;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .app[data-scale="large"] {
+      --active-accent: var(--large-accent);
+      --active-soft: var(--large-soft);
+      --active-mid: var(--large-mid);
+      --active-text: var(--large-text);
+      --active-glow: var(--large-glow);
+    }
+
+    /* Header Bar */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .brand h1 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--text-primary);
+    }
+
+    .brand p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    .controls-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .scale-switch {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .scale-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.77rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .scale-btn .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .scale-btn[data-scale-target="small"] .dot { background: var(--small-accent); }
+    .scale-btn[data-scale-target="large"] .dot { background: var(--large-accent); }
+
+    .scale-btn[aria-pressed="true"] {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scale-btn[data-scale-target="small"][aria-pressed="true"] { color: var(--small-accent); }
+    .scale-btn[data-scale-target="large"][aria-pressed="true"] { color: var(--large-accent); }
+
+    .icon-btn {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+
+    .icon-btn:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+      background: var(--bg-subtle);
+    }
+
+    .icon-btn[aria-pressed="true"] {
+      border-color: var(--active-accent);
+      color: var(--active-accent);
+      background: var(--active-soft);
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Flowchart Panel */
+    .flow-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+
+    .route-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .route-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-right: 2px;
+    }
+
+    .route-chip {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .route-chip:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+
+    .route-chip[aria-pressed="true"] {
+      background: var(--active-soft);
+      border-color: var(--active-accent);
+      color: var(--active-text);
+    }
+
+    .route-chip[data-route="retry"][aria-pressed="true"] {
+      background: var(--retry-soft);
+      border-color: var(--retry-accent);
+      color: var(--tier-revision-fg);
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.71rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-line {
+      width: 18px;
+      height: 0;
+      border-top: 2.5px solid var(--active-accent);
+    }
+
+    .legend-line.is-retry {
+      border-top: 2.5px dashed var(--retry-accent);
+    }
+
+    .diagram-stage {
+      padding: 8px 10px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    svg#flowSvg {
+      width: 100%;
+      max-width: 960px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .edge-path {
+      fill: none;
+      stroke: var(--border-strong);
+      stroke-width: 2.1;
+      stroke-linecap: round;
+      transition: stroke var(--transition), stroke-width var(--transition), opacity var(--transition);
+      cursor: pointer;
+    }
+
+    .edge-path.is-retry {
+      stroke-dasharray: 6 4;
+    }
+
+    .edge-path.is-on-route {
+      stroke: var(--active-mid);
+      stroke-width: 2.5;
+    }
+
+    .edge-path.is-retry.is-on-route {
+      stroke: var(--retry-accent);
+      opacity: 0.75;
+    }
+
+    .edge-path.is-active {
+      stroke: var(--active-accent);
+      stroke-width: 3.3;
+      filter: drop-shadow(0 0 6px var(--active-glow));
+    }
+
+    .edge-path.is-retry.is-active {
+      stroke: var(--retry-accent);
+      stroke-width: 3.3;
+      opacity: 1;
+      filter: drop-shadow(0 0 6px var(--retry-glow));
+    }
+
+    .edge-hit {
+      fill: none;
+      stroke: transparent;
+      stroke-width: 18;
+      cursor: pointer;
+    }
+
+    .edge-pill-bg {
+      fill: var(--bg-surface);
+      stroke: var(--border);
+      stroke-width: 1;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .edge-pill-bg.is-active {
+      fill: var(--active-soft);
+      stroke: var(--active-accent);
+    }
+
+    .edge-pill-bg.is-retry.is-active {
+      fill: var(--retry-soft);
+      stroke: var(--retry-accent);
+    }
+
+    .edge-pill-text {
+      font-size: 9.8px;
+      font-weight: 700;
+      fill: var(--text-muted);
+      text-anchor: middle;
+      dominant-baseline: central;
+      pointer-events: none;
+      transition: fill var(--transition);
+    }
+
+    .edge-pill-text.is-active {
+      fill: var(--active-text);
+    }
+
+    .edge-pill-text.is-retry.is-active {
+      fill: var(--tier-revision-fg);
+    }
+
+    .node-group {
+      cursor: pointer;
+      outline: none;
+    }
+
+    .node-card-bg {
+      fill: var(--bg-elevated);
+      stroke: var(--border-strong);
+      stroke-width: 1.5;
+      rx: 11;
+      ry: 11;
+      transition: all var(--transition);
+    }
+
+    .node-group:hover .node-card-bg,
+    .node-group:focus-visible .node-card-bg {
+      stroke: var(--active-accent);
+      stroke-width: 2;
+    }
+
+    .node-group.is-active .node-card-bg {
+      fill: var(--active-soft);
+      stroke: var(--active-accent);
+      stroke-width: 2.5;
+      filter: drop-shadow(0 5px 14px var(--active-glow));
+    }
+
+    .node-group.is-revision.is-active .node-card-bg {
+      fill: var(--retry-soft);
+      stroke: var(--retry-accent);
+      filter: drop-shadow(0 5px 14px var(--retry-glow));
+    }
+
+    .node-title-text {
+      font-size: 11.8px;
+      font-weight: 700;
+      fill: var(--text-primary);
+    }
+
+    .node-time-text {
+      font-size: 10px;
+      font-weight: 700;
+      fill: var(--text-muted);
+    }
+
+    .node-group.is-active .node-time-text {
+      fill: var(--active-text);
+    }
+
+    .node-group.is-revision.is-active .node-time-text {
+      fill: var(--tier-revision-fg);
+    }
+
+    .node-badge-text {
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .node-id-pill {
+      fill: var(--bg-subtle);
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+
+    .node-group.is-active .node-id-pill {
+      fill: var(--active-accent);
+      stroke: var(--active-accent);
+    }
+
+    .node-group.is-revision.is-active .node-id-pill {
+      fill: var(--retry-accent);
+      stroke: var(--retry-accent);
+    }
+
+    .node-id-text {
+      font-size: 9.5px;
+      font-weight: 800;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      dominant-baseline: central;
+    }
+
+    .node-group.is-active .node-id-text {
+      fill: #ffffff;
+    }
+
+    .pulse-dot {
+      fill: var(--active-accent);
+      filter: drop-shadow(0 0 6px var(--active-accent));
+    }
+
+    .pulse-halo {
+      fill: var(--active-accent);
+      opacity: 0.28;
+    }
+
+    .pulse-dot.is-retry,
+    .pulse-halo.is-retry {
+      fill: var(--retry-accent);
+    }
+
+    /* Step Control Footer inside Diagram */
+    .step-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 8px 14px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+
+    .step-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .step-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .step-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      border: none;
+      background: var(--border-strong);
+      cursor: pointer;
+      transition: all var(--transition);
+      padding: 0;
+    }
+
+    .step-dot.is-active {
+      width: 22px;
+      border-radius: 999px;
+      background: var(--active-accent);
+    }
+
+    .step-dot.is-retry.is-active {
+      background: var(--retry-accent);
+    }
+
+    .kbd-hint {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* Lower Two-Column Workspace */
+    .lower-grid {
+      display: grid;
+      grid-template-columns: minmax(340px, 1.38fr) minmax(290px, 1fr);
+      gap: 11px;
+      flex: 1;
+      align-items: stretch;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .view-tabs {
+      display: inline-flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .view-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.73rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .view-tab[aria-selected="true"] {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scale-pill {
+      font-size: 0.69rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: var(--active-soft);
+      color: var(--active-text);
+      border: 1px solid var(--active-mid);
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 12px 14px 14px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow-y: auto;
+    }
+
+    .meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tier-chip {
+      font-size: 0.68rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .tier-Practice { background: var(--tier-practice-bg); color: var(--tier-practice-fg); }
+    .tier-Gate { background: var(--tier-gate-bg); color: var(--tier-gate-fg); }
+    .tier-Verification { background: var(--tier-verification-bg); color: var(--tier-verification-fg); }
+    .tier-Revision { background: var(--tier-revision-bg); color: var(--tier-revision-fg); }
+    .tier-Certification { background: var(--tier-certification-bg); color: var(--tier-certification-fg); }
+
+    .stage-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    .stage-obj {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .cards-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .info-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-card.is-accent {
+      background: var(--active-soft);
+      border-color: var(--active-mid);
+    }
+
+    .info-card.is-retry-card {
+      background: var(--retry-soft);
+      border-color: var(--retry-accent);
+    }
+
+    .info-label {
+      font-size: 0.67rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .info-card.is-accent .info-label { color: var(--active-text); }
+    .info-card.is-retry-card .info-label { color: var(--tier-revision-fg); }
+
+    .info-text {
+      font-size: 0.82rem;
+      color: var(--text-primary);
+    }
+
+    .time-badge-inline {
+      display: inline-block;
+      margin-top: 2px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: var(--active-text);
+    }
+
+    .branch-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .branch-btn {
+      border: 1px solid var(--active-mid);
+      background: var(--active-soft);
+      color: var(--active-text);
+      border-radius: var(--radius-sm);
+      padding: 5px 9px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .branch-btn:hover {
+      background: var(--active-accent);
+      color: #ffffff;
+      border-color: var(--active-accent);
+    }
+
+    .branch-btn.is-retry {
+      border-color: var(--retry-accent);
+      background: var(--retry-soft);
+      color: var(--tier-revision-fg);
+    }
+
+    .branch-btn.is-retry:hover {
+      background: var(--retry-accent);
+      color: #ffffff;
+    }
+
+    /* Budget Panel */
+    .budget-total-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      background: var(--active-soft);
+      border: 1px solid var(--active-mid);
+      border-radius: var(--radius-md);
+    }
+
+    .budget-big {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--active-text);
+    }
+
+    .budget-sub {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .budget-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .bar-row {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 5px 7px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+
+    .bar-row:hover,
+    .bar-row.is-active {
+      background: var(--bg-subtle);
+      border-color: var(--active-mid);
+    }
+
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      gap: 6px;
+    }
+
+    .bar-name {
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .bar-val {
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .bar-track {
+      height: 7px;
+      background: var(--bg-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 360ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .benchmark-note {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+    }
+
+    .benchmark-note strong {
+      color: var(--text-primary);
+    }
+
+    /* Footer */
+    .takeaway-bar {
+      padding: 9px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--active-accent);
+      border-radius: var(--radius-md);
+      font-size: 0.79rem;
+      color: var(--text-secondary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .takeaway-bar strong {
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 860px) {
+      .lower-grid {
+        grid-template-columns: 1fr;
+      }
+      .cards-2col {
+        grid-template-columns: 1fr;
+      }
+      .kbd-hint,
+      .legend-row {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app" data-scale="small">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Mapping the Scalable Mastery Workflow</h1>
+        <p>Toggle between Seminar (30) and Large Lecture (150) to inspect stage mechanics, Error Autopsy repair loops, and faculty time load.</p>
+      </div>
+      <div class="controls-cluster">
+        <div class="scale-switch" role="group" aria-label="Class Size Toggle">
+          <button class="scale-btn" data-scale-target="small" aria-pressed="true" type="button">
+            <span class="dot"></span>Seminar: 30 Students
+          </button>
+          <button class="scale-btn" data-scale-target="large" aria-pressed="false" type="button">
+            <span class="dot"></span>Large Lecture: 150 Students
+          </button>
+        </div>
+        <button class="icon-btn" id="autoPlayBtn" aria-pressed="false" type="button" title="Toggle Auto-Tour (Space)">
+          <span id="autoPlayIcon">&#9654;</span><span id="autoPlayLabel">Auto-Tour</span>
+        </button>
+        <button class="icon-btn" id="themeBtn" type="button" title="Toggle Light / Dark Mode">
+          <span id="themeIcon">&#9790;</span><span id="themeLabel">Dark</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Branching Flowchart Panel -->
+    <section class="panel" aria-label="Scalable Mastery Branching Flowchart">
+      <div class="flow-header">
+        <div class="route-group" role="group" aria-label="Journey Path Simulator">
+          <span class="route-label">Trace Path:</span>
+          <button class="route-chip" data-route="main" aria-pressed="true" type="button">Main Mastery Path</button>
+          <button class="route-chip" data-route="retry" aria-pressed="false" type="button">Revision &amp; Error Autopsy Loop</button>
+        </div>
+        <div class="legend-row">
+          <span class="legend-item"><span class="legend-line"></span>Main Progression</span>
+          <span class="legend-item"><span class="legend-line is-retry"></span>Revision / Repair Loop</span>
+        </div>
+      </div>
+
+      <div class="diagram-stage">
+        <svg id="flowSvg" viewBox="0 0 920 296" role="img" aria-label="6-node branching mastery assessment flowchart"></svg>
+      </div>
+
+      <div class="step-bar">
+        <div class="step-nav">
+          <button class="icon-btn" id="prevBtn" type="button">&larr; Prev</button>
+          <button class="icon-btn" id="nextBtn" type="button">Next &rarr;</button>
+        </div>
+        <div class="step-progress">
+          <span id="stepStatusText">Step 1 of 5</span>
+          <div class="step-dots" id="stepDots"></div>
+        </div>
+        <span class="kbd-hint">Keys: &larr; / &rarr; &middot; S (Scale) &middot; Space</span>
+      </div>
+    </section>
+
+    <!-- Lower Workspace: Stage Inspector + Faculty Time Budget -->
+    <main class="lower-grid">
+      <section class="panel" aria-label="Stage Inspector">
+        <div class="panel-head">
+          <div class="view-tabs" role="tablist" aria-label="Inspector Tabs">
+            <button class="view-tab" data-view="inspect" role="tab" aria-selected="true" type="button">Inspect Stage</button>
+            <button class="view-tab" data-view="compare" role="tab" aria-selected="false" type="button">Compare 30 vs 150</button>
+          </div>
+          <span class="scale-pill" id="scalePill">Seminar: 30 Students</span>
+        </div>
+        <div class="panel-body" id="inspectorBody"></div>
+      </section>
+
+      <section class="panel" aria-label="Faculty Time Budget Panel">
+        <div class="panel-head">
+          <strong style="font-size: 0.82rem; color: var(--text-primary);">Unit Faculty Time Budget</strong>
+          <span class="info-label" id="budgetUnitTag">Per Unit &middot; 30 Students</span>
+        </div>
+        <div class="panel-body" id="budgetBody"></div>
+      </section>
+    </main>
+
+    <footer class="takeaway-bar">
+      <strong>Key takeaway:</strong> Scalability comes from <strong>binary rubrics, zero-point practice, and targeted verification</strong>—not from buying better surveillance software. Even in a 150-student lecture, trading weekly homework grading for live checkpoints and rotating micro-vivas cuts total grading hours in half while making authentic mastery the only viable path.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      const NODES = {
+        n1: {
+          id: "n1",
+          code: "N1",
+          label: "Ungraded Practice Loop",
+          lines: ["Ungraded", "Practice Loop"],
+          tier: "Practice",
+          objective: "Build foundational fluency with zero grade penalty.",
+          small: {
+            format: "In-class workshops, peer critiques, and worked-example self-checks.",
+            timeText: "0.5 hrs setup",
+            hours: 0.5
+          },
+          large: {
+            format: "Auto-graded drills, peer review rubrics, and optional Socratic AI tutor.",
+            timeText: "1.0 hr setup",
+            hours: 1.0
+          },
+          aiResilience: "Removes extrinsic pressure to cheat because mistakes cost zero points.",
+          x: 89, y: 82, w: 146, h: 78
+        },
+        n2: {
+          id: "n2",
+          code: "N2",
+          label: "Readiness Gate & Self-Audit",
+          lines: ["Readiness Gate", "& Self-Audit"],
+          tier: "Gate",
+          objective: "Confirm deliberate preparation before consuming faculty verification time.",
+          small: {
+            format: "Completed practice set plus 3-sentence reflection on remaining gaps.",
+            timeText: "0.5 hrs spot-check",
+            hours: 0.5
+          },
+          large: {
+            format: "LMS completion check plus structured metacognitive readiness form.",
+            timeText: "0.5 hrs automated check",
+            hours: 0.5
+          },
+          aiResilience: "Requires learner to articulate personal weak spots before entering Gym Mode.",
+          x: 274, y: 82, w: 146, h: 78
+        },
+        n3: {
+          id: "n3",
+          code: "N3",
+          label: "Live Unassisted Checkpoint",
+          lines: ["Live Unassisted", "Checkpoint"],
+          tier: "Verification",
+          objective: "Verify baseline core skills without external tools.",
+          small: {
+            format: "30-min paper transfer task or error-diagnosis scored Mastered / Not Yet.",
+            timeText: "0.75 hrs grading",
+            hours: 0.75
+          },
+          large: {
+            format: "35-min in-hall paper/offline task scored on 3-criterion single-point rubric.",
+            timeText: "3.5 hrs grading (or 1.2 hrs across 3 TAs)",
+            hours: 3.5
+          },
+          aiResilience: "Occurs live and unassisted; evaluates active reasoning rather than static home artifacts.",
+          x: 460, y: 82, w: 146, h: 78
+        },
+        n4: {
+          id: "n4",
+          code: "N4",
+          label: "Error Autopsy & Cooldown",
+          lines: ["Error Autopsy & Cooldown"],
+          tier: "Revision",
+          objective: "Convert failed attempts into targeted cognitive repair without grade punishment.",
+          small: {
+            format: "48-hr cooldown, 1-page mental-model autopsy, brief coaching check-in.",
+            timeText: "1.0 hr coaching",
+            hours: 1.0
+          },
+          large: {
+            format: "72-hr cooldown, structured Error Autopsy template, costs 1 Revision Token to re-enter.",
+            timeText: "2.5 hrs TA office-hour batching",
+            hours: 2.5
+          },
+          aiResilience: "Prevents brute-force retaking and forces diagnosis of why reasoning broke down.",
+          x: 553, y: 240, w: 222, h: 78
+        },
+        n5: {
+          id: "n5",
+          code: "N5",
+          label: "Scalable Oral Defense",
+          lines: ["Scalable Oral", "Defense"],
+          tier: "Verification",
+          objective: "Prove deep ownership, judgment, and adaptability under novel constraints.",
+          small: {
+            format: "5-min 1-on-1 micro-vivas for all students or 4-student panel critiques.",
+            timeText: "2.5 hrs total",
+            hours: 2.5
+          },
+          large: {
+            format: "25% rotating cohort micro-vivas plus targeted anomaly audits OR 2-min randomized async video defenses reviewed at 1.5x speed.",
+            timeText: "4.5–5.5 hrs total across teaching team",
+            hours: 5.0
+          },
+          aiResilience: "Two live follow-up pivots ('Why not X?', 'What if constraint Y shifts?') expose outsourced work within 60 seconds.",
+          x: 646, y: 82, w: 146, h: 78
+        },
+        n6: {
+          id: "n6",
+          code: "N6",
+          label: "Verified Mastery Standard",
+          lines: ["Verified Mastery", "Standard"],
+          tier: "Certification",
+          objective: "Lock in permanent credit toward final grade bundle without averaging past failures.",
+          small: {
+            format: "Standard marked Complete on Mastery Tracker; unlocks advanced extension.",
+            timeText: "0.25 hrs logging",
+            hours: 0.25
+          },
+          large: {
+            format: "Binary competency badge recorded in LMS; maps directly to C/B/A grade bundles.",
+            timeText: "0.5 hrs automated sync",
+            hours: 0.5
+          },
+          aiResilience: "Grades represent verified human capability rather than compliance averages.",
+          x: 831, y: 82, w: 146, h: 78
+        }
+      };
+
+      const NODE_ORDER = ["n1", "n2", "n3", "n4", "n5", "n6"];
+
+      const EDGES = [
+        {
+          id: "e12",
+          source: "n1",
+          target: "n2",
+          label: "Submit practice + self-audit",
+          retry: false,
+          d: "M 162 82 L 196 82",
+          pillX: 181, pillY: 22, pillW: 158
+        },
+        {
+          id: "e23",
+          source: "n2",
+          target: "n3",
+          label: "Ticket approved",
+          retry: false,
+          d: "M 347 82 L 382 82",
+          pillX: 367, pillY: 22, pillW: 102
+        },
+        {
+          id: "e35",
+          source: "n3",
+          target: "n5",
+          label: "Mastered baseline",
+          retry: false,
+          d: "M 533 82 L 568 82",
+          pillX: 553, pillY: 22, pillW: 112
+        },
+        {
+          id: "e56",
+          source: "n5",
+          target: "n6",
+          label: "Defense passed",
+          retry: false,
+          d: "M 719 82 L 753 82",
+          pillX: 738, pillY: 22, pillW: 102
+        },
+        {
+          id: "e34",
+          source: "n3",
+          target: "n4",
+          label: "Not Yet (needs repair)",
+          retry: true,
+          d: "M 498 121 C 504 156, 530 166, 540 197",
+          pillX: 525, pillY: 162, pillW: 132
+        },
+        {
+          id: "e54",
+          source: "n5",
+          target: "n4",
+          label: "Gaps exposed in defense",
+          retry: true,
+          d: "M 672 121 C 708 164, 712 240, 669 240",
+          pillX: 786, pillY: 192, pillW: 146
+        },
+        {
+          id: "e43",
+          source: "n4",
+          target: "n3",
+          label: "Autopsy cleared (re-verify)",
+          retry: true,
+          d: "M 442 240 C 392 240, 396 164, 424 126",
+          pillX: 312, pillY: 192, pillW: 152
+        }
+      ];
+
+      // Predefined traversable routes for Prev / Next & Auto-Tour
+      const ROUTES = {
+        main: {
+          steps: [
+            { node: "n1", activeEdge: "e12" },
+            { node: "n2", activeEdge: "e23" },
+            { node: "n3", activeEdge: "e35" },
+            { node: "n5", activeEdge: "e56" },
+            { node: "n6", activeEdge: null }
+          ],
+          edges: ["e12", "e23", "e35", "e56"]
+        },
+        retry: {
+          steps: [
+            { node: "n3", activeEdge: "e34" },
+            { node: "n4", activeEdge: "e43" },
+            { node: "n3", activeEdge: "e35" },
+            { node: "n5", activeEdge: "e54" },
+            { node: "n4", activeEdge: "e43" },
+            { node: "n6", activeEdge: null }
+          ],
+          edges: ["e34", "e43", "e35", "e54"]
+        }
+      };
+
+      const TIER_STYLES = {
+        Practice: { bg: "var(--tier-practice-bg)", fg: "var(--tier-practice-fg)", bar: "var(--tier-practice-bar)" },
+        Gate: { bg: "var(--tier-gate-bg)", fg: "var(--tier-gate-fg)", bar: "var(--tier-gate-bar)" },
+        Verification: { bg: "var(--tier-verification-bg)", fg: "var(--tier-verification-fg)", bar: "var(--tier-verification-bar)" },
+        Revision: { bg: "var(--tier-revision-bg)", fg: "var(--tier-revision-fg)", bar: "var(--tier-revision-bar)" },
+        Certification: { bg: "var(--tier-certification-bg)", fg: "var(--tier-certification-fg)", bar: "var(--tier-certification-bar)" }
+      };
+
+      const state = {
+        scale: "small",
+        route: "main",
+        stepIdx: 0,
+        activeNodeId: "n1",
+        activeEdgeId: "e12",
+        view: "inspect",
+        autoPlay: false,
+        autoTimer: null,
+        pulseRaf: null
+      };
+
+      const appEl = document.getElementById("app");
+      const svgEl = document.getElementById("flowSvg");
+      const inspectorBody = document.getElementById("inspectorBody");
+      const budgetBody = document.getElementById("budgetBody");
+      const scalePill = document.getElementById("scalePill");
+      const budgetUnitTag = document.getElementById("budgetUnitTag");
+      const stepDotsEl = document.getElementById("stepDots");
+      const stepStatusText = document.getElementById("stepStatusText");
+      const autoPlayBtn = document.getElementById("autoPlayBtn");
+      const autoPlayIcon = document.getElementById("autoPlayIcon");
+      const autoPlayLabel = document.getElementById("autoPlayLabel");
+      const themeBtn = document.getElementById("themeBtn");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+
+      function initTheme() {
+        const params = new URLSearchParams(window.location.search);
+        const paramTheme = params.get("theme");
+        let saved = null;
+        try { saved = localStorage.getItem("sovereign-workflow-theme"); } catch (e) {}
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const theme = (paramTheme === "dark" || paramTheme === "light")
+          ? paramTheme
+          : (saved || (prefersDark ? "dark" : "light"));
+        applyTheme(theme, false);
+      }
+
+      function applyTheme(theme, persist = true) {
+        document.documentElement.setAttribute("data-theme", theme);
+        const isDark = theme === "dark";
+        themeIcon.innerHTML = isDark ? "&#9728;" : "&#9790;";
+        themeLabel.textContent = isDark ? "Light" : "Dark";
+        if (persist) {
+          try { localStorage.setItem("sovereign-workflow-theme", theme); } catch (e) {}
+        }
+      }
+
+      function createSvgEl(tag, attrs = {}) {
+        const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          el.setAttribute(k, v);
+        }
+        return el;
+      }
+
+      function renderDiagram() {
+        svgEl.innerHTML = "";
+        const routeEdgeSet = new Set(ROUTES[state.route].edges);
+        const activeNode = state.activeNodeId;
+        const activeEdge = state.activeEdgeId;
+
+        // Markers
+        const defs = createSvgEl("defs");
+        const addMarker = (id, fill) => {
+          const mk = createSvgEl("marker", {
+            id,
+            viewBox: "0 0 10 10",
+            refX: "8.2",
+            refY: "5",
+            markerWidth: "6.5",
+            markerHeight: "6.5",
+            orient: "auto-start-reverse"
+          });
+          mk.appendChild(createSvgEl("path", { d: "M 0 1.4 L 9.2 5 L 0 8.6 z", fill }));
+          defs.appendChild(mk);
+        };
+        addMarker("arrow-muted", "var(--border-strong)");
+        addMarker("arrow-route", "var(--active-mid)");
+        addMarker("arrow-active", "var(--active-accent)");
+        addMarker("arrow-retry", "var(--retry-accent)");
+        svgEl.appendChild(defs);
+
+        // Subtle zone label for lower revision loop
+        const revZoneLabel = createSvgEl("text", {
+          x: "553",
+          y: "292",
+          "text-anchor": "middle",
+          "font-size": "9.5",
+          "font-weight": "700",
+          "letter-spacing": "0.08em",
+          fill: "var(--text-muted)"
+        });
+        revZoneLabel.textContent = "STRUCTURED REVISION & COGNITIVE REPAIR LOOP (ZERO GRADE PENALTY)";
+        svgEl.appendChild(revZoneLabel);
+
+        // Edges + Condition Pills
+        const edgesGroup = createSvgEl("g");
+        EDGES.forEach((edge) => {
+          const isActive = edge.id === activeEdge || (activeEdge === null && (edge.source === activeNode || edge.target === activeNode));
+          const isExactActive = edge.id === activeEdge;
+          const isOnRoute = routeEdgeSet.has(edge.id);
+
+          let marker = "url(#arrow-muted)";
+          if (isExactActive) marker = edge.retry ? "url(#arrow-retry)" : "url(#arrow-active)";
+          else if (isOnRoute) marker = edge.retry ? "url(#arrow-retry)" : "url(#arrow-route)";
+
+          const classes = [
+            "edge-path",
+            edge.retry ? "is-retry" : "",
+            isOnRoute ? "is-on-route" : "",
+            isExactActive ? "is-active" : ""
+          ].filter(Boolean).join(" ");
+
+          const path = createSvgEl("path", {
+            id: `path-${edge.id}`,
+            d: edge.d,
+            class: classes,
+            "marker-end": marker
+          });
+          edgesGroup.appendChild(path);
+
+          const hit = createSvgEl("path", { d: edge.d, class: "edge-hit" });
+          hit.addEventListener("click", () => focusEdge(edge));
+          edgesGroup.appendChild(hit);
+
+          // Tiny vertical connector tick for top horizontal arrows to their pill labels
+          if (!edge.retry) {
+            edgesGroup.appendChild(createSvgEl("line", {
+              x1: edge.pillX,
+              y1: 33,
+              x2: edge.pillX,
+              y2: 78,
+              stroke: isExactActive ? "var(--active-accent)" : "var(--border)",
+              "stroke-width": isExactActive ? "1.4" : "1",
+              "stroke-dasharray": "2 2"
+            }));
+          }
+
+          // Condition pill
+          const pillBg = createSvgEl("rect", {
+            x: edge.pillX - edge.pillW / 2,
+            y: edge.pillY - 11,
+            width: edge.pillW,
+            height: 22,
+            rx: 11,
+            class: `edge-pill-bg${edge.retry ? " is-retry" : ""}${isExactActive ? " is-active" : ""}`
+          });
+          pillBg.addEventListener("click", () => focusEdge(edge));
+          edgesGroup.appendChild(pillBg);
+
+          const pillTxt = createSvgEl("text", {
+            x: edge.pillX,
+            y: edge.pillY,
+            class: `edge-pill-text${edge.retry ? " is-retry" : ""}${isExactActive ? " is-active" : ""}`
+          });
+          pillTxt.textContent = edge.label;
+          edgesGroup.appendChild(pillTxt);
+        });
+        svgEl.appendChild(edgesGroup);
+
+        // Animated Pulse Elements
+        const activeEdgeObj = EDGES.find((e) => e.id === activeEdge);
+        const pulseRetryClass = activeEdgeObj && activeEdgeObj.retry ? " is-retry" : "";
+        svgEl.appendChild(createSvgEl("circle", {
+          id: "pulseHalo",
+          r: "9",
+          class: `pulse-halo${pulseRetryClass}`,
+          style: activeEdgeObj ? "" : "display:none"
+        }));
+        svgEl.appendChild(createSvgEl("circle", {
+          id: "pulseDot",
+          r: "4.2",
+          class: `pulse-dot${pulseRetryClass}`,
+          style: activeEdgeObj ? "" : "display:none"
+        }));
+
+        // Nodes
+        const nodesGroup = createSvgEl("g");
+        NODE_ORDER.forEach((id) => {
+          const node = NODES[id];
+          const isActive = id === activeNode;
+          const isRev = node.tier === "Revision";
+          const tStyle = TIER_STYLES[node.tier];
+          const timeDisplay = state.scale === "small" ? node.small.timeText : node.large.timeText;
+          const shortTime = timeDisplay.split(" (")[0];
+
+          const g = createSvgEl("g", {
+            class: `node-group${isActive ? " is-active" : ""}${isRev ? " is-revision" : ""}`,
+            tabindex: "0",
+            role: "button",
+            "aria-label": `${node.label}, ${node.tier} tier, ${shortTime}`
+          });
+          g.addEventListener("click", () => selectNode(id));
+          g.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              selectNode(id);
+            }
+          });
+
+          const left = node.x - node.w / 2;
+          const top = node.y - node.h / 2;
+
+          g.appendChild(createSvgEl("rect", {
+            x: left,
+            y: top,
+            width: node.w,
+            height: node.h,
+            class: "node-card-bg"
+          }));
+
+          // Tier pill
+          const badgeW = node.tier.length * 6.1 + 14;
+          g.appendChild(createSvgEl("rect", {
+            x: left + 9,
+            y: top + 8,
+            width: badgeW,
+            height: 16,
+            rx: 8,
+            fill: tStyle.bg
+          }));
+          const badgeTxt = createSvgEl("text", {
+            x: left + 9 + badgeW / 2,
+            y: top + 19,
+            "text-anchor": "middle",
+            class: "node-badge-text",
+            fill: tStyle.fg
+          });
+          badgeTxt.textContent = node.tier;
+          g.appendChild(badgeTxt);
+
+          // Code pill (N1..N6)
+          g.appendChild(createSvgEl("rect", {
+            x: left + node.w - 31,
+            y: top + 8,
+            width: 23,
+            height: 16,
+            rx: 8,
+            class: "node-id-pill"
+          }));
+          const idTxt = createSvgEl("text", {
+            x: left + node.w - 19.5,
+            y: top + 16,
+            class: "node-id-text"
+          });
+          idTxt.textContent = node.code;
+          g.appendChild(idTxt);
+
+          // Title
+          const titleY = node.lines.length === 1 ? top + 44 : top + 38;
+          node.lines.forEach((line, lIdx) => {
+            const t = createSvgEl("text", {
+              x: left + 10,
+              y: titleY + lIdx * 14,
+              class: "node-title-text"
+            });
+            t.textContent = line;
+            g.appendChild(t);
+          });
+
+          // Compact Time Tag at bottom of card
+          const timeTxt = createSvgEl("text", {
+            x: left + 10,
+            y: top + node.h - 9,
+            class: "node-time-text"
+          });
+          timeTxt.textContent = `\u23F1 ${shortTime}`;
+          g.appendChild(timeTxt);
+
+          nodesGroup.appendChild(g);
+        });
+        svgEl.appendChild(nodesGroup);
+
+        startPulseAnimation();
+      }
+
+      function startPulseAnimation() {
+        if (state.pulseRaf) cancelAnimationFrame(state.pulseRaf);
+        if (!state.activeEdgeId) return;
+        const path = document.getElementById(`path-${state.activeEdgeId}`);
+        const dot = document.getElementById("pulseDot");
+        const halo = document.getElementById("pulseHalo");
+        if (!path || !dot || !halo) return;
+
+        const len = path.getTotalLength();
+        let start = null;
+        const duration = len < 80 ? 1150 : 1700;
+
+        function tick(ts) {
+          if (!start) start = ts;
+          const t = ((ts - start) % duration) / duration;
+          const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+          const pt = path.getPointAtLength(eased * len);
+          dot.setAttribute("cx", pt.x.toFixed(1));
+          dot.setAttribute("cy", pt.y.toFixed(1));
+          halo.setAttribute("cx", pt.x.toFixed(1));
+          halo.setAttribute("cy", pt.y.toFixed(1));
+          halo.setAttribute("r", (6.5 + Math.sin(t * Math.PI) * 4.5).toFixed(1));
+          state.pulseRaf = requestAnimationFrame(tick);
+        }
+
+        state.pulseRaf = requestAnimationFrame(tick);
+      }
+
+      function renderInspector() {
+        const node = NODES[state.activeNodeId];
+        const scaleData = state.scale === "small" ? node.small : node.large;
+        const outgoing = EDGES.filter((e) => e.source === node.id);
+
+        scalePill.textContent = state.scale === "small" ? "Seminar: 30 Students" : "Large Lecture: 150 Students";
+
+        if (state.view === "inspect") {
+          const isRev = node.tier === "Revision";
+          inspectorBody.innerHTML = `
+            <div class="meta-row">
+              <span class="tier-chip tier-${node.tier}">${node.tier} Tier</span>
+              <span class="info-label">Stage ${node.code}</span>
+            </div>
+            <div>
+              <h2 class="stage-title">${node.label}</h2>
+              <p class="stage-obj">${node.objective}</p>
+            </div>
+            <div class="cards-2col">
+              <div class="info-card ${isRev ? "is-retry-card" : "is-accent"}">
+                <span class="info-label">Execution Format (${state.scale === "small" ? "30 Students" : "150 Students"})</span>
+                <p class="info-text">${scaleData.format}</p>
+                <span class="time-badge-inline">&#9201; ${scaleData.timeText}</span>
+              </div>
+              <div class="info-card">
+                <span class="info-label">AI-Resilience Mechanism</span>
+                <p class="info-text">${node.aiResilience}</p>
+              </div>
+            </div>
+            ${outgoing.length > 0 ? `
+              <div class="branch-actions">
+                <span class="info-label" style="margin-right: 4px;">Next Transitions:</span>
+                ${outgoing.map((e) => `
+                  <button class="branch-btn${e.retry ? " is-retry" : ""}" data-jump-edge="${e.id}" type="button">
+                    ${e.label} &rarr; ${NODES[e.target].code}
+                  </button>
+                `).join("")}
+              </div>
+            ` : `
+              <div class="branch-actions">
+                <span class="info-label">Outcome:</span>
+                <span class="info-text" style="font-weight: 600;">Standard locked in permanently — zero failure averaging.</span>
+              </div>
+            `}
+          `;
+
+          inspectorBody.querySelectorAll("[data-jump-edge]").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const edge = EDGES.find((e) => e.id === btn.dataset.jumpEdge);
+              if (edge) {
+                state.activeNodeId = edge.target;
+                const nextOut = EDGES.find((e) => e.source === edge.target && !e.retry) || EDGES.find((e) => e.source === edge.target) || null;
+                state.activeEdgeId = nextOut ? nextOut.id : null;
+                syncRouteIndexToNode(edge.target);
+                renderAll();
+              }
+            });
+          });
+        } else {
+          inspectorBody.innerHTML = `
+            <div class="meta-row">
+              <span class="tier-chip tier-${node.tier}">${node.tier} Tier &middot; Scale Comparison</span>
+              <span class="info-label">${node.label}</span>
+            </div>
+            <div class="cards-2col">
+              <div class="info-card" style="background: var(--small-soft); border-color: var(--small-mid);">
+                <span class="info-label" style="color: var(--small-text);">Seminar: 30 Students</span>
+                <p class="info-text">${node.small.format}</p>
+                <span class="time-badge-inline" style="color: var(--small-text);">&#9201; ${node.small.timeText}</span>
+              </div>
+              <div class="info-card" style="background: var(--large-soft); border-color: var(--large-mid);">
+                <span class="info-label" style="color: var(--large-text);">Large Lecture: 150 Students</span>
+                <p class="info-text">${node.large.format}</p>
+                <span class="time-badge-inline" style="color: var(--large-text);">&#9201; ${node.large.timeText}</span>
+              </div>
+            </div>
+            <div class="info-card">
+              <span class="info-label">Shared AI-Resilience Mechanism</span>
+              <p class="info-text">${node.aiResilience}</p>
+            </div>
+          `;
+        }
+      }
+
+      function renderBudget() {
+        const isSmall = state.scale === "small";
+        budgetUnitTag.textContent = isSmall ? "Per Unit \u00B7 30 Students" : "Per Unit \u00B7 150 Students";
+
+        const totalHours = isSmall ? "5.5 hrs" : "12.5–13.5 hrs";
+        const maxStageHours = isSmall ? 2.5 : 5.0;
+        const traditionalRef = isSmall
+          ? "Traditional point-graded baseline: ~9–11 hrs/unit. Reallocating weekly homework marking saves ~40–50% while adding live oral defense."
+          : "Traditional point-graded baseline: ~42–52 hrs/unit (scaled from 28–35 hrs per 100 students). Splits cleanly across instructor + TAs (checkpoint grading drops to 1.2 hrs each across 3 TAs).";
+
+        budgetBody.innerHTML = `
+          <div class="budget-total-row">
+            <div>
+              <div class="info-label">Total Teaching Team Load</div>
+              <div class="budget-big">${totalHours}</div>
+            </div>
+            <div class="budget-sub">
+              <strong>${isSmall ? "Single Instructor" : "Instructor + TAs"}</strong><br />
+              Click any stage bar to inspect
+            </div>
+          </div>
+          <div class="budget-bars">
+            ${NODE_ORDER.map((id) => {
+              const n = NODES[id];
+              const d = isSmall ? n.small : n.large;
+              const pct = Math.max(8, Math.round((d.hours / maxStageHours) * 100));
+              const shortT = d.timeText.split(" (")[0];
+              return `
+                <div class="bar-row${id === state.activeNodeId ? " is-active" : ""}" data-bar-node="${id}">
+                  <div class="bar-top">
+                    <span class="bar-name">${n.code}: ${n.label}</span>
+                    <span class="bar-val">${shortT}</span>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: ${pct}%; background: ${TIER_STYLES[n.tier].bar};"></div>
+                  </div>
+                </div>
+              `;
+            }).join("")}
+          </div>
+          <div class="benchmark-note">
+            <strong>Workload Benchmark:</strong> ${traditionalRef}
+          </div>
+        `;
+
+        budgetBody.querySelectorAll("[data-bar-node]").forEach((row) => {
+          row.addEventListener("click", () => selectNode(row.dataset.barNode));
+        });
+      }
+
+      function renderStepControls() {
+        const steps = ROUTES[state.route].steps;
+        stepStatusText.textContent = `Step ${state.stepIdx + 1} of ${steps.length} (${NODES[state.activeNodeId].code})`;
+        stepDotsEl.innerHTML = "";
+        steps.forEach((step, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          const isRetryStep = step.node === "n4" || (step.activeEdge && EDGES.find((e) => e.id === step.activeEdge)?.retry);
+          btn.className = `step-dot${idx === state.stepIdx ? " is-active" : ""}${isRetryStep ? " is-retry" : ""}`;
+          btn.setAttribute("aria-label", `Step ${idx + 1}: ${NODES[step.node].label}`);
+          btn.addEventListener("click", () => applyRouteStep(idx));
+          stepDotsEl.appendChild(btn);
+        });
+      }
+
+      function applyRouteStep(idx) {
+        const steps = ROUTES[state.route].steps;
+        state.stepIdx = ((idx % steps.length) + steps.length) % steps.length;
+        const step = steps[state.stepIdx];
+        state.activeNodeId = step.node;
+        state.activeEdgeId = step.activeEdge;
+        renderAll();
+      }
+
+      function syncRouteIndexToNode(nodeId) {
+        const steps = ROUTES[state.route].steps;
+        const found = steps.findIndex((s) => s.node === nodeId);
+        if (found !== -1) state.stepIdx = found;
+      }
+
+      function selectNode(nodeId) {
+        state.activeNodeId = nodeId;
+        const preferredEdge = EDGES.find((e) => e.source === nodeId && ROUTES[state.route].edges.includes(e.id))
+          || EDGES.find((e) => e.source === nodeId && !e.retry)
+          || EDGES.find((e) => e.source === nodeId)
+          || null;
+        state.activeEdgeId = preferredEdge ? preferredEdge.id : null;
+        syncRouteIndexToNode(nodeId);
+        renderAll();
+      }
+
+      function focusEdge(edge) {
+        state.activeNodeId = edge.source;
+        state.activeEdgeId = edge.id;
+        if (edge.retry && state.route !== "retry") {
+          setRoute("retry", false);
+        }
+        syncRouteIndexToNode(edge.source);
+        renderAll();
+      }
+
+      function setScale(scale) {
+        state.scale = scale;
+        appEl.setAttribute("data-scale", scale);
+        document.querySelectorAll(".scale-btn").forEach((b) => {
+          b.setAttribute("aria-pressed", String(b.dataset.scaleTarget === scale));
+        });
+        renderAll();
+      }
+
+      function setRoute(route, resetStep = true) {
+        state.route = route;
+        document.querySelectorAll(".route-chip").forEach((c) => {
+          c.setAttribute("aria-pressed", String(c.dataset.route === route));
+        });
+        if (resetStep) applyRouteStep(0);
+      }
+
+      function setView(view) {
+        state.view = view;
+        document.querySelectorAll(".view-tab").forEach((t) => {
+          t.setAttribute("aria-selected", String(t.dataset.view === view));
+        });
+        renderInspector();
+      }
+
+      function toggleAutoPlay() {
+        state.autoPlay = !state.autoPlay;
+        autoPlayBtn.setAttribute("aria-pressed", String(state.autoPlay));
+        autoPlayIcon.innerHTML = state.autoPlay ? "&#10074;&#10074;" : "&#9654;";
+        autoPlayLabel.textContent = state.autoPlay ? "Pause" : "Auto-Tour";
+        if (state.autoPlay) {
+          state.autoTimer = setInterval(() => applyRouteStep(state.stepIdx + 1), 3200);
+        } else if (state.autoTimer) {
+          clearInterval(state.autoTimer);
+          state.autoTimer = null;
+        }
+      }
+
+      function renderAll() {
+        renderDiagram();
+        renderInspector();
+        renderBudget();
+        renderStepControls();
+      }
+
+      // Bindings
+      document.querySelectorAll(".scale-btn").forEach((b) => {
+        b.addEventListener("click", () => setScale(b.dataset.scaleTarget));
+      });
+      document.querySelectorAll(".route-chip").forEach((c) => {
+        c.addEventListener("click", () => setRoute(c.dataset.route, true));
+      });
+      document.querySelectorAll(".view-tab").forEach((t) => {
+        t.addEventListener("click", () => setView(t.dataset.view));
+      });
+      document.getElementById("prevBtn").addEventListener("click", () => applyRouteStep(state.stepIdx - 1));
+      document.getElementById("nextBtn").addEventListener("click", () => applyRouteStep(state.stepIdx + 1));
+      autoPlayBtn.addEventListener("click", toggleAutoPlay);
+
+      themeBtn.addEventListener("click", () => {
+        const cur = document.documentElement.getAttribute("data-theme") || "light";
+        applyTheme(cur === "dark" ? "light" : "dark", true);
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+        if (e.key === "ArrowRight") applyRouteStep(state.stepIdx + 1);
+        else if (e.key === "ArrowLeft") applyRouteStep(state.stepIdx - 1);
+        else if (e.key === "s" || e.key === "S") setScale(state.scale === "small" ? "large" : "small");
+        else if (e.key === " ") {
+          e.preventDefault();
+          toggleAutoPlay();
+        }
+      });
+
+      initTheme();
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
