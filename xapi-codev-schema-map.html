@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IEEE xAPI 2.0 (9274.1.1-2023) CODE+V Schema Map — SOVRAELEX / SYNCZINES</title>
+  <style>
+    :root {
+      --bg-app: #f5f7fb;
+      --bg-surface: #ffffff;
+      --bg-elevated: #eef2f8;
+      --bg-code: #0f172a;
+      --text-code: #e2e8f0;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --border: #d7e0ec;
+      --border-strong: #b4c3d8;
+
+      --c-local: #4f46e5;
+      --c-local-bg: rgba(79, 70, 229, 0.07);
+      --c-local-soft: rgba(79, 70, 229, 0.14);
+      --c-local-border: rgba(79, 70, 229, 0.44);
+
+      --c-trans: #d97706;
+      --c-trans-bg: rgba(217, 119, 6, 0.07);
+      --c-trans-soft: rgba(217, 119, 6, 0.15);
+      --c-trans-border: rgba(217, 119, 6, 0.45);
+
+      --c-sync: #0d9488;
+      --c-sync-bg: rgba(13, 148, 136, 0.07);
+      --c-sync-soft: rgba(13, 148, 136, 0.14);
+      --c-sync-border: rgba(13, 148, 136, 0.44);
+
+      --danger: #dc2626;
+      --danger-soft: rgba(220, 38, 38, 0.13);
+      --success: #059669;
+      --success-soft: rgba(5, 150, 105, 0.14);
+
+      --node-bg: #ffffff;
+      --node-border: #cbd5e1;
+
+      --radius-lg: 12px;
+      --radius-md: 8px;
+      --radius-sm: 6px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg-app: #0a0f1a;
+      --bg-surface: #111827;
+      --bg-elevated: #192235;
+      --bg-code: #070b14;
+      --text-code: #e2e8f0;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #233149;
+      --border-strong: #374b6e;
+
+      --c-local: #818cf8;
+      --c-local-bg: rgba(129, 140, 248, 0.09);
+      --c-local-soft: rgba(129, 140, 248, 0.18);
+      --c-local-border: rgba(129, 140, 248, 0.48);
+
+      --c-trans: #fbbf24;
+      --c-trans-bg: rgba(251, 191, 36, 0.08);
+      --c-trans-soft: rgba(251, 191, 36, 0.17);
+      --c-trans-border: rgba(251, 191, 36, 0.46);
+
+      --c-sync: #2dd4bf;
+      --c-sync-bg: rgba(45, 212, 191, 0.08);
+      --c-sync-soft: rgba(45, 212, 191, 0.17);
+      --c-sync-border: rgba(45, 212, 191, 0.46);
+
+      --danger: #f87171;
+      --danger-soft: rgba(248, 113, 113, 0.16);
+      --success: #34d399;
+      --success-soft: rgba(52, 211, 153, 0.16);
+
+      --node-bg: #151f33;
+      --node-border: #2c3e5c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100%;
+      background: var(--bg-app);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .app-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 10px 14px;
+    }
+
+    .title-group { display: flex; flex-direction: column; gap: 2px; }
+    .title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .title-row h1 { font-size: 14.5px; font-weight: 700; letter-spacing: -0.01em; }
+
+    .spec-chip {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--c-sync-soft);
+      color: var(--c-sync);
+      border: 1px solid var(--c-sync-border);
+    }
+
+    .subtitle { font-size: 11.5px; color: var(--text-muted); }
+
+    .controls-right { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .btn:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+
+    .kbd {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    /* Filter Toolbar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 7px 11px;
+    }
+
+    .filter-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+
+    .filter-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .filter-pill:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .filter-pill.active-all { background: var(--bg-elevated); border-color: var(--border-strong); color: var(--text-primary); }
+    .filter-pill.active-local { background: var(--c-local-soft); border-color: var(--c-local-border); color: var(--c-local); }
+    .filter-pill.active-trans { background: var(--c-trans-soft); border-color: var(--c-trans-border); color: var(--c-trans); }
+    .filter-pill.active-sync { background: var(--c-sync-soft); border-color: var(--c-sync-border); color: var(--c-sync); }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .legend-counts {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+
+    /* SVG Schema Tree Card */
+    .diagram-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .svg-wrap { width: 100%; overflow-x: auto; }
+
+    svg.tree-svg {
+      width: 100%;
+      min-width: 780px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .tree-edge {
+      fill: none;
+      stroke: var(--border-strong);
+      stroke-width: 1.8;
+      opacity: 0.45;
+      transition: stroke 0.22s ease, stroke-width 0.22s ease, opacity 0.22s ease;
+    }
+
+    .tree-edge.active {
+      stroke: var(--c-sync);
+      stroke-width: 2.6;
+      opacity: 1;
+      stroke-dasharray: 6 4;
+      animation: flowPulse 1.1s linear infinite;
+    }
+
+    .tree-edge.active-local { stroke: var(--c-local); }
+    .tree-edge.active-trans { stroke: var(--c-trans); }
+    .tree-edge.active-sync { stroke: var(--c-sync); }
+
+    @keyframes flowPulse { to { stroke-dashoffset: -20; } }
+
+    .root-box {
+      fill: var(--bg-elevated);
+      stroke: var(--c-sync-border);
+      stroke-width: 2;
+      rx: 12;
+      ry: 12;
+      filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.16));
+    }
+
+    .branch-group {
+      cursor: pointer;
+      transition: opacity 0.22s ease;
+    }
+
+    .branch-group.dimmed { opacity: 0.34; }
+
+    .branch-box {
+      fill: var(--node-bg);
+      stroke: var(--node-border);
+      stroke-width: 1.5;
+      rx: 10;
+      ry: 10;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
+      transition: stroke 0.18s ease, stroke-width 0.18s ease;
+    }
+
+    .branch-group:hover .branch-box { stroke-width: 2.3; }
+    .branch-group.selected .branch-box { stroke: var(--c-sync); stroke-width: 2.8; }
+    .branch-group.selected.sel-local .branch-box { stroke: var(--c-local); }
+    .branch-group.selected.sel-trans .branch-box { stroke: var(--c-trans); }
+
+    .b-title { font-size: 12px; font-weight: 800; font-family: var(--font-mono); fill: var(--text-primary); }
+    .b-sub { font-size: 10.2px; fill: var(--text-secondary); }
+    .b-pill-txt { font-size: 9px; font-weight: 700; font-family: var(--font-mono); text-anchor: middle; }
+
+    /* Bottom Dual Panel */
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1.45fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 880px) {
+      .bottom-grid { grid-template-columns: 1fr; }
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 11px 13px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 7px;
+    }
+
+    .tabs { display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .tab-btn {
+      padding: 4px 9px;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 11.4px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--bg-elevated);
+      border-color: var(--border);
+      color: var(--text-primary);
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .b-local { background: var(--c-local-soft); color: var(--c-local); border-color: var(--c-local-border); }
+    .b-trans { background: var(--c-trans-soft); color: var(--c-trans); border-color: var(--c-trans-border); }
+    .b-sync { background: var(--c-sync-soft); color: var(--c-sync); border-color: var(--c-sync-border); }
+    .b-danger { background: var(--danger-soft); color: var(--danger); border-color: rgba(220, 38, 38, 0.35); }
+    .b-success { background: var(--success-soft); color: var(--success); border-color: rgba(5, 150, 105, 0.35); }
+
+    /* Field Diff Cards */
+    .field-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 292px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .field-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 7px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      transition: opacity 0.2s ease, border-color 0.2s ease;
+    }
+
+    .field-card.dimmed { opacity: 0.35; }
+    .field-card.match-local { border-left: 3px solid var(--c-local); }
+    .field-card.match-trans { border-left: 3px solid var(--c-trans); }
+    .field-card.match-sync { border-left: 3px solid var(--c-sync); }
+
+    .field-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .field-key {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .diff-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+
+    @media (max-width: 620px) {
+      .diff-grid { grid-template-columns: 1fr; }
+    }
+
+    .diff-cell {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 7px;
+      font-family: var(--font-mono);
+      font-size: 10.4px;
+      color: var(--text-secondary);
+      word-break: break-word;
+    }
+
+    .diff-cell .lbl {
+      display: block;
+      font-family: var(--font-sans);
+      font-size: 9.2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+      margin-bottom: 1px;
+    }
+
+    .diff-dropped {
+      color: var(--danger);
+      text-decoration: line-through;
+      opacity: 0.85;
+    }
+
+    .rationale {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* JSON Side-by-Side */
+    .json-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    @media (max-width: 640px) {
+      .json-grid { grid-template-columns: 1fr; }
+    }
+
+    .code-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .code-head {
+      padding: 5px 8px;
+      font-size: 10.2px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .copy-mini {
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      font-size: 9.8px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    pre.code-body {
+      background: var(--bg-code);
+      color: var(--text-code);
+      font-family: var(--font-mono);
+      font-size: 10.1px;
+      line-height: 1.4;
+      padding: 8px;
+      max-height: 256px;
+      overflow: auto;
+      margin: 0;
+      white-space: pre;
+    }
+
+    /* Right Panel: SYNCTESS Heptahex + WASM Allow-List Gate */
+    .hepta-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px;
+    }
+
+    @media (max-width: 540px) {
+      .hepta-wrap { flex-direction: column; }
+    }
+
+    svg.hepta-svg {
+      width: 158px;
+      min-width: 158px;
+      height: auto;
+      display: block;
+      user-select: none;
+    }
+
+    .hex-cell { cursor: pointer; transition: transform 0.15s ease; }
+    .hex-poly {
+      fill: var(--bg-surface);
+      stroke: var(--border-strong);
+      stroke-width: 1.6;
+      transition: fill 0.18s ease, stroke 0.18s ease, stroke-width 0.18s ease;
+    }
+    .hex-cell:hover .hex-poly { stroke: var(--c-sync); stroke-width: 2.2; }
+    .hex-cell.active .hex-poly { fill: var(--c-sync-soft); stroke: var(--c-sync); stroke-width: 2.6; }
+    .hex-cell.core-hex.active .hex-poly { fill: var(--c-trans-soft); stroke: var(--c-trans); stroke-width: 2.6; }
+
+    .hex-num { font-size: 9px; font-family: var(--font-mono); font-weight: 800; fill: var(--text-muted); text-anchor: middle; pointer-events: none; }
+    .hex-lbl { font-size: 9.2px; font-weight: 800; fill: var(--text-primary); text-anchor: middle; pointer-events: none; }
+
+    .hex-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .hex-verb {
+      font-family: var(--font-mono);
+      font-size: 10.3px;
+      color: var(--c-sync);
+      word-break: break-all;
+    }
+
+    .hex-kv {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 7px;
+      font-size: 10.8px;
+      color: var(--text-secondary);
+    }
+
+    .hex-kv strong {
+      display: block;
+      font-size: 9.4px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 1px;
+    }
+
+    /* Fail-Closed WASM Allow-List Tester */
+    .gate-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gate-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .gate-input-row {
+      display: flex;
+      gap: 5px;
+    }
+
+    .gate-select {
+      flex: 1;
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 4px 7px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+    }
+
+    .gate-result {
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      padding: 6px 8px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+    }
+
+    .footer-hint {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Header -->
+    <header class="topbar">
+      <div class="title-group">
+        <div class="title-row">
+          <h1>IEEE xAPI 2.0 (9274.1.1-2023) CODE+V Schema Map</h1>
+          <span class="spec-chip">version: "2.0.0" · Fail-Closed WASM Filter</span>
+        </div>
+        <div class="subtitle">Two-Tier Local-First Projection: SOVRAELEX (`local_lrs.db`) → Rust/WASM Allow-List Compiler → SYNCZINES CRDT</div>
+      </div>
+
+      <div class="controls-right">
+        <button id="themeToggle" class="btn" type="button" title="Toggle Light / Dark Theme (Hotkey: T)">
+          <span id="themeIcon">☀</span> <span id="themeLabel">Light</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Privacy-Tier Filter Bar -->
+    <nav class="filter-bar" aria-label="Privacy Tier Filter">
+      <div class="filter-group" id="filterPills">
+        <button class="filter-pill active-all" data-filter="all" type="button">All Properties</button>
+        <button class="filter-pill" data-filter="local" type="button">
+          <span class="dot" style="background:var(--c-local);"></span> SOVRAELEX Local Only
+        </button>
+        <button class="filter-pill" data-filter="trans" type="button">
+          <span class="dot" style="background:var(--c-trans);"></span> WASM Transformed
+        </button>
+        <button class="filter-pill" data-filter="sync" type="button">
+          <span class="dot" style="background:var(--c-sync);"></span> SYNCZINE Synced Output
+        </button>
+      </div>
+      <div class="legend-counts" id="filterSummary">Showing 21 / 21 fields across 6 branches</div>
+    </nav>
+
+    <!-- 6-Branch Hierarchical Schema Tree SVG -->
+    <section class="diagram-card" aria-label="Hierarchical IEEE 9274.1.1-2023 Schema Tree">
+      <div class="svg-wrap">
+        <svg class="tree-svg" viewBox="0 0 960 274" role="img" aria-label="IEEE xAPI 2.0 6-Branch Schema Map">
+          <!-- Edges Left -->
+          <path id="edge-actor" class="tree-edge" d="M 392 137 C 364 137, 366 50, 338 50" />
+          <path id="edge-verb" class="tree-edge" d="M 392 137 L 338 137" />
+          <path id="edge-object" class="tree-edge" d="M 392 137 C 364 137, 366 224, 338 224" />
+
+          <!-- Edges Right -->
+          <path id="edge-result" class="tree-edge" d="M 568 137 C 596 137, 594 50, 622 50" />
+          <path id="edge-context" class="tree-edge" d="M 568 137 L 622 137" />
+          <path id="edge-metadata" class="tree-edge" d="M 568 137 C 596 137, 594 224, 622 224" />
+
+          <!-- Center Root Node -->
+          <g aria-label="Root IEEE 9274.1.1-2023 Statement">
+            <rect class="root-box" x="392" y="64" width="176" height="146" />
+            <text x="480" y="88" text-anchor="middle" font-size="11.5" font-weight="800" font-family="var(--font-mono)" fill="var(--c-sync)">IEEE 9274.1.1-2023</text>
+            <text x="480" y="106" text-anchor="middle" font-size="13" font-weight="800" fill="var(--text-primary)">xAPI 2.0 Statement</text>
+            <rect x="424" y="116" width="112" height="20" rx="5" fill="var(--bg-surface)" stroke="var(--border)" />
+            <text x="480" y="129" text-anchor="middle" font-size="10.2" font-family="var(--font-mono)" font-weight="700" fill="var(--text-primary)">"version": "2.0.0"</text>
+            <text x="480" y="154" text-anchor="middle" font-size="9.6" fill="var(--text-muted)">Fail-Closed WASM Filter</text>
+            <text x="480" y="168" text-anchor="middle" font-size="9.6" fill="var(--text-muted)">ext/sync/* Allow-List Only</text>
+            <rect x="412" y="180" width="136" height="20" rx="10" fill="var(--c-sync-soft)" />
+            <text id="rootFilterBadge" x="480" y="193" text-anchor="middle" font-size="9.4" font-weight="700" font-family="var(--font-mono)" fill="var(--c-sync)">FILTER: ALL TIERS</text>
+          </g>
+
+          <!-- Left Branch 1: actor -->
+          <g id="br-actor" class="branch-group" data-branch="actor" tabindex="0" role="button" aria-label="Branch 1 actor">
+            <rect class="branch-box" x="16" y="12" width="322" height="76" />
+            <text class="b-title" x="28" y="32">1. actor (Pairwise DID IFI)</text>
+            <text class="b-sub" x="28" y="49">account.homePage · did:peer · strips actor.name</text>
+            <rect x="28" y="59" width="76" height="19" rx="4" fill="var(--c-local-soft)" />
+            <text class="b-pill-txt" x="66" y="72" fill="var(--c-local)">2 LOCAL</text>
+            <rect x="110" y="59" width="84" height="19" rx="4" fill="var(--c-sync-soft)" />
+            <text class="b-pill-txt" x="152" y="72" fill="var(--c-sync)">2 SYNCED</text>
+          </g>
+
+          <!-- Left Branch 2: verb -->
+          <g id="br-verb" class="branch-group" data-branch="verb" tabindex="0" role="button" aria-label="Branch 2 verb">
+            <rect class="branch-box" x="16" y="99" width="322" height="76" />
+            <text class="b-title" x="28" y="119">2. verb (CODE+V Profile IRIs)</text>
+            <text class="b-sub" x="28" y="136">curated · organized · distilled · expressed · verified · validated</text>
+            <rect x="28" y="146" width="110" height="19" rx="4" fill="var(--c-sync-soft)" />
+            <text class="b-pill-txt" x="83" y="159" fill="var(--c-sync)">2 SYNCED (100%)</text>
+          </g>
+
+          <!-- Left Branch 3: object -->
+          <g id="br-object" class="branch-group" data-branch="object" tabindex="0" role="button" aria-label="Branch 3 object">
+            <rect class="branch-box" x="16" y="186" width="322" height="76" />
+            <text class="b-title" x="28" y="206">3. object (SYNCTESS Hex Cell)</text>
+            <text class="b-sub" x="28" y="223">object.id · definition.type · optional title strip</text>
+            <rect x="28" y="233" width="76" height="19" rx="4" fill="var(--c-local-soft)" />
+            <text class="b-pill-txt" x="66" y="246" fill="var(--c-local)">1 LOCAL</text>
+            <rect x="110" y="233" width="84" height="19" rx="4" fill="var(--c-sync-soft)" />
+            <text class="b-pill-txt" x="152" y="246" fill="var(--c-sync)">2 SYNCED</text>
+          </g>
+
+          <!-- Right Branch 4: result -->
+          <g id="br-result" class="branch-group" data-branch="result" tabindex="0" role="button" aria-label="Branch 4 result">
+            <rect class="branch-box" x="622" y="12" width="322" height="76" />
+            <text class="b-title" x="634" y="32">4. result (Cognitive vs. Process)</text>
+            <text class="b-sub" x="634" y="49">score.scaled · quantized duration · ext/local/* vs ext/sync/*</text>
+            <rect x="634" y="59" width="74" height="19" rx="4" fill="var(--c-local-soft)" />
+            <text class="b-pill-txt" x="671" y="72" fill="var(--c-local)">2 LOCAL</text>
+            <rect x="714" y="59" width="82" height="19" rx="4" fill="var(--c-trans-soft)" />
+            <text class="b-pill-txt" x="755" y="72" fill="var(--c-trans)">1 WASM</text>
+            <rect x="802" y="59" width="84" height="19" rx="4" fill="var(--c-sync-soft)" />
+            <text class="b-pill-txt" x="844" y="72" fill="var(--c-sync)">3 SYNCED</text>
+          </g>
+
+          <!-- Right Branch 5: context -->
+          <g id="br-context" class="branch-group" data-branch="context" tabindex="0" role="button" aria-label="Branch 5 context">
+            <rect class="branch-box" x="622" y="99" width="322" height="76" />
+            <text class="b-title" x="634" y="119">5. context (Heptahex &amp; Agents)</text>
+            <text class="b-sub" x="634" y="136">parent/grouping/category · native xAPI 2.0 contextAgents</text>
+            <rect x="634" y="146" width="74" height="19" rx="4" fill="var(--c-local-soft)" />
+            <text class="b-pill-txt" x="671" y="159" fill="var(--c-local)">1 LOCAL</text>
+            <rect x="714" y="146" width="86" height="19" rx="4" fill="var(--c-sync-soft)" />
+            <text class="b-pill-txt" x="757" y="159" fill="var(--c-sync)">5 SYNCED</text>
+          </g>
+
+          <!-- Right Branch 6: metadata & proofs -->
+          <g id="br-metadata" class="branch-group" data-branch="metadata" tabindex="0" role="button" aria-label="Branch 6 metadata and proofs">
+            <rect class="branch-box" x="622" y="186" width="322" height="76" />
+            <text class="b-title" x="634" y="206">6. metadata &amp; proofs</text>
+            <text class="b-sub" x="634" y="223">fresh UUID separation · 15-min UTC bucket · CID refs</text>
+            <rect x="634" y="233" width="74" height="19" rx="4" fill="var(--c-local-soft)" />
+            <text class="b-pill-txt" x="671" y="246" fill="var(--c-local)">1 LOCAL</text>
+            <rect x="714" y="233" width="90" height="19" rx="4" fill="var(--c-trans-soft)" />
+            <text class="b-pill-txt" x="759" y="246" fill="var(--c-trans)">2 WASM</text>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Bottom Dual Grid -->
+    <div class="bottom-grid">
+      <!-- Left: Branch Field Diff & Full JSON Viewer -->
+      <section class="panel" aria-label="Schema Field Diff and JSON Inspector">
+        <div class="panel-header">
+          <div class="tabs">
+            <button id="tabDiff" class="tab-btn active" type="button">Branch Field Diff (<span id="branchTabLabel">4. result</span>)</button>
+            <button id="tabJson" class="tab-btn" type="button">Verbatim Tier 1 vs. Tier 2 JSON</button>
+          </div>
+          <span id="branchCountBadge" class="badge b-sync">6 fields</span>
+        </div>
+
+        <!-- Tab 1: Field-level diff -->
+        <div id="diffView" class="field-list"></div>
+
+        <!-- Tab 2: Verbatim Side-by-Side JSON -->
+        <div id="jsonView" class="json-grid" style="display:none;">
+          <div class="code-card">
+            <div class="code-head">
+              <span style="color:var(--c-local);">Tier 1 · SOVRAELEX Local (local_lrs.db)</span>
+              <button id="copyT1" class="copy-mini" type="button">Copy</button>
+            </div>
+            <pre id="jsonT1" class="code-body"></pre>
+          </div>
+          <div class="code-card">
+            <div class="code-head">
+              <span style="color:var(--c-sync);">Tier 2 · SYNCZINES CRDT Projection</span>
+              <button id="copyT2" class="copy-mini" type="button">Copy</button>
+            </div>
+            <pre id="jsonT2" class="code-body"></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: Interactive SYNCTESS Heptahex & WASM Allow-List Tester -->
+      <section class="panel" aria-label="SYNCTESS Heptahex and Fail-Closed WASM Tester">
+        <div class="panel-header">
+          <strong style="font-size:12px;">SYNCTESS Heptahex (CODE+V) &amp; WASM Gate</strong>
+          <span class="badge b-trans">Stage-Gate Emission</span>
+        </div>
+
+        <div class="hepta-wrap">
+          <svg class="hepta-svg" viewBox="22 14 216 192" role="img" aria-label="Interactive 7-Cell SYNCTESS Heptahex">
+            <g id="heptaGroup"></g>
+          </svg>
+          <div class="hex-detail">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+              <strong id="hexTitle" style="font-size:12px;">4. Express</strong>
+              <span id="hexTag" class="badge b-sync">CODE+V Stage</span>
+            </div>
+            <div id="hexVerb" class="hex-verb"></div>
+            <div class="hex-kv">
+              <strong style="color:var(--c-local);">Sealed On-Device (local_lrs.db)</strong>
+              <span id="hexLocal"></span>
+            </div>
+            <div class="hex-kv">
+              <strong style="color:var(--c-sync);">Stripped Sync Projection (CRDT)</strong>
+              <span id="hexSync"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fail-Closed Rust/WASM Allow-List Compiler Tester -->
+        <div class="gate-box">
+          <div class="gate-head">
+            <span>Fail-Closed Rust/WASM Allow-List Audit</span>
+            <span id="gateStatusBadge" class="badge b-danger">DROPPED</span>
+          </div>
+          <div class="gate-input-row">
+            <select id="gateSelect" class="gate-select" aria-label="Test an xAPI field against the Rust/WASM allow-list compiler">
+              <option value="local_hesitation">ext/local/hesitation-spikes-sec: [42, 118, 65]</option>
+              <option value="sync_zk">ext/sync/zk-effort-proof: "zkp:groth16:9f84..."</option>
+              <option value="mbox_leak">actor.mbox: "mailto:student@fpt.edu.vn"</option>
+              <option value="duration_exact">result.duration: "PT27M14.42S"</option>
+              <option value="ai_agent">contextAgents: "local-llm:qwen3-socratic-coach"</option>
+              <option value="sync_cid">ext/sync/artifact-cid: "bafybeigdyrzt5..."</option>
+              <option value="unknown_ext">ext/experimental/mouse-velocity: 1.42</option>
+            </select>
+          </div>
+          <div id="gateResult" class="gate-result"></div>
+        </div>
+
+        <div class="footer-hint">
+          <span>Click branches (<span class="kbd">1</span>–<span class="kbd">6</span>) or Heptahex cells · <span class="kbd">F</span> Cycle Filter · <span class="kbd">T</span> Theme</span>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const BRANCHES = {
+        actor: {
+          label: "1. actor",
+          fields: [
+            {
+              key: "actor.account.homePage",
+              disp: "sync",
+              t1: '"https://id.alchemosaic.org/did/peer"',
+              t2: '"https://id.alchemosaic.org/did/peer"',
+              rationale: "Non-resolvable namespace URI paired with course-scoped did:peer satisfies IEEE xAPI 2.0 single-IFI Agent requirement without using mbox email hashes."
+            },
+            {
+              key: "actor.account.name",
+              disp: "sync",
+              t1: '"did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y"',
+              t2: '"did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y"',
+              rationale: "Unlinkable course-scoped pairwise DID. Distinct per course so neither peers nor second instructors can correlate learners across semesters."
+            },
+            {
+              key: "actor.name",
+              disp: "local",
+              t1: '"CobaltFox-42"',
+              t2: "[STRIPPED BY WASM FILTER]",
+              rationale: "Avatar display string is kept in local_lrs.db for friendly UI rendering but omitted from Tier 2 synced statements to minimize metadata surface."
+            },
+            {
+              key: "Root Sovereign DID Mapping",
+              disp: "local",
+              t1: "HKDF(Root_Master_Seed + Course_Salt) in SOVRAEPASS",
+              t2: "[NEVER PRESENT IN ANY STATEMENT]",
+              rationale: "Root DID and legal name are never embedded—not even encrypted or hashed—inside any xAPI statement or SYNCZINE container."
+            }
+          ]
+        },
+        verb: {
+          label: "2. verb",
+          fields: [
+            {
+              key: "verb.id",
+              disp: "sync",
+              t1: '"https://profile.alchemosaic.org/xapi/codev/v1/verbs/expressed"',
+              t2: '"https://profile.alchemosaic.org/xapi/codev/v1/verbs/expressed"',
+              rationale: "Versioned CODE+V xAPI Profile IRI covering curated, organized, distilled, expressed, verified, validated (plus standard ADL completed for the 7th Hex Core Anchor)."
+            },
+            {
+              key: "verb.display",
+              disp: "sync",
+              t1: '{ "en": "expressed" }',
+              t2: '{ "en": "expressed" }',
+              rationale: "Standard IEEE 9274.1.1-2023 language map identifying the human-readable action label across bilingual or international deployments."
+            }
+          ]
+        },
+        object: {
+          label: "3. object",
+          fields: [
+            {
+              key: "object.id",
+              disp: "sync",
+              t1: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03/stage/express"',
+              t2: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03/stage/express"',
+              rationale: "Canonical IRI pointing directly to one of the six outer CODE+V faces of a specific SYNCTESS heptahex unit."
+            },
+            {
+              key: "object.definition.type",
+              disp: "sync",
+              t1: '"https://profile.alchemosaic.org/xapi/codev/v1/activity-types/codev-stage"',
+              t2: '"https://profile.alchemosaic.org/xapi/codev/v1/activity-types/codev-stage"',
+              rationale: "Typed activity classification enabling deterministic cohort bottleneck heatmaps across all SYNCZINE learning paths."
+            },
+            {
+              key: "object.definition.name",
+              disp: "local",
+              t1: '{ "en": "SYNCTESS 03 — Express: Argument Synthesis" }',
+              t2: "[OPTIONAL — STRIPPED ON SYNC]",
+              rationale: "Redundant human title already defined in the SYNCZINE manifest; dropped on sync to keep CRDT payloads compact."
+            }
+          ]
+        },
+        result: {
+          label: "4. result",
+          fields: [
+            {
+              key: "result.completion & result.success",
+              disp: "sync",
+              t1: "completion: true (success: true/false in Validate)",
+              t2: "completion: true",
+              rationale: "Minimal binary stage-gate progress markers emitted only when the learner explicitly clicks Commit Stage."
+            },
+            {
+              key: "result.score.scaled",
+              disp: "sync",
+              t1: "Bounded float [-1.0 .. 1.0] (Verify / Validate)",
+              t2: "Bounded float [-1.0 .. 1.0]",
+              rationale: "Strictly bounded per IEEE 9274.1.1-2023 to power rubric consensus and calibrated FLUX computation."
+            },
+            {
+              key: "result.duration",
+              disp: "trans",
+              t1: '"PT27M14.42S" (Exact ISO 8601 duration)',
+              t2: '"PT30M" (Quantized bin: PT5M / PT15M / PT30M / PT60M+)',
+              rationale: "Coarse duration quantization neutralizes typing-speed and work-cadence fingerprinting in small 30–40 student university seminars."
+            },
+            {
+              key: "result.response",
+              disp: "local",
+              t1: '"Draft v4 final essay text... [FULL PRIVATE TEXT & SELF-NOTES]"',
+              t2: "[DROPPED BY ALLOW-LIST]",
+              rationale: "Raw messy prose and personal reflection stay strictly on-device to preserve psychological safety and prevent stylometric identification."
+            },
+            {
+              key: "result.extensions[.../ext/local/*]",
+              disp: "local",
+              t1: "revision-count: 4 · hesitation-spikes-sec: [42,118,65] · confidence-delta: 0.35 · ai-coach-turns: 6 · pii-sanitizer-redactions: 1",
+              t2: "[ALL ext/local/* KEYS DROPPED]",
+              rationale: "High-resolution cognitive telemetry fuels private on-device AI coaching without ever crossing the network boundary."
+            },
+            {
+              key: "result.extensions[.../ext/sync/*]",
+              disp: "sync",
+              t1: 'revision-bucket: "3-5" · bottleneck-flag: false · artifact-cid: "bafybeig..." · zk-effort-proof: "zkp:groth16:..."',
+              t2: 'revision-bucket: "3-5" · bottleneck-flag: false · artifact-cid: "bafybeig..." · zk-effort-proof: "zkp:groth16:..."',
+              rationale: "Fail-closed allow-list permits ONLY explicitly namespaced ext/sync/* keys—delivering verifiable proof of effort and sanitized CIDs with zero PII."
+            }
+          ]
+        },
+        context: {
+          label: "5. context",
+          fields: [
+            {
+              key: "context.registration",
+              disp: "sync",
+              t1: '"5f9b2c18-114e-4d8a-8f0b-7c3d9e1a2b44"',
+              t2: '"5f9b2c18-114e-4d8a-8f0b-7c3d9e1a2b44"',
+              rationale: "Course-cohort registration UUID scoping all statements inside the active semester SYNCZINE."
+            },
+            {
+              key: "contextActivities.parent",
+              disp: "sync",
+              t1: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03"',
+              t2: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03"',
+              rationale: "Binds the CODE+V stage face to its enclosing 7-cell SYNCTESS competency core."
+            },
+            {
+              key: "contextActivities.grouping",
+              disp: "sync",
+              t1: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04"',
+              t2: '"https://synczine.alchemosaic.org/paths/z2v-ielts-04"',
+              rationale: "Links the SYNCTESS unit up to the parent composable SYNCZINE learning path."
+            },
+            {
+              key: "contextActivities.category",
+              disp: "sync",
+              t1: '"https://profile.alchemosaic.org/xapi/codev/v1"',
+              t2: '"https://profile.alchemosaic.org/xapi/codev/v1"',
+              rationale: "Declares conformance to the JSON-LD CODE+V xAPI Profile (aligned with IEEE P9274.2.1)."
+            },
+            {
+              key: "contextAgents [Local AI Coach]",
+              disp: "local",
+              t1: 'agent: "local-llm:qwen3-socratic-coach" · role: .../roles/local-ai-coach',
+              t2: "[STRIPPED ON SYNC]",
+              rationale: "Local on-device AI coaching sessions remain completely private so learners can ask elementary questions without stigma."
+            },
+            {
+              key: "contextAgents [Peer / Validator]",
+              disp: "sync",
+              t1: "Native xAPI 2.0 contextAgent (peer/validator did:peer + relevantTypes)",
+              t2: "Native xAPI 2.0 contextAgent (peer/validator did:peer + relevantTypes)",
+              rationale: "Uses IEEE 9274.1.1-2023 native contextAgents for double-blind Stage 5 Verify and Stage 6 Validate multi-actor attribution without custom extensions."
+            }
+          ]
+        },
+        metadata: {
+          label: "6. metadata & proofs",
+          fields: [
+            {
+              key: "id (Statement UUID)",
+              disp: "trans",
+              t1: '"019a2f40-8b12-7d3a-9c41-4e7b82a10f91" (Local UUIDv7)',
+              t2: '"019a2f40-9e77-7a10-b203-11c489f0e211" (Fresh unlinked UUID)',
+              rationale: "Generates a brand-new statement UUID on sync and keeps (local_stmt_id ↔ synced_stmt_id) sealed in local_lrs.db so observers cannot infer local edit frequency from UUIDv7 creation order."
+            },
+            {
+              key: "timestamp",
+              disp: "trans",
+              t1: '"2026-11-25T13:42:19.814Z" (Millisecond UTC)',
+              t2: '"2026-11-25T13:45:00Z" (15-min UTC boundary)',
+              rationale: "Temporal bucketing to 15-minute UTC intervals defeats submission-time correlation and schedule fingerprinting across small classes."
+            },
+            {
+              key: "attachments (Raw Documents)",
+              disp: "local",
+              t1: "Local draft PDFs, audio recordings, EXIF photos",
+              t2: "[STRIPPED → REPLACED BY SHA-256 CID]",
+              rationale: "Raw documents are never embedded in synced xAPI attachments; the local sanitizer strips EXIF/PDF metadata first and hashes the clean deliverable into ext/sync/artifact-cid."
+            }
+          ]
+        }
+      };
+
+      const TIER1_JSON = `{
+  "version": "2.0.0",
+  "id": "019a2f40-8b12-7d3a-9c41-4e7b82a10f91",
+  "actor": {
+    "objectType": "Agent",
+    "name": "CobaltFox-42",
+    "account": {
+      "homePage": "https://id.alchemosaic.org/did/peer",
+      "name": "did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y"
+    }
+  },
+  "verb": {
+    "id": "https://profile.alchemosaic.org/xapi/codev/v1/verbs/expressed",
+    "display": { "en": "expressed" }
+  },
+  "object": {
+    "objectType": "Activity",
+    "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03/stage/express",
+    "definition": {
+      "type": "https://profile.alchemosaic.org/xapi/codev/v1/activity-types/codev-stage",
+      "name": { "en": "SYNCTESS 03 — Express: Argument Synthesis" }
+    }
+  },
+  "result": {
+    "completion": true,
+    "duration": "PT27M14.42S",
+    "response": "Draft v4 final essay text... [FULL PRIVATE TEXT & SELF-NOTES]",
+    "extensions": {
+      "https://profile.alchemosaic.org/xapi/ext/local/revision-count": 4,
+      "https://profile.alchemosaic.org/xapi/ext/local/hesitation-spikes-sec": [42, 118, 65],
+      "https://profile.alchemosaic.org/xapi/ext/local/confidence-delta": 0.35,
+      "https://profile.alchemosaic.org/xapi/ext/local/ai-coach-turns": 6,
+      "https://profile.alchemosaic.org/xapi/ext/local/pii-sanitizer-redactions": 1,
+      "https://profile.alchemosaic.org/xapi/ext/sync/revision-bucket": "3-5",
+      "https://profile.alchemosaic.org/xapi/ext/sync/bottleneck-flag": false,
+      "https://profile.alchemosaic.org/xapi/ext/sync/artifact-cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "https://profile.alchemosaic.org/xapi/ext/sync/zk-effort-proof": "zkp:groth16:9f84c2b1e0a7..."
+    }
+  },
+  "context": {
+    "registration": "5f9b2c18-114e-4d8a-8f0b-7c3d9e1a2b44",
+    "contextActivities": {
+      "parent": [
+        { "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03" }
+      ],
+      "grouping": [
+        { "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04" }
+      ],
+      "category": [
+        { "id": "https://profile.alchemosaic.org/xapi/codev/v1" }
+      ]
+    },
+    "contextAgents": [
+      {
+        "objectType": "contextAgent",
+        "agent": {
+          "objectType": "Agent",
+          "account": {
+            "homePage": "https://local.sovraelex.app/agents",
+            "name": "local-llm:qwen3-socratic-coach"
+          }
+        },
+        "relevantTypes": [
+          "https://profile.alchemosaic.org/xapi/codev/v1/roles/local-ai-coach"
+        ]
+      }
+    ]
+  },
+  "timestamp": "2026-11-25T13:42:19.814Z"
+}`;
+
+      const TIER2_JSON = `{
+  "version": "2.0.0",
+  "id": "019a2f40-9e77-7a10-b203-11c489f0e211",
+  "actor": {
+    "objectType": "Agent",
+    "account": {
+      "homePage": "https://id.alchemosaic.org/did/peer",
+      "name": "did:peer:2.Ez6LSghwSE437wnDE1pt3X6hVDUQzSjsHzinpX3XFvMjRAm7y"
+    }
+  },
+  "verb": {
+    "id": "https://profile.alchemosaic.org/xapi/codev/v1/verbs/expressed",
+    "display": { "en": "expressed" }
+  },
+  "object": {
+    "objectType": "Activity",
+    "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03/stage/express",
+    "definition": {
+      "type": "https://profile.alchemosaic.org/xapi/codev/v1/activity-types/codev-stage"
+    }
+  },
+  "result": {
+    "completion": true,
+    "duration": "PT30M",
+    "extensions": {
+      "https://profile.alchemosaic.org/xapi/ext/sync/revision-bucket": "3-5",
+      "https://profile.alchemosaic.org/xapi/ext/sync/bottleneck-flag": false,
+      "https://profile.alchemosaic.org/xapi/ext/sync/artifact-cid": "bafybeigdyrzt5sfp7udm7hu76uh7y26nf3efuylqabf3oclgtqy55fbzdi",
+      "https://profile.alchemosaic.org/xapi/ext/sync/zk-effort-proof": "zkp:groth16:9f84c2b1e0a7..."
+    }
+  },
+  "context": {
+    "registration": "5f9b2c18-114e-4d8a-8f0b-7c3d9e1a2b44",
+    "contextActivities": {
+      "parent": [
+        { "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04/synctess/hex-03" }
+      ],
+      "grouping": [
+        { "id": "https://synczine.alchemosaic.org/paths/z2v-ielts-04" }
+      ],
+      "category": [
+        { "id": "https://profile.alchemosaic.org/xapi/codev/v1" }
+      ]
+    }
+  },
+  "timestamp": "2026-11-25T13:45:00Z"
+}`;
+
+      const HEPTAHEX = [
+        {
+          id: "curate", num: "1", name: "Curate", cx: 100, cy: 58, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/curated",
+          local: "Raw URLs, personal highlights, dead-end searches, reading dwell times, local bookmarks",
+          sync: "source_count_bucket, domain diversity index, quantized duration, completion: true"
+        },
+        {
+          id: "organize", num: "2", name: "Organize", cx: 160, cy: 58, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/organized",
+          local: "Full outline/mindmap JSON diffs, node drag history, discarded taxonomies, local AI structure prompts",
+          sync: "Structural complexity count (node/edge buckets), revision cycle count, quantized duration"
+        },
+        {
+          id: "distill", num: "3", name: "Distill", cx: 190, cy: 110, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/distilled",
+          local: "Messy synthesis drafts, hesitation pauses, self-rated confusion tags, local LLM Socratic transcript",
+          sync: "Compression ratio metric, bottleneck_flag (boolean), self-confidence tier (1–5), completion"
+        },
+        {
+          id: "express", num: "4", name: "Express", cx: 160, cy: 162, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/expressed",
+          local: "Full prose/audio/media draft history, keystroke cadence, local PII sanitizer warnings, raw attachments",
+          sync: "Sanitized artifact CID / SHA-256 hash, revision count bucket, zk_effort_proof_digest"
+        },
+        {
+          id: "verify", num: "5", name: "Verify", cx: 100, cy: 162, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/verified",
+          local: "Private self-check notes, rubric uncertainty annotations, raw critique drafts before submission",
+          sync: "Pairwise contextAgents (peer did:peer + role IRI), rubric score.scaled (-1 to 1), status"
+        },
+        {
+          id: "validate", num: "6", name: "Validate", cx: 70, cy: 110, core: false,
+          verb: "https://profile.alchemosaic.org/xapi/codev/v1/verbs/validated",
+          local: "Internal reflection journal, real-world evidence source files, local mentor notes",
+          sync: "Validator contextAgent (did:peer), success: true/false, issued SYNTHCRED / OB3 receipt hash"
+        },
+        {
+          id: "core", num: "7", name: "Core", cx: 130, cy: 110, core: true,
+          verb: "http://adlnet.gov/expapi/verbs/completed",
+          local: "Full local mastery trajectory graph, Root DID derivation link, longitudinal skill decay curve",
+          sync: "Aggregated SYNCTESS score.scaled, all-6-stages ZK completeness proof, anonymized milestone"
+        }
+      ];
+
+      const GATE_TESTS = {
+        local_hesitation: {
+          status: "DROPPED",
+          badgeClass: "b-danger",
+          msg: "REJECTED: Namespace prefix '.../ext/local/' is sealed inside local_lrs.db. Never serialized to CRDT."
+        },
+        sync_zk: {
+          status: "ALLOWED",
+          badgeClass: "b-sync",
+          msg: "PASSED: Explicitly allow-listed under '.../ext/sync/'. Verifies effort without revealing raw drafts."
+        },
+        mbox_leak: {
+          status: "BLOCKED (PII)",
+          badgeClass: "b-danger",
+          msg: "HARD FAIL: 'actor.mbox' is forbidden in SOVRAEG. Only course-scoped 'actor.account' (did:peer) is accepted."
+        },
+        duration_exact: {
+          status: "QUANTIZED",
+          badgeClass: "b-trans",
+          msg: "TRANSFORMED: 'PT27M14.42S' snapped to coarse bin 'PT30M' to neutralize timing fingerprinting."
+        },
+        ai_agent: {
+          status: "DROPPED",
+          badgeClass: "b-danger",
+          msg: "REJECTED: On-device contextAgent ('local.sovraelex.app') stripped prior to sync emission."
+        },
+        sync_cid: {
+          status: "ALLOWED",
+          badgeClass: "b-sync",
+          msg: "PASSED: Content-addressed SHA-256 CID references EXIF/PDF-sanitized artifact under '.../ext/sync/'."
+        },
+        unknown_ext: {
+          status: "FAIL-CLOSED DROP",
+          badgeClass: "b-danger",
+          msg: "REJECTED: Fail-closed compiler drops any unregistered or unknown extension key by default."
+        }
+      };
+
+      const BRANCH_KEYS = ["actor", "verb", "object", "result", "context", "metadata"];
+      const FILTER_ORDER = ["all", "local", "trans", "sync"];
+
+      let activeFilter = "all";
+      let selectedBranch = "result";
+      let activeLeftTab = "diff";
+      let selectedHex = "express";
+
+      // DOM Refs
+      const themeToggle = document.getElementById("themeToggle");
+      const themeIcon = document.getElementById("themeIcon");
+      const themeLabel = document.getElementById("themeLabel");
+      const filterPills = document.getElementById("filterPills");
+      const filterSummary = document.getElementById("filterSummary");
+      const rootFilterBadge = document.getElementById("rootFilterBadge");
+
+      const tabDiff = document.getElementById("tabDiff");
+      const tabJson = document.getElementById("tabJson");
+      const branchTabLabel = document.getElementById("branchTabLabel");
+      const branchCountBadge = document.getElementById("branchCountBadge");
+      const diffView = document.getElementById("diffView");
+      const jsonView = document.getElementById("jsonView");
+      const jsonT1 = document.getElementById("jsonT1");
+      const jsonT2 = document.getElementById("jsonT2");
+      const copyT1 = document.getElementById("copyT1");
+      const copyT2 = document.getElementById("copyT2");
+
+      const heptaGroup = document.getElementById("heptaGroup");
+      const hexTitle = document.getElementById("hexTitle");
+      const hexTag = document.getElementById("hexTag");
+      const hexVerb = document.getElementById("hexVerb");
+      const hexLocal = document.getElementById("hexLocal");
+      const hexSync = document.getElementById("hexSync");
+
+      const gateSelect = document.getElementById("gateSelect");
+      const gateStatusBadge = document.getElementById("gateStatusBadge");
+      const gateResult = document.getElementById("gateResult");
+
+      // Populate verbatim JSON
+      jsonT1.textContent = TIER1_JSON;
+      jsonT2.textContent = TIER2_JSON;
+
+      // Theme Sync
+      function applyTheme(theme) {
+        document.documentElement.setAttribute("data-theme", theme);
+        themeIcon.textContent = theme === "dark" ? "☀" : "☾";
+        themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
+        try { localStorage.setItem("sovraeg-theme", theme); } catch (_) {}
+      }
+
+      (function initTheme() {
+        let saved = null;
+        try { saved = localStorage.getItem("sovraeg-theme"); } catch (_) {}
+        if (saved === "light" || saved === "dark") {
+          applyTheme(saved);
+        } else {
+          const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+          applyTheme(prefersLight ? "light" : "dark");
+        }
+      })();
+
+      // Build Interactive SYNCTESS Heptahex SVG
+      function hexPoints(cx, cy, r) {
+        const pts = [];
+        for (let i = 0; i < 6; i++) {
+          const ang = (Math.PI / 180) * (60 * i - 90);
+          pts.push(`${(cx + r * Math.cos(ang)).toFixed(1)},${(cy + r * Math.sin(ang)).toFixed(1)}`);
+        }
+        return pts.join(" ");
+      }
+
+      HEPTAHEX.forEach((h) => {
+        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", `hex-cell ${h.core ? "core-hex" : ""}`);
+        g.setAttribute("data-hex", h.id);
+        g.setAttribute("tabindex", "0");
+        g.setAttribute("role", "button");
+        g.setAttribute("aria-label", `${h.num}. ${h.name}`);
+
+        const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        poly.setAttribute("class", "hex-poly");
+        poly.setAttribute("points", hexPoints(h.cx, h.cy, 30));
+        g.appendChild(poly);
+
+        const tNum = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        tNum.setAttribute("class", "hex-num");
+        tNum.setAttribute("x", h.cx);
+        tNum.setAttribute("y", h.cy - 4);
+        tNum.textContent = h.core ? "7TH HEX" : `STAGE ${h.num}`;
+        g.appendChild(tNum);
+
+        const tLbl = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        tLbl.setAttribute("class", "hex-lbl");
+        tLbl.setAttribute("x", h.cx);
+        tLbl.setAttribute("y", h.cy + 10);
+        tLbl.textContent = h.name;
+        g.appendChild(tLbl);
+
+        const activate = () => {
+          selectedHex = h.id;
+          renderHeptahex();
+        };
+        g.addEventListener("click", activate);
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); activate(); }
+        });
+
+        heptaGroup.appendChild(g);
+      });
+
+      function renderHeptahex() {
+        const h = HEPTAHEX.find((item) => item.id === selectedHex) || HEPTAHEX[3];
+        document.querySelectorAll(".hex-cell").forEach((el) => {
+          el.classList.toggle("active", el.getAttribute("data-hex") === h.id);
+        });
+        hexTitle.textContent = h.core ? "7th Hex · Core Anchor" : `${h.num}. ${h.name}`;
+        hexTag.textContent = h.core ? "Competency Core" : "CODE+V Stage";
+        hexTag.className = h.core ? "badge b-trans" : "badge b-sync";
+        hexVerb.textContent = h.verb;
+        hexLocal.textContent = h.local;
+        hexSync.textContent = h.sync;
+      }
+
+      function renderGateTest() {
+        const res = GATE_TESTS[gateSelect.value] || GATE_TESTS.local_hesitation;
+        gateStatusBadge.textContent = res.status;
+        gateStatusBadge.className = `badge ${res.badgeClass}`;
+        gateResult.textContent = res.msg;
+      }
+
+      function dispMeta(disp) {
+        if (disp === "local") return { text: "LOCAL ONLY", cls: "b-local", cardCls: "match-local" };
+        if (disp === "trans") return { text: "WASM TRANSFORM", cls: "b-trans", cardCls: "match-trans" };
+        return { text: "SYNCED ZERO-PII", cls: "b-sync", cardCls: "match-sync" };
+      }
+
+      function render() {
+        // Filter buttons
+        filterPills.querySelectorAll(".filter-pill").forEach((btn) => {
+          const f = btn.getAttribute("data-filter");
+          btn.classList.remove("active-all", "active-local", "active-trans", "active-sync");
+          if (f === activeFilter) btn.classList.add(`active-${f}`);
+        });
+
+        // Root badge
+        const filterNames = {
+          all: "FILTER: ALL TIERS",
+          local: "FILTER: LOCAL ONLY",
+          trans: "FILTER: WASM TRANS",
+          sync: "FILTER: SYNCED PII-0"
+        };
+        rootFilterBadge.textContent = filterNames[activeFilter];
+
+        // Count matching fields & update SVG branches/edges
+        let totalFields = 0;
+        let matchingFields = 0;
+        let activeBranches = 0;
+
+        BRANCH_KEYS.forEach((key) => {
+          const br = BRANCHES[key];
+          totalFields += br.fields.length;
+          const matches = br.fields.filter((f) => activeFilter === "all" || f.disp === activeFilter).length;
+          matchingFields += matches;
+          if (matches > 0) activeBranches++;
+
+          const g = document.getElementById(`br-${key}`);
+          const edge = document.getElementById(`edge-${key}`);
+          const isSelected = key === selectedBranch;
+
+          g.classList.remove("dimmed", "selected", "sel-local", "sel-trans");
+          if (matches === 0) g.classList.add("dimmed");
+          if (isSelected) {
+            g.classList.add("selected");
+            if (activeFilter === "local") g.classList.add("sel-local");
+            if (activeFilter === "trans") g.classList.add("sel-trans");
+          }
+
+          edge.classList.remove("active", "active-local", "active-trans", "active-sync");
+          if (isSelected || (activeFilter !== "all" && matches > 0)) {
+            edge.classList.add("active");
+            if (activeFilter === "local") edge.classList.add("active-local");
+            else if (activeFilter === "trans") edge.classList.add("active-trans");
+            else edge.classList.add("active-sync");
+          }
+        });
+
+        filterSummary.textContent = `Matching ${matchingFields} / ${totalFields} fields across ${activeBranches} branches`;
+
+        // Left Panel Tabs
+        tabDiff.classList.toggle("active", activeLeftTab === "diff");
+        tabJson.classList.toggle("active", activeLeftTab === "json");
+        diffView.style.display = activeLeftTab === "diff" ? "flex" : "none";
+        jsonView.style.display = activeLeftTab === "json" ? "grid" : "none";
+
+        // Render selected branch field diff
+        const br = BRANCHES[selectedBranch];
+        branchTabLabel.textContent = br.label;
+        const brMatches = br.fields.filter((f) => activeFilter === "all" || f.disp === activeFilter).length;
+        branchCountBadge.textContent = activeFilter === "all"
+          ? `${br.fields.length} fields`
+          : `${brMatches}/${br.fields.length} match filter`;
+        branchCountBadge.className = activeFilter === "local"
+          ? "badge b-local"
+          : (activeFilter === "trans" ? "badge b-trans" : "badge b-sync");
+
+        diffView.innerHTML = "";
+        br.fields.forEach((f) => {
+          const meta = dispMeta(f.disp);
+          const isMatch = activeFilter === "all" || f.disp === activeFilter;
+          const card = document.createElement("div");
+          card.className = `field-card ${meta.cardCls} ${isMatch ? "" : "dimmed"}`;
+
+          const dropped = f.disp === "local";
+          card.innerHTML = `
+            <div class="field-top">
+              <span class="field-key">${f.key}</span>
+              <span class="badge ${meta.cls}">${meta.text}</span>
+            </div>
+            <div class="diff-grid">
+              <div class="diff-cell">
+                <span class="lbl" style="color:var(--c-local);">Tier 1 · SOVRAELEX Local</span>
+                <span>${escapeHtml(f.t1)}</span>
+              </div>
+              <div class="diff-cell">
+                <span class="lbl" style="color:${dropped ? "var(--danger)" : (f.disp === "trans" ? "var(--c-trans)" : "var(--c-sync)")};">Tier 2 · SYNCZINES Output</span>
+                <span class="${dropped ? "diff-dropped" : ""}">${escapeHtml(f.t2)}</span>
+              </div>
+            </div>
+            <div class="rationale">${escapeHtml(f.rationale)}</div>
+          `;
+          diffView.appendChild(card);
+        });
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function copyText(text, btn) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = "Copied ✓";
+            setTimeout(() => { btn.textContent = orig; }, 1400);
+          });
+        }
+      }
+
+      // Listeners
+      filterPills.querySelectorAll(".filter-pill").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeFilter = btn.getAttribute("data-filter");
+          render();
+        });
+      });
+
+      document.querySelectorAll(".branch-group").forEach((g) => {
+        const select = () => {
+          selectedBranch = g.getAttribute("data-branch");
+          activeLeftTab = "diff";
+          render();
+        };
+        g.addEventListener("click", select);
+        g.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(); }
+        });
+      });
+
+      tabDiff.addEventListener("click", () => { activeLeftTab = "diff"; render(); });
+      tabJson.addEventListener("click", () => { activeLeftTab = "json"; render(); });
+      copyT1.addEventListener("click", () => copyText(TIER1_JSON, copyT1));
+      copyT2.addEventListener("click", () => copyText(TIER2_JSON, copyT2));
+      gateSelect.addEventListener("change", renderGateTest);
+
+      themeToggle.addEventListener("click", () => {
+        const curr = document.documentElement.getAttribute("data-theme");
+        applyTheme(curr === "dark" ? "light" : "dark");
+      });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "SELECT" || e.target.tagName === "TEXTAREA")) return;
+        const idx = parseInt(e.key, 10);
+        if (idx >= 1 && idx <= 6) {
+          selectedBranch = BRANCH_KEYS[idx - 1];
+          activeLeftTab = "diff";
+          render();
+        } else if (e.key.toLowerCase() === "f") {
+          const nextIdx = (FILTER_ORDER.indexOf(activeFilter) + 1) % FILTER_ORDER.length;
+          activeFilter = FILTER_ORDER[nextIdx];
+          render();
+        } else if (e.key.toLowerCase() === "t") {
+          const curr = document.documentElement.getAttribute("data-theme");
+          applyTheme(curr === "dark" ? "light" : "dark");
+        }
+      });
+
+      renderHeptahex();
+      renderGateTest();
+      render();
+    })();
+  </script>
+</body>
+</html>
