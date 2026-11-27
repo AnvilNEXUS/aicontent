@@ -1,0 +1,2181 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Radiating Assay Heptahex — SYNCTESS → CODE+V → SYNTHCRED</title>
+  <style>
+    /* ==========================================================================
+       DESIGN TOKENS & THEMES (Blueprint Dark & Antique Parchment Light)
+       ========================================================================== */
+    :root {
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --transition-fast: 180ms cubic-bezier(0.22, 1, 0.36, 1);
+      --transition-med: 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    html[data-theme="dark"] {
+      --bg-app: #060b14;
+      --bg-surface: #0b1322;
+      --bg-surface-2: #101b30;
+      --bg-canvas: #070d18;
+      --grid-line: rgba(34, 211, 238, 0.065);
+      --grid-line-major: rgba(34, 211, 238, 0.13);
+      --border-subtle: rgba(148, 163, 184, 0.16);
+      --border-strong: rgba(34, 211, 238, 0.32);
+
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+
+      --cyan: #22d3ee;
+      --cyan-soft: rgba(34, 211, 238, 0.14);
+      --cyan-dim: #1e3a52;
+      --gold: #f59e0b;
+      --gold-bright: #fbbf24;
+      --gold-soft: rgba(245, 158, 11, 0.16);
+      --perimeter: #f97316;
+      --perimeter-bright: #fb923c;
+      --gap: #f43f5e;
+      --gap-soft: rgba(244, 63, 94, 0.16);
+      --sealed: #10b981;
+
+      --hex-fill-idle: #0c1829;
+      --hex-fill-active: #0c2538;
+      --hex-fill-gap: #261019;
+      --hex-fill-center: #1e1608;
+      --hex-fill-center-sealed: #291d07;
+
+      --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    html[data-theme="light"] {
+      --bg-app: #efe9da;
+      --bg-surface: #f7f3e8;
+      --bg-surface-2: #ebe4d3;
+      --bg-canvas: #f4efe2;
+      --grid-line: rgba(15, 118, 110, 0.08);
+      --grid-line-major: rgba(15, 118, 110, 0.16);
+      --border-subtle: rgba(28, 25, 23, 0.14);
+      --border-strong: rgba(15, 118, 110, 0.35);
+
+      --text-primary: #1c1917;
+      --text-secondary: #44403c;
+      --text-muted: #78716c;
+
+      --cyan: #0f766e;
+      --cyan-soft: rgba(15, 118, 110, 0.12);
+      --cyan-dim: #a8a29e;
+      --gold: #b45309;
+      --gold-bright: #d97706;
+      --gold-soft: rgba(180, 83, 9, 0.14);
+      --perimeter: #c2410c;
+      --perimeter-bright: #ea580c;
+      --gap: #be123c;
+      --gap-soft: rgba(190, 18, 60, 0.12);
+      --sealed: #047857;
+
+      --hex-fill-idle: #f9f6ee;
+      --hex-fill-active: #e6f4f1;
+      --hex-fill-gap: #fce8ec;
+      --hex-fill-center: #fef3c7;
+      --hex-fill-center-sealed: #fde68a;
+
+      --shadow-card: 0 8px 24px rgba(28, 25, 23, 0.08);
+    }
+
+    /* ==========================================================================
+       RESET & BASE LAYOUT
+       ========================================================================== */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background-color: var(--bg-app);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, select {
+      font-family: inherit;
+      color: inherit;
+    }
+
+    /* ==========================================================================
+       HEADER BAR
+       ========================================================================== */
+    .app-header {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .brand-subtitle {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      margin: 2px 0 0 0;
+    }
+
+    .header-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .segmented-group {
+      display: inline-flex;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+
+    .seg-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .seg-btn:hover { color: var(--text-primary); }
+
+    .seg-btn.active {
+      background: var(--bg-surface);
+      color: var(--cyan);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .theme-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-surface-2);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .theme-btn:hover {
+      border-color: var(--cyan);
+    }
+
+    /* ==========================================================================
+       MAIN TWO-COLUMN WORKSPACE
+       ========================================================================== */
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(340px, 1fr);
+      gap: 16px;
+      padding: 16px 20px 24px;
+      flex: 1;
+      max-width: 1640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1080px) {
+      .workspace {
+        grid-template-columns: 1fr;
+        padding: 12px;
+      }
+    }
+
+    /* ==========================================================================
+       LEFT COLUMN: SVG STAGE & ACTION TOOLBAR
+       ========================================================================== */
+    .stage-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .toolbar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 10px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .toolbar-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      color: var(--text-primary);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .btn:hover {
+      border-color: var(--cyan);
+      transform: translateY(-1px);
+    }
+
+    .btn:active { transform: translateY(0); }
+
+    .btn-primary {
+      background: var(--cyan-soft);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .btn-gold {
+      background: var(--gold-soft);
+      border-color: var(--gold);
+      color: var(--gold-bright);
+    }
+
+    .btn-gap {
+      background: var(--gap-soft);
+      border-color: var(--gap);
+      color: var(--gap);
+    }
+
+    .canvas-card {
+      position: relative;
+      background-color: var(--bg-canvas);
+      background-image:
+        linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px),
+        linear-gradient(to right, var(--grid-line-major) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line-major) 1px, transparent 1px);
+      background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 540px;
+    }
+
+    #heptahex-svg {
+      width: 100%;
+      max-width: 740px;
+      height: auto;
+      display: block;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Seal Celebration Banner */
+    .seal-banner {
+      position: absolute;
+      bottom: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(16px);
+      opacity: 0;
+      pointer-events: none;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.96), rgba(234, 88, 12, 0.96));
+      color: #fff;
+      padding: 9px 18px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 8px 28px rgba(249, 115, 22, 0.45);
+      transition: all 400ms cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+      max-width: calc(100% - 24px);
+    }
+
+    .seal-banner.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .canvas-hint {
+      position: absolute;
+      top: 12px;
+      left: 14px;
+      font-size: 0.72rem;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      padding: 4px 9px;
+      border-radius: 999px;
+      opacity: 0.9;
+    }
+
+    /* ==========================================================================
+       SVG ELEMENT INTERACTIONS & ANIMATIONS
+       ========================================================================== */
+    .chamber-group {
+      cursor: pointer;
+      transition: transform 200ms ease;
+    }
+
+    .chamber-group:hover .chamber-outer {
+      filter: brightness(1.18);
+    }
+
+    .perimeter-seg {
+      cursor: pointer;
+      transition: stroke 260ms ease, stroke-width 260ms ease, opacity 260ms ease;
+    }
+
+    .perimeter-seg:hover {
+      stroke-width: 7;
+    }
+
+    @keyframes dashFlowOut {
+      from { stroke-dashoffset: 36; }
+      to   { stroke-dashoffset: 0; }
+    }
+
+    @keyframes dashFlowIn {
+      from { stroke-dashoffset: 0; }
+      to   { stroke-dashoffset: 36; }
+    }
+
+    @keyframes pulseRing {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes gapBlink {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    @keyframes shockwave {
+      0% { r: 80; opacity: 0.9; stroke-width: 8; }
+      100% { r: 375; opacity: 0; stroke-width: 1; }
+    }
+
+    .flow-out {
+      stroke-dasharray: 8 10;
+      animation: dashFlowOut 0.9s linear infinite;
+    }
+
+    .flow-in {
+      stroke-dasharray: 8 10;
+      animation: dashFlowIn 0.9s linear infinite;
+    }
+
+    .flow-gap-rev {
+      stroke-dasharray: 6 8;
+      animation: dashFlowIn 0.55s linear infinite;
+    }
+
+    .anim-pulse {
+      animation: pulseRing 1.5s ease-in-out infinite;
+    }
+
+    .anim-gap {
+      animation: gapBlink 0.85s ease-in-out infinite;
+    }
+
+    .shockwave-ring {
+      fill: none;
+      stroke: var(--perimeter-bright);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .shockwave-ring.fire {
+      animation: shockwave 1.15s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ==========================================================================
+       RIGHT COLUMN: INSPECTOR & TELEMETRY PANEL
+       ========================================================================== */
+    .inspector-column {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .panel-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-card);
+    }
+
+    .panel-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Polymorphic Lens Pills */
+    .lens-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .lens-pill {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 8px 6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      text-align: center;
+      transition: all var(--transition-fast);
+      line-height: 1.25;
+    }
+
+    .lens-pill:hover { color: var(--text-primary); border-color: var(--cyan); }
+
+    .lens-pill.active {
+      background: var(--cyan-soft);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* Progress Meter */
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .status-pill {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+
+    .status-unsealed { background: var(--bg-surface-2); color: var(--text-secondary); border: 1px solid var(--border-subtle); }
+    .status-progress { background: var(--cyan-soft); color: var(--cyan); border: 1px solid var(--cyan); }
+    .status-gap      { background: var(--gap-soft); color: var(--gap); border: 1px solid var(--gap); }
+    .status-sealed   { background: linear-gradient(135deg, var(--gold), var(--perimeter)); color: #fff; border: 1px solid var(--gold-bright); }
+
+    .mini-hex-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    .mini-hex-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 7px 4px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .mini-hex-btn:hover { border-color: var(--cyan); }
+    .mini-hex-btn.selected { box-shadow: 0 0 0 2px var(--cyan); }
+
+    .mini-hex-letter {
+      font-size: 0.85rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+
+    .mini-hex-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--text-muted);
+    }
+
+    .mini-hex-btn[data-state="IN_ASSAY"] .mini-hex-dot { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+    .mini-hex-btn[data-state="ASSAY_GAP"] .mini-hex-dot { background: var(--gap); box-shadow: 0 0 6px var(--gap); }
+    .mini-hex-btn[data-state="PASSED"] { border-color: var(--perimeter); background: var(--gold-soft); }
+    .mini-hex-btn[data-state="PASSED"] .mini-hex-dot { background: var(--perimeter); box-shadow: 0 0 6px var(--perimeter); }
+
+    /* Active Chamber Inspector */
+    .chamber-title-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .chamber-title {
+      font-size: 0.98rem;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-primary);
+    }
+
+    .chamber-role {
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: var(--cyan);
+    }
+
+    .state-btn-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .state-btn {
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-surface-2);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 7px 4px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .state-btn:hover { color: var(--text-primary); }
+    .state-btn.active[data-target="UNASSAYED"] { background: var(--bg-surface); border-color: var(--text-secondary); color: var(--text-primary); }
+    .state-btn.active[data-target="IN_ASSAY"]  { background: var(--cyan-soft); border-color: var(--cyan); color: var(--cyan); }
+    .state-btn.active[data-target="ASSAY_GAP"] { background: var(--gap-soft); border-color: var(--gap); color: var(--gap); }
+    .state-btn.active[data-target="PASSED"]    { background: var(--gold-soft); border-color: var(--perimeter); color: var(--perimeter-bright); }
+
+    .evidence-box {
+      background: var(--bg-surface-2);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: 9px 11px;
+      font-size: 0.8rem;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .rubric-list {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 12px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .rubric-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      background: var(--bg-surface-2);
+      padding: 7px 9px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border-color var(--transition-fast);
+    }
+
+    .rubric-item:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+    .rubric-item input[type="checkbox"] {
+      margin-top: 2px;
+      accent-color: var(--cyan);
+      cursor: pointer;
+    }
+
+    .attestation-box {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface-2);
+      border: 1px dashed var(--border-subtle);
+      color: var(--text-muted);
+      word-break: break-all;
+    }
+
+    .attestation-box.passed {
+      border-style: solid;
+      border-color: var(--perimeter);
+      color: var(--gold-bright);
+      background: var(--gold-soft);
+    }
+
+    .attestation-box.gap {
+      border-style: solid;
+      border-color: var(--gap);
+      color: var(--gap);
+      background: var(--gap-soft);
+    }
+
+    /* Event Log Terminal */
+    .event-log {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      height: 126px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .log-entry { color: var(--text-secondary); }
+    .log-time { color: var(--text-muted); margin-right: 6px; }
+    .log-tag-pass { color: var(--perimeter-bright); font-weight: 700; }
+    .log-tag-info { color: var(--cyan); font-weight: 700; }
+    .log-tag-gap  { color: var(--gap); font-weight: 700; }
+    .log-tag-seal { color: var(--gold-bright); font-weight: 800; }
+
+    /* ==========================================================================
+       MODAL: VC JSON-LD INSPECTOR
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 15, 0.72);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal-dialog {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-lg);
+      max-width: 720px;
+      width: 100%;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      margin: 0;
+      font-family: var(--font-mono);
+    }
+
+    .modal-body {
+      padding: 14px 18px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .json-pre {
+      margin: 0;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      line-height: 1.5;
+      background: var(--bg-canvas);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      color: var(--cyan);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .modal-footer {
+      padding: 12px 18px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .copy-feedback {
+      font-size: 0.76rem;
+      font-family: var(--font-mono);
+      color: var(--sealed);
+      opacity: 0;
+      transition: opacity 200ms ease;
+    }
+
+    .copy-feedback.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <!-- ========================================================================
+       TOP HEADER BAR
+       ======================================================================== -->
+  <header class="app-header">
+    <div class="brand">
+      <svg class="brand-icon" viewBox="0 0 40 40" aria-hidden="true">
+        <polygon points="36,20 28,33.86 12,33.86 4,20 12,6.14 28,6.14" fill="none" stroke="var(--perimeter)" stroke-width="2.4" />
+        <polygon points="29,20 24.5,27.8 15.5,27.8 11,20 15.5,12.2 24.5,12.2" fill="var(--gold-soft)" stroke="var(--gold)" stroke-width="2" />
+      </svg>
+      <div>
+        <h1 class="brand-title">Radiating Assay Heptahex</h1>
+        <p class="brand-subtitle">SYNCTESS → CODE+V → SYNTHCRED State Machine</p>
+      </div>
+    </div>
+
+    <div class="header-controls">
+      <div class="segmented-group" role="group" aria-label="Flow direction mode">
+        <button class="seg-btn active" id="btn-flow-learner" data-flow="learner">Learner (Inside-Out)</button>
+        <button class="seg-btn" id="btn-flow-verifier" data-flow="verifier">Verifier (Outside-In)</button>
+      </div>
+
+      <div class="segmented-group" role="group" aria-label="Click behavior mode">
+        <button class="seg-btn active" id="btn-click-quick" data-click="quick">Quick Toggle</button>
+        <button class="seg-btn" id="btn-click-cycle" data-click="cycle">4-State Cycle</button>
+      </div>
+
+      <button class="theme-btn" id="btn-theme-toggle" title="Toggle Dark/Light Theme">
+        <span id="theme-icon">☀</span>
+        <span id="theme-label">Parchment</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       MAIN TWO-COLUMN DASHBOARD
+       ======================================================================== -->
+  <main class="workspace">
+    <!-- LEFT COLUMN: SVG STAGE -->
+    <section class="stage-column">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <button class="btn btn-primary" id="btn-simulate">▶ Simulate Full Assay</button>
+          <button class="btn btn-gap" id="btn-test-gap">⚠ Test Revision Gap</button>
+          <button class="btn btn-gold" id="btn-seal-all">✦ Seal All (6/6)</button>
+          <button class="btn" id="btn-reset-all">↺ Reset (0/6)</button>
+        </div>
+        <div class="toolbar-group">
+          <button class="btn" id="btn-inspect-vc">{ } Inspect VC JSON-LD</button>
+        </div>
+      </div>
+
+      <div class="canvas-card">
+        <div class="canvas-hint" id="canvas-hint">Click any CODE+V chamber or perimeter arc</div>
+
+        <svg id="heptahex-svg" viewBox="0 0 800 800" role="img" aria-label="Interactive Radiating Assay Heptahex State Machine">
+          <defs>
+            <!-- Luminous Glow Filters -->
+            <filter id="glow-cyan" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="4.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="glow-gold" x="-35%" y="-35%" width="170%" height="170%">
+              <feGaussianBlur stdDeviation="6" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="glow-perimeter" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="5.5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+            <filter id="glow-gap" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+
+            <!-- Gradients -->
+            <radialGradient id="center-grad" cx="50%" cy="50%" r="60%">
+              <stop offset="0%" stop-color="var(--gold)" stop-opacity="0.32" />
+              <stop offset="100%" stop-color="var(--hex-fill-center)" stop-opacity="0.96" />
+            </radialGradient>
+            <radialGradient id="center-grad-sealed" cx="50%" cy="50%" r="65%">
+              <stop offset="0%" stop-color="var(--gold-bright)" stop-opacity="0.52" />
+              <stop offset="100%" stop-color="var(--hex-fill-center-sealed)" stop-opacity="0.98" />
+            </radialGradient>
+          </defs>
+
+          <!-- Background Subtle Guide Rings -->
+          <g id="layer-guides" opacity="0.25"></g>
+
+          <!-- Harmonic Shockwave Ring (fires on 6/6 Seal) -->
+          <circle id="seal-shockwave" class="shockwave-ring" cx="400" cy="400" r="80" />
+
+          <!-- Outer Callout Labels & Leader Lines -->
+          <g id="layer-callouts"></g>
+
+          <!-- Segmented SYNTHCRED Perimeter (6 arcs + 6 junction lock nodes) -->
+          <g id="layer-perimeter"></g>
+          <g id="layer-junctions"></g>
+
+          <!-- 6 Radiating Projection Bridges -->
+          <g id="layer-bridges"></g>
+
+          <!-- 6 CODE+V Satellite Chambers -->
+          <g id="layer-chambers"></g>
+
+          <!-- Central SYNCTESS Nucleus -->
+          <g id="layer-center"></g>
+        </svg>
+
+        <!-- Minted Celebration Banner -->
+        <div class="seal-banner" id="seal-banner">
+          <span>✦ SYNTHCRED CRYPTOGRAPHICALLY SEALED</span>
+          <span style="opacity:0.85; font-family:var(--font-mono);" id="seal-merkle-short">merkle:0x...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: INSPECTOR & TELEMETRY -->
+    <aside class="inspector-column">
+      <!-- Polymorphic Lens Selector -->
+      <div class="panel-card">
+        <div class="panel-label">
+          <span>Polymorphic SYNTHCRED Lens</span>
+          <span style="font-family:var(--font-mono); color:var(--gold);">1 SYNCTESS • 3 Overlays</span>
+        </div>
+        <div class="lens-pills" id="lens-pills"></div>
+      </div>
+
+      <!-- Perimeter Seal Progress Meter -->
+      <div class="panel-card">
+        <div class="progress-header">
+          <span class="panel-label" style="margin:0;">Perimeter Seal Progress</span>
+          <span class="status-pill status-unsealed" id="overall-status-pill">UNSEALED • 0/6</span>
+        </div>
+        <div class="mini-hex-row" id="mini-hex-row"></div>
+      </div>
+
+      <!-- Active Chamber Assay Inspector -->
+      <div class="panel-card" id="chamber-inspector">
+        <div class="panel-label">
+          <span>Active Chamber Assay Inspector</span>
+          <span id="inspector-index" style="font-family:var(--font-mono);">01 / 06</span>
+        </div>
+
+        <div class="chamber-title-row">
+          <h2 class="chamber-title" id="insp-title">Assay CURATE</h2>
+          <span class="chamber-role" id="insp-role">Input Integrity</span>
+        </div>
+
+        <div class="state-btn-grid" id="state-btn-grid">
+          <button class="state-btn" data-target="UNASSAYED">Unassayed</button>
+          <button class="state-btn" data-target="IN_ASSAY">In-Assay</button>
+          <button class="state-btn" data-target="ASSAY_GAP">Assay Gap</button>
+          <button class="state-btn" data-target="PASSED">Passed</button>
+        </div>
+
+        <div class="panel-label">Radiated SYNCTESS Evidence Slice</div>
+        <div class="evidence-box" id="insp-evidence"></div>
+
+        <div class="panel-label">
+          <span>Assay Touchstone / Rubric Criteria</span>
+          <span style="font-size:0.65rem; font-weight:500; text-transform:none;">Tick all to auto-pass</span>
+        </div>
+        <ul class="rubric-list" id="insp-rubric"></ul>
+
+        <div class="panel-label">Attestation / Verification Record</div>
+        <div class="attestation-box" id="insp-attestation"></div>
+      </div>
+
+      <!-- Compact Event Log Terminal -->
+      <div class="panel-card">
+        <div class="panel-label">
+          <span>State-Machine Event Log</span>
+          <button class="btn" id="btn-clear-log" style="padding:2px 8px; font-size:0.68rem;">Clear</button>
+        </div>
+        <div class="event-log" id="event-log" aria-live="polite"></div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ========================================================================
+       MODAL: W3C VERIFIABLE CREDENTIAL JSON-LD
+       ======================================================================== -->
+  <div class="modal-backdrop" id="vc-modal" role="dialog" aria-modal="true" aria-labelledby="vc-modal-title">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title" id="vc-modal-title">SYNTHCRED • W3C Verifiable Credential (JSON-LD)</h3>
+        <button class="btn" id="btn-close-modal" style="padding:4px 10px;">✕</button>
+      </div>
+      <div class="modal-body">
+        <pre class="json-pre" id="vc-json-output"></pre>
+      </div>
+      <div class="modal-footer">
+        <span class="copy-feedback" id="copy-feedback">✓ Copied JSON-LD to clipboard</span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-primary" id="btn-copy-json">Copy JSON-LD</button>
+          <button class="btn" id="btn-close-modal-2">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       APPLICATION LOGIC & PRECISION SVG ENGINE
+       ======================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ----------------------------------------------------------------------
+         1. DOMAIN DATA: 6 CODE+V CHAMBERS & 3 POLYMORPHIC LENSES
+         ---------------------------------------------------------------------- */
+      const SYNCTESS_CORE_HASH = 'sha256:8f4e2a91c7b03d6e5a12f94c8b7e3104d2a6c9e5f01b74a8c3d2e1f904b6a7c2';
+
+      const CHAMBERS = [
+        { id: 'curate',   num: '01', short: 'C', label: 'CURATE',   role: 'Input Integrity',    angleDeg: -90 },
+        { id: 'organize', num: '02', short: 'O', label: 'ORGANIZE', role: 'Structural Logic',   angleDeg: -30 },
+        { id: 'distill',  num: '03', short: 'D', label: 'DISTILL',  role: 'Conceptual Mastery', angleDeg:  30 },
+        { id: 'express',  num: '04', short: 'E', label: 'EXPRESS',  role: 'Artifactual Output', angleDeg:  90 },
+        { id: 'verify',   num: '05', short: 'V', label: 'VERIFY',   role: 'Forensic Proof',     angleDeg: 150 },
+        { id: 'validate', num: '06', short: 'V', label: 'VALIDATE', role: 'Sovereign Mastery',  angleDeg: -150 }
+      ];
+
+      const LENSES = [
+        {
+          id: 'systems-architect',
+          name: 'Sovereign Systems Architect',
+          shortName: '1. Systems Architect',
+          credentialId: 'urn:synthcred:vc:sovereign-systems-architect:v1',
+          chambers: {
+            curate: {
+              evidence: 'Primary RFC specifications, architecture decision logs (ADRs), and benchmark datasets curated from 14 verified sources.',
+              rubrics: [
+                'Provenance of all primary technical sources is cryptographically linked',
+                'Selection rationale explicitly justifies trade-offs and exclusions',
+                'Zero unverified secondary citations in the core reference bundle'
+              ],
+              gapHint: 'Missing provenance links for 2 benchmark datasets in the SYNCTESS source manifest.'
+            },
+            organize: {
+              evidence: 'Modular system topology graph, bounded-context schema, and dependency matrix mapping all component interfaces.',
+              rubrics: [
+                'System boundaries and data-flow contracts are unambiguously defined',
+                'Taxonomy supports deterministic retrieval of every artifact slice',
+                'No circular dependencies across core architectural layers'
+              ],
+              gapHint: 'Interface schema lacks explicit error-boundary contract between ingestion and assay modules.'
+            },
+            distill: {
+              evidence: 'One-page architectural invariants brief and 5 core operational heuristics extracted from full system specs.',
+              rubrics: [
+                'Core invariants are falsifiable and free of jargon bloat',
+                'High signal-to-noise ratio preserves edge-case failure modes',
+                'Mental model aligns 1:1 with the implemented system topology'
+              ],
+              gapHint: 'Distilled invariants omit latency degradation thresholds under peak load.'
+            },
+            express: {
+              evidence: 'Working open-source reference implementation, interactive state-machine prototype, and live deployment walkthrough.',
+              rubrics: [
+                'Deliverable runs deterministically with zero external black-box dependencies',
+                'Craftsmanship and ergonomics meet production practitioner standards',
+                'Public artifact is self-contained and reproducible by third parties'
+              ],
+              gapHint: 'Reference build fails reproducibility check on clean environment bootstrap.'
+            },
+            verify: {
+              evidence: 'Immutable Git commit trail, automated test suite (98% coverage), and SHA-256 content-addressable build hashes.',
+              rubrics: [
+                'Forensic revision diffs confirm authentic iterative authorship',
+                'All deterministic unit, schema, and integrity checks pass 100%',
+                'Content hashes match the central SYNCTESS bundle byte-for-byte'
+              ],
+              gapHint: 'Hash mismatch detected between revision v1.3 manifest and submitted artifact bundle.'
+            },
+            validate: {
+              evidence: 'Signed peer-jury defense transcript from 3 senior architects plus 30-day live field telemetry.',
+              rubrics: [
+                'Artifact withstands adversarial peer review without structural collapse',
+                'Demonstrates measurable real-world utility in live deployment',
+                'Practitioner defense confirms sovereign mastery of underlying principles'
+              ],
+              gapHint: 'Awaiting final practitioner sign-off on adversarial threat-model defense.'
+            }
+          }
+        },
+        {
+          id: 'instructional-craft',
+          name: 'Instructional Design Craft',
+          shortName: '2. Instructional Craft',
+          credentialId: 'urn:synthcred:vc:instructional-design-craft:v1',
+          chambers: {
+            curate: {
+              evidence: 'Learner needs-analysis transcripts, cognitive-load studies, and domain exemplar library.',
+              rubrics: [
+                'Sources reflect diverse learner contexts and accessibility standards',
+                'Domain exemplars are vetted for factual and pedagogical accuracy',
+                'Curation log documents why outdated frameworks were retired'
+              ],
+              gapHint: 'Accessibility audit references are incomplete for screen-reader workflows.'
+            },
+            organize: {
+              evidence: 'Spiral curriculum map, prerequisite competency graph, and scaffolded module sequence.',
+              rubrics: [
+                'Learning progression moves cleanly from concrete to abstract',
+                'Each module maps explicitly to observable mastery touchstones',
+                'Cognitive load is balanced across every instructional unit'
+              ],
+              gapHint: 'Module 3 introduces two un-scaffolded concepts prior to prerequisite check.'
+            },
+            distill: {
+              evidence: 'Visual concept anchor diagrams, learner quick-reference cards, and 3-minute synthesis scripts.',
+              rubrics: [
+                'Core takeaways are memorable and immediately actionable',
+                'Visual metaphors accurately represent underlying domain mechanics',
+                'Eliminates extraneous prose without losing conceptual rigor'
+              ],
+              gapHint: 'Quick-reference card conflates formative feedback with summative assay.'
+            },
+            express: {
+              evidence: 'Complete interactive bilingual learning module with hands-on labs and formative rubrics.',
+              rubrics: [
+                'Interactive exercises elicit authentic demonstration rather than rote recall',
+                'Tone, clarity, and visual hierarchy engage the target audience',
+                'Deliverable is ready for immediate classroom or self-paced use'
+              ],
+              gapHint: 'Lab 2 lacks a concrete worked example for self-paced learners.'
+            },
+            verify: {
+              evidence: 'Rubric alignment matrix, WCAG AA compliance report, and versioned authoring logs.',
+              rubrics: [
+                '100% of assessment items trace directly to stated learning outcomes',
+                'Automated accessibility and link-integrity checks pass cleanly',
+                'Authoring timestamps verify original curriculum creation'
+              ],
+              gapHint: 'Two rubric items in Unit 4 do not map back to any learning objective.'
+            },
+            validate: {
+              evidence: 'Pilot cohort mastery outcomes (n=24), learner transfer artifacts, and master-educator critique.',
+              rubrics: [
+                'Pilot learners successfully transfer skills to novel real-world tasks',
+                'Master-educator panel validates pedagogical rigor and fairness',
+                'Post-pilot iteration log addresses observed learner friction'
+              ],
+              gapHint: 'Pilot cohort transfer data requires 1 additional mentor attestation.'
+            }
+          }
+        },
+        {
+          id: 'knowledge-steward',
+          name: 'Open Knowledge Steward',
+          shortName: '3. Knowledge Steward',
+          credentialId: 'urn:synthcred:vc:open-knowledge-steward:v1',
+          chambers: {
+            curate: {
+              evidence: 'Open-licensed archival corpus, primary field interviews, and citation provenance ledger.',
+              rubrics: [
+                'All materials carry clear open-licensing or explicit contributor consent',
+                'Primary sources are preserved in durable, non-proprietary formats',
+                'Curation notes surface marginalized or overlooked perspectives'
+              ],
+              gapHint: 'License metadata missing for 1 archival audio transcript.'
+            },
+            organize: {
+              evidence: 'Linked-data ontology, cross-referenced index, and semantic tagging schema.',
+              rubrics: [
+                'Metadata adheres to interoperable open standards (JSON-LD / Dublin Core)',
+                'Cross-links enable effortless discovery across related topics',
+                'Archive structure remains intelligible without proprietary tooling'
+              ],
+              gapHint: 'Semantic tags for regional dialects need standardized URI identifiers.'
+            },
+            distill: {
+              evidence: 'Public executive synthesis, glossary of canonical terms, and plain-language stewardship guide.',
+              rubrics: [
+                'Complex archival findings are translated accurately for public access',
+                'Glossary definitions resolve ambiguity across disciplines',
+                'Synthesis preserves nuance without distorting primary evidence'
+              ],
+              gapHint: 'Glossary omits distinction between verification and community validation.'
+            },
+            express: {
+              evidence: 'Published open-access knowledge portal, downloadable static archive, and community handbook.',
+              rubrics: [
+                'Portal is offline-portable, fast, and freely forkable',
+                'Presentation honors the cultural and intellectual integrity of contributors',
+                'Clear contribution guidelines invite ongoing community stewardship'
+              ],
+              gapHint: 'Static archive export is missing the contributor attribution table.'
+            },
+            verify: {
+              evidence: 'Cryptographic archive checksums, license compliance audit, and reproducible build scripts.',
+              rubrics: [
+                'Every archival file is checksummed and tamper-evident',
+                'Zero copyright or attribution violations detected in audit',
+                'Independent mirror successfully verifies archive integrity'
+              ],
+              gapHint: 'Secondary mirror checksum verification has not yet been recorded.'
+            },
+            validate: {
+              evidence: 'Community stewardship endorsement, downstream reuse citations, and public defense session.',
+              rubrics: [
+                'Domain community affirms accuracy, respect, and ongoing usefulness',
+                'At least two independent projects cite or build upon the archive',
+                'Stewardship governance plan ensures long-term continuity'
+              ],
+              gapHint: 'Pending second independent community reuse attestation.'
+            }
+          }
+        }
+      ];
+
+      /* ----------------------------------------------------------------------
+         2. APPLICATION STATE
+         ---------------------------------------------------------------------- */
+      const STATE_ORDER = ['UNASSAYED', 'IN_ASSAY', 'ASSAY_GAP', 'PASSED'];
+
+      // Per-lens state storage so switching lenses preserves independent progress
+      const lensStates = {};
+      LENSES.forEach(lens => {
+        lensStates[lens.id] = {
+          chambers: {},
+          rubrics: {},
+          wasSealed: false
+        };
+        CHAMBERS.forEach(c => {
+          lensStates[lens.id].chambers[c.id] = 'UNASSAYED';
+          lensStates[lens.id].rubrics[c.id] = [false, false, false];
+        });
+      });
+
+      let currentLensId = LENSES[0].id;
+      let activeChamberId = CHAMBERS[0].id;
+      let flowMode = 'learner';      // 'learner' | 'verifier'
+      let clickMode = 'quick';       // 'quick' | 'cycle'
+      let simTimer = null;
+
+      /* ----------------------------------------------------------------------
+         3. SVG GEOMETRY HELPERS (PRECISION FLAT-TOP HEPTAHEX)
+         ---------------------------------------------------------------------- */
+      const SVG_NS = 'http://www.w3.org/2000/svg';
+      const CX = 400;
+      const CY = 400;
+      const R_CENTER = 82;
+      const R_SAT = 82;
+      const DIST_SAT = 228;
+      const R_PERIM = R_SAT + 20; // 102px offset for crisp outer scalloped contour
+
+      function el(tag, attrs = {}, parent = null) {
+        const node = document.createElementNS(SVG_NS, tag);
+        for (const [k, v] of Object.entries(attrs)) {
+          node.setAttribute(k, v);
+        }
+        if (parent) parent.appendChild(node);
+        return node;
+      }
+
+      function hexVertices(cx, cy, r) {
+        const pts = [];
+        for (let k = 0; k < 6; k++) {
+          const rad = (k * 60) * Math.PI / 180;
+          pts.push({ x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) });
+        }
+        return pts;
+      }
+
+      function ptsToString(pts) {
+        return pts.map(p => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(' ');
+      }
+
+      function satCenter(angleDeg) {
+        const rad = angleDeg * Math.PI / 180;
+        return {
+          x: CX + DIST_SAT * Math.cos(rad),
+          y: CY + DIST_SAT * Math.sin(rad)
+        };
+      }
+
+      function midpoint(p1, p2) {
+        return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+      }
+
+      // Deterministic pseudo-hash for simulated cryptographic attestations
+      function miniHash(seed) {
+        let h = 2166136261;
+        for (let i = 0; i < seed.length; i++) {
+          h ^= seed.charCodeAt(i);
+          h = Math.imul(h, 16777619);
+        }
+        const hex1 = (h >>> 0).toString(16).padStart(8, '0');
+        const hex2 = ((h ^ 0x9e3779b9) >>> 0).toString(16).padStart(8, '0');
+        return `0x${hex1}${hex2}`;
+      }
+
+      /* ----------------------------------------------------------------------
+         4. BUILD STATIC + DYNAMIC SVG LAYERS
+         ---------------------------------------------------------------------- */
+      const domRefs = {
+        chambers: {},
+        bridges: {},
+        perimeters: {},
+        junctions: [],
+        center: {},
+        callouts: {}
+      };
+
+      function buildSVG() {
+        const layerGuides = document.getElementById('layer-guides');
+        const layerCallouts = document.getElementById('layer-callouts');
+        const layerPerimeter = document.getElementById('layer-perimeter');
+        const layerJunctions = document.getElementById('layer-junctions');
+        const layerBridges = document.getElementById('layer-bridges');
+        const layerChambers = document.getElementById('layer-chambers');
+        const layerCenter = document.getElementById('layer-center');
+
+        // Subtle architectural guide circles
+        el('circle', { cx: CX, cy: CY, r: DIST_SAT, fill: 'none', stroke: 'var(--cyan)', 'stroke-width': 1, 'stroke-dasharray': '4 8' }, layerGuides);
+        el('circle', { cx: CX, cy: CY, r: DIST_SAT + R_PERIM - 12, fill: 'none', stroke: 'var(--border-subtle)', 'stroke-width': 1 }, layerGuides);
+
+        // Precompute satellite centers & outer perimeter vertices
+        const satData = CHAMBERS.map((ch, i) => {
+          const c = satCenter(ch.angleDeg);
+          const perimVerts = hexVertices(c.x, c.y, R_PERIM);
+          // Outer 4 vertices in clockwise order for satellite i
+          const outerVerts = [
+            perimVerts[(i + 3) % 6],
+            perimVerts[(i + 4) % 6],
+            perimVerts[(i + 5) % 6],
+            perimVerts[(i + 6) % 6]
+          ];
+          return { ...ch, i, cx: c.x, cy: c.y, outerVerts };
+        });
+
+        // Compute 6 Junction Lock Nodes midway between adjacent outer vertices
+        const junctions = satData.map((s, i) => {
+          const next = satData[(i + 1) % 6];
+          return midpoint(s.outerVerts[3], next.outerVerts[0]);
+        });
+
+        // 4A. Segmented SYNTHCRED Perimeter (6 interactive arcs)
+        satData.forEach((s, i) => {
+          const prevJ = junctions[(i + 5) % 6];
+          const nextJ = junctions[i];
+          const pathPts = [prevJ, ...s.outerVerts, nextJ];
+          const d = pathPts.map((p, idx) => `${idx === 0 ? 'M' : 'L'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ');
+
+          const g = el('g', { class: 'perimeter-group', 'data-id': s.id }, layerPerimeter);
+          // Invisible wide hit area for easy clicking/tapping
+          const hit = el('path', { d, fill: 'none', stroke: 'transparent', 'stroke-width': 20, style: 'cursor:pointer;' }, g);
+          // Visible perimeter segment
+          const seg = el('path', {
+            d,
+            fill: 'none',
+            stroke: 'var(--cyan-dim)',
+            'stroke-width': 3.5,
+            'stroke-linecap': 'round',
+            'stroke-linejoin': 'round',
+            class: 'perimeter-seg'
+          }, g);
+
+          const onClick = () => handleChamberInteraction(s.id);
+          hit.addEventListener('click', onClick);
+          seg.addEventListener('click', onClick);
+
+          domRefs.perimeters[s.id] = { seg, g };
+        });
+
+        // 4B. 6 Junction Lock Nodes
+        junctions.forEach((j, i) => {
+          const g = el('g', { transform: `translate(${j.x.toFixed(2)}, ${j.y.toFixed(2)})` }, layerJunctions);
+          const halo = el('circle', { r: 11, fill: 'var(--perimeter)', opacity: 0 }, g);
+          const node = el('circle', { r: 5.5, fill: 'var(--bg-canvas)', stroke: 'var(--cyan-dim)', 'stroke-width': 2 }, g);
+          const core = el('circle', { r: 2.2, fill: 'var(--cyan-dim)' }, g);
+          domRefs.junctions.push({ g, halo, node, core, adjA: CHAMBERS[i].id, adjB: CHAMBERS[(i + 1) % 6].id });
+        });
+
+        // 4C. Outer Callout Labels ("SYNTHCRED PERIMETER")
+        const topLeftCallout = el('g', {}, layerCallouts);
+        el('text', { x: 46, y: 74, fill: 'var(--text-primary)', 'font-size': 14, 'font-weight': 800, 'letter-spacing': '0.08em' }, topLeftCallout).textContent = 'SYNTHCRED';
+        el('text', { x: 46, y: 92, fill: 'var(--text-secondary)', 'font-size': 12, 'font-weight': 600, 'letter-spacing': '0.06em' }, topLeftCallout).textContent = 'PERIMETER';
+        el('polyline', { points: '146,84 185,84 218,118', fill: 'none', stroke: 'var(--text-muted)', 'stroke-width': 1.2 }, topLeftCallout);
+        el('circle', { cx: 218, cy: 118, r: 3, fill: 'var(--perimeter)' }, topLeftCallout);
+
+        const botRightCallout = el('g', {}, layerCallouts);
+        const sealText = el('text', { x: 754, y: 716, 'text-anchor': 'end', fill: 'var(--perimeter-bright)', 'font-size': 13, 'font-weight': 800, 'font-family': 'var(--font-mono)' }, botRightCallout);
+        sealText.textContent = '0/6 LOCKED';
+        const sealSub = el('text', { x: 754, y: 734, 'text-anchor': 'end', fill: 'var(--text-muted)', 'font-size': 11, 'font-family': 'var(--font-mono)' }, botRightCallout);
+        sealSub.textContent = 'SEAL STATUS';
+        el('polyline', { points: '646,720 605,720 578,688', fill: 'none', stroke: 'var(--text-muted)', 'stroke-width': 1.2 }, botRightCallout);
+        el('circle', { cx: 578, cy: 688, r: 3, fill: 'var(--perimeter)' }, botRightCallout);
+        domRefs.callouts = { sealText, sealSub };
+
+        // 4D. 6 Radiating Projection Bridges (connecting flat edge to flat edge)
+        const apothemC = R_CENTER * Math.sqrt(3) / 2; // ~71.01
+        const apothemS = R_SAT * Math.sqrt(3) / 2;    // ~71.01
+        const bridgeStart = apothemC + 4;
+        const bridgeEnd = DIST_SAT - apothemS - 4;
+        const bridgeLen = bridgeEnd - bridgeStart;    // ~78px
+
+        satData.forEach(s => {
+          const g = el('g', {
+            transform: `translate(${CX}, ${CY}) rotate(${s.angleDeg})`
+          }, layerBridges);
+
+          // Mechanical conduit rails
+          el('line', { x1: bridgeStart + 4, y1: -11, x2: bridgeEnd - 12, y2: -11, stroke: 'var(--border-subtle)', 'stroke-width': 1.5 }, g);
+          el('line', { x1: bridgeStart + 4, y1:  11, x2: bridgeEnd - 12, y2:  11, stroke: 'var(--border-subtle)', 'stroke-width': 1.5 }, g);
+
+          // Base conduit beam
+          const beam = el('line', {
+            x1: bridgeStart, y1: 0,
+            x2: bridgeEnd - 10, y2: 0,
+            stroke: 'var(--cyan-dim)',
+            'stroke-width': 7,
+            'stroke-linecap': 'round'
+          }, g);
+
+          // Animated energy core stroke
+          const energy = el('line', {
+            x1: bridgeStart + 2, y1: 0,
+            x2: bridgeEnd - 12, y2: 0,
+            stroke: 'var(--cyan)',
+            'stroke-width': 3,
+            'stroke-linecap': 'round',
+            opacity: 0
+          }, g);
+
+          // Outward arrowhead (Learner mode / Passed)
+          const arrowOut = el('polygon', {
+            points: `${bridgeEnd},0 ${bridgeEnd - 15},-10 ${bridgeEnd - 15},10`,
+            fill: 'var(--cyan-dim)'
+          }, g);
+
+          // Inward arrowhead (Verifier mode / Assay Gap warning)
+          const arrowIn = el('polygon', {
+            points: `${bridgeStart},0 ${bridgeStart + 15},-10 ${bridgeStart + 15},10`,
+            fill: 'var(--gap)',
+            opacity: 0
+          }, g);
+
+          domRefs.bridges[s.id] = { g, beam, energy, arrowOut, arrowIn, len: bridgeLen };
+        });
+
+        // 4E. 6 Satellite CODE+V Assay Chambers
+        satData.forEach(s => {
+          const g = el('g', {
+            class: 'chamber-group',
+            transform: `translate(${s.cx.toFixed(2)}, ${s.cy.toFixed(2)})`,
+            'data-id': s.id,
+            tabindex: '0',
+            role: 'button',
+            'aria-label': `Assay ${s.label} chamber`
+          }, layerChambers);
+
+          // Outer housing bevel
+          const outer = el('polygon', {
+            points: ptsToString(hexVertices(0, 0, R_SAT)),
+            fill: 'var(--hex-fill-idle)',
+            stroke: 'var(--cyan-dim)',
+            'stroke-width': 3,
+            class: 'chamber-outer'
+          }, g);
+
+          // Inner glowing ring
+          const inner = el('polygon', {
+            points: ptsToString(hexVertices(0, 0, R_SAT - 8)),
+            fill: 'none',
+            stroke: 'var(--cyan-dim)',
+            'stroke-width': 1.2,
+            opacity: 0.6
+          }, g);
+
+          // Active selection focus ring
+          const focusRing = el('polygon', {
+            points: ptsToString(hexVertices(0, 0, R_SAT + 6)),
+            fill: 'none',
+            stroke: 'var(--cyan)',
+            'stroke-width': 1.5,
+            'stroke-dasharray': '5 4',
+            opacity: 0
+          }, g);
+
+          // Typography
+          const sub = el('text', {
+            x: 0, y: -15,
+            'text-anchor': 'middle',
+            fill: 'var(--text-secondary)',
+            'font-size': 12,
+            'font-weight': 600,
+            'letter-spacing': '0.06em'
+          }, g);
+          sub.textContent = 'Assay';
+
+          const title = el('text', {
+            x: 0, y: 9,
+            'text-anchor': 'middle',
+            fill: 'var(--text-primary)',
+            'font-size': 18,
+            'font-weight': 800,
+            'letter-spacing': '0.06em'
+          }, g);
+          title.textContent = s.label;
+
+          // State badge pill at bottom of hexagon
+          const badgeRect = el('rect', {
+            x: -34, y: 24, width: 68, height: 18, rx: 9,
+            fill: 'var(--bg-surface-2)',
+            stroke: 'var(--border-subtle)',
+            'stroke-width': 1
+          }, g);
+
+          const badgeText = el('text', {
+            x: 0, y: 36.5,
+            'text-anchor': 'middle',
+            fill: 'var(--text-muted)',
+            'font-size': 9.5,
+            'font-weight': 700,
+            'font-family': 'var(--font-mono)'
+          }, g);
+          badgeText.textContent = 'UNASSAYED';
+
+          // Click & keyboard support
+          g.addEventListener('click', () => handleChamberInteraction(s.id));
+          g.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleChamberInteraction(s.id);
+            }
+          });
+
+          domRefs.chambers[s.id] = { g, outer, inner, focusRing, title, badgeRect, badgeText };
+        });
+
+        // 4F. Central SYNCTESS Nucleus
+        const cg = el('g', { transform: `translate(${CX}, ${CY})` }, layerCenter);
+
+        const cHalo = el('polygon', {
+          points: ptsToString(hexVertices(0, 0, R_CENTER + 10)),
+          fill: 'none',
+          stroke: 'var(--gold)',
+          'stroke-width': 2,
+          opacity: 0.25
+        }, cg);
+
+        const cOuter = el('polygon', {
+          points: ptsToString(hexVertices(0, 0, R_CENTER)),
+          fill: 'url(#center-grad)',
+          stroke: 'var(--gold)',
+          'stroke-width': 3.5,
+          filter: 'url(#glow-gold)'
+        }, cg);
+
+        const cInner = el('polygon', {
+          points: ptsToString(hexVertices(0, 0, R_CENTER - 9)),
+          fill: 'none',
+          stroke: 'var(--gold-bright)',
+          'stroke-width': 1.2,
+          opacity: 0.65
+        }, cg);
+
+        const cTitle = el('text', {
+          x: 0, y: -6,
+          'text-anchor': 'middle',
+          fill: 'var(--gold-bright)',
+          'font-size': 20,
+          'font-weight': 900,
+          'letter-spacing': '0.07em'
+        }, cg);
+        cTitle.textContent = 'SYNCTESS';
+
+        const cSub = el('text', {
+          x: 0, y: 14,
+          'text-anchor': 'middle',
+          fill: 'var(--text-primary)',
+          'font-size': 11.5,
+          'font-weight': 600,
+          opacity: 0.88
+        }, cg);
+        cSub.textContent = '(Sovereign Proof)';
+
+        const cHash = el('text', {
+          x: 0, y: 36,
+          'text-anchor': 'middle',
+          fill: 'var(--gold)',
+          'font-size': 9.5,
+          'font-family': 'var(--font-mono)',
+          'font-weight': 700
+        }, cg);
+        cHash.textContent = 'sha256:8f4e…a7c2';
+
+        domRefs.center = { cg, cHalo, cOuter, cInner, cTitle, cSub, cHash };
+      }
+
+      /* ----------------------------------------------------------------------
+         5. STATE MACHINE TRANSITIONS & RENDERING
+         ---------------------------------------------------------------------- */
+      function getLensState() {
+        return lensStates[currentLensId];
+      }
+
+      function getLensDef() {
+        return LENSES.find(l => l.id === currentLensId);
+      }
+
+      function logEvent(tag, message, type = 'info') {
+        const logEl = document.getElementById('event-log');
+        const now = new Date();
+        const ts = now.toTimeString().slice(0, 8);
+        const div = document.createElement('div');
+        div.className = 'log-entry';
+        div.innerHTML = `<span class="log-time">[${ts}]</span><span class="log-tag-${type}">${tag}</span> ${message}`;
+        logEl.appendChild(div);
+        logEl.scrollTop = logEl.scrollHeight;
+      }
+
+      function handleChamberInteraction(chamberId) {
+        activeChamberId = chamberId;
+        const st = getLensState();
+        const cur = st.chambers[chamberId];
+        let next;
+        if (clickMode === 'quick') {
+          next = (cur === 'PASSED') ? 'UNASSAYED' : 'PASSED';
+        } else {
+          const idx = STATE_ORDER.indexOf(cur);
+          next = STATE_ORDER[(idx + 1) % STATE_ORDER.length];
+        }
+        setChamberState(chamberId, next);
+      }
+
+      function setChamberState(chamberId, newState, silent = false) {
+        const st = getLensState();
+        const prev = st.chambers[chamberId];
+        st.chambers[chamberId] = newState;
+
+        // Keep rubric checkboxes in sync if explicitly passed or reset
+        if (newState === 'PASSED') {
+          st.rubrics[chamberId] = [true, true, true];
+        } else if (newState === 'UNASSAYED') {
+          st.rubrics[chamberId] = [false, false, false];
+        }
+
+        const ch = CHAMBERS.find(c => c.id === chamberId);
+        if (!silent && prev !== newState) {
+          if (newState === 'IN_ASSAY') {
+            logEvent(`BRIDGE[${ch.label}]`, '→ Evidence slice projected for assay', 'info');
+          } else if (newState === 'ASSAY_GAP') {
+            logEvent(`GAP[${ch.label}]`, '→ Touchstone failed; revision required', 'gap');
+          } else if (newState === 'PASSED') {
+            const count = CHAMBERS.filter(c => st.chambers[c.id] === 'PASSED').length;
+            logEvent(`PERIMETER[${count}/6]`, `→ ${ch.label} locked`, 'pass');
+          } else {
+            logEvent(`RESET[${ch.label}]`, '→ Chamber returned to Unassayed', 'info');
+          }
+        }
+
+        renderAll();
+      }
+
+      function triggerShockwave() {
+        const ring = document.getElementById('seal-shockwave');
+        ring.classList.remove('fire');
+        void ring.offsetWidth; // force reflow
+        ring.classList.add('fire');
+      }
+
+      function renderAll() {
+        const st = getLensState();
+        const passedCount = CHAMBERS.filter(c => st.chambers[c.id] === 'PASSED').length;
+        const gapCount = CHAMBERS.filter(c => st.chambers[c.id] === 'ASSAY_GAP').length;
+        const inAssayCount = CHAMBERS.filter(c => st.chambers[c.id] === 'IN_ASSAY').length;
+        const isSealed = passedCount === 6;
+
+        // Check transition into Sealed state
+        if (isSealed && !st.wasSealed) {
+          st.wasSealed = true;
+          triggerShockwave();
+          logEvent('SYNTHCRED', '→ 6/6 Perimeter Fused • Credential Minted', 'seal');
+        } else if (!isSealed) {
+          st.wasSealed = false;
+        }
+
+        // 1. Update 6 Chambers, Bridges, and Perimeter Segments
+        CHAMBERS.forEach(ch => {
+          const state = st.chambers[ch.id];
+          const cRef = domRefs.chambers[ch.id];
+          const bRef = domRefs.bridges[ch.id];
+          const pRef = domRefs.perimeters[ch.id];
+
+          // Focus ring
+          cRef.focusRing.setAttribute('opacity', ch.id === activeChamberId ? '0.9' : '0');
+
+          // Reset animations
+          cRef.inner.classList.remove('anim-pulse', 'anim-gap');
+          pRef.seg.classList.remove('flow-out', 'flow-in', 'anim-gap');
+          bRef.energy.classList.remove('flow-out', 'flow-in', 'flow-gap-rev');
+
+          if (state === 'UNASSAYED') {
+            cRef.outer.setAttribute('fill', 'var(--hex-fill-idle)');
+            cRef.outer.setAttribute('stroke', 'var(--cyan-dim)');
+            cRef.outer.removeAttribute('filter');
+            cRef.inner.setAttribute('stroke', 'var(--cyan-dim)');
+            cRef.badgeRect.setAttribute('fill', 'var(--bg-surface-2)');
+            cRef.badgeRect.setAttribute('stroke', 'var(--border-subtle)');
+            cRef.badgeText.setAttribute('fill', 'var(--text-muted)');
+            cRef.badgeText.textContent = 'UNASSAYED';
+
+            bRef.beam.setAttribute('stroke', 'var(--cyan-dim)');
+            bRef.beam.setAttribute('opacity', '0.35');
+            bRef.energy.setAttribute('opacity', '0');
+            bRef.arrowOut.setAttribute('fill', 'var(--cyan-dim)');
+            bRef.arrowOut.setAttribute('opacity', flowMode === 'learner' ? '0.45' : '0');
+            bRef.arrowIn.setAttribute('fill', 'var(--cyan-dim)');
+            bRef.arrowIn.setAttribute('opacity', flowMode === 'verifier' ? '0.45' : '0');
+
+            pRef.seg.setAttribute('stroke', 'var(--cyan-dim)');
+            pRef.seg.setAttribute('stroke-width', '2.5');
+            pRef.seg.setAttribute('stroke-dasharray', '6 6');
+            pRef.seg.setAttribute('opacity', '0.4');
+            pRef.seg.removeAttribute('filter');
+          } else if (state === 'IN_ASSAY') {
+            cRef.outer.setAttribute('fill', 'var(--hex-fill-active)');
+            cRef.outer.setAttribute('stroke', 'var(--cyan)');
+            cRef.outer.setAttribute('filter', 'url(#glow-cyan)');
+            cRef.inner.setAttribute('stroke', 'var(--cyan)');
+            cRef.inner.classList.add('anim-pulse');
+            cRef.badgeRect.setAttribute('fill', 'var(--cyan-soft)');
+            cRef.badgeRect.setAttribute('stroke', 'var(--cyan)');
+            cRef.badgeText.setAttribute('fill', 'var(--cyan)');
+            cRef.badgeText.textContent = 'IN-ASSAY';
+
+            bRef.beam.setAttribute('stroke', 'var(--cyan-dim)');
+            bRef.beam.setAttribute('opacity', '0.7');
+            bRef.energy.setAttribute('stroke', 'var(--cyan)');
+            bRef.energy.setAttribute('opacity', '1');
+            bRef.energy.classList.add(flowMode === 'learner' ? 'flow-out' : 'flow-in');
+            bRef.arrowOut.setAttribute('fill', 'var(--cyan)');
+            bRef.arrowOut.setAttribute('opacity', flowMode === 'learner' ? '1' : '0');
+            bRef.arrowIn.setAttribute('fill', 'var(--cyan)');
+            bRef.arrowIn.setAttribute('opacity', flowMode === 'verifier' ? '1' : '0');
+
+            pRef.seg.setAttribute('stroke', 'var(--cyan)');
+            pRef.seg.setAttribute('stroke-width', '4');
+            pRef.seg.setAttribute('opacity', '0.9');
+            pRef.seg.classList.add(flowMode === 'learner' ? 'flow-out' : 'flow-in');
+            pRef.seg.setAttribute('filter', 'url(#glow-cyan)');
+          } else if (state === 'ASSAY_GAP') {
+            cRef.outer.setAttribute('fill', 'var(--hex-fill-gap)');
+            cRef.outer.setAttribute('stroke', 'var(--gap)');
+            cRef.outer.setAttribute('filter', 'url(#glow-gap)');
+            cRef.inner.setAttribute('stroke', 'var(--gap)');
+            cRef.inner.classList.add('anim-gap');
+            cRef.badgeRect.setAttribute('fill', 'var(--gap-soft)');
+            cRef.badgeRect.setAttribute('stroke', 'var(--gap)');
+            cRef.badgeText.setAttribute('fill', 'var(--gap)');
+            cRef.badgeText.textContent = '⚠ GAP';
+
+            // Reverse pulsing warning arrow back to SYNCTESS
+            bRef.beam.setAttribute('stroke', 'var(--gap-soft)');
+            bRef.beam.setAttribute('opacity', '0.9');
+            bRef.energy.setAttribute('stroke', 'var(--gap)');
+            bRef.energy.setAttribute('opacity', '1');
+            bRef.energy.classList.add('flow-gap-rev');
+            bRef.arrowOut.setAttribute('opacity', '0');
+            bRef.arrowIn.setAttribute('fill', 'var(--gap)');
+            bRef.arrowIn.setAttribute('opacity', '1');
+
+            pRef.seg.setAttribute('stroke', 'var(--gap)');
+            pRef.seg.setAttribute('stroke-width', '4.5');
+            pRef.seg.setAttribute('stroke-dasharray', '12 8');
+            pRef.seg.setAttribute('opacity', '1');
+            pRef.seg.classList.add('anim-gap');
+            pRef.seg.setAttribute('filter', 'url(#glow-gap)');
+          } else if (state === 'PASSED') {
+            cRef.outer.setAttribute('fill', 'var(--hex-fill-active)');
+            cRef.outer.setAttribute('stroke', 'var(--cyan)');
+            cRef.outer.setAttribute('filter', 'url(#glow-cyan)');
+            cRef.inner.setAttribute('stroke', 'var(--cyan)');
+            cRef.badgeRect.setAttribute('fill', 'var(--gold-soft)');
+            cRef.badgeRect.setAttribute('stroke', 'var(--perimeter)');
+            cRef.badgeText.setAttribute('fill', 'var(--gold-bright)');
+            cRef.badgeText.textContent = '✓ LOCKED';
+
+            bRef.beam.setAttribute('stroke', 'var(--gold)');
+            bRef.beam.setAttribute('opacity', '0.95');
+            bRef.energy.setAttribute('stroke', 'var(--gold-bright)');
+            bRef.energy.setAttribute('opacity', '0.9');
+            bRef.energy.classList.add(flowMode === 'learner' ? 'flow-out' : 'flow-in');
+            bRef.arrowOut.setAttribute('fill', 'var(--gold-bright)');
+            bRef.arrowOut.setAttribute('opacity', flowMode === 'learner' ? '1' : '0');
+            bRef.arrowIn.setAttribute('fill', 'var(--gold-bright)');
+            bRef.arrowIn.setAttribute('opacity', flowMode === 'verifier' ? '1' : '0');
+
+            pRef.seg.setAttribute('stroke', isSealed ? 'var(--perimeter-bright)' : 'var(--perimeter)');
+            pRef.seg.setAttribute('stroke-width', isSealed ? '6.5' : '5');
+            pRef.seg.removeAttribute('stroke-dasharray');
+            pRef.seg.setAttribute('opacity', '1');
+            pRef.seg.setAttribute('filter', 'url(#glow-perimeter)');
+          }
+        });
+
+        // 2. Update 6 Junction Lock Nodes
+        domRefs.junctions.forEach(j => {
+          const locked = st.chambers[j.adjA] === 'PASSED' && st.chambers[j.adjB] === 'PASSED';
+          j.halo.setAttribute('opacity', locked ? (isSealed ? '0.45' : '0.28') : '0');
+          j.node.setAttribute('stroke', locked ? 'var(--perimeter-bright)' : 'var(--cyan-dim)');
+          j.node.setAttribute('fill', locked ? 'var(--gold)' : 'var(--bg-canvas)');
+          j.core.setAttribute('fill', locked ? '#ffffff' : 'var(--cyan-dim)');
+        });
+
+        // 3. Update Central SYNCTESS Nucleus
+        const cRef = domRefs.center;
+        if (isSealed) {
+          cRef.cOuter.setAttribute('fill', 'url(#center-grad-sealed)');
+          cRef.cOuter.setAttribute('stroke', 'var(--gold-bright)');
+          cRef.cHalo.setAttribute('opacity', '0.75');
+          cRef.cSub.textContent = 'MINTED SYNTHCRED';
+          cRef.cHash.textContent = `merkle:${miniHash(currentLensId + SYNCTESS_CORE_HASH).slice(0, 10)}`;
+        } else {
+          cRef.cOuter.setAttribute('fill', 'url(#center-grad)');
+          cRef.cOuter.setAttribute('stroke', 'var(--gold)');
+          cRef.cHalo.setAttribute('opacity', '0.25');
+          cRef.cSub.textContent = '(Sovereign Proof)';
+          cRef.cHash.textContent = 'sha256:8f4e…a7c2';
+        }
+
+        // 4. Update Outer Callout & Celebration Banner
+        domRefs.callouts.sealText.textContent = isSealed ? '6/6 SEALED • MINTED' : `${passedCount}/6 LOCKED`;
+        const banner = document.getElementById('seal-banner');
+        document.getElementById('seal-merkle-short').textContent = `merkle:${miniHash(currentLensId + SYNCTESS_CORE_HASH)}`;
+        banner.classList.toggle('visible', isSealed);
+
+        // 5. Update Right-Side Progress Meter & Status Pill
+        const pill = document.getElementById('overall-status-pill');
+        pill.className = 'status-pill';
+        if (isSealed) {
+          pill.classList.add('status-sealed');
+          pill.textContent = 'SYNTHCRED SEALED • 6/6';
+        } else if (gapCount > 0) {
+          pill.classList.add('status-gap');
+          pill.textContent = `REVISION NEEDED • ${passedCount}/6`;
+        } else if (passedCount > 0 || inAssayCount > 0) {
+          pill.classList.add('status-progress');
+          pill.textContent = `IN PROGRESS • ${passedCount}/6`;
+        } else {
+          pill.classList.add('status-unsealed');
+          pill.textContent = 'UNSEALED • 0/6';
+        }
+
+        renderMiniHexRow();
+        renderInspector();
+      }
+
+      /* ----------------------------------------------------------------------
+         6. RIGHT-SIDE PANEL RENDERERS
+         ---------------------------------------------------------------------- */
+      function renderLensPills() {
+        const container = document.getElementById('lens-pills');
+        container.innerHTML = '';
+        LENSES.forEach(lens => {
+          const btn = document.createElement('button');
+          btn.className = `lens-pill${lens.id === currentLensId ? ' active' : ''}`;
+          btn.textContent = lens.shortName;
+          btn.addEventListener('click', () => {
+            stopSimulation();
+            currentLensId = lens.id;
+            renderLensPills();
+            logEvent('LENS', `→ Switched overlay to "${lens.name}"`, 'info');
+            renderAll();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      function renderMiniHexRow() {
+        const row = document.getElementById('mini-hex-row');
+        const st = getLensState();
+        row.innerHTML = '';
+        CHAMBERS.forEach(ch => {
+          const btn = document.createElement('button');
+          btn.className = `mini-hex-btn${ch.id === activeChamberId ? ' selected' : ''}`;
+          btn.dataset.state = st.chambers[ch.id];
+          btn.title = `Assay ${ch.label} (${st.chambers[ch.id]})`;
+          btn.innerHTML = `<span class="mini-hex-letter">${ch.short}</span><span class="mini-hex-dot"></span>`;
+          btn.addEventListener('click', () => {
+            activeChamberId = ch.id;
+            renderAll();
+          });
+          row.appendChild(btn);
+        });
+      }
+
+      function renderInspector() {
+        const st = getLensState();
+        const lens = getLensDef();
+        const ch = CHAMBERS.find(c => c.id === activeChamberId);
+        const chSpec = lens.chambers[ch.id];
+        const state = st.chambers[ch.id];
+
+        document.getElementById('inspector-index').textContent = `${ch.num} / 06`;
+        document.getElementById('insp-title').textContent = `Assay ${ch.label}`;
+        document.getElementById('insp-role').textContent = ch.role;
+        document.getElementById('insp-evidence').textContent = chSpec.evidence;
+
+        // Direct State Buttons
+        document.querySelectorAll('#state-btn-grid .state-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.target === state);
+        });
+
+        // Interactive Rubric Checklist
+        const ul = document.getElementById('insp-rubric');
+        ul.innerHTML = '';
+        chSpec.rubrics.forEach((text, idx) => {
+          const li = document.createElement('li');
+          li.className = 'rubric-item';
+          const checked = st.rubrics[ch.id][idx];
+          li.innerHTML = `<input type="checkbox" ${checked ? 'checked' : ''} /><span>${text}</span>`;
+          const cb = li.querySelector('input');
+          li.addEventListener('click', (e) => {
+            if (e.target !== cb) cb.checked = !cb.checked;
+            st.rubrics[ch.id][idx] = cb.checked;
+            const allChecked = st.rubrics[ch.id].every(Boolean);
+            const anyChecked = st.rubrics[ch.id].some(Boolean);
+            if (allChecked) {
+              setChamberState(ch.id, 'PASSED');
+            } else if (anyChecked && st.chambers[ch.id] === 'UNASSAYED') {
+              setChamberState(ch.id, 'IN_ASSAY');
+            } else if (!allChecked && st.chambers[ch.id] === 'PASSED') {
+              setChamberState(ch.id, 'IN_ASSAY');
+            } else {
+              renderInspector();
+            }
+          });
+          ul.appendChild(li);
+        });
+
+        // Attestation Box
+        const attBox = document.getElementById('insp-attestation');
+        attBox.className = 'attestation-box';
+        if (state === 'PASSED') {
+          attBox.classList.add('passed');
+          const sig = miniHash(`${lens.id}:${ch.id}:${SYNCTESS_CORE_HASH}`);
+          attBox.textContent = `✓ ATTESTATION LOCKED • proofHash: ${sig} • bound to SYNCTESS`;
+        } else if (state === 'ASSAY_GAP') {
+          attBox.classList.add('gap');
+          attBox.textContent = `⚠ REVISION REQUIRED: ${chSpec.gapHint}`;
+        } else if (state === 'IN_ASSAY') {
+          attBox.textContent = `⋯ ASSAY IN PROGRESS: Evaluating radiated SYNCTESS slice against ${ch.label} touchstones…`;
+        } else {
+          attBox.textContent = `Pending projection. Click chamber or tick all rubric criteria to lock this perimeter arc.`;
+        }
+      }
+
+      /* ----------------------------------------------------------------------
+         7. TOOLBAR ACTIONS & SIMULATION
+         ---------------------------------------------------------------------- */
+      function stopSimulation() {
+        if (simTimer) {
+          clearTimeout(simTimer);
+          simTimer = null;
+        }
+      }
+
+      function simulateFullAssay() {
+        stopSimulation();
+        const st = getLensState();
+        CHAMBERS.forEach(c => {
+          st.chambers[c.id] = 'UNASSAYED';
+          st.rubrics[c.id] = [false, false, false];
+        });
+        st.wasSealed = false;
+        renderAll();
+        logEvent('SIM', '→ Starting full clockwise CODE+V assay sequence…', 'info');
+
+        let step = 0;
+        function nextStep() {
+          const chIdx = Math.floor(step / 2);
+          if (chIdx >= CHAMBERS.length) {
+            simTimer = null;
+            return;
+          }
+          const ch = CHAMBERS[chIdx];
+          activeChamberId = ch.id;
+          if (step % 2 === 0) {
+            setChamberState(ch.id, 'IN_ASSAY');
+            step++;
+            simTimer = setTimeout(nextStep, 480);
+          } else {
+            setChamberState(ch.id, 'PASSED');
+            step++;
+            simTimer = setTimeout(nextStep, 420);
+          }
+        }
+        simTimer = setTimeout(nextStep, 200);
+      }
+
+      function testRevisionGap() {
+        stopSimulation();
+        const st = getLensState();
+        st.wasSealed = false;
+        CHAMBERS.forEach(c => {
+          if (c.id === 'verify') {
+            st.chambers[c.id] = 'ASSAY_GAP';
+            st.rubrics[c.id] = [true, false, true];
+          } else {
+            st.chambers[c.id] = 'PASSED';
+            st.rubrics[c.id] = [true, true, true];
+          }
+        });
+        activeChamberId = 'verify';
+        logEvent('TEST', '→ Loaded 5/6 Passed + 1 Assay Gap (VERIFY) — perimeter closure blocked', 'gap');
+        renderAll();
+      }
+
+      function sealAll() {
+        stopSimulation();
+        const st = getLensState();
+        CHAMBERS.forEach(c => {
+          st.chambers[c.id] = 'PASSED';
+          st.rubrics[c.id] = [true, true, true];
+        });
+        renderAll();
+      }
+
+      function resetAll() {
+        stopSimulation();
+        const st = getLensState();
+        st.wasSealed = false;
+        CHAMBERS.forEach(c => {
+          st.chambers[c.id] = 'UNASSAYED';
+          st.rubrics[c.id] = [false, false, false];
+        });
+        logEvent('SYSTEM', '→ All 6 CODE+V chambers reset to Unassayed (0/6)', 'info');
+        renderAll();
+      }
+
+      /* ----------------------------------------------------------------------
+         8. W3C VERIFIABLE CREDENTIAL JSON-LD GENERATOR
+         ---------------------------------------------------------------------- */
+      function buildVcJson() {
+        const st = getLensState();
+        const lens = getLensDef();
+        const passedCount = CHAMBERS.filter(c => st.chambers[c.id] === 'PASSED').length;
+        const isSealed = passedCount === 6;
+
+        const payload = {
+          '@context': [
+            'https://www.w3.org/2018/credentials/v1',
+            'https://synthcred.org/contexts/radiating-assay-heptahex/v1'
+          ],
+          id: lens.credentialId,
+          type: ['VerifiableCredential', 'SynthCredCredential'],
+          issuer: 'did:web:assay.synthcred.org',
+          issuanceDate: isSealed ? new Date().toISOString() : null,
+          credentialStatus: {
+            perimeterState: isSealed ? 'SEALED_MINTED' : 'UNSEALED_IN_PROGRESS',
+            lockedChambers: `${passedCount}/6`,
+            merkleRoot: isSealed ? `merkle:${miniHash(lens.id + SYNCTESS_CORE_HASH)}` : null
+          },
+          credentialSubject: {
+            id: 'did:key:z6MkSovereignLearnerExample9xQ',
+            lensOverlay: lens.name,
+            synctessNucleus: {
+              role: 'Tangible Evidence of Sovereign Success',
+              contentHash: SYNCTESS_CORE_HASH
+            },
+            codeVAssays: CHAMBERS.map(ch => ({
+              chamber: ch.label,
+              domain: ch.role,
+              state: st.chambers[ch.id],
+              rubricsPassed: st.rubrics[ch.id].filter(Boolean).length + '/' + st.rubrics[ch.id].length,
+              attestationHash: st.chambers[ch.id] === 'PASSED'
+                ? miniHash(`${lens.id}:${ch.id}:${SYNCTESS_CORE_HASH}`)
+                : null
+            }))
+          }
+        };
+        return JSON.stringify(payload, null, 2);
+      }
+
+      /* ----------------------------------------------------------------------
+         9. EVENT LISTENERS & INITIALIZATION
+         ---------------------------------------------------------------------- */
+      function wireEvents() {
+        // Flow Mode Toggle
+        document.querySelectorAll('[data-flow]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            flowMode = btn.dataset.flow;
+            document.querySelectorAll('[data-flow]').forEach(b => b.classList.toggle('active', b === btn));
+            logEvent('FLOW', `→ Mode switched to ${flowMode === 'learner' ? 'Learner (Inside-Out)' : 'Verifier (Outside-In Audit)'}`, 'info');
+            renderAll();
+          });
+        });
+
+        // Click Behavior Toggle
+        document.querySelectorAll('[data-click]').forEach(btn => {
+          btn.addEventListener('click', () => {
+            clickMode = btn.dataset.click;
+            document.querySelectorAll('[data-click]').forEach(b => b.classList.toggle('active', b === btn));
+            document.getElementById('canvas-hint').textContent = clickMode === 'quick'
+              ? 'Click any CODE+V chamber to toggle Pass / Unassayed'
+              : 'Click any CODE+V chamber to cycle all 4 assay states';
+          });
+        });
+
+        // Theme Toggle
+        document.getElementById('btn-theme-toggle').addEventListener('click', () => {
+          const html = document.documentElement;
+          const isDark = html.getAttribute('data-theme') === 'dark';
+          html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+          document.getElementById('theme-icon').textContent = isDark ? '☾' : '☀';
+          document.getElementById('theme-label').textContent = isDark ? 'Blueprint' : 'Parchment';
+        });
+
+        // Inspector Direct State Buttons
+        document.querySelectorAll('#state-btn-grid .state-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            stopSimulation();
+            setChamberState(activeChamberId, btn.dataset.target);
+          });
+        });
+
+        // Toolbar Actions
+        document.getElementById('btn-simulate').addEventListener('click', simulateFullAssay);
+        document.getElementById('btn-test-gap').addEventListener('click', testRevisionGap);
+        document.getElementById('btn-seal-all').addEventListener('click', sealAll);
+        document.getElementById('btn-reset-all').addEventListener('click', resetAll);
+        document.getElementById('btn-clear-log').addEventListener('click', () => {
+          document.getElementById('event-log').innerHTML = '';
+        });
+
+        // VC JSON-LD Modal
+        const modal = document.getElementById('vc-modal');
+        document.getElementById('btn-inspect-vc').addEventListener('click', () => {
+          document.getElementById('vc-json-output').textContent = buildVcJson();
+          modal.classList.add('open');
+        });
+        const closeModal = () => modal.classList.remove('open');
+        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+        document.getElementById('btn-close-modal-2').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        document.getElementById('btn-copy-json').addEventListener('click', () => {
+          const text = document.getElementById('vc-json-output').textContent;
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          ta.style.position = 'fixed';
+          ta.style.opacity = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          try {
+            document.execCommand('copy');
+            const fb = document.getElementById('copy-feedback');
+            fb.classList.add('show');
+            setTimeout(() => fb.classList.remove('show'), 2200);
+          } catch (err) {
+            // Fallback silent
+          }
+          document.body.removeChild(ta);
+        });
+      }
+
+      // Bootstrap
+      buildSVG();
+      renderLensPills();
+      wireEvents();
+      logEvent('BOOT', '→ Radiating Assay Heptahex initialized (0/6 Locked)', 'info');
+      renderAll();
+    })();
+  </script>
+</body>
+</html>
