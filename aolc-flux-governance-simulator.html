@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AOLC FLUX Decay &amp; Governance Weight Simulator</title>
+<style>
+  :root {
+    --scale: 1;
+    --bg: #f5efe3;
+    --bg-grad: radial-gradient(circle at 12% 8%, #fbf7ee 0%, #f3ecdd 55%, #ece2ce 100%);
+    --surface: #fcf9f2;
+    --surface-2: #efe7d6;
+    --surface-3: #e4d9c2;
+    --ink: #1e2421;
+    --ink-muted: #555f59;
+    --ink-soft: #757f78;
+    --border: #d7cab2;
+    --border-strong: #bfa988;
+    --shadow: 0 8px 24px rgba(56, 42, 20, 0.08);
+    --shadow-sm: 0 2px 8px rgba(56, 42, 20, 0.06);
+
+    /* Series & Semantic Colors */
+    --founder: #b8332a;
+    --founder-soft: rgba(184, 51, 42, 0.14);
+    --steward: #0f766e;
+    --steward-soft: rgba(15, 118, 110, 0.14);
+    --mentor: #b4691e;
+    --mentor-soft: rgba(180, 105, 30, 0.15);
+    --accent: #3f4d96;
+    --accent-soft: rgba(63, 77, 150, 0.13);
+    --safe: #1e7a55;
+    --safe-soft: rgba(30, 122, 85, 0.14);
+    --warn: #b4691e;
+    --warn-soft: rgba(180, 105, 30, 0.14);
+    --grid-line: rgba(120, 105, 80, 0.18);
+    --linear-bar: rgba(85, 95, 89, 0.38);
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0c1117;
+    --bg-grad: radial-gradient(circle at 15% 10%, #151d28 0%, #0d1219 55%, #090d12 100%);
+    --surface: #141b24;
+    --surface-2: #1c2532;
+    --surface-3: #253142;
+    --ink: #ece8df;
+    --ink-muted: #9da8b8;
+    --ink-soft: #758294;
+    --border: #2a3545;
+    --border-strong: #3d4d63;
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.35);
+
+    --founder: #f87171;
+    --founder-soft: rgba(248, 113, 113, 0.16);
+    --steward: #2dd4bf;
+    --steward-soft: rgba(45, 212, 191, 0.16);
+    --mentor: #f59e0b;
+    --mentor-soft: rgba(245, 158, 11, 0.16);
+    --accent: #818cf8;
+    --accent-soft: rgba(129, 140, 248, 0.16);
+    --safe: #34d399;
+    --safe-soft: rgba(52, 211, 153, 0.16);
+    --warn: #fbbf24;
+    --warn-soft: rgba(251, 191, 36, 0.16);
+    --grid-line: rgba(157, 168, 184, 0.14);
+    --linear-bar: rgba(157, 168, 184, 0.36);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0; padding: 14px; font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale)); line-height: 1.5; color: var(--ink);
+    background: var(--bg-grad); min-height: 100vh; transition: background .25s, color .25s;
+  }
+  body.embed-mode { padding: 8px; }
+
+  .app { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 13px 16px; box-shadow: var(--shadow-sm);
+  }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .between { justify-content: space-between; }
+
+  .eyebrow {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale));
+    letter-spacing: .1em; text-transform: uppercase; color: var(--mentor); font-weight: 750;
+  }
+  .title { margin: 2px 0 0; font-size: calc(18px * var(--scale)); font-weight: 800; letter-spacing: -.01em; }
+  .subtitle { margin: 2px 0 0; font-size: calc(12.5px * var(--scale)); color: var(--ink-muted); }
+
+  .font-ctl {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 9px;
+    background: var(--surface-2); border: 1px solid var(--border); font-size: calc(11px * var(--scale)); color: var(--ink-muted);
+  }
+  .font-ctl input { width: 62px; accent-color: var(--steward); cursor: pointer; }
+
+  .btn {
+    appearance: none; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink);
+    font-family: var(--font-sans); font-size: calc(12px * var(--scale)); font-weight: 650;
+    padding: 6px 11px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: all .18s; user-select: none;
+  }
+  .btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .btn:focus-visible { outline: 2px solid var(--steward); outline-offset: 2px; }
+  .btn.active { background: var(--steward); border-color: var(--steward); color: #fff; }
+  html[data-theme="dark"] .btn.active { color: #091214; }
+
+  /* Preset Bar */
+  .preset-label {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale));
+    text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 700;
+  }
+
+  /* Slider Control Grid */
+  .sliders-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;
+  }
+  .slider-box {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 12px;
+    padding: 11px 13px; display: flex; flex-direction: column; gap: 7px;
+  }
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .slider-name { font-weight: 750; font-size: calc(12.5px * var(--scale)); }
+  .slider-val {
+    font-family: var(--font-mono); font-weight: 800; font-size: calc(14px * var(--scale));
+    padding: 2px 8px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border);
+  }
+  .slider-box input[type="range"] { width: 100%; cursor: pointer; accent-color: var(--steward); }
+  .slider-box.founder-ctl input[type="range"] { accent-color: var(--founder); }
+  .slider-box.year-ctl input[type="range"] { accent-color: var(--mentor); }
+  .slider-meta { display: flex; justify-content: space-between; font-size: calc(11px * var(--scale)); color: var(--ink-muted); font-family: var(--font-mono); }
+
+  /* KPI Strip */
+  .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 11px 13px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 3px;
+  }
+  .kpi-k { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .07em; color: var(--ink-soft); font-weight: 700; }
+  .kpi-v { font-size: calc(19px * var(--scale)); font-weight: 850; letter-spacing: -.01em; }
+  .kpi-sub { font-size: calc(11.5px * var(--scale)); color: var(--ink-muted); }
+  .kpi.safe { border-left: 4px solid var(--safe); }
+  .kpi.safe .kpi-v { color: var(--safe); }
+  .kpi.danger { border-left: 4px solid var(--founder); }
+  .kpi.danger .kpi-v { color: var(--founder); }
+  .kpi.warn { border-left: 4px solid var(--mentor); }
+  .kpi.warn .kpi-v { color: var(--mentor); }
+  .kpi.accent { border-left: 4px solid var(--accent); }
+  .kpi.accent .kpi-v { color: var(--accent); }
+
+  /* Charts Workspace */
+  .charts-grid { display: grid; grid-template-columns: minmax(0, 1.32fr) minmax(0, 1fr); gap: 12px; align-items: stretch; }
+  @media (max-width: 980px) { .charts-grid { grid-template-columns: 1fr; } }
+
+  .chart-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 15px;
+    padding: 14px 16px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; position: relative;
+  }
+  .chart-title { margin: 0; font-size: calc(15px * var(--scale)); font-weight: 800; }
+  .chart-sub { margin: 2px 0 0; font-size: calc(12px * var(--scale)); color: var(--ink-muted); }
+  .legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: calc(11.5px * var(--scale)); font-weight: 650; }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+  .swatch.circle { border-radius: 50%; }
+
+  svg.viz { width: 100%; height: auto; display: block; user-select: none; overflow: visible; }
+  .axis-line { stroke: var(--border-strong); stroke-width: 1.2; }
+  .grid-line { stroke: var(--grid-line); stroke-width: 1; stroke-dasharray: 3 3; }
+  .axis-label { font-family: var(--font-mono); font-size: 10.5px; fill: var(--ink-muted); }
+  .series-path { fill: none; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; transition: d .2s ease; }
+  .inspect-line { stroke: var(--mentor); stroke-width: 2; stroke-dasharray: 5 4; }
+  .hit-col { fill: transparent; cursor: pointer; }
+  .hit-col:hover { fill: var(--mentor-soft); opacity: .35; }
+  .bar-rect { transition: y .22s ease, height .22s ease; rx: 4; }
+  .bar-val { font-family: var(--font-mono); font-size: 10.5px; font-weight: 800; fill: var(--ink); text-anchor: middle; }
+  .threshold-line { stroke: var(--founder); stroke-width: 1.5; stroke-dasharray: 4 3; opacity: .75; }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute; pointer-events: none; z-index: 20; opacity: 0; transition: opacity .15s;
+    background: var(--surface); border: 1.5px solid var(--border-strong); border-radius: 10px;
+    padding: 9px 11px; box-shadow: var(--shadow); font-size: calc(11.5px * var(--scale)); min-width: 195px;
+  }
+  .tooltip.show { opacity: 1; }
+  .tt-head { font-family: var(--font-mono); font-weight: 800; margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+  .tt-row { display: flex; justify-content: space-between; gap: 12px; margin: 2px 0; }
+
+  /* Table & Constitutional Check */
+  .bottom-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 12px; }
+  @media (max-width: 980px) { .bottom-grid { grid-template-columns: 1fr; } }
+
+  table.data-table { width: 100%; border-collapse: collapse; font-size: calc(12px * var(--scale)); }
+  .data-table th, .data-table td { padding: 8px 9px; border-bottom: 1px solid var(--border); text-align: right; }
+  .data-table th:first-child, .data-table td:first-child { text-align: left; }
+  .data-table th { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+  .data-table td.mono { font-family: var(--font-mono); font-weight: 700; }
+
+  .veto-list { display: flex; flex-direction: column; gap: 8px; }
+  .veto-item {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 9px 11px; display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  }
+  .badge {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale)); font-weight: 800;
+    padding: 3px 8px; border-radius: 999px; white-space: nowrap;
+  }
+  .badge.safe { background: var(--safe-soft); color: var(--safe); border: 1px solid var(--safe); }
+  .badge.danger { background: var(--founder-soft); color: var(--founder); border: 1px solid var(--founder); }
+
+  /* Collapsible Advanced & Anti-Farming Drawer */
+  details.adv-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 11px 16px; box-shadow: var(--shadow-sm);
+  }
+  details.adv-card summary {
+    cursor: pointer; font-weight: 750; font-size: calc(13px * var(--scale)); list-style: none;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  details.adv-card summary::-webkit-details-marker { display: none; }
+  .adv-body { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 14px; }
+  @media (max-width: 900px) { .adv-body { grid-template-columns: 1fr; } }
+
+  .formula-pill {
+    font-family: var(--font-mono); font-size: calc(11.5px * var(--scale));
+    padding: 7px 10px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--border);
+    color: var(--ink);
+  }
+
+  .footer-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: calc(11.5px * var(--scale)); color: var(--ink-muted); }
+  .kbd { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <header class="card row between">
+    <div>
+      <div class="eyebrow">AOLC BICAMERAL GOVERNANCE · REPUTATION MATH ENGINE</div>
+      <h1 class="title">FLUX Decay &amp; Square-Root vs. Linear Governance Simulator</h1>
+      <p class="subtitle">Testing anti-entrenchment decay, activation floor F<sub>min</sub>, and sub-linear vote compression across a 10-year Commons lifecycle</p>
+    </div>
+    <div class="row">
+      <label class="font-ctl" title="Adjust interface text scale">
+        <span>A-</span>
+        <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font scale" />
+        <span>A+</span>
+      </label>
+      <button id="playBtn" class="btn" type="button" title="Animate Year 0 to Year 10">&#9654; Play 10-Yr</button>
+      <button id="themeBtn" class="btn" type="button" title="Toggle Light Parchment / Dark Obsidian (Key: T)">
+        <span id="themeIcon">&#9790;</span><span id="themeLabel">Dark</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Scenario Presets -->
+  <section class="card row between" aria-label="Governance Scenario Presets">
+    <div class="row">
+      <span class="preset-label">Scenarios:</span>
+      <button class="btn preset-btn active" data-preset="default" type="button">Charter Default (15% Decay)</button>
+      <button class="btn preset-btn" data-preset="plutocracy" type="button">0% Decay (Founder Lock-In)</button>
+      <button class="btn preset-btn" data-preset="whale" type="button">5,000 FLUX Whale Stress Test</button>
+      <button class="btn preset-btn" data-preset="rapid" type="button">Fast Renewal (25% Decay)</button>
+    </div>
+    <span class="formula-pill" id="formulaReadout">F(t+1) = F(t)·(1 - d) + ΔF &nbsp;|&nbsp; W = √max(0, F - 25)</span>
+  </section>
+
+  <!-- Primary Interactive Sliders -->
+  <section class="sliders-grid" aria-label="Simulation Controls">
+    <div class="slider-box">
+      <div class="slider-head">
+        <span class="slider-name">Annual FLUX Decay Rate (<em>d</em>)</span>
+        <span class="slider-val" id="decayVal">15%</span>
+      </div>
+      <input id="decaySlider" type="range" min="0" max="35" step="1" value="15" aria-label="Annual FLUX decay rate" />
+      <div class="slider-meta"><span>0% (No Decay)</span><span id="halfLifeMeta">Half-life: 4.26 yrs</span><span>35% (Rapid)</span></div>
+    </div>
+
+    <div class="slider-box founder-ctl">
+      <div class="slider-head">
+        <span class="slider-name">Retired Founder Starting FLUX</span>
+        <span class="slider-val" id="founderVal">2,500</span>
+      </div>
+      <input id="founderSlider" type="range" min="500" max="5000" step="250" value="2500" aria-label="Retired Founder starting FLUX" />
+      <div class="slider-meta"><span>500 FLUX</span><span>Annual earned: 0 (Inactive)</span><span>5,000 FLUX</span></div>
+    </div>
+
+    <div class="slider-box year-ctl">
+      <div class="slider-head">
+        <span class="slider-name">Inspection Year (<em>t</em>)</span>
+        <span class="slider-val" id="yearVal">Year 5</span>
+      </div>
+      <input id="yearSlider" type="range" min="0" max="10" step="1" value="5" aria-label="Inspection year" />
+      <div class="slider-meta"><span>Year 0 (Launch)</span><span>Click chart to jump year</span><span>Year 10</span></div>
+    </div>
+  </section>
+
+  <!-- Live KPI Strip -->
+  <section class="kpi-grid" aria-live="polite">
+    <div class="kpi" id="kpiMajority">
+      <span class="kpi-k">Active Contributor Majority (√FLUX)</span>
+      <span class="kpi-v" id="kpiMajVal">67.7%</span>
+      <span class="kpi-sub" id="kpiMajSub">Steward + Mentor hold majority at Year 5</span>
+    </div>
+    <div class="kpi accent">
+      <span class="kpi-k">Founder Influence Compression</span>
+      <span class="kpi-v" id="kpiCompVal">-18.1 pts</span>
+      <span class="kpi-sub" id="kpiCompSub">Linear vs. Square-Root vote delta at Year 5</span>
+    </div>
+    <div class="kpi warn">
+      <span class="kpi-k">Active Majority Crossover Year</span>
+      <span class="kpi-v" id="kpiCrossVal">Year 2</span>
+      <span class="kpi-sub" id="kpiCrossSub">First year active contributors exceed 50% √FLUX</span>
+    </div>
+    <div class="kpi safe">
+      <span class="kpi-k">FLUX Half-Life &amp; Rate Constant</span>
+      <span class="kpi-v" id="kpiHalfVal">4.26 yrs</span>
+      <span class="kpi-sub" id="kpiHalfSub">λ = 0.1625 yr⁻¹ · Floor F_min = 25 FLUX</span>
+    </div>
+  </section>
+
+  <!-- Dual-Panel Quantitative Dashboard -->
+  <main class="charts-grid">
+    <!-- Panel 1: 10-Year Multi-Line Decay Trajectory -->
+    <section class="chart-card">
+      <div class="row between">
+        <div>
+          <h2 class="chart-title">10-Year Active FLUX Trajectory</h2>
+          <p class="chart-sub">Hover any year for exact balances; click a column to move the Inspection Year marker</p>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch circle" style="background:var(--founder)"></span>Retired Founder</span>
+          <span class="legend-item"><span class="swatch circle" style="background:var(--steward)"></span>Guild Steward</span>
+          <span class="legend-item"><span class="swatch circle" style="background:var(--mentor)"></span>New Active Mentor</span>
+        </div>
+      </div>
+      <svg id="lineSvg" class="viz" viewBox="0 0 640 330" role="img" aria-label="10-Year FLUX Decay Line Chart"></svg>
+      <div id="lineTooltip" class="tooltip"></div>
+    </section>
+
+    <!-- Panel 2: Grouped Bar Chart (Linear vs Square-Root Share) -->
+    <section class="chart-card">
+      <div class="row between">
+        <div>
+          <h2 class="chart-title" id="barTitle">Guild Chamber Vote Share — Year 5</h2>
+          <p class="chart-sub">Comparing 1-FLUX-1-Vote (Linear) against Square-Root Compression</p>
+        </div>
+        <div class="legend">
+          <span class="legend-item"><span class="swatch" style="background:var(--linear-bar)"></span>Linear (1:1)</span>
+          <span class="legend-item"><span class="swatch" style="background:var(--steward)"></span>√FLUX Weight</span>
+        </div>
+      </div>
+      <svg id="barSvg" class="viz" viewBox="0 0 460 330" role="img" aria-label="Linear vs Square-Root Voting Share Bar Chart"></svg>
+    </section>
+  </main>
+
+  <!-- Detailed Readout Table & Bicameral Veto Test -->
+  <section class="bottom-grid">
+    <div class="card">
+      <div class="row between" style="margin-bottom:8px;">
+        <h3 class="chart-title" id="tableTitle">Exact Governance Breakdown (Year 5)</h3>
+        <span style="font-family:var(--font-mono);font-size:calc(11px * var(--scale));color:var(--ink-muted);">Activation Floor: F<sub>min</sub> = <strong id="floorBadge">25</strong> FLUX</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Contributor Archetype</th>
+            <th>Active FLUX</th>
+            <th>Linear Share</th>
+            <th>√FLUX Weight</th>
+            <th>√FLUX Share</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="row between" style="margin-bottom:8px;">
+        <h3 class="chart-title">Unilateral Capture Test (Guild Chamber)</h3>
+        <span style="font-family:var(--font-mono);font-size:calc(11px * var(--scale));color:var(--ink-muted);">Can Retired Founder pass solo?</span>
+      </div>
+      <div class="veto-list" id="vetoList"></div>
+    </div>
+  </section>
+
+  <!-- Expandable Advanced Tuning & Concave Anti-Farming Curve -->
+  <details class="adv-card">
+    <summary>
+      <span>&#9881; Advanced Tuning &amp; Concave Epoch Anti-Farming Simulator (ΔF<sub>epoch</sub> = F<sub>max</sub>·(1 - e<sup>-k·S</sup>))</span>
+      <span style="font-family:var(--font-mono);font-size:calc(11px * var(--scale));color:var(--ink-muted);">Click to expand</span>
+    </summary>
+    <div class="adv-body">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="slider-box">
+          <div class="slider-head">
+            <span class="slider-name">Sybil Activation Floor (F<sub>min</sub>)</span>
+            <span class="slider-val" id="floorVal">25 FLUX</span>
+          </div>
+          <input id="floorSlider" type="range" min="0" max="150" step="5" value="25" />
+          <div class="slider-meta"><span>0</span><span>Blocks dust/Sybil accounts</span><span>150</span></div>
+        </div>
+        <div class="slider-box">
+          <div class="slider-head">
+            <span class="slider-name">Guild Steward Annual Verified FLUX</span>
+            <span class="slider-val" id="stewardRateVal">250 / yr</span>
+          </div>
+          <input id="stewardRateSlider" type="range" min="50" max="500" step="25" value="250" />
+        </div>
+        <div class="slider-box">
+          <div class="slider-head">
+            <span class="slider-name">New Active Mentor Annual Verified FLUX</span>
+            <span class="slider-val" id="mentorRateVal">380 / yr</span>
+          </div>
+          <input id="mentorRateSlider" type="range" min="50" max="600" step="10" value="380" />
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div class="row between">
+          <div>
+            <h4 class="chart-title">Quarterly Anti-Farming Saturation Curve</h4>
+            <p class="chart-sub">Hard ceiling F<sub>max</sub> = 150 FLUX/quarter, sensitivity k = 0.04 — spam edits yield diminishing marginal FLUX</p>
+          </div>
+          <span class="slider-val" id="epochOut">+136.4 FLUX</span>
+        </div>
+        <div class="slider-box" style="padding:8px 11px;">
+          <div class="slider-head">
+            <span class="slider-name">Simulated Quarterly Verified Score (S<sub>verified</sub>)</span>
+            <span class="slider-val" id="scoreVal">60 pts</span>
+          </div>
+          <input id="scoreSlider" type="range" min="0" max="150" step="5" value="60" />
+        </div>
+        <svg id="epochSvg" class="viz" viewBox="0 0 460 155" role="img" aria-label="Epoch Anti-Farming Curve"></svg>
+      </div>
+    </div>
+  </details>
+
+  <footer class="card footer-note">
+    <span><strong>Constitutional Rule:</strong> FLUX is strictly non-monetary, soulbound, and earned exclusively via Guild-verified CODE+V contributions.</span>
+    <span>Keys: <span class="kbd">&larr;</span> <span class="kbd">&rarr;</span> Year &middot; <span class="kbd">Space</span> Play/Pause &middot; <span class="kbd">T</span> Theme</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const state = {
+    decayPct: 15,
+    founderStart: 2500,
+    stewardStart: 200,
+    stewardAnnual: 250,
+    mentorStart: 50,
+    mentorAnnual: 380,
+    floor: 25,
+    year: 5,
+    epochScore: 60,
+    playTimer: null
+  };
+
+  const PRESETS = {
+    default: { decayPct: 15, founderStart: 2500, stewardAnnual: 250, mentorAnnual: 380, floor: 25, year: 5 },
+    plutocracy: { decayPct: 0, founderStart: 2500, stewardAnnual: 250, mentorAnnual: 380, floor: 25, year: 5 },
+    whale: { decayPct: 15, founderStart: 5000, stewardAnnual: 250, mentorAnnual: 380, floor: 25, year: 5 },
+    rapid: { decayPct: 25, founderStart: 2500, stewardAnnual: 250, mentorAnnual: 380, floor: 25, year: 5 }
+  };
+
+  function computeSeries() {
+    const d = state.decayPct / 100;
+    const personas = [
+      { id: "founder", name: "Retired Founder (Early Hoarder)", short: "Retired Founder", color: "var(--founder)", start: state.founderStart, annual: 0, series: [] },
+      { id: "steward", name: "Consistent Guild Steward", short: "Guild Steward", color: "var(--steward)", start: state.stewardStart, annual: state.stewardAnnual, series: [] },
+      { id: "mentor", name: "New Active Mentor", short: "Active Mentor", color: "var(--mentor)", start: state.mentorStart, annual: state.mentorAnnual, series: [] }
+    ];
+
+    personas.forEach((p) => {
+      let cur = p.start;
+      p.series.push(cur);
+      for (let t = 1; t <= 10; t++) {
+        cur = cur * (1 - d) + p.annual;
+        p.series.push(cur);
+      }
+    });
+
+    // Compute per-year vote shares
+    const yearly = [];
+    for (let t = 0; t <= 10; t++) {
+      const vals = personas.map((p) => p.series[t]);
+      const sumLin = vals.reduce((a, b) => a + b, 0) || 1;
+      const weights = vals.map((v) => (v >= state.floor ? Math.sqrt(Math.max(0, v - state.floor)) : 0));
+      const sumSqrt = weights.reduce((a, b) => a + b, 0) || 1;
+      yearly.push({
+        t,
+        vals,
+        weights,
+        linPct: vals.map((v) => (v / sumLin) * 100),
+        sqrtPct: weights.map((w) => (w / sumSqrt) * 100)
+      });
+    }
+    return { personas, yearly };
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeIcon").innerHTML = theme === "dark" ? "&#9728;" : "&#9790;";
+    document.getElementById("themeLabel").textContent = theme === "dark" ? "Light" : "Dark";
+    try { localStorage.setItem("aolc_flux_theme", theme); } catch (_) {}
+  }
+
+  function renderLineChart(personas, yearly) {
+    const svg = document.getElementById("lineSvg");
+    const W = 640, H = 330, padL = 56, padR = 22, padT = 22, padB = 38;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const rawMax = Math.max(...personas.flatMap((p) => p.series), 1000);
+    const yMax = Math.ceil(rawMax / 500) * 500;
+    const xPos = (t) => padL + (t / 10) * plotW;
+    const yPos = (v) => padT + plotH - (v / yMax) * plotH;
+
+    let html = "";
+    // Grid & Y labels
+    const ticks = 5;
+    for (let i = 0; i <= ticks; i++) {
+      const val = (yMax / ticks) * i;
+      const y = yPos(val);
+      html += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" />`;
+      html += `<text class="axis-label" x="${padL - 8}" y="${y + 4}" text-anchor="end">${Math.round(val).toLocaleString()}</text>`;
+    }
+
+    // X axis & labels
+    html += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" />`;
+    html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" />`;
+    for (let t = 0; t <= 10; t++) {
+      const x = xPos(t);
+      const bold = t === state.year ? 'font-weight="800" fill="var(--mentor)"' : "";
+      html += `<text class="axis-label" x="${x}" y="${H - 12}" text-anchor="middle" ${bold}>Yr ${t}</text>`;
+    }
+
+    // Inspection Year Vertical Reference Line
+    const ix = xPos(state.year);
+    html += `<line class="inspect-line" x1="${ix}" y1="${padT}" x2="${ix}" y2="${padT + plotH}" />`;
+    html += `<rect x="${ix - 28}" y="3" width="56" height="17" rx="5" fill="var(--mentor)" />`;
+    html += `<text x="${ix}" y="15" text-anchor="middle" font-family="var(--font-mono)" font-size="10" font-weight="800" fill="#fff">YEAR ${state.year}</text>`;
+
+    // Series Paths & Points
+    personas.forEach((p, pi) => {
+      const dStr = p.series.map((v, t) => `${t === 0 ? "M" : "L"} ${xPos(t).toFixed(1)} ${yPos(v).toFixed(1)}`).join(" ");
+      html += `<path class="series-path" d="${dStr}" stroke="${p.color}" />`;
+      p.series.forEach((v, t) => {
+        const active = t === state.year;
+        const r = active ? 6 : 3.2;
+        const sw = active ? 2.5 : 1.5;
+        html += `<circle cx="${xPos(t).toFixed(1)}" cy="${yPos(v).toFixed(1)}" r="${r}" fill="var(--surface)" stroke="${p.color}" stroke-width="${sw}" />`;
+      });
+    });
+
+    // Interactive Column Hit Targets
+    const colW = plotW / 10;
+    for (let t = 0; t <= 10; t++) {
+      const cx = Math.max(padL, xPos(t) - colW / 2);
+      const cw = t === 0 || t === 10 ? colW / 2 : colW;
+      html += `<rect class="hit-col" data-t="${t}" x="${cx.toFixed(1)}" y="${padT}" width="${cw.toFixed(1)}" height="${plotH}" />`;
+    }
+
+    svg.innerHTML = html;
+
+    // Bind Hover Tooltip & Click-to-Select Year
+    const tt = document.getElementById("lineTooltip");
+    svg.querySelectorAll(".hit-col").forEach((rect) => {
+      rect.addEventListener("mouseenter", (e) => {
+        const t = Number(rect.dataset.t);
+        const yData = yearly[t];
+        tt.innerHTML = `<div class="tt-head">Year ${t} Snapshot</div>` +
+          personas.map((p, idx) =>
+            `<div class="tt-row"><span style="color:${p.color};font-weight:700;">${p.short}</span>` +
+            `<span style="font-family:var(--font-mono);">${Math.round(yData.vals[idx]).toLocaleString()} FLUX (${yData.sqrtPct[idx].toFixed(1)}% √)</span></div>`
+          ).join("");
+        tt.classList.add("show");
+      });
+      rect.addEventListener("mousemove", (e) => {
+        const box = svg.parentElement.getBoundingClientRect();
+        let left = e.clientX - box.left + 14;
+        if (left + 215 > box.width) left = e.clientX - box.left - 220;
+        const top = Math.max(12, e.clientY - box.top - 36);
+        tt.style.left = left + "px";
+        tt.style.top = top + "px";
+      });
+      rect.addEventListener("mouseleave", () => tt.classList.remove("show"));
+      rect.addEventListener("click", () => {
+        stopPlay();
+        state.year = Number(rect.dataset.t);
+        document.getElementById("yearSlider").value = state.year;
+        render();
+      });
+    });
+  }
+
+  function renderBarChart(personas, yData) {
+    const svg = document.getElementById("barSvg");
+    const W = 460, H = 330, padL = 44, padR = 16, padT = 26, padB = 54;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const yPos = (pct) => padT + plotH - (pct / 100) * plotH;
+
+    let html = "";
+    [0, 25, 50, 75, 100].forEach((pct) => {
+      const y = yPos(pct);
+      html += `<line class="grid-line" x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" />`;
+      html += `<text class="axis-label" x="${padL - 7}" y="${y + 4}" text-anchor="end">${pct}%</text>`;
+    });
+
+    // 50% Majority Reference Line
+    const y50 = yPos(50);
+    html += `<line class="threshold-line" x1="${padL}" y1="${y50}" x2="${W - padR}" y2="${y50}" />`;
+    html += `<text x="${W - padR - 4}" y="${y50 - 5}" text-anchor="end" font-family="var(--font-mono)" font-size="9.5" font-weight="700" fill="var(--founder)">50% Majority Line</text>`;
+
+    html += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" />`;
+    html += `<line class="axis-line" x1="${padL}" y1="${padT}" x2="${padL}" y2="${padT + plotH}" />`;
+
+    const groupW = plotW / 3;
+    const barW = 40;
+    const gap = 8;
+
+    personas.forEach((p, idx) => {
+      const gx = padL + groupW * idx + groupW / 2;
+      const linP = yData.linPct[idx];
+      const sqP = yData.sqrtPct[idx];
+      const linH = (linP / 100) * plotH;
+      const sqH = (sqP / 100) * plotH;
+
+      const x1 = gx - barW - gap / 2;
+      const x2 = gx + gap / 2;
+
+      html += `<rect class="bar-rect" x="${x1}" y="${yPos(linP)}" width="${barW}" height="${linH}" fill="var(--linear-bar)" />`;
+      html += `<text class="bar-val" x="${x1 + barW / 2}" y="${yPos(linP) - 6}" style="fill:var(--ink-muted)">${linP.toFixed(1)}%</text>`;
+
+      html += `<rect class="bar-rect" x="${x2}" y="${yPos(sqP)}" width="${barW}" height="${sqH}" fill="${p.color}" />`;
+      html += `<text class="bar-val" x="${x2 + barW / 2}" y="${yPos(sqP) - 6}" style="fill:${p.color}">${sqP.toFixed(1)}%</text>`;
+
+      html += `<text x="${gx}" y="${H - 28}" text-anchor="middle" font-size="11.5" font-weight="750" fill="var(--ink)">${p.short}</text>`;
+      html += `<text x="${gx}" y="${H - 13}" text-anchor="middle" font-family="var(--font-mono)" font-size="9.8" fill="var(--ink-muted)">Lin vs √FLUX</text>`;
+    });
+
+    svg.innerHTML = html;
+  }
+
+  function renderEpochCurve() {
+    const svg = document.getElementById("epochSvg");
+    const Fmax = 150, k = 0.04;
+    const W = 460, H = 155, padL = 42, padR = 16, padT = 16, padB = 28;
+    const plotW = W - padL - padR, plotH = H - padT - padB;
+    const xPos = (s) => padL + (s / 150) * plotW;
+    const yPos = (f) => padT + plotH - (f / 160) * plotH;
+
+    let dStr = "";
+    for (let s = 0; s <= 150; s += 5) {
+      const f = Fmax * (1 - Math.exp(-k * s));
+      dStr += `${s === 0 ? "M" : "L"} ${xPos(s).toFixed(1)} ${yPos(f).toFixed(1)} `;
+    }
+
+    const curF = Fmax * (1 - Math.exp(-k * state.epochScore));
+    document.getElementById("scoreVal").textContent = `${state.epochScore} pts`;
+    document.getElementById("epochOut").textContent = `+${curF.toFixed(1)} FLUX`;
+
+    const yCap = yPos(150);
+    let html = "";
+    [0, 50, 100, 150].forEach((v) => {
+      html += `<line class="grid-line" x1="${padL}" y1="${yPos(v)}" x2="${W - padR}" y2="${yPos(v)}" />`;
+      html += `<text class="axis-label" x="${padL - 6}" y="${yPos(v) + 4}" text-anchor="end">${v}</text>`;
+    });
+    html += `<line x1="${padL}" y1="${yCap}" x2="${W - padR}" y2="${yCap}" stroke="var(--founder)" stroke-dasharray="4 3" stroke-width="1.2" />`;
+    html += `<text x="${W - padR - 4}" y="${yCap - 4}" text-anchor="end" font-family="var(--font-mono)" font-size="9.5" fill="var(--founder)">Hard Cap F_max = 150</text>`;
+    html += `<line class="axis-line" x1="${padL}" y1="${padT + plotH}" x2="${W - padR}" y2="${padT + plotH}" />`;
+    html += `<path d="${dStr}" fill="none" stroke="var(--steward)" stroke-width="2.6" />`;
+    html += `<line x1="${xPos(state.epochScore)}" y1="${yPos(curF)}" x2="${xPos(state.epochScore)}" y2="${padT + plotH}" stroke="var(--mentor)" stroke-dasharray="3 3" />`;
+    html += `<circle cx="${xPos(state.epochScore)}" cy="${yPos(curF)}" r="5.5" fill="var(--surface)" stroke="var(--mentor)" stroke-width="2.5" />`;
+    [0, 30, 60, 90, 120, 150].forEach((s) => {
+      html += `<text class="axis-label" x="${xPos(s)}" y="${H - 8}" text-anchor="middle">${s}</text>`;
+    });
+    svg.innerHTML = html;
+  }
+
+  function render() {
+    const { personas, yearly } = computeSeries();
+    const yData = yearly[state.year];
+    const d = state.decayPct / 100;
+    const lambda = d > 0 ? -Math.log(1 - d) : 0;
+    const halfLife = d > 0 ? Math.log(2) / lambda : Infinity;
+
+    // Slider labels
+    document.getElementById("decayVal").textContent = `${state.decayPct}%`;
+    document.getElementById("halfLifeMeta").textContent = d > 0 ? `Half-life: ${halfLife.toFixed(2)} yrs` : "Half-life: ∞ (Never decays)";
+    document.getElementById("founderVal").textContent = state.founderStart.toLocaleString();
+    document.getElementById("yearVal").textContent = `Year ${state.year}`;
+    document.getElementById("floorVal").textContent = `${state.floor} FLUX`;
+    document.getElementById("floorBadge").textContent = state.floor;
+    document.getElementById("stewardRateVal").textContent = `${state.stewardAnnual} / yr`;
+    document.getElementById("mentorRateVal").textContent = `${state.mentorAnnual} / yr`;
+    document.getElementById("formulaReadout").textContent = `F(t+1) = F(t)·(1 - ${d.toFixed(2)}) + ΔF  |  W = √max(0, F - ${state.floor})`;
+
+    // KPI computations
+    const activeSqrtPct = yData.sqrtPct[1] + yData.sqrtPct[2];
+    const founderLinPct = yData.linPct[0];
+    const founderSqrtPct = yData.sqrtPct[0];
+    const deltaPts = founderSqrtPct - founderLinPct;
+    const crossObj = yearly.find((y) => (y.sqrtPct[1] + y.sqrtPct[2]) > 50);
+
+    const kpiMaj = document.getElementById("kpiMajority");
+    kpiMaj.className = "kpi " + (activeSqrtPct > 50 ? "safe" : "danger");
+    document.getElementById("kpiMajVal").textContent = `${activeSqrtPct.toFixed(1)}%`;
+    document.getElementById("kpiMajSub").textContent = activeSqrtPct > 50
+      ? `Active contributors hold majority at Year ${state.year}`
+      : `Dormant founder still dominates at Year ${state.year}`;
+
+    document.getElementById("kpiCompVal").textContent = `${deltaPts >= 0 ? "+" : ""}${deltaPts.toFixed(1)} pts`;
+    document.getElementById("kpiCompSub").textContent = `Founder: ${founderLinPct.toFixed(1)}% Linear → ${founderSqrtPct.toFixed(1)}% √FLUX`;
+
+    document.getElementById("kpiCrossVal").textContent = crossObj ? `Year ${crossObj.t}` : "> Year 10";
+    document.getElementById("kpiCrossSub").textContent = crossObj
+      ? `Active stewards overtake dormant founder by Year ${crossObj.t}`
+      : `Increase decay rate d to prevent 10-yr lock-in`;
+
+    document.getElementById("kpiHalfVal").textContent = d > 0 ? `${halfLife.toFixed(2)} yrs` : "∞ (None)";
+    document.getElementById("kpiHalfSub").textContent = d > 0
+      ? `λ = ${lambda.toFixed(4)} yr⁻¹ · Floor F_min = ${state.floor} FLUX`
+      : `Zero decay: early hoarders never lose weight`;
+
+    document.getElementById("barTitle").textContent = `Guild Chamber Vote Share — Year ${state.year}`;
+    document.getElementById("tableTitle").textContent = `Exact Governance Breakdown (Year ${state.year})`;
+
+    // Breakdown Table
+    document.getElementById("breakdownBody").innerHTML = personas.map((p, idx) => `
+      <tr>
+        <td><span class="swatch circle" style="background:${p.color};margin-right:6px;"></span><strong>${p.name}</strong></td>
+        <td class="mono">${Math.round(yData.vals[idx]).toLocaleString()}</td>
+        <td class="mono" style="color:var(--ink-muted)">${yData.linPct[idx].toFixed(1)}%</td>
+        <td class="mono">${yData.weights[idx].toFixed(1)}</td>
+        <td class="mono" style="color:${p.color}">${yData.sqrtPct[idx].toFixed(1)}%</td>
+      </tr>
+    `).join("");
+
+    // Bicameral Veto Check
+    const classes = [
+      { label: "Class A · Operational (>50%)", desc: "CODE+V rubrics, new Guild charters", req: 50.01 },
+      { label: "Class B · Protocol (≥60%)", desc: "NATS specs, FLUX constants, Hub peering", req: 60 },
+      { label: "Class C · Constitutional (≥75%)", desc: "Charter amendments, Operator root rotation", req: 75 }
+    ];
+    document.getElementById("vetoList").innerHTML = classes.map((c) => {
+      const soloPass = founderSqrtPct >= c.req;
+      return `
+        <div class="veto-item">
+          <div>
+            <div style="font-weight:750;font-size:calc(12.5px * var(--scale));">${c.label}</div>
+            <div style="font-size:calc(11px * var(--scale));color:var(--ink-muted);">${c.desc}</div>
+          </div>
+          <span class="badge ${soloPass ? "danger" : "safe"}">${soloPass ? "SOLO CAPTURE RISK" : "COALITION REQUIRED"}</span>
+        </div>`;
+    }).join("");
+
+    renderLineChart(personas, yearly);
+    renderBarChart(personas, yData);
+    renderEpochCurve();
+  }
+
+  function stopPlay() {
+    if (state.playTimer) {
+      clearInterval(state.playTimer);
+      state.playTimer = null;
+      document.getElementById("playBtn").innerHTML = "&#9654; Play 10-Yr";
+      document.getElementById("playBtn").classList.remove("active");
+    }
+  }
+
+  function clearPresets() {
+    document.querySelectorAll(".preset-btn").forEach((b) => b.classList.remove("active"));
+  }
+
+  // Bindings
+  document.getElementById("decaySlider").addEventListener("input", (e) => { clearPresets(); state.decayPct = Number(e.target.value); render(); });
+  document.getElementById("founderSlider").addEventListener("input", (e) => { clearPresets(); state.founderStart = Number(e.target.value); render(); });
+  document.getElementById("yearSlider").addEventListener("input", (e) => { stopPlay(); state.year = Number(e.target.value); render(); });
+  document.getElementById("floorSlider").addEventListener("input", (e) => { clearPresets(); state.floor = Number(e.target.value); render(); });
+  document.getElementById("stewardRateSlider").addEventListener("input", (e) => { clearPresets(); state.stewardAnnual = Number(e.target.value); render(); });
+  document.getElementById("mentorRateSlider").addEventListener("input", (e) => { clearPresets(); state.mentorAnnual = Number(e.target.value); render(); });
+  document.getElementById("scoreSlider").addEventListener("input", (e) => { state.epochScore = Number(e.target.value); renderEpochCurve(); });
+  document.getElementById("fontSlider").addEventListener("input", (e) => { document.documentElement.style.setProperty("--scale", e.target.value); });
+
+  document.querySelectorAll(".preset-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      stopPlay();
+      const p = PRESETS[btn.dataset.preset];
+      Object.assign(state, p);
+      document.getElementById("decaySlider").value = state.decayPct;
+      document.getElementById("founderSlider").value = state.founderStart;
+      document.getElementById("yearSlider").value = state.year;
+      document.getElementById("floorSlider").value = state.floor;
+      document.getElementById("stewardRateSlider").value = state.stewardAnnual;
+      document.getElementById("mentorRateSlider").value = state.mentorAnnual;
+      document.querySelectorAll(".preset-btn").forEach((b) => b.classList.toggle("active", b === btn));
+      render();
+    });
+  });
+
+  document.getElementById("playBtn").addEventListener("click", () => {
+    if (state.playTimer) { stopPlay(); return; }
+    if (state.year >= 10) state.year = 0;
+    document.getElementById("playBtn").innerHTML = "&#9632; Pause";
+    document.getElementById("playBtn").classList.add("active");
+    state.playTimer = setInterval(() => {
+      state.year = (state.year + 1) % 11;
+      document.getElementById("yearSlider").value = state.year;
+      render();
+      if (state.year === 10) stopPlay();
+    }, 850);
+  });
+
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") { stopPlay(); state.year = Math.min(10, state.year + 1); document.getElementById("yearSlider").value = state.year; render(); }
+    else if (e.key === "ArrowLeft") { stopPlay(); state.year = Math.max(0, state.year - 1); document.getElementById("yearSlider").value = state.year; render(); }
+    else if (e.key === " ") { e.preventDefault(); document.getElementById("playBtn").click(); }
+    else if (e.key.toLowerCase() === "t") { document.getElementById("themeBtn").click(); }
+  });
+
+  // Obsidian iframe & theme auto-init
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "1") document.body.classList.add("embed-mode");
+  const urlTheme = params.get("theme");
+  let saved = null;
+  try { saved = localStorage.getItem("aolc_flux_theme"); } catch (_) {}
+  const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(urlTheme === "dark" || urlTheme === "light" ? urlTheme : (saved || (sysDark ? "dark" : "light")));
+
+  render();
+})();
+</script>
+</body>
+</html>

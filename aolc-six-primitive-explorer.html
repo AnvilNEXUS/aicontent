@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AOLC Six-Primitive Architecture &amp; Commercial Capture Explorer</title>
+<style>
+  :root {
+    --scale: 1;
+    --bg: #f5efe3;
+    --bg-grad: radial-gradient(circle at 12% 8%, #fbf7ee 0%, #f3ecdd 55%, #ece2ce 100%);
+    --surface: #fcf9f2;
+    --surface-2: #efe7d6;
+    --surface-3: #e5dac3;
+    --ink: #1e2421;
+    --ink-muted: #555f59;
+    --ink-soft: #757f78;
+    --border: #d7cab2;
+    --border-strong: #bfa988;
+    --shadow: 0 8px 24px rgba(56, 42, 20, 0.08);
+    --shadow-sm: 0 2px 8px rgba(56, 42, 20, 0.06);
+    --sync: #0f766e;
+    --sync-soft: rgba(15, 118, 110, 0.13);
+    --flux: #b4691e;
+    --flux-soft: rgba(180, 105, 30, 0.14);
+    --disc: #3f4d96;
+    --disc-soft: rgba(63, 77, 150, 0.13);
+    --danger: #b8332a;
+    --danger-soft: rgba(184, 51, 42, 0.14);
+    --safe: #1e7a55;
+    --safe-soft: rgba(30, 122, 85, 0.14);
+    --lane-bg: rgba(252, 249, 242, 0.72);
+    --lane-stroke: #d3c5aa;
+    --node-bg: #fffdf8;
+    --pill-bg: #f7f1e3;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+  html[data-theme="dark"] {
+    --bg: #0c1117;
+    --bg-grad: radial-gradient(circle at 15% 10%, #151d28 0%, #0d1219 55%, #090d12 100%);
+    --surface: #141b24;
+    --surface-2: #1c2532;
+    --surface-3: #253142;
+    --ink: #ece8df;
+    --ink-muted: #9da8b8;
+    --ink-soft: #758294;
+    --border: #2a3545;
+    --border-strong: #3d4d63;
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.35);
+    --sync: #2dd4bf;
+    --sync-soft: rgba(45, 212, 191, 0.15);
+    --flux: #f59e0b;
+    --flux-soft: rgba(245, 158, 11, 0.16);
+    --disc: #818cf8;
+    --disc-soft: rgba(129, 140, 248, 0.16);
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, 0.16);
+    --safe: #34d399;
+    --safe-soft: rgba(52, 211, 153, 0.16);
+    --lane-bg: rgba(20, 27, 36, 0.72);
+    --lane-stroke: #2c3849;
+    --node-bg: #18212d;
+    --pill-bg: #141c27;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 14px; font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale)); line-height: 1.5; color: var(--ink);
+    background: var(--bg-grad); min-height: 100vh; transition: background .25s, color .25s;
+  }
+  body.embed-mode { padding: 8px; }
+  .app { max-width: 1360px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .topbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+  .eyebrow {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale));
+    letter-spacing: .1em; text-transform: uppercase; color: var(--sync); font-weight: 700;
+  }
+  .title { margin: 2px 0 0; font-size: calc(18px * var(--scale)); font-weight: 800; letter-spacing: -.01em; }
+  .subtitle { margin: 2px 0 0; font-size: calc(12.5px * var(--scale)); color: var(--ink-muted); }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; }
+  .between { justify-content: space-between; }
+  .font-ctl {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 9px;
+    background: var(--surface-2); border: 1px solid var(--border); font-size: calc(11px * var(--scale)); color: var(--ink-muted);
+  }
+  .font-ctl input { width: 64px; accent-color: var(--sync); cursor: pointer; }
+  .btn {
+    appearance: none; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink);
+    font-family: var(--font-sans); font-size: calc(12px * var(--scale)); font-weight: 650;
+    padding: 6px 11px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: all .18s; user-select: none;
+  }
+  .btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .btn:focus-visible { outline: 2px solid var(--sync); outline-offset: 2px; }
+  .btn.active { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .layer-btn[data-layer="data_sync"].active { background: var(--sync); border-color: var(--sync); color: #fff; }
+  .layer-btn[data-layer="flux_governance"].active { background: var(--flux); border-color: var(--flux); color: #fff; }
+  .layer-btn[data-layer="discovery_relay"].active { background: var(--disc); border-color: var(--disc); color: #fff; }
+  html[data-theme="dark"] .layer-btn[data-layer="data_sync"].active,
+  html[data-theme="dark"] .layer-btn[data-layer="flux_governance"].active,
+  html[data-theme="dark"] .layer-btn[data-layer="discovery_relay"].active { color: #091015; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .group-label {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale));
+    text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 700; margin-right: 3px;
+  }
+  .capture-toggle {
+    display: inline-flex; align-items: center; gap: 10px; padding: 7px 13px; border-radius: 10px;
+    border: 1.5px solid var(--border-strong); background: var(--surface-2); cursor: pointer;
+    font-weight: 750; font-size: calc(12px * var(--scale)); color: var(--ink); transition: all .22s;
+  }
+  .capture-toggle.captured {
+    border-color: var(--danger); background: var(--danger-soft); color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-soft);
+  }
+  .switch-track { width: 36px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; transition: background .2s; }
+  .capture-toggle.captured .switch-track { background: var(--danger); }
+  .switch-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform .2s; }
+  .capture-toggle.captured .switch-thumb { transform: translateX(16px); }
+  .phase-pill {
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-muted);
+    padding: 5px 11px; border-radius: 999px; font-size: calc(11.5px * var(--scale)); font-weight: 650; cursor: pointer; transition: all .18s;
+  }
+  .phase-pill:hover { border-color: var(--border-strong); color: var(--ink); }
+  .phase-pill.active { background: var(--flux); border-color: var(--flux); color: #fff; }
+  html[data-theme="dark"] .phase-pill.active { color: #120d04; }
+  .phase-summary {
+    margin-top: 9px; padding: 9px 12px; border-radius: 10px; background: var(--surface-2);
+    border-left: 4px solid var(--flux); font-size: calc(12.5px * var(--scale));
+    display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .meta-tag {
+    font-family: var(--font-mono); font-size: calc(11px * var(--scale)); padding: 3px 8px;
+    border-radius: 6px; background: var(--surface); border: 1px solid var(--border); color: var(--ink-muted);
+  }
+  .capture-strip {
+    display: none; border: 1.5px solid var(--danger); flex-direction: column; gap: 10px;
+  }
+  .capture-strip.visible { display: flex; }
+  .capture-badge {
+    font-family: var(--font-mono); font-size: calc(11px * var(--scale)); font-weight: 750;
+    color: var(--danger); background: var(--danger-soft); padding: 4px 10px; border-radius: 999px;
+  }
+  .integrity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 8px; }
+  .icard { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+  .icard .k { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; color: var(--ink-soft); }
+  .icard .v { font-size: calc(13px * var(--scale)); font-weight: 800; color: var(--safe); margin-top: 2px; }
+  .workspace { display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(300px, .95fr); gap: 12px; align-items: start; }
+  @media (max-width: 1000px) { .workspace { grid-template-columns: 1fr; } }
+  .stage-card { padding: 12px; box-shadow: var(--shadow); overflow: hidden; }
+  .legend { display: flex; flex-wrap: wrap; gap: 11px; font-size: calc(11px * var(--scale)); font-family: var(--font-mono); color: var(--ink-muted); }
+  svg#archSvg { width: 100%; height: auto; display: block; user-select: none; }
+  .lane-rect { fill: var(--lane-bg); stroke: var(--lane-stroke); stroke-width: 1.25; stroke-dasharray: 5 4; rx: 14; }
+  .lane-title { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; letter-spacing: .09em; fill: var(--ink-soft); }
+  .node-group { cursor: pointer; transition: opacity .25s; }
+  .node-box { fill: var(--node-bg); stroke: var(--border-strong); stroke-width: 1.6; rx: 12; transition: all .22s; }
+  .node-group:hover .node-box { stroke-width: 2.4; filter: drop-shadow(0 6px 12px rgba(0,0,0,.14)); }
+  .node-group.selected .node-box { stroke: var(--sync); stroke-width: 2.8; }
+  .node-group.compromised .node-box { stroke: var(--danger); stroke-width: 2.7; fill: var(--danger-soft); }
+  .node-group.standby { opacity: .55; }
+  .node-group.standby:hover, .node-group.standby.selected { opacity: .92; }
+  .node-group.reroute-active { opacity: 1; }
+  .node-group.reroute-active .node-box { stroke: var(--safe); stroke-width: 2.8; fill: var(--safe-soft); }
+  .node-title { font-size: 14.5px; font-weight: 800; fill: var(--ink); letter-spacing: .02em; }
+  .node-sub { font-size: 11px; fill: var(--ink-muted); }
+  .node-badge-bg { fill: var(--surface-2); stroke: var(--border); stroke-width: 1; rx: 5; }
+  .node-badge-text { font-family: var(--font-mono); font-size: 9.7px; font-weight: 700; fill: var(--ink); }
+  .edge-group { transition: opacity .28s; }
+  .edge-group.dimmed { opacity: .12; }
+  .edge-group.hidden-edge { opacity: 0; pointer-events: none; }
+  .edge-path { fill: none; stroke-width: 2.3; stroke-linecap: round; transition: stroke .25s, opacity .25s; }
+  .edge-pulse { fill: none; stroke-width: 2.8; stroke-dasharray: 8 18; stroke-linecap: round; animation: flowDash 1.35s linear infinite; pointer-events: none; }
+  @keyframes flowDash { from { stroke-dashoffset: 26; } to { stroke-dashoffset: 0; } }
+  .edge-group.severed .edge-path { stroke: var(--danger) !important; stroke-dasharray: 5 5; opacity: .65; }
+  .edge-group.severed .edge-pulse { display: none; }
+  .edge-pill-bg { fill: var(--pill-bg); stroke: var(--border); stroke-width: 1; rx: 6; }
+  .edge-pill-text { font-family: var(--font-mono); font-size: 9.6px; font-weight: 700; fill: var(--ink); text-anchor: middle; }
+  .sever-x { display: none; }
+  .edge-group.severed .sever-x { display: inline; }
+  .inspector { padding: 15px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; position: sticky; top: 10px; }
+  .insp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 9px; }
+  .insp-layer { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .08em; font-weight: 750; }
+  .insp-title { margin: 2px 0 0; font-size: calc(17px * var(--scale)); font-weight: 800; }
+  .chip { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); font-weight: 750; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); white-space: nowrap; }
+  .chip.safe { background: var(--safe-soft); border-color: var(--safe); color: var(--safe); }
+  .chip.danger { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  .chip.flux { background: var(--flux-soft); border-color: var(--flux); color: var(--flux); }
+  .dblock { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; }
+  .dlabel { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 700; }
+  .dtext { margin: 0; font-size: calc(12.3px * var(--scale)); }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+  .tag { font-family: var(--font-mono); font-size: calc(10.5px * var(--scale)); padding: 2px 7px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
+  .flinks { display: flex; flex-direction: column; gap: 5px; }
+  .flink {
+    width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 9px; cursor: pointer; color: var(--ink); font-size: calc(11.5px * var(--scale));
+    display: flex; align-items: center; justify-content: space-between; gap: 6px; transition: all .15s;
+  }
+  .flink:hover { border-color: var(--sync); background: var(--surface-3); }
+  .fdir { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); color: var(--ink-muted); white-space: nowrap; }
+  .footer-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: calc(11.5px * var(--scale)); color: var(--ink-muted); }
+  .kbd { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="card topbar">
+    <div>
+      <div class="eyebrow">ALCHEMOSAIC OPEN LEARNING COMMONS · ARCHITECTURE EXPLORER</div>
+      <h1 class="title">Six-Primitive Separation of Powers &amp; Credible Exit</h1>
+      <p class="subtitle">Decoupling Edge Custody, Production Forges, Epistemic Guilds, and Replaceable Hubs across Progressive Decentralization</p>
+    </div>
+    <div class="row">
+      <label class="font-ctl" title="Adjust font scale">
+        <span>A-</span>
+        <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font size scale" />
+        <span>A+</span>
+      </label>
+      <button id="sfxBtn" class="btn" type="button" aria-pressed="true"><span id="sfxIcon">&#128266;</span><span id="sfxLabel">SFX On</span></button>
+      <button id="themeBtn" class="btn" type="button"><span id="themeIcon">&#9790;</span><span id="themeLabel">Dark</span></button>
+    </div>
+  </header>
+
+  <section class="card row between" aria-label="Layer Filters and Hub Capture Simulation">
+    <div class="row" role="group" aria-label="Flow Layer Filter">
+      <span class="group-label">Flow Layer:</span>
+      <button class="btn layer-btn active" data-layer="all" type="button">All Layers</button>
+      <button class="btn layer-btn" data-layer="data_sync" type="button"><span class="dot" style="background:var(--sync)"></span>Data &amp; CRDT Sync</button>
+      <button class="btn layer-btn" data-layer="flux_governance" type="button"><span class="dot" style="background:var(--flux)"></span>FLUX Governance</button>
+      <button class="btn layer-btn" data-layer="discovery_relay" type="button"><span class="dot" style="background:var(--disc)"></span>Discovery Relay</button>
+    </div>
+    <button id="captureToggle" class="capture-toggle" type="button" aria-pressed="false">
+      <span class="switch-track"><span class="switch-thumb"></span></span>
+      <span id="captureText">Simulate Hub Capture (Credible Exit)</span>
+    </button>
+  </section>
+
+  <section class="card" aria-label="Governance Phase Stepper">
+    <div class="row between">
+      <div class="row" role="tablist">
+        <button class="phase-pill active" data-phase="0" role="tab" aria-selected="true" type="button">Phase 0 · BDFL Forge</button>
+        <button class="phase-pill" data-phase="1" role="tab" aria-selected="false" type="button">Phase 1 · Federated Guilds</button>
+        <button class="phase-pill" data-phase="2" role="tab" aria-selected="false" type="button">Phase 2 · Bicameral Commons</button>
+        <button class="phase-pill" data-phase="3" role="tab" aria-selected="false" type="button">Phase 3 · Ossified Federation</button>
+      </div>
+      <div class="row">
+        <button id="prevPhaseBtn" class="btn" type="button">&larr; Prev</button>
+        <button id="nextPhaseBtn" class="btn" type="button">Next &rarr;</button>
+        <button id="tourBtn" class="btn" type="button">&#9654; Auto-Walk</button>
+      </div>
+    </div>
+    <div class="phase-summary" id="phaseSummary"></div>
+  </section>
+
+  <section id="captureStrip" class="card capture-strip" aria-live="polite">
+    <div class="row between">
+      <span class="capture-badge">&#9888; PRIMARY HUB COMPROMISED · AD-BLOAT / COMMERCIAL CAPTURE DETECTED</span>
+      <span style="font-size:calc(12px * var(--scale));color:var(--ink-muted);">Signed <code style="font-family:var(--font-mono);font-weight:700;">hub.announce.exit</code> fork beacon broadcast &rarr; clean failover to Peer Community HUB complete.</span>
+    </div>
+    <div class="integrity-grid">
+      <div class="icard"><div class="k">Learner Raw PII Exposed</div><div class="v">0 Bytes (Edge Custody)</div></div>
+      <div class="icard"><div class="k">SYNCZINE &amp; Git History</div><div class="v">100% Preserved (Forges + R2)</div></div>
+      <div class="icard"><div class="k">SYNTHCREDS &amp; FLUX</div><div class="v">100% Intact (Guild Multi-Sig)</div></div>
+      <div class="icard"><div class="k">Migration Overhead</div><div class="v">1-Line NATS leaf.conf Swap</div></div>
+    </div>
+  </section>
+
+  <main class="workspace">
+    <section class="card stage-card">
+      <div class="row between" style="padding:0 4px 8px;font-size:calc(11.5px * var(--scale));color:var(--ink-muted);">
+        <span>Click any primitive to inspect tech stack, custody boundary, and anti-capture defense.</span>
+        <div class="legend">
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--sync)"></span>Data/CRDT</span>
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--flux)"></span>FLUX/Guild</span>
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--disc)"></span>Discovery</span>
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--safe)"></span>Credible Exit</span>
+        </div>
+      </div>
+
+      <svg id="archSvg" viewBox="0 0 1000 660" role="img" aria-label="AOLC Six-Primitive Architecture Diagram">
+        <defs>
+          <marker id="a-sync" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--sync)"/></marker>
+          <marker id="a-flux" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--flux)"/></marker>
+          <marker id="a-disc" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--disc)"/></marker>
+          <marker id="a-safe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--safe)"/></marker>
+        </defs>
+
+        <!-- Swimlanes -->
+        <rect class="lane-rect" x="18" y="54" width="490" height="150"/>
+        <text class="lane-title" x="32" y="74">EDGE CUSTODY &amp; ATELIER VENTURE</text>
+        <rect class="lane-rect" x="526" y="54" width="456" height="150"/>
+        <text class="lane-title" x="540" y="74">EPISTEMIC TRUST &amp; PEER VALIDATION</text>
+        <rect class="lane-rect" x="18" y="270" width="964" height="150"/>
+        <text class="lane-title" x="32" y="290">ARTIFACT PRODUCTION &amp; SEMANTIC NAMESPACE CORE</text>
+        <rect class="lane-rect" x="18" y="492" width="964" height="152"/>
+        <text class="lane-title" x="32" y="512">REPLACEABLE COMMODITY DISCOVERY RELAYS</text>
+
+        <!-- Directed Protocol Flows -->
+        <g class="edge-group" data-layer="data_sync">
+          <path class="edge-path" d="M334 353 L534 353" stroke="var(--sync)" marker-end="url(#a-sync)"/>
+          <path class="edge-pulse" d="M334 353 L534 353" stroke="var(--sync)"/>
+          <rect class="edge-pill-bg" x="358" y="330" width="152" height="20"/>
+          <text class="edge-pill-text" x="434" y="343">Compiled SYNCZINES</text>
+        </g>
+
+        <g class="edge-group" data-layer="data_sync">
+          <path class="edge-path" d="M596 302 C596 240 137 250 137 192" stroke="var(--sync)" marker-start="url(#a-sync)" marker-end="url(#a-sync)"/>
+          <path class="edge-pulse" d="M596 302 C596 240 137 250 137 192" stroke="var(--sync)"/>
+          <rect class="edge-pill-bg" x="148" y="228" width="186" height="20"/>
+          <text class="edge-pill-text" x="241" y="241">Offline NATS Leaf + CRDT</text>
+        </g>
+
+        <g class="edge-group" data-layer="data_sync">
+          <path class="edge-path" d="M240 137 L288 137" stroke="var(--sync)" marker-end="url(#a-sync)"/>
+          <path class="edge-pulse" d="M240 137 L288 137" stroke="var(--sync)"/>
+          <rect class="edge-pill-bg" x="220" y="150" width="90" height="19"/>
+          <text class="edge-pill-text" x="265" y="163">Zero-PII UI</text>
+        </g>
+
+        <g class="edge-group" data-layer="flux_governance">
+          <path class="edge-path" d="M110 86 C110 14 720 14 720 82" stroke="var(--flux)" marker-end="url(#a-flux)"/>
+          <path class="edge-pulse" d="M110 86 C110 14 720 14 720 82" stroke="var(--flux)"/>
+          <rect class="edge-pill-bg" x="255" y="6" width="174" height="20"/>
+          <text class="edge-pill-text" x="342" y="19">CODE+V Verified Proofs</text>
+        </g>
+
+        <g class="edge-group" data-layer="flux_governance">
+          <path class="edge-path" d="M785 86 C785 37 165 37 165 82" stroke="var(--flux)" marker-end="url(#a-flux)"/>
+          <path class="edge-pulse" d="M785 86 C785 37 165 37 165 82" stroke="var(--flux)"/>
+          <rect class="edge-pill-bg" x="454" y="28" width="188" height="20"/>
+          <text class="edge-pill-text" x="548" y="41">SYNTHCREDS + Soulbound FLUX</text>
+        </g>
+
+        <g class="edge-group" data-layer="flux_governance">
+          <path class="edge-path" d="M800 188 L800 298" stroke="var(--flux)" marker-end="url(#a-flux)"/>
+          <path class="edge-pulse" d="M800 188 L800 298" stroke="var(--flux)"/>
+          <rect class="edge-pill-bg" x="713" y="228" width="174" height="20"/>
+          <text class="edge-pill-text" x="800" y="241">Guild Chamber √FLUX Vote</text>
+        </g>
+
+        <g class="edge-group" data-layer="flux_governance">
+          <path class="edge-path" d="M442 188 C460 236 650 228 668 298" stroke="var(--flux)" marker-end="url(#a-flux)"/>
+          <path class="edge-pulse" d="M442 188 C460 236 650 228 668 298" stroke="var(--flux)"/>
+          <rect class="edge-pill-bg" x="466" y="228" width="166" height="20"/>
+          <text class="edge-pill-text" x="549" y="241">Node Chamber 1-Vote</text>
+        </g>
+
+        <g class="edge-group" data-layer="discovery_relay" id="edgeZonePrimary">
+          <path class="edge-path" d="M622 404 C622 458 250 444 250 516" stroke="var(--disc)" marker-end="url(#a-disc)"/>
+          <path class="edge-pulse" d="M622 404 C622 458 250 444 250 516" stroke="var(--disc)"/>
+          <rect class="edge-pill-bg" x="358" y="446" width="172" height="20"/>
+          <text class="edge-pill-text" id="labelZonePrimary" x="444" y="459">Signed Public Manifests</text>
+          <g class="sever-x" transform="translate(320,456)"><circle r="11" fill="var(--danger)"/><path d="M-4-4L4 4M4-4L-4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></g>
+        </g>
+
+        <g class="edge-group" data-layer="discovery_relay" id="edgePrimaryAgency">
+          <path class="edge-path" d="M340 520 C405 460 405 268 392 192" stroke="var(--disc)" marker-end="url(#a-disc)"/>
+          <path class="edge-pulse" d="M340 520 C405 460 405 268 392 192" stroke="var(--disc)"/>
+          <rect class="edge-pill-bg" x="328" y="382" width="150" height="20"/>
+          <text class="edge-pill-text" id="labelPrimaryAgency" x="403" y="395">Cross-Zone Search</text>
+          <g class="sever-x" transform="translate(390,424)"><circle r="11" fill="var(--danger)"/><path d="M-4-4L4 4M4-4L-4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></g>
+        </g>
+
+        <g class="edge-group" data-layer="discovery_relay" id="edgeZonePeer">
+          <path class="edge-path" id="pathZonePeer" d="M786 404 L786 516" stroke="var(--disc)" stroke-dasharray="4 4" marker-end="url(#a-disc)"/>
+          <path class="edge-pulse" id="pulseZonePeer" d="M786 404 L786 516" stroke="var(--safe)" style="display:none;"/>
+          <rect class="edge-pill-bg" x="688" y="446" width="196" height="20"/>
+          <text class="edge-pill-text" id="labelZonePeer" x="786" y="459">Standby Federation Mirror</text>
+        </g>
+
+        <g class="edge-group hidden-edge" data-layer="discovery_relay" id="edgePeerAgency">
+          <path class="edge-path" d="M650 520 C555 460 442 365 422 192" stroke="var(--safe)" stroke-width="2.8" marker-end="url(#a-safe)"/>
+          <path class="edge-pulse" d="M650 520 C555 460 442 365 422 192" stroke="var(--safe)"/>
+          <rect class="edge-pill-bg" x="454" y="408" width="176" height="20" style="stroke:var(--safe);"/>
+          <text class="edge-pill-text" x="542" y="421" style="fill:var(--safe);">Rerouted Discovery Relay</text>
+        </g>
+
+        <!-- Primitive Nodes -->
+        <g class="node-group selected" data-node="sovraenodes" tabindex="0" role="button">
+          <rect class="node-box" x="34" y="86" width="206" height="102"/>
+          <rect x="34" y="86" width="6" height="102" rx="3" fill="var(--sync)"/>
+          <text class="node-title" x="50" y="112">SOVRAENODES</text>
+          <text class="node-sub" x="50" y="129">Atomic Custody &amp; Edge Compute</text>
+          <text class="node-sub" x="50" y="144">Tauri v2 · SQLite · Loro/Yjs · DIDs</text>
+          <rect class="node-badge-bg" x="50" y="156" width="176" height="22"/>
+          <text class="node-badge-text" id="badge-sovraenodes" x="58" y="170"></text>
+        </g>
+
+        <g class="node-group" data-node="sovraegencies" tabindex="0" role="button">
+          <rect class="node-box" x="292" y="86" width="206" height="102"/>
+          <rect x="292" y="86" width="6" height="102" rx="3" fill="var(--sync)"/>
+          <text class="node-title" x="308" y="112">SOVRAEGENCIES</text>
+          <text class="node-sub" x="308" y="129">Autonomous Ateliers &amp; Ventures</text>
+          <text class="node-sub" x="308" y="144">Curated Zones · Forges · Guilds</text>
+          <rect class="node-badge-bg" x="308" y="156" width="176" height="22"/>
+          <text class="node-badge-text" id="badge-sovraegencies" x="316" y="170"></text>
+        </g>
+
+        <g class="node-group" data-node="guilds" tabindex="0" role="button">
+          <rect class="node-box" x="564" y="86" width="388" height="102"/>
+          <rect x="564" y="86" width="6" height="102" rx="3" fill="var(--flux)"/>
+          <text class="node-title" x="582" y="112">GUILDS</text>
+          <text class="node-sub" x="582" y="129">Epistemic Trust, CODE+V Rubrics &amp; Peer Validation</text>
+          <text class="node-sub" x="582" y="144">Multi-Sig SYNTHCREDS (Open Badges 3.0) · Decaying FLUX</text>
+          <rect class="node-badge-bg" x="582" y="156" width="352" height="22"/>
+          <text class="node-badge-text" id="badge-guilds" x="592" y="170"></text>
+        </g>
+
+        <g class="node-group" data-node="forges" tabindex="0" role="button">
+          <rect class="node-box" x="44" y="302" width="290" height="102"/>
+          <rect x="44" y="302" width="6" height="102" rx="3" fill="var(--sync)"/>
+          <text class="node-title" x="62" y="328">FORGES</text>
+          <text class="node-sub" x="62" y="345">Artifact Production &amp; Compilation</text>
+          <text class="node-sub" x="62" y="360">Forgejo Git · Kestra 2.0 · SYNCZINES</text>
+          <rect class="node-badge-bg" x="62" y="372" width="256" height="22"/>
+          <text class="node-badge-text" id="badge-forges" x="70" y="386"></text>
+        </g>
+
+        <g class="node-group" data-node="sovraezones" tabindex="0" role="button">
+          <rect class="node-box" x="540" y="302" width="412" height="102"/>
+          <rect x="540" y="302" width="6" height="102" rx="3" fill="var(--disc)"/>
+          <text class="node-title" x="558" y="328">SOVRAEZONES</text>
+          <text class="node-sub" x="558" y="345">Cryptographic &amp; Semantic Curriculum Domains</text>
+          <text class="node-sub" x="558" y="360">NATS Account + Ed25519 NKey/JWT · DNS/DID Namespace</text>
+          <rect class="node-badge-bg" x="558" y="372" width="376" height="22"/>
+          <text class="node-badge-text" id="badge-sovraezones" x="568" y="386"></text>
+        </g>
+
+        <g class="node-group" data-node="hubs" id="nodePrimaryHub" tabindex="0" role="button">
+          <rect class="node-box" x="44" y="520" width="366" height="108"/>
+          <rect id="barPrimaryHub" x="44" y="520" width="6" height="108" rx="3" fill="var(--disc)"/>
+          <text class="node-title" id="titlePrimaryHub" x="62" y="546">PRIMARY HUB (GENESIS RELAY)</text>
+          <text class="node-sub" id="subPrimaryHub1" x="62" y="563">Stateless Discovery &amp; NATS Supercluster Gateway</text>
+          <text class="node-sub" id="subPrimaryHub2" x="62" y="578">Meilisearch / SurrealDB Manifest Indexer · Zero PII</text>
+          <rect class="node-badge-bg" x="62" y="592" width="332" height="22"/>
+          <text class="node-badge-text" id="badge-hubs" x="72" y="606"></text>
+        </g>
+
+        <g class="node-group standby" data-node="peer_hub" id="nodePeerHub" tabindex="0" role="button">
+          <rect class="node-box" x="590" y="520" width="366" height="108"/>
+          <rect x="590" y="520" width="6" height="108" rx="3" fill="var(--safe)"/>
+          <text class="node-title" x="608" y="546">PEER COMMUNITY HUB</text>
+          <text class="node-sub" x="608" y="563">Independent Federated NATS Relay &amp; Indexer</text>
+          <text class="node-sub" x="608" y="578">Subscribes to Public Zone Exports · Credible Exit Target</text>
+          <rect class="node-badge-bg" x="608" y="592" width="332" height="22"/>
+          <text class="node-badge-text" id="badge-peer_hub" x="618" y="606"></text>
+        </g>
+      </svg>
+    </section>
+
+    <aside class="card inspector" aria-label="Primitive Details Inspector">
+      <div class="insp-head">
+        <div>
+          <div class="insp-layer" id="inspLayer"></div>
+          <h2 class="insp-title" id="inspTitle"></h2>
+        </div>
+        <span class="chip safe" id="inspStatus"></span>
+      </div>
+      <div class="dblock"><span class="dlabel">Architectural Role</span><p class="dtext" id="inspRole"></p></div>
+      <div class="dblock"><span class="dlabel" id="inspPhaseLabel"></span><p class="dtext" id="inspPhaseAuth"></p></div>
+      <div class="dblock"><span class="dlabel">Technical Stack</span><div class="tags" id="inspStack"></div></div>
+      <div class="dblock"><span class="dlabel">Custody Scope &amp; Boundary</span><p class="dtext" id="inspCustody"></p></div>
+      <div class="dblock"><span class="dlabel">Anti-Capture Role (vs. Fandom UCP)</span><p class="dtext" id="inspDefense"></p></div>
+      <div class="dblock"><span class="dlabel">Connected Primitives (Click to Jump)</span><div class="flinks" id="inspFlows"></div></div>
+    </aside>
+  </main>
+
+  <footer class="card footer-note">
+    <span><strong>Architectural Rule:</strong> Infrastructure (Nodes/Hubs), Production (Forges), and Credibility (Guilds) are strictly decoupled.</span>
+    <span>Keys: <span class="kbd">&larr;</span> <span class="kbd">&rarr;</span> Phase &middot; <span class="kbd">1</span>&ndash;<span class="kbd">4</span> Layers &middot; <span class="kbd">C</span> Hub Capture &middot; <span class="kbd">T</span> Theme</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const PHASES = [
+    {
+      name: "Phase 0 · BDFL Forge (Months 0–12)",
+      mode: "Benevolent Dictatorship",
+      keys: "Solodev holds NATS Operator root keys, core schemas, and Genesis Hub.",
+      milestone: "Ship 1–3 live SOVRAEGENCIES; enforce Day-1 Credible Exit (one-click archive export, open DIDs, zero lock-in).",
+      badges: {
+        sovraenodes: "KEY: Learner Device (100% PII)",
+        sovraegencies: "AUTH: Founding Ateliers (Exit Ready)",
+        guilds: "AUTH: Founding Assessors (Co-Sign Prep)",
+        forges: "KEY: Scoped Forge CI Publisher JWT",
+        sovraezones: "KEY: Solodev BDFL Operator Root",
+        hubs: "KEY: Solodev Genesis Hub (Replaceable)",
+        peer_hub: "STATUS: Standby Peer Relay (Ready)"
+      },
+      nodeAuth: {
+        sovraenodes: "Learner holds 100% private SOVRAEPASS keys and local SQLite/CRDT custody from Day 1.",
+        sovraegencies: "1–3 founding Ateliers run turnkey sovra-atelier-stack instances with one-click full archive export.",
+        guilds: "Founding educators define initial CODE+V rubrics and prepare multi-sig SYNTHCRED signing keys.",
+        forges: "Solodev & founding ateliers deploy Forgejo + Kestra 2.0 pipelines authenticated via scoped publisher JWTs.",
+        sovraezones: "Solodev holds cold NATS Operator root keys to move fast while guaranteeing open Credible Exit.",
+        hubs: "Solodev operates the Genesis Hub for initial discovery; zero lock-in by design.",
+        peer_hub: "Architecture pre-wired for external Hubs; community relays can mirror public Zone manifests anytime."
+      }
+    },
+    {
+      name: "Phase 1 · Federated Guilds (Year 1–2)",
+      mode: "Delegated Meritocracy",
+      keys: "Solodev manages protocol upgrades; founding GUILDS co-sign SYNTHCREDS.",
+      milestone: "First 3–5 independent external HUBS and third-party FORGES join NATS federation; non-monetary FLUX activates.",
+      badges: {
+        sovraenodes: "KEY: Learner Device + PWS Sync",
+        sovraegencies: "AUTH: 5+ Sovereign Ateliers",
+        guilds: "KEY: Multi-Sig SYNTHCREDS + FLUX Live",
+        forges: "KEY: Federated 3rd-Party Forges",
+        sovraezones: "KEY: Zone Steward Account Keys",
+        hubs: "MODE: Multi-Hub NATS Supercluster",
+        peer_hub: "STATUS: Active Peer Hub (3–5 Nodes)"
+      },
+      nodeAuth: {
+        sovraenodes: "Learners seamlessly sync encrypted CRDT deltas across multiple independent NATS Hubs.",
+        sovraegencies: "Third-party studios launch commercial or community Ateliers under Commons Charter covenants.",
+        guilds: "Founding Guilds assume threshold multi-sig SYNTHCRED issuance and activate soulbound, decaying FLUX.",
+        forges: "Independent regional Forges remix CC-BY-SA SYNCZINES and publish signed catalog bundles.",
+        sovraezones: "Dedicated Zone Stewards hold Account signing keys; Solodev retains protocol upgrade stewardship.",
+        hubs: "Genesis Hub becomes one peer among 3–5 independent Supercluster relays.",
+        peer_hub: "Independent regional Hubs actively index public Zone manifests and relay discovery traffic."
+      }
+    },
+    {
+      name: "Phase 2 · Bicameral Commons (Year 2–3)",
+      mode: "Constitutional Hybrid DAO",
+      keys: "Multi-sig Steward Council + Guild Chamber (√FLUX) + Node Chamber (1-Entity-1-Vote).",
+      milestone: "Move defensive trademarks and core repos into non-profit Purpose Trust or DUNA/DAO legal wrapper.",
+      badges: {
+        sovraenodes: "KEY: Sovereign Edge (Charter Protected)",
+        sovraegencies: "VOTE: Node Chamber (1-Active-1-Vote)",
+        guilds: "VOTE: Guild Chamber (√FLUX Weighted)",
+        forges: "AUTH: Open Commons CC-BY-SA / MIT",
+        sovraezones: "GOV: Bicameral Mutual Veto",
+        hubs: "GOV: Charter-Bound Peering Rules",
+        peer_hub: "VOTE: Node Chamber Peer Operator"
+      },
+      nodeAuth: {
+        sovraenodes: "Charter Article I legally and cryptographically guarantees zero-PII edge custody.",
+        sovraegencies: "Active verified Ateliers vote 1-Entity-1-Vote in the Node Chamber with veto power over protocol changes.",
+        guilds: "Guild Chamber aggregates square-root FLUX weights to govern CODE+V rubrics and block commercial capture.",
+        forges: "Core Forge templates and schemas transition to Purpose Trust stewardship under MIT/Apache-2.0.",
+        sovraezones: "Protocol changes require 60%+ approval across both Guild and Node Chambers plus a 14-day timelock.",
+        hubs: "Any Hub violating surveillance-free covenants faces automatic trademark revocation and peering detachment.",
+        peer_hub: "Independent Hub operators with 90-day verified uptime hold seats in the Node Chamber."
+      }
+    },
+    {
+      name: "Phase 3 · Ossified Federation (Year 3+)",
+      mode: "Self-Healing Federation",
+      keys: "Protocol ossifies; BDFL retires root keys into timelocked multi-sig governance.",
+      milestone: "Any Hub can fail or turn commercial without harming the Commons; SOVRAENODES repoint leaf relays in seconds.",
+      badges: {
+        sovraenodes: "KEY: Permanent Autonomous Edge",
+        sovraegencies: "MODE: Self-Sustaining Federation",
+        guilds: "MODE: Polycentric Epistemic Mesh",
+        forges: "MODE: Content-Addressed Mirrors",
+        sovraezones: "KEY: Timelocked Multi-Sig Ossified",
+        hubs: "MODE: Disposable Commodity Relay",
+        peer_hub: "MODE: Self-Healing Supercluster"
+      },
+      nodeAuth: {
+        sovraenodes: "Nodes auto-failover across peer Hubs upon receiving signed fork beacons—zero single point of failure.",
+        sovraegencies: "Global network of independent micro-schools and ateliers operating with zero platform rent-extraction.",
+        guilds: "Decaying FLUX ensures active contemporary stewards always outvote dormant founders or captured entities.",
+        forges: "Immutable content-addressed SYNCZINE archives survive indefinitely across local mirrors and R2/IPFS nodes.",
+        sovraezones: "BDFL root keys retired into timelocked constitutional multi-sig; core protocol ossified for stability.",
+        hubs: "Fully interchangeable commodity relays; buying or shutting down a Hub yields zero lock-in.",
+        peer_hub: "Autonomous regional Hubs sustain discovery seamlessly across any individual Hub outage or takeover."
+      }
+    }
+  ];
+
+  const NODES = {
+    sovraenodes: {
+      title: "SOVRAENODES",
+      layer: "EDGE CUSTODY LAYER",
+      color: "var(--sync)",
+      status: "Zero-PII Edge",
+      statusClass: "safe",
+      role: "The sovereign edge — a learner's local-first Tauri v2 app, educator mini-server, or institutional VPS. Executes SYNCZINES and stores private study journals offline.",
+      stack: ["Tauri v2", "SQLite", "Loro / Yjs CRDTs", "SOVRAEPASS (did:key)", "Local NATS Leaf", "IEEE xAPI 2.0"],
+      custody: "Holds 100% of raw PII, private study state, and personal credentials strictly on-device. Local prefixes (local.pii.>, local.xapi.>) are blocked from crossing upstream.",
+      defense: "Even if every Hub shuts down or turns hostile, every SOVRAENODE remains 100% functional offline and holds complete personal credentials.",
+      flows: [
+        { target: "sovraezones", text: "Offline NATS Leaf + E2EE CRDT Sync", dir: "↔" },
+        { target: "sovraegencies", text: "Zero-PII Local Learning Runtime", dir: "→" },
+        { target: "guilds", text: "CODE+V Verified Artifact Proofs", dir: "↔" }
+      ]
+    },
+    sovraegencies: {
+      title: "SOVRAEGENCIES",
+      layer: "ATELIER VENTURE LAYER",
+      color: "var(--sync)",
+      status: "Autonomous Venture",
+      statusClass: "safe",
+      role: "Autonomous micro-schools, cohorts, or studios that assemble a specific curation of Zones, Forges, and Guild standards into a live educational offering with local economic sustainability.",
+      stack: ["sovra-atelier-stack", "Dokploy + Traefik", "SOVRAELEX / SOVRAEGIX", "did:web", "Commons Charter License"],
+      custody: "Owns its studio domain, learner relationships, and financial model without holding hostage learner DIDs or raw PII.",
+      defense: "Commercial actors can build profitable SOVRAEGENCIES under transparent tuition/mentoring—but Charter violations trigger automatic mark revocation and Hub detachment.",
+      flows: [
+        { target: "sovraenodes", text: "Zero-PII Local Learning Runtime", dir: "←" },
+        { target: "sovraezones", text: "Node Chamber 1-Active-1-Vote", dir: "→" },
+        { target: "hubs", text: "Cross-Zone Discovery & Search", dir: "←" }
+      ]
+    },
+    guilds: {
+      title: "GUILDS",
+      layer: "EPISTEMIC TRUST LAYER",
+      color: "var(--flux)",
+      status: "Multi-Sig Trust",
+      statusClass: "flux",
+      role: "Domain-specific communities of practice (educators, assessors, artisans, mentors) maintaining CODE+V quality rubrics, running peer verification, and co-signing SYNTHCREDS.",
+      stack: ["Open Badges 3.0", "W3C Verifiable Credentials", "Threshold Multi-Sig", "Soulbound Decaying FLUX", "NATS Service Exports"],
+      custody: "Holds cryptographic validation authority and append-only FLUX attestation streams—never owns learner PII or server infrastructure.",
+      defense: "Non-transferable, decaying FLUX + square-root voting prevents capital from buying academic credibility or capturing credential standards.",
+      flows: [
+        { target: "sovraenodes", text: "Signed SYNTHCREDS & FLUX Deltas", dir: "↔" },
+        { target: "sovraezones", text: "Guild Chamber √FLUX Governance", dir: "→" }
+      ]
+    },
+    forges: {
+      title: "FORGES",
+      layer: "PRODUCTION LAYER",
+      color: "var(--sync)",
+      status: "Git-Versioned",
+      statusClass: "safe",
+      role: "Creative workshops where raw curriculum materials (MDX, AVLD specs, media) are versioned and compiled into immutable, offline-playable SYNCZINES and SYNCTESS bundles.",
+      stack: ["Forgejo Git", "Kestra 2.0 / Windmill", "Astro / Quartz v4", "Cloudflare R2", "SHA-256 Bundles"],
+      custody: "Maintains canonical CC-BY-SA Git history and deterministic build artifacts; authenticates via scoped publish-only NATS JWTs.",
+      defense: "Replaces Fandom's proprietary wikitext lock-in with real Git branching, remixing, and static content-addressed mirrors anyone can fork in seconds.",
+      flows: [
+        { target: "sovraezones", text: "Compiled SYNCZINE Catalog Bundles", dir: "→" }
+      ]
+    },
+    sovraezones: {
+      title: "SOVRAEZONES",
+      layer: "NAMESPACE LAYER",
+      color: "var(--disc)",
+      status: "NATS Account",
+      statusClass: "safe",
+      role: "Logical knowledge territories (equivalent to an individual Fandom wiki, e.g., vn-esl). A Zone is a signed cryptographic namespace and routing boundary spanning many Nodes — not a server.",
+      stack: ["NATS Account", "Ed25519 NKey / JWT", "JetStream Streams", "DNS / DID Namespace", "hub.announce.exit"],
+      custody: "Isolates subject namespaces, JetStream quotas, and explicit Hub export policies so no external operator can hijack or overwrite a Zone.",
+      defense: "Communities own their DNS/DID namespace and publish signed exit beacons; no central staff can close, lock, or confiscate a Zone.",
+      flows: [
+        { target: "forges", text: "Compiled SYNCZINE Bundles", dir: "←" },
+        { target: "sovraenodes", text: "Offline NATS Leaf + CRDT Sync", dir: "↔" },
+        { target: "hubs", text: "Signed Public Catalog Manifests", dir: "→" },
+        { target: "peer_hub", text: "Standby / Failover Federation Mirror", dir: "→" }
+      ]
+    },
+    hubs: {
+      title: "PRIMARY HUB (GENESIS RELAY)",
+      layer: "DISCOVERY RELAY LAYER",
+      color: "var(--disc)",
+      status: "Replaceable Relay",
+      statusClass: "safe",
+      role: "Stateless federation broker indexing signed public Zone manifests, relaying encrypted CRDT sync deltas, and powering cross-Zone search.",
+      stack: ["NATS Supercluster Gateway", "SurrealDB / Meilisearch", "Dokploy + Traefik", "Read-Only Stream Imports"],
+      custody: "Sees only public signed manifests and opaque client-encrypted CRDT ciphertext. Holds zero PII, zero credential authority, and zero exclusive data.",
+      defense: "Treated as replaceable commodity infrastructure — buying or compromising a Hub yields zero lock-in and triggers instant community failover.",
+      flows: [
+        { target: "sovraezones", text: "Imports Signed Public Manifests", dir: "←" },
+        { target: "sovraegencies", text: "Cross-Zone Search & Discovery", dir: "→" },
+        { target: "peer_hub", text: "Credible Exit Failover Target", dir: "→" }
+      ]
+    },
+    peer_hub: {
+      title: "PEER COMMUNITY HUB",
+      layer: "FEDERATED DISCOVERY BACKUP",
+      color: "var(--safe)",
+      status: "Standby Peer",
+      statusClass: "safe",
+      role: "Independent community-run Hub subscribed to the same public Zone catalog exports, proving that discovery cannot be monopolized or held hostage for SEO/ad extraction.",
+      stack: ["sovra-hub-stack", "NATS Supercluster", "Meilisearch Indexer", "Signed Exit Beacon Listener"],
+      custody: "Stateless mirror of public signed Zone manifests; takes over discovery and CRDT relay traffic cleanly without touching learner PII.",
+      defense: "Realizes the Reverse Fandom policy: updating one line in leafnodes.remotes moves an entire community cleanly with zero broken trust.",
+      flows: [
+        { target: "sovraezones", text: "Mirrors Signed Zone Manifests", dir: "←" },
+        { target: "sovraegencies", text: "Rerouted Discovery Relay", dir: "→" },
+        { target: "hubs", text: "Replaces Compromised Primary Hub", dir: "←" }
+      ]
+    }
+  };
+
+  let state = {
+    layer: "all",
+    phase: 0,
+    selected: "sovraenodes",
+    captured: false,
+    sfx: true,
+    tourTimer: null
+  };
+
+  let audioCtx = null;
+  function playTone(freq, dur, type) {
+    if (!state.sfx) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + dur);
+    } catch (_) {}
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeIcon").innerHTML = theme === "dark" ? "&#9728;" : "&#9790;";
+    document.getElementById("themeLabel").textContent = theme === "dark" ? "Light" : "Dark";
+    try { localStorage.setItem("aolc_explorer_theme", theme); } catch (_) {}
+  }
+
+  function render() {
+    const p = PHASES[state.phase];
+
+    // Phase pills & summary
+    document.querySelectorAll(".phase-pill").forEach((el) => {
+      const idx = Number(el.dataset.phase);
+      el.classList.toggle("active", idx === state.phase);
+      el.setAttribute("aria-selected", String(idx === state.phase));
+    });
+    document.getElementById("phaseSummary").innerHTML =
+      `<div><strong>${p.name}</strong> &mdash; <em>${p.mode}</em>: ${p.keys} <strong>Milestone:</strong> ${p.milestone}</div>` +
+      `<span class="meta-tag">Phase ${state.phase} / 3</span>`;
+
+    // Node phase badges
+    Object.keys(p.badges).forEach((k) => {
+      const el = document.getElementById("badge-" + k);
+      if (el) el.textContent = p.badges[k];
+    });
+
+    // Layer filtering
+    document.querySelectorAll(".layer-btn").forEach((b) => {
+      b.classList.toggle("active", b.dataset.layer === state.layer);
+    });
+    document.querySelectorAll(".edge-group").forEach((g) => {
+      const match = state.layer === "all" || g.dataset.layer === state.layer;
+      g.classList.toggle("dimmed", !match);
+    });
+
+    // Capture simulation visual state
+    const capBtn = document.getElementById("captureToggle");
+    capBtn.classList.toggle("captured", state.captured);
+    capBtn.setAttribute("aria-pressed", String(state.captured));
+    document.getElementById("captureText").textContent = state.captured
+      ? "Hub Capture Active — Restore Primary Hub"
+      : "Simulate Hub Capture (Credible Exit)";
+    document.getElementById("captureStrip").classList.toggle("visible", state.captured);
+
+    const pHub = document.getElementById("nodePrimaryHub");
+    const peerHub = document.getElementById("nodePeerHub");
+    const eZonePrimary = document.getElementById("edgeZonePrimary");
+    const ePrimaryAgency = document.getElementById("edgePrimaryAgency");
+    const ePeerAgency = document.getElementById("edgePeerAgency");
+    const pathZonePeer = document.getElementById("pathZonePeer");
+    const pulseZonePeer = document.getElementById("pulseZonePeer");
+
+    pHub.classList.toggle("compromised", state.captured);
+    peerHub.classList.toggle("standby", !state.captured);
+    peerHub.classList.toggle("reroute-active", state.captured);
+    eZonePrimary.classList.toggle("severed", state.captured);
+    ePrimaryAgency.classList.toggle("severed", state.captured);
+    ePeerAgency.classList.toggle("hidden-edge", !state.captured);
+
+    document.getElementById("barPrimaryHub").setAttribute("fill", state.captured ? "var(--danger)" : "var(--disc)");
+    document.getElementById("titlePrimaryHub").textContent = state.captured
+      ? "PRIMARY HUB (COMPROMISED)"
+      : "PRIMARY HUB (GENESIS RELAY)";
+    document.getElementById("subPrimaryHub1").textContent = state.captured
+      ? "Ad-Bloat / Commercial Capture / Fork Suppression Attempt"
+      : "Stateless Discovery & NATS Supercluster Gateway";
+    document.getElementById("badge-hubs").textContent = state.captured
+      ? "DETACHED: Peering & Brand License Revoked"
+      : p.badges.hubs;
+    document.getElementById("badge-peer_hub").textContent = state.captured
+      ? "ACTIVE FAILOVER: Zero PII / Creds Lost"
+      : p.badges.peer_hub;
+    document.getElementById("labelZonePrimary").textContent = state.captured ? "DETACHED (Fork Beacon)" : "Signed Public Manifests";
+    document.getElementById("labelPrimaryAgency").textContent = state.captured ? "SEVERED (Client Rerouted)" : "Cross-Zone Search";
+    document.getElementById("labelZonePeer").textContent = state.captured ? "ACTIVE Credible Exit Sync" : "Standby Federation Mirror";
+
+    pathZonePeer.setAttribute("stroke", state.captured ? "var(--safe)" : "var(--disc)");
+    pathZonePeer.setAttribute("stroke-dasharray", state.captured ? "none" : "4 4");
+    pathZonePeer.setAttribute("marker-end", state.captured ? "url(#a-safe)" : "url(#a-disc)");
+    pulseZonePeer.style.display = state.captured ? "inline" : "none";
+
+    // Selected node highlight
+    document.querySelectorAll(".node-group").forEach((n) => {
+      n.classList.toggle("selected", n.dataset.node === state.selected);
+    });
+
+    // Inspector Drawer
+    const n = NODES[state.selected];
+    document.getElementById("inspLayer").textContent = n.layer;
+    document.getElementById("inspLayer").style.color = n.color;
+    document.getElementById("inspTitle").textContent =
+      state.selected === "hubs" && state.captured ? "PRIMARY HUB (CAPTURED)" : n.title;
+
+    const chip = document.getElementById("inspStatus");
+    if (state.selected === "hubs" && state.captured) {
+      chip.textContent = "Detached / Captured";
+      chip.className = "chip danger";
+    } else if (state.selected === "peer_hub" && state.captured) {
+      chip.textContent = "Active Exit Target";
+      chip.className = "chip safe";
+    } else {
+      chip.textContent = n.status;
+      chip.className = "chip " + n.statusClass;
+    }
+
+    document.getElementById("inspRole").textContent = n.role;
+    document.getElementById("inspPhaseLabel").textContent = `Authority & Key Custody (${p.name.split(" (")[0]})`;
+    document.getElementById("inspPhaseAuth").textContent =
+      state.selected === "hubs" && state.captured
+        ? "Charter violation detected! NATS Account Resolver detached this Hub; learners received a signed hub.announce.exit prompt and switched to Peer Community HUB in seconds."
+        : p.nodeAuth[state.selected];
+
+    document.getElementById("inspStack").innerHTML = n.stack.map((s) => `<span class="tag">${s}</span>`).join("");
+    document.getElementById("inspCustody").textContent = n.custody;
+    document.getElementById("inspDefense").textContent = n.defense;
+
+    const flinks = document.getElementById("inspFlows");
+    flinks.innerHTML = "";
+    n.flows.forEach((f) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "flink";
+      btn.innerHTML = `<span>${f.text}</span><span class="fdir">${f.dir} ${NODES[f.target].title.split(" ")[0]}</span>`;
+      btn.addEventListener("click", () => {
+        state.selected = f.target;
+        playTone(540, 0.06, "triangle");
+        render();
+      });
+      flinks.appendChild(btn);
+    });
+  }
+
+  // Event Bindings
+  document.querySelectorAll(".layer-btn").forEach((b) => {
+    b.addEventListener("click", () => {
+      state.layer = b.dataset.layer;
+      playTone(480, 0.05, "sine");
+      render();
+    });
+  });
+
+  document.querySelectorAll(".phase-pill").forEach((p) => {
+    p.addEventListener("click", () => {
+      stopTour();
+      state.phase = Number(p.dataset.phase);
+      playTone(360 + state.phase * 70, 0.07, "triangle");
+      render();
+    });
+  });
+
+  document.getElementById("prevPhaseBtn").addEventListener("click", () => {
+    stopTour();
+    state.phase = (state.phase + 3) % 4;
+    playTone(360 + state.phase * 70, 0.07, "triangle");
+    render();
+  });
+
+  document.getElementById("nextPhaseBtn").addEventListener("click", () => {
+    stopTour();
+    state.phase = (state.phase + 1) % 4;
+    playTone(360 + state.phase * 70, 0.07, "triangle");
+    render();
+  });
+
+  function stopTour() {
+    if (state.tourTimer) {
+      clearInterval(state.tourTimer);
+      state.tourTimer = null;
+      document.getElementById("tourBtn").innerHTML = "&#9654; Auto-Walk";
+      document.getElementById("tourBtn").classList.remove("active");
+    }
+  }
+
+  document.getElementById("tourBtn").addEventListener("click", () => {
+    if (state.tourTimer) { stopTour(); return; }
+    document.getElementById("tourBtn").innerHTML = "&#9632; Stop Walk";
+    document.getElementById("tourBtn").classList.add("active");
+    state.tourTimer = setInterval(() => {
+      state.phase = (state.phase + 1) % 4;
+      playTone(380 + state.phase * 65, 0.05, "sine");
+      render();
+    }, 2800);
+  });
+
+  document.getElementById("captureToggle").addEventListener("click", () => {
+    state.captured = !state.captured;
+    if (state.captured) {
+      state.selected = "hubs";
+      playTone(220, 0.14, "sawtooth");
+      setTimeout(() => playTone(520, 0.12, "triangle"), 130);
+    } else {
+      playTone(460, 0.08, "sine");
+    }
+    render();
+  });
+
+  document.querySelectorAll(".node-group").forEach((g) => {
+    const pick = () => {
+      state.selected = g.dataset.node;
+      playTone(580, 0.05, "sine");
+      render();
+    };
+    g.addEventListener("click", pick);
+    g.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+    });
+  });
+
+  document.getElementById("fontSlider").addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--scale", e.target.value);
+  });
+
+  document.getElementById("sfxBtn").addEventListener("click", () => {
+    state.sfx = !state.sfx;
+    document.getElementById("sfxBtn").setAttribute("aria-pressed", String(state.sfx));
+    document.getElementById("sfxIcon").innerHTML = state.sfx ? "&#128266;" : "&#128263;";
+    document.getElementById("sfxLabel").textContent = state.sfx ? "SFX On" : "Muted";
+    if (state.sfx) playTone(620, 0.05, "sine");
+  });
+
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+    playTone(500, 0.05, "sine");
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") { stopTour(); state.phase = (state.phase + 1) % 4; render(); }
+    else if (e.key === "ArrowLeft") { stopTour(); state.phase = (state.phase + 3) % 4; render(); }
+    else if (e.key === "1") { state.layer = "all"; render(); }
+    else if (e.key === "2") { state.layer = "data_sync"; render(); }
+    else if (e.key === "3") { state.layer = "flux_governance"; render(); }
+    else if (e.key === "4") { state.layer = "discovery_relay"; render(); }
+    else if (e.key.toLowerCase() === "c") { document.getElementById("captureToggle").click(); }
+    else if (e.key.toLowerCase() === "t") { document.getElementById("themeBtn").click(); }
+  });
+
+  // Init URL parameters for Obsidian iframe embedding (?theme=dark|light&embed=1)
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "1") document.body.classList.add("embed-mode");
+  const urlTheme = params.get("theme");
+  let savedTheme = null;
+  try { savedTheme = localStorage.getItem("aolc_explorer_theme"); } catch (_) {}
+  const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(urlTheme === "dark" || urlTheme === "light" ? urlTheme : (savedTheme || (sysDark ? "dark" : "light")));
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dokploy sovra-atelier-stack Service Topology &amp; Pipeline Tracer</title>
+<style>
+  :root {
+    --scale: 1;
+    --bg: #f5efe3;
+    --bg-grad: radial-gradient(circle at 12% 8%, #fbf7ee 0%, #f3ecdd 55%, #ece2ce 100%);
+    --surface: #fcf9f2;
+    --surface-2: #efe7d6;
+    --surface-3: #e4d9c2;
+    --ink: #1e2421;
+    --ink-muted: #555f59;
+    --ink-soft: #757f78;
+    --border: #d7cab2;
+    --border-strong: #bfa988;
+    --shadow: 0 8px 24px rgba(56, 42, 20, 0.08);
+    --shadow-sm: 0 2px 8px rgba(56, 42, 20, 0.06);
+
+    /* Network & Pipeline Accents */
+    --pub: #3f4d96;
+    --pub-soft: rgba(63, 77, 150, 0.11);
+    --priv: #0f766e;
+    --priv-soft: rgba(15, 118, 110, 0.12);
+    --ext: #b4691e;
+    --ext-soft: rgba(180, 105, 30, 0.13);
+    --safe: #1e7a55;
+    --safe-soft: rgba(30, 122, 85, 0.14);
+    --danger: #b8332a;
+    --danger-soft: rgba(184, 51, 42, 0.14);
+    --warn: #b4691e;
+    --warn-soft: rgba(180, 105, 30, 0.16);
+
+    --zone-pub-bg: rgba(63, 77, 150, 0.05);
+    --zone-priv-bg: rgba(15, 118, 110, 0.06);
+    --zone-ext-bg: rgba(180, 105, 30, 0.05);
+    --node-bg: #fffdf8;
+    --pill-bg: #f7f1e3;
+    --term-bg: #1c2229;
+    --term-ink: #e7ecef;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  }
+
+  html[data-theme="dark"] {
+    --bg: #0c1117;
+    --bg-grad: radial-gradient(circle at 15% 10%, #151d28 0%, #0d1219 55%, #090d12 100%);
+    --surface: #141b24;
+    --surface-2: #1c2532;
+    --surface-3: #253142;
+    --ink: #ece8df;
+    --ink-muted: #9da8b8;
+    --ink-soft: #758294;
+    --border: #2a3545;
+    --border-strong: #3d4d63;
+    --shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 3px 10px rgba(0, 0, 0, 0.35);
+
+    --pub: #818cf8;
+    --pub-soft: rgba(129, 140, 248, 0.15);
+    --priv: #2dd4bf;
+    --priv-soft: rgba(45, 212, 191, 0.14);
+    --ext: #f59e0b;
+    --ext-soft: rgba(245, 158, 11, 0.15);
+    --safe: #34d399;
+    --safe-soft: rgba(52, 211, 153, 0.16);
+    --danger: #f87171;
+    --danger-soft: rgba(248, 113, 113, 0.16);
+    --warn: #fbbf24;
+    --warn-soft: rgba(251, 191, 36, 0.16);
+
+    --zone-pub-bg: rgba(129, 140, 248, 0.06);
+    --zone-priv-bg: rgba(45, 212, 191, 0.06);
+    --zone-ext-bg: rgba(245, 158, 11, 0.06);
+    --node-bg: #18212d;
+    --pill-bg: #141c27;
+    --term-bg: #0a0f14;
+    --term-ink: #dbe7f3;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 14px; font-family: var(--font-sans);
+    font-size: calc(14px * var(--scale)); line-height: 1.5; color: var(--ink);
+    background: var(--bg-grad); min-height: 100vh; transition: background .25s, color .25s;
+  }
+  body.embed-mode { padding: 8px; }
+  .app { max-width: 1380px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 16px; box-shadow: var(--shadow-sm);
+  }
+  .row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .between { justify-content: space-between; }
+
+  .eyebrow {
+    font-family: var(--font-mono); font-size: calc(10.5px * var(--scale));
+    letter-spacing: .1em; text-transform: uppercase; color: var(--priv); font-weight: 750;
+  }
+  .title { margin: 2px 0 0; font-size: calc(18px * var(--scale)); font-weight: 800; letter-spacing: -.01em; }
+  .subtitle { margin: 2px 0 0; font-size: calc(12.5px * var(--scale)); color: var(--ink-muted); }
+
+  .font-ctl {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 9px;
+    background: var(--surface-2); border: 1px solid var(--border); font-size: calc(11px * var(--scale)); color: var(--ink-muted);
+  }
+  .font-ctl input { width: 62px; accent-color: var(--priv); cursor: pointer; }
+
+  .btn {
+    appearance: none; border: 1px solid var(--border); background: var(--surface-2); color: var(--ink);
+    font-family: var(--font-sans); font-size: calc(12px * var(--scale)); font-weight: 650;
+    padding: 6px 11px; border-radius: 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: all .18s; user-select: none;
+  }
+  .btn:hover { border-color: var(--border-strong); background: var(--surface-3); }
+  .btn:focus-visible { outline: 2px solid var(--priv); outline-offset: 2px; }
+  .btn.active { background: var(--priv); border-color: var(--priv); color: #fff; }
+  html[data-theme="dark"] .btn.active { color: #091214; }
+
+  /* Stepper Controls */
+  .step-pill {
+    border: 1px solid var(--border); background: var(--surface-2); color: var(--ink-muted);
+    padding: 5px 11px; border-radius: 999px; font-size: calc(11.5px * var(--scale)); font-weight: 650;
+    cursor: pointer; transition: all .18s;
+  }
+  .step-pill:hover { border-color: var(--border-strong); color: var(--ink); }
+  .step-pill.active { background: var(--priv); border-color: var(--priv); color: #fff; }
+  html[data-theme="dark"] .step-pill.active { color: #091214; }
+
+  /* Disconnect Toggle Switch */
+  .offline-toggle {
+    display: inline-flex; align-items: center; gap: 10px; padding: 7px 13px; border-radius: 10px;
+    border: 1.5px solid var(--border-strong); background: var(--surface-2); cursor: pointer;
+    font-weight: 750; font-size: calc(12px * var(--scale)); color: var(--ink); transition: all .22s;
+  }
+  .offline-toggle.offline {
+    border-color: var(--warn); background: var(--warn-soft); color: var(--warn);
+    box-shadow: 0 0 0 3px var(--warn-soft);
+  }
+  .switch-track { width: 36px; height: 20px; border-radius: 999px; background: var(--border-strong); position: relative; transition: background .2s; }
+  .offline-toggle.offline .switch-track { background: var(--warn); }
+  .switch-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: transform .2s; }
+  .offline-toggle.offline .switch-thumb { transform: translateX(16px); }
+
+  /* Step Description Strip */
+  .step-banner {
+    margin-top: 9px; padding: 10px 13px; border-radius: 10px; background: var(--surface-2);
+    border-left: 4px solid var(--priv); display: flex; flex-wrap: wrap; align-items: center;
+    justify-content: space-between; gap: 10px; font-size: calc(12.5px * var(--scale));
+  }
+  .step-banner.buffered { border-left-color: var(--warn); }
+
+  /* Offline Resilience Banner */
+  .resilience-strip {
+    display: none; border: 1.5px solid var(--warn); flex-direction: column; gap: 10px;
+  }
+  .resilience-strip.visible { display: flex; }
+  .resilience-badge {
+    font-family: var(--font-mono); font-size: calc(11px * var(--scale)); font-weight: 800;
+    color: var(--warn); background: var(--warn-soft); padding: 4px 10px; border-radius: 999px;
+  }
+  .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); gap: 8px; }
+  .scard { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; }
+  .scard .k { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; color: var(--ink-soft); }
+  .scard .v { font-size: calc(13px * var(--scale)); font-weight: 800; color: var(--safe); margin-top: 2px; }
+  .scard .v.warn { color: var(--warn); }
+
+  /* Workspace Grid */
+  .workspace { display: grid; grid-template-columns: minmax(0, 1.72fr) minmax(305px, .95fr); gap: 12px; align-items: start; }
+  @media (max-width: 1020px) { .workspace { grid-template-columns: 1fr; } }
+
+  .stage-card { padding: 12px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 11px; font-size: calc(11px * var(--scale)); font-family: var(--font-mono); color: var(--ink-muted); }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  svg#topoSvg { width: 100%; height: auto; display: block; user-select: none; }
+
+  /* SVG Boundaries & Nodes */
+  .zone-rect { rx: 14; stroke-width: 1.4; stroke-dasharray: 6 4; }
+  .zone-title { font-family: var(--font-mono); font-size: 10.5px; font-weight: 800; letter-spacing: .09em; }
+
+  .svc-node { cursor: pointer; transition: opacity .25s; }
+  .svc-box { fill: var(--node-bg); stroke: var(--border-strong); stroke-width: 1.6; rx: 12; transition: all .22s; }
+  .svc-node:hover .svc-box { stroke-width: 2.4; filter: drop-shadow(0 6px 12px rgba(0,0,0,.14)); }
+  .svc-node.selected .svc-box { stroke: var(--pub); stroke-width: 2.8; }
+  .svc-node.step-active .svc-box { stroke: var(--priv); stroke-width: 2.8; fill: var(--priv-soft); }
+  .svc-node.hub-cut .svc-box { stroke: var(--danger); stroke-width: 2.4; fill: var(--danger-soft); }
+  .svc-node.nats-buffering .svc-box { stroke: var(--warn); stroke-width: 2.8; fill: var(--warn-soft); }
+
+  .svc-title { font-size: 13.8px; font-weight: 800; fill: var(--ink); }
+  .svc-img { font-family: var(--font-mono); font-size: 10px; fill: var(--ink-muted); }
+  .svc-sub { font-size: 10.8px; fill: var(--ink-muted); }
+  .svc-badge-bg { fill: var(--surface-2); stroke: var(--border); stroke-width: 1; rx: 5; }
+  .svc-badge-text { font-family: var(--font-mono); font-size: 9.5px; font-weight: 700; fill: var(--ink); }
+
+  /* Sub-artifact pills (PG & Volume) */
+  .sub-pill { fill: var(--surface-2); stroke: var(--border-strong); stroke-width: 1.2; stroke-dasharray: 4 3; rx: 9; }
+
+  /* Pipeline Edges */
+  .pipe-edge { transition: opacity .25s; opacity: .26; }
+  .pipe-edge.active { opacity: 1; }
+  .pipe-edge.always-soft { opacity: .45; }
+  .pipe-edge.always-soft.active { opacity: 1; }
+  .pipe-path { fill: none; stroke-width: 2.4; stroke-linecap: round; transition: stroke .22s; }
+  .pipe-pulse {
+    fill: none; stroke-width: 3; stroke-dasharray: 8 16; stroke-linecap: round;
+    animation: flowDash 1.25s linear infinite; display: none; pointer-events: none;
+  }
+  .pipe-edge.active .pipe-pulse { display: inline; }
+  @keyframes flowDash { from { stroke-dashoffset: 24; } to { stroke-dashoffset: 0; } }
+
+  .pipe-edge.cut .pipe-path { stroke: var(--danger) !important; stroke-dasharray: 5 5; opacity: .85; }
+  .pipe-edge.cut .pipe-pulse { display: none !important; }
+  .cut-marker { display: none; }
+  .pipe-edge.cut .cut-marker { display: inline; }
+
+  .edge-pill-bg { fill: var(--pill-bg); stroke: var(--border); stroke-width: 1; rx: 6; }
+  .edge-pill-text { font-family: var(--font-mono); font-size: 9.4px; font-weight: 750; fill: var(--ink); text-anchor: middle; }
+
+  /* JetStream Buffer Pulse Ring */
+  .buffer-ring {
+    fill: none; stroke: var(--warn); stroke-width: 2.5; rx: 14; opacity: 0; pointer-events: none;
+  }
+  .buffer-ring.pulsing {
+    animation: jsPulse 1.6s ease-out infinite;
+  }
+  @keyframes jsPulse {
+    0% { opacity: .9; stroke-width: 2.5; }
+    100% { opacity: 0; stroke-width: 9; }
+  }
+
+  /* Live Telemetry Terminal */
+  .terminal {
+    background: var(--term-bg); color: var(--term-ink); border-radius: 11px;
+    padding: 10px 13px; font-family: var(--font-mono); font-size: calc(11.3px * var(--scale));
+    border: 1px solid var(--border-strong); display: flex; flex-direction: column; gap: 4px;
+  }
+  .term-head { display: flex; justify-content: space-between; align-items: center; font-size: calc(10px * var(--scale)); color: #8fa3b8; border-bottom: 1px solid rgba(255,255,255,.1); padding-bottom: 5px; margin-bottom: 2px; }
+  .term-line { white-space: pre-wrap; word-break: break-word; }
+  .term-ok { color: #34d399; }
+  .term-warn { color: #fbbf24; }
+  .term-cmd { color: #7dd3fc; }
+
+  /* Inspector Drawer */
+  .inspector { padding: 15px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; position: sticky; top: 10px; }
+  .insp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; border-bottom: 1px solid var(--border); padding-bottom: 9px; }
+  .insp-zone { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .08em; font-weight: 750; }
+  .insp-title { margin: 2px 0 0; font-size: calc(17px * var(--scale)); font-weight: 800; }
+  .chip { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); font-weight: 750; padding: 4px 8px; border-radius: 999px; border: 1px solid var(--border); background: var(--surface-2); white-space: nowrap; }
+  .chip.safe { background: var(--safe-soft); border-color: var(--safe); color: var(--safe); }
+  .chip.warn { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); }
+  .chip.danger { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+  .chip.pub { background: var(--pub-soft); border-color: var(--pub); color: var(--pub); }
+
+  .dblock { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 11px; display: flex; flex-direction: column; gap: 4px; }
+  .dlabel { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); font-weight: 700; }
+  .dtext { margin: 0; font-size: calc(12.2px * var(--scale)); }
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 2px; }
+  .tag { font-family: var(--font-mono); font-size: calc(10.5px * var(--scale)); padding: 2px 7px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); }
+
+  .footer-note { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; font-size: calc(11.5px * var(--scale)); color: var(--ink-muted); }
+  .kbd { font-family: var(--font-mono); font-size: calc(10px * var(--scale)); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--border-strong); background: var(--surface-2); color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <header class="card row between">
+    <div>
+      <div class="eyebrow">DOKPLOY DEPLOYMENT BLUEPRINT · SOVRA-ATELIER-STACK</div>
+      <h1 class="title">Service Topology &amp; Git-to-SYNCZINE Pipeline Tracer</h1>
+      <p class="subtitle">Network segmentation (dokploy-network vs. atelier-internal), 5-stage Kestra 2.0 publishing lifecycle, and offline JetStream resilience</p>
+    </div>
+    <div class="row">
+      <label class="font-ctl" title="Adjust text scale">
+        <span>A-</span>
+        <input id="fontSlider" type="range" min="0.85" max="1.2" step="0.05" value="1" aria-label="Font scale" />
+        <span>A+</span>
+      </label>
+      <button id="sfxBtn" class="btn" type="button" aria-pressed="true"><span id="sfxIcon">&#128266;</span><span id="sfxLabel">SFX On</span></button>
+      <button id="themeBtn" class="btn" type="button"><span id="themeIcon">&#9790;</span><span id="themeLabel">Dark</span></button>
+    </div>
+  </header>
+
+  <!-- Pipeline Stepper & Hub Disconnect Controls -->
+  <section class="card" aria-label="Pipeline Stage Stepper and Hub Disconnect Toggle">
+    <div class="row between">
+      <div class="row" role="tablist" aria-label="Publish Lifecycle Stages">
+        <button class="step-pill active" data-step="1" role="tab" aria-selected="true" type="button">1 · Author Release Tag</button>
+        <button class="step-pill" data-step="2" role="tab" aria-selected="false" type="button">2 · Internal Webhook</button>
+        <button class="step-pill" data-step="3" role="tab" aria-selected="false" type="button">3 · CODE+V Build</button>
+        <button class="step-pill" data-step="4" role="tab" aria-selected="false" type="button">4 · Atomic Swap &amp; R2</button>
+        <button class="step-pill" data-step="5" role="tab" aria-selected="false" type="button">5 · NATS Broadcast</button>
+      </div>
+      <div class="row">
+        <button id="prevStepBtn" class="btn" type="button">&larr; Prev</button>
+        <button id="nextStepBtn" class="btn" type="button">Next &rarr;</button>
+        <button id="playBtn" class="btn" type="button">&#9654; Trace Flow</button>
+      </div>
+    </div>
+
+    <div class="row between" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">
+      <button id="offlineToggle" class="offline-toggle" type="button" aria-pressed="false">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span id="offlineLabel">Simulate Hub Disconnect (Offline JetStream Resilience)</span>
+      </button>
+      <div class="row">
+        <button id="emitBtn" class="btn" type="button" title="Publish a simulated SYNCZINE release manifest into NATS Leaf">+ Publish Test Tag</button>
+        <span class="chip safe" id="queueChip">JetStream Pending: 0</span>
+      </div>
+    </div>
+
+    <div class="step-banner" id="stepBanner"></div>
+  </section>
+
+  <!-- Offline Hub-Cut Resilience Status Strip -->
+  <section id="resilienceStrip" class="card resilience-strip" aria-live="polite">
+    <div class="row between">
+      <span class="resilience-badge">&#9888; UPSTREAM FEDERATED HUB DISCONNECTED · OUTBOUND TLS :7422 SEVERED</span>
+      <span style="font-size:calc(12px * var(--scale));color:var(--ink-muted);">Local Forgejo builds, atomic Caddy delivery, and R2 backups continue uninterrupted; NATS Leaf buffers signed manifests locally for automatic replay.</span>
+    </div>
+    <div class="status-grid">
+      <div class="scard"><div class="k">Steps 1–3 (Forge + Kestra)</div><div class="v">100% Operational Locally</div></div>
+      <div class="scard"><div class="k">Step 4 (Caddy + R2 Mirror)</div><div class="v">Learners Served Uninterrupted</div></div>
+      <div class="scard"><div class="k">Step 5 (NATS Leaf JetStream)</div><div class="v warn" id="bufferMetric">Local Buffer Active (1 Queued)</div></div>
+      <div class="scard"><div class="k">Failover / Credible Exit</div><div class="v">Edit 1 URL in leaf.conf</div></div>
+    </div>
+  </section>
+
+  <!-- Main Interactive Workspace -->
+  <main class="workspace">
+    <!-- Segmented Architecture Diagram + Terminal -->
+    <section class="card stage-card">
+      <div class="row between" style="padding:0 4px;font-size:calc(11.5px * var(--scale));color:var(--ink-muted);">
+        <span>Click any service container to inspect Docker image, network boundary, volume mounts, and hardening rules.</span>
+        <div class="legend">
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--pub)"></span>dokploy-network</span>
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--priv)"></span>atelier-internal</span>
+          <span class="row" style="gap:4px"><span class="dot" style="background:var(--ext)"></span>External Edge</span>
+        </div>
+      </div>
+
+      <svg id="topoSvg" viewBox="0 0 1000 620" role="img" aria-label="Dokploy sovra-atelier-stack Service Topology">
+        <defs>
+          <marker id="m-pub" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--pub)"/></marker>
+          <marker id="m-priv" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--priv)"/></marker>
+          <marker id="m-ext" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--ext)"/></marker>
+          <marker id="m-safe" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse"><path d="M1 1.5L9 5L1 8.5z" fill="var(--safe)"/></marker>
+        </defs>
+
+        <!-- Boundary 1: PUBLIC INGRESS (dokploy-network) -->
+        <rect class="zone-rect" x="14" y="12" width="972" height="106" fill="var(--zone-pub-bg)" stroke="var(--pub)" />
+        <text class="zone-title" x="28" y="30" fill="var(--pub)">PUBLIC INGRESS · dokploy-network (Traefik v3 TLS Termination)</text>
+
+        <!-- Boundary 2: PRIVATE INTERNAL BUS (atelier-internal) -->
+        <rect class="zone-rect" x="14" y="138" width="972" height="314" fill="var(--zone-priv-bg)" stroke="var(--priv)" />
+        <text class="zone-title" x="28" y="156" fill="var(--priv)">ATELIER DOCKER HOST · DUAL-HOMED SERVICES (Top) + STRICTLY PRIVATE atelier-internal BUS (Bottom)</text>
+
+        <!-- Inner Sub-boundary for Strictly Private Services -->
+        <rect x="26" y="314" width="948" height="128" rx="11" fill="none" stroke="var(--border-strong)" stroke-width="1.1" stroke-dasharray="3 3" />
+        <text class="zone-title" x="38" y="330" fill="var(--ink-soft)" style="font-size:9.5px;">ZERO PUBLIC INGRESS · REACHABLE ONLY ON atelier-internal BRIDGE</text>
+
+        <!-- Boundary 3: EXTERNAL FEDERATION EDGE -->
+        <rect class="zone-rect" x="14" y="472" width="972" height="136" fill="var(--zone-ext-bg)" stroke="var(--ext)" />
+        <text class="zone-title" x="28" y="490" fill="var(--ext)">EXTERNAL FEDERATION EDGE · Off-Box R2 Mirrors &amp; AOLC Supercluster HUB</text>
+
+        <!-- === PIPELINE EDGES === -->
+        <!-- Step 1: Traefik -> Forgejo (Author Release Tag) -->
+        <g class="pipe-edge active" data-steps="1">
+          <path class="pipe-path" d="M155 106 L155 170" stroke="var(--pub)" marker-end="url(#m-pub)" />
+          <path class="pipe-pulse" d="M155 106 L155 170" stroke="var(--pub)" />
+          <rect class="edge-pill-bg" x="56" y="124" width="198" height="19" />
+          <text class="edge-pill-text" x="155" y="137">1 · SSH :2222 / HTTPS tag v1.2.0</text>
+        </g>
+
+        <!-- Step 2: Forgejo -> Kestra (Internal Webhook) -->
+        <g class="pipe-edge" data-steps="2">
+          <path class="pipe-path" d="M282 208 L368 208" stroke="var(--priv)" marker-end="url(#m-priv)" />
+          <path class="pipe-pulse" d="M282 208 L368 208" stroke="var(--priv)" />
+          <rect class="edge-pill-bg" x="286" y="182" width="82" height="20" />
+          <text class="edge-pill-text" x="327" y="195">2 · Webhook</text>
+        </g>
+
+        <!-- Step 3: Forgejo -> Kestra (Internal Git Clone + Ephemeral Runner) -->
+        <g class="pipe-edge" data-steps="3">
+          <path class="pipe-path" d="M282 248 L368 248" stroke="var(--priv)" marker-end="url(#m-priv)" />
+          <path class="pipe-pulse" d="M282 248 L368 248" stroke="var(--priv)" />
+          <rect class="edge-pill-bg" x="286" y="256" width="82" height="20" />
+          <text class="edge-pill-text" x="327" y="269">3 · Git Clone</text>
+        </g>
+
+        <!-- Step 3b: Kestra <-> kestra-pg state -->
+        <g class="pipe-edge" data-steps="2,3">
+          <path class="pipe-path" d="M405 280 C405 315 268 315 268 345" stroke="var(--priv)" stroke-dasharray="3 3" marker-start="url(#m-priv)" marker-end="url(#m-priv)" />
+          <path class="pipe-pulse" d="M405 280 C405 315 268 315 268 345" stroke="var(--priv)" />
+        </g>
+
+        <!-- Step 4a: Kestra -> Caddy (Atomic Symlink Swap into synczine-dist :ro) -->
+        <g class="pipe-edge" data-steps="4">
+          <path class="pipe-path" d="M627 216 L713 216" stroke="var(--safe)" marker-end="url(#m-safe)" />
+          <path class="pipe-pulse" d="M627 216 L713 216" stroke="var(--safe)" />
+          <rect class="edge-pill-bg" x="626" y="188" width="90" height="20" />
+          <text class="edge-pill-text" x="671" y="201">4a · mv -Tf (:ro)</text>
+        </g>
+
+        <!-- Step 4b: Caddy <- Traefik (HTTPS zines.* Learner Delivery) -->
+        <g class="pipe-edge always-soft" data-steps="4">
+          <path class="pipe-path" d="M845 106 L845 170" stroke="var(--safe)" marker-start="url(#m-safe)" marker-end="url(#m-safe)" />
+          <path class="pipe-pulse" d="M845 106 L845 170" stroke="var(--safe)" />
+          <rect class="edge-pill-bg" x="752" y="124" width="186" height="19" />
+          <text class="edge-pill-text" x="845" y="137">HTTPS zines.* (CORS Mirror)</text>
+        </g>
+
+        <!-- Step 4c: Kestra -> Cloudflare R2 (Off-Box S3 Sync) -->
+        <g class="pipe-edge" data-steps="4">
+          <path class="pipe-path" d="M602 280 C650 320 676 410 735 504" stroke="var(--ext)" marker-end="url(#m-ext)" />
+          <path class="pipe-pulse" d="M602 280 C650 320 676 410 735 504" stroke="var(--ext)" />
+          <rect class="edge-pill-bg" x="678" y="452" width="136" height="19" />
+          <text class="edge-pill-text" x="746" y="465">4b · aws s3 sync (R2)</text>
+        </g>
+
+        <!-- Step 5a: Kestra -> NATS Leaf (nats-box publish signed manifest) -->
+        <g class="pipe-edge" data-steps="5">
+          <path class="pipe-path" d="M500 280 L500 338" stroke="var(--priv)" marker-end="url(#m-priv)" />
+          <path class="pipe-pulse" d="M500 280 L500 338" stroke="var(--priv)" />
+          <rect class="edge-pill-bg" x="415" y="294" width="170" height="19" />
+          <text class="edge-pill-text" x="500" y="307">5a · nats pub (.creds)</text>
+        </g>
+
+        <!-- Step 5b: NATS Leaf -> Federated HUB (Outbound TLS :7422) -->
+        <g class="pipe-edge" data-steps="5" id="edgeNatsHub">
+          <path class="pipe-path" d="M460 434 C435 462 355 468 330 504" stroke="var(--ext)" marker-end="url(#m-ext)" />
+          <path class="pipe-pulse" d="M460 434 C435 462 355 468 330 504" stroke="var(--ext)" />
+          <rect class="edge-pill-bg" x="260" y="452" width="174" height="19" />
+          <text class="edge-pill-text" id="labelNatsHub" x="347" y="465">5b · Outbound TLS :7422</text>
+          <g class="cut-marker" transform="translate(415,465)">
+            <circle r="11" fill="var(--danger)" />
+            <path d="M-4-4L4 4M4-4L-4 4" stroke="#fff" stroke-width="2.2" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- === 6 INTERACTIVE ARCHITECTURAL SERVICE NODES === -->
+
+        <!-- 1. Traefik v3 Edge -->
+        <g class="svc-node step-active selected" data-node="traefik" tabindex="0" role="button">
+          <rect class="svc-box" x="28" y="40" width="944" height="66" />
+          <rect x="28" y="40" width="6" height="66" rx="3" fill="var(--pub)" />
+          <text class="svc-title" x="46" y="65">1. TRAEFIK v3 EDGE PROXY (Dokploy Managed)</text>
+          <text class="svc-img" x="46" y="83">traefik:v3 · Explicit label: traefik.docker.network=dokploy-network · Let's Encrypt TLS</text>
+          <rect class="svc-badge-bg" x="678" y="55" width="276" height="32" />
+          <text class="svc-badge-text" x="690" y="75">ROUTES: forge.* · flow.* · zines.* (Blocks DB/NATS)</text>
+        </g>
+
+        <!-- 2. Forgejo FORGE -->
+        <g class="svc-node step-active" data-node="forgejo" tabindex="0" role="button">
+          <rect class="svc-box" x="28" y="174" width="254" height="106" />
+          <rect x="28" y="174" width="6" height="106" rx="3" fill="var(--pub)" />
+          <text class="svc-title" x="44" y="198">2. FORGEJO FORGE</text>
+          <text class="svc-img" x="44" y="214">codeberg.org/forgejo/forgejo</text>
+          <text class="svc-sub" x="44" y="232">SYNCZINE MDX / AVLD Git Repos</text>
+          <text class="svc-sub" x="44" y="247">Ports: 3000 (HTTPS) · 2222 (SSH)</text>
+          <rect class="svc-badge-bg" x="44" y="254" width="222" height="19" />
+          <text class="svc-badge-text" x="52" y="267">VOL: forgejo-data · Hook -> kestra</text>
+        </g>
+
+        <!-- 3. Kestra 2.0 + Postgres -->
+        <g class="svc-node" data-node="kestra" tabindex="0" role="button">
+          <rect class="svc-box" x="373" y="174" width="254" height="106" />
+          <rect x="373" y="174" width="6" height="106" rx="3" fill="var(--priv)" />
+          <text class="svc-title" x="389" y="198">3. KESTRA 2.0 + POSTGRES</text>
+          <text class="svc-img" x="389" y="214">kestra/kestra + postgres:16-alpine</text>
+          <text class="svc-sub" x="389" y="232">Docker Task Runners (Node 22/CLI)</text>
+          <text class="svc-sub" x="389" y="247">CODE+V Check · Astro/Quartz Build</text>
+          <rect class="svc-badge-bg" x="389" y="254" width="222" height="19" />
+          <text class="svc-badge-text" x="397" y="267">AUTH: Basic/VPN · docker.sock</text>
+        </g>
+
+        <!-- 4. Caddy SYNCZINE Mirror -->
+        <g class="svc-node" data-node="caddy" tabindex="0" role="button">
+          <rect class="svc-box" x="718" y="174" width="254" height="106" />
+          <rect x="718" y="174" width="6" height="106" rx="3" fill="var(--safe)" />
+          <text class="svc-title" x="734" y="198">4. CADDY SYNCZINE MIRROR</text>
+          <text class="svc-img" x="734" y="214">caddy:2-alpine (zstd + gzip)</text>
+          <text class="svc-sub" x="734" y="232">Static Astro/Quartz + .zip Bundles</text>
+          <text class="svc-sub" x="734" y="247">CORS * · Immutable /releases/*</text>
+          <rect class="svc-badge-bg" x="734" y="254" width="222" height="19" />
+          <text class="svc-badge-text" x="742" y="267">VOL: synczine-dist (:ro READ-ONLY)</text>
+        </g>
+
+        <!-- Internal Support Pill: kestra-pg (Click selects Kestra+PG) -->
+        <g class="svc-node" data-node="kestra" tabindex="0" role="button" aria-label="kestra-pg database inside atelier-internal">
+          <rect class="sub-pill" x="44" y="346" width="254" height="84" />
+          <text class="svc-title" x="58" y="370" style="font-size:12.2px;">kestra-pg (State DB)</text>
+          <text class="svc-img" x="58" y="386">postgres:16-alpine · atelier-internal</text>
+          <text class="svc-sub" x="58" y="403">Zero public ports · pg_isready check</text>
+          <text class="svc-badge-text" x="58" y="419" style="fill:var(--priv);">VOL: kestra-pgdata</text>
+        </g>
+
+        <!-- 5. NATS Leaf Node (atelier-internal ONLY) -->
+        <g class="svc-node" data-node="nats" id="nodeNats" tabindex="0" role="button">
+          <rect class="buffer-ring" id="bufferRing" x="370" y="339" width="260" height="98" />
+          <rect class="svc-box" x="373" y="342" width="254" height="92" />
+          <rect x="373" y="342" width="6" height="92" rx="3" fill="var(--priv)" />
+          <text class="svc-title" x="389" y="365">5. NATS LEAF NODE</text>
+          <text class="svc-img" x="389" y="380">nats:2-alpine · atelier-internal ONLY</text>
+          <text class="svc-sub" id="natsSub" x="389" y="397">JetStream Queue · Zero Public Ingress</text>
+          <rect class="svc-badge-bg" x="389" y="406" width="222" height="19" />
+          <text class="svc-badge-text" id="natsBadge" x="397" y="419">STATUS: Bridged via TLS :7422</text>
+        </g>
+
+        <!-- Internal Support Pill: synczine-dist Volume (Click selects Caddy) -->
+        <g class="svc-node" data-node="caddy" tabindex="0" role="button" aria-label="Shared synczine-dist Docker volume">
+          <rect class="sub-pill" x="702" y="346" width="254" height="84" />
+          <text class="svc-title" x="716" y="370" style="font-size:12.2px;">Shared Volume: synczine-dist</text>
+          <text class="svc-img" x="716" y="386">Kestra (rw) → Atomic mv -Tf → Caddy (:ro)</text>
+          <text class="svc-sub" x="716" y="403">/releases/&lt;repo&gt;/&lt;tag&gt;/bundle.synczine.zip</text>
+          <text class="svc-badge-text" x="716" y="419" style="fill:var(--safe);">Tamper-Proof Web Layer Isolation</text>
+        </g>
+
+        <!-- 6. External Edge (Federated HUB + Cloudflare R2) -->
+        <g class="svc-node" data-node="external" id="nodeHub" tabindex="0" role="button">
+          <rect class="svc-box" x="44" y="506" width="432" height="88" />
+          <rect id="barHub" x="44" y="506" width="6" height="88" rx="3" fill="var(--ext)" />
+          <text class="svc-title" id="hubTitle" x="62" y="530">6A. AOLC FEDERATED HUB (Supercluster)</text>
+          <text class="svc-img" x="62" y="546">tls://hub-genesis.aolc.org:7422 · NATS Gateway</text>
+          <text class="svc-sub" id="hubSub" x="62" y="563">Indexes Public zone.*.synczine.manifest Events for Global Discovery</text>
+          <rect class="svc-badge-bg" x="62" y="570" width="396" height="18" />
+          <text class="svc-badge-text" id="hubBadge" x="72" y="582">STATUS: Connected · Receiving Signed Catalog Manifests</text>
+        </g>
+
+        <g class="svc-node" data-node="external" id="nodeR2" tabindex="0" role="button">
+          <rect class="svc-box" x="524" y="506" width="432" height="88" />
+          <rect x="524" y="506" width="6" height="88" rx="3" fill="var(--ext)" />
+          <text class="svc-title" x="542" y="530">6B. CLOUDFLARE R2 MIRROR (Off-Box S3)</text>
+          <text class="svc-img" x="542" y="546">s3://aolc-synczines/&lt;repo&gt;/&lt;tag&gt;/ · Zero Egress Fees</text>
+          <text class="svc-sub" x="542" y="563">Immutable Fallback Bundle Mirror for SOVRAELEX Clients</text>
+          <rect class="svc-badge-bg" x="542" y="570" width="396" height="18" />
+          <text class="svc-badge-text" x="552" y="582">STATUS: Always Reachable · Independent of Hub Uptime</text>
+        </g>
+      </svg>
+
+      <!-- Live Pipeline Telemetry Strip -->
+      <div class="terminal" aria-live="polite">
+        <div class="term-head">
+          <span id="termTitle">PIPELINE TRACE · STEP 1 / 5</span>
+          <span id="termProto">PROTOCOL: SSH :2222 / HTTPS</span>
+        </div>
+        <div class="term-line term-cmd" id="termCmd"></div>
+        <div class="term-line" id="termOut"></div>
+      </div>
+    </section>
+
+    <!-- Service Container Inspector Drawer -->
+    <aside class="card inspector" aria-label="Container Security & Configuration Inspector">
+      <div class="insp-head">
+        <div>
+          <div class="insp-zone" id="inspZone"></div>
+          <h2 class="insp-title" id="inspTitle"></h2>
+        </div>
+        <span class="chip safe" id="inspStatus"></span>
+      </div>
+      <div class="dblock"><span class="dlabel">Docker Image(s)</span><div class="tags" id="inspImage"></div></div>
+      <div class="dblock"><span class="dlabel">Network Boundary &amp; Exposure</span><p class="dtext" id="inspNet"></p></div>
+      <div class="dblock"><span class="dlabel">Volumes &amp; Mount Permissions</span><div class="tags" id="inspStorage"></div></div>
+      <div class="dblock"><span class="dlabel">Role in sovra-atelier-stack</span><p class="dtext" id="inspRole"></p></div>
+      <div class="dblock"><span class="dlabel">Solodev Security Hardening Rule</span><p class="dtext" id="inspSec"></p></div>
+    </aside>
+  </main>
+
+  <footer class="card footer-note">
+    <span><strong>Operational Takeaway:</strong> Separating <code>dokploy-network</code> from <code>atelier-internal</code> and mounting <code>synczine-dist</code> read-only into Caddy ensures local publishing survives upstream Hub outages.</span>
+    <span>Keys: <span class="kbd">&larr;</span> <span class="kbd">&rarr;</span> Step &middot; <span class="kbd">Space</span> Trace &middot; <span class="kbd">D</span> Hub Disconnect &middot; <span class="kbd">T</span> Theme</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  const STEPS = {
+    1: {
+      title: "Step 1 · Author Release Tag",
+      proto: "SSH :2222 / HTTPS (Traefik v3)",
+      activeNodes: ["traefik", "forgejo"],
+      desc: "Educator pushes git tag v1.2.0 to the FORGE repository in Forgejo via SSH :2222 or HTTPS routed through Traefik v3 on dokploy-network.",
+      cmd: "$ git tag -a v1.2.0 -m \"Z2V Unit 3 SYNCZINE\" && git push origin v1.2.0",
+      out: "[OK] Traefik routed forge.atelier.example.org -> forgejo:3000; release tag v1.2.0 committed to forgejo-data."
+    },
+    2: {
+      title: "Step 2 · Internal Webhook Trigger",
+      proto: "Internal HTTP (atelier-internal ONLY)",
+      activeNodes: ["forgejo", "kestra"],
+      desc: "Forgejo POSTs the tag-push JSON payload strictly across the private atelier-internal bridge to Kestra 2.0 — zero public webhook exposure.",
+      cmd: "POST http://kestra:8080/api/v1/executions/webhook/aolc.forge/publish_synczine/<WEBHOOK_KEY>",
+      out: "[OK] FORGEJO__webhook__ALLOWED_HOST_LIST=kestra verified; Kestra queued execution in kestra-pg (postgres:16-alpine)."
+    },
+    3: {
+      title: "Step 3 · Isolated Build & CODE+V Validation",
+      proto: "Ephemeral Docker Task Runner (node:22-alpine)",
+      activeNodes: ["forgejo", "kestra"],
+      desc: "Kestra spawns an ephemeral node:22-alpine container on atelier-internal to shallow-clone the tag, enforce npm run validate:codev, compile Astro/Quartz, and hash bundle.synczine.zip.",
+      cmd: "$ npm ci && npm run validate:codev && npm run build && sha256sum bundle.synczine.zip",
+      out: "[OK] CODE+V 6-phase schema valid; SHA-256 = 9f4c...e1a8 written to repo/manifest_meta.json."
+    },
+    4: {
+      title: "Step 4 · Atomic Symlink Swap & Cloudflare R2 Sync",
+      proto: "Shared Volume (:ro) + S3 API (Cloudflare R2)",
+      activeNodes: ["kestra", "caddy", "external"],
+      desc: "Build runner swaps /latest/<repo> atomically via ln -sfn + mv -Tf inside synczine-dist (served immediately read-only by Caddy with CORS *) and syncs immutable release files to Cloudflare R2.",
+      cmd: "$ mv -Tf /srv/synczine-dist/latest/z2v.tmp /srv/synczine-dist/latest/z2v && aws s3 sync ... s3://aolc-synczines/z2v/v1.2.0",
+      out: "[OK] Caddy serving https://zines.atelier.example.org/latest/z2v/ (zero downtime); R2 off-box mirror synced."
+    },
+    5: {
+      title: "Step 5 · Signed NATS Catalog Broadcast",
+      proto: "Scoped NKey JWT -> Outbound TLS :7422",
+      activeNodes: ["kestra", "nats", "external"],
+      desc: "Kestra invokes natsio/nats-box with scoped forge-publisher.creds to publish the signed manifest to local nats-leaf, which federates outbound over TLS :7422 to AOLC Hubs.",
+      cmd: "$ nats --server nats://nats-leaf:4222 --creds /run/secrets/forge-publisher.creds pub zone.vn_esl.synczine.manifest.z2v '{...}'",
+      out: "[OK] Signed manifest published to Z_VN_ESL_CATALOG and replicated across AOLC Supercluster Hubs."
+    }
+  };
+
+  const NODES = {
+    traefik: {
+      title: "Traefik v3 Edge Proxy",
+      zone: "PUBLIC INGRESS · dokploy-network",
+      zoneColor: "var(--pub)",
+      status: "TLS Edge",
+      statusClass: "pub",
+      images: ["traefik:v3 (Dokploy)"],
+      net: "Public HTTPS (:443) on dokploy-network only. Routes forge.*, flow.*, and zines.* using explicit traefik.docker.network=dokploy-network labels. Completely blocks Postgres and NATS.",
+      storage: ["Let's Encrypt ACME Certs"],
+      role: "Single hardened ingress point terminating TLS and routing external web/SSH traffic exclusively to approved dual-homed containers.",
+      sec: "Pin traefik.docker.network=dokploy-network on every dual-homed container to prevent Traefik v3 gateway timeouts; place flow.* behind Cloudflare Access or Tailscale IP allowlisting."
+    },
+    forgejo: {
+      title: "Forgejo FORGE",
+      zone: "DUAL-HOMED · dokploy-network + atelier-internal",
+      zoneColor: "var(--pub)",
+      status: "Git Source",
+      statusClass: "safe",
+      images: ["codeberg.org/forgejo/forgejo:latest"],
+      net: "HTTPS (forge.* -> :3000) and SSH (:2222 -> :22) on dokploy-network; triggers webhooks strictly across atelier-internal.",
+      storage: ["forgejo-data:/data (rw)", "/etc/timezone (:ro)"],
+      role: "Canonical Git forge storing versioned SYNCZINE MDX, AVLD graphs, and media manifests with public registration disabled.",
+      sec: "Set FORGEJO__service__DISABLE_REGISTRATION=true and lock FORGEJO__webhook__ALLOWED_HOST_LIST=kestra so webhooks cannot be abused for SSRF."
+    },
+    kestra: {
+      title: "Kestra 2.0 + Postgres (kestra-pg)",
+      zone: "ORCHESTRATOR (Dual) + DB (atelier-internal ONLY)",
+      zoneColor: "var(--priv)",
+      status: "CI Orchestrator",
+      statusClass: "safe",
+      images: ["kestra/kestra:latest", "postgres:16-alpine", "node:22-alpine (ephemeral)", "amazon/aws-cli", "natsio/nats-box"],
+      net: "Kestra UI on flow.* (basic-auth/VPN); kestra-pg has ZERO public ports and listens strictly on atelier-internal.",
+      storage: ["kestra-storage (rw)", "kestra-pgdata (rw)", "synczine-dist (rw)", "forge-publisher.creds (:ro)", "/var/run/docker.sock"],
+      role: "Executes the event-driven publish_synczine workflow: validates CODE+V schemas, compiles Astro/Quartz bundles, hashes zips, syncs Cloudflare R2, and publishes NATS manifests.",
+      sec: "Mount forge-publisher.creds read-only (:ro) using a scoped publish-only NATS Signing Key so even a compromised CI worker cannot read learner CRDT rooms."
+    },
+    caddy: {
+      title: "Caddy SYNCZINE Mirror",
+      zone: "DUAL-HOMED · dokploy-network + atelier-internal",
+      zoneColor: "var(--safe)",
+      status: "Read-Only Mirror",
+      statusClass: "safe",
+      images: ["caddy:2-alpine"],
+      net: "Public HTTPS (zines.* -> :8080) with zstd/gzip compression and Access-Control-Allow-Origin: * for offline-first SOVRAELEX clients.",
+      storage: ["synczine-dist:/srv/mirror (:ro READ-ONLY)", "./config/Caddyfile (:ro)"],
+      role: "Serves immutable /releases/* archives (1-year cache) and atomically swapped /latest/* Astro/Quartz web mirrors locally at full speed.",
+      sec: "Mounting synczine-dist as read-only (:ro) guarantees that even a web-layer compromise cannot tamper with compiled SYNCZINE bundles or hashes."
+    },
+    nats: {
+      title: "NATS Leaf Node",
+      zone: "STRICTLY PRIVATE · atelier-internal ONLY",
+      zoneColor: "var(--priv)",
+      status: "Zero Public Ingress",
+      statusClass: "safe",
+      images: ["nats:2-alpine"],
+      net: "ZERO exposed host ports. Accepts internal publishes on nats://nats-leaf:4222 and initiates outbound TLS :7422 uplink to federated AOLC Hubs.",
+      storage: ["nats-jetstream:/data/jetstream (rw)", "./config/leaf.conf (:ro)", "./keys/atelier-leaf.creds (:ro)"],
+      role: "Bridges signed Zone catalog manifests to federated Hubs while providing durable local JetStream buffering during upstream outages.",
+      sec: "Enforces deny_exports: [\"local.>\", \"pii.>\"] in leaf.conf and enables zero-downtime Credible Exit by swapping one URL line in leafnodes.remotes."
+    },
+    external: {
+      title: "External Edge (Federated HUB + Cloudflare R2)",
+      zone: "EXTERNAL FEDERATION EDGE",
+      zoneColor: "var(--ext)",
+      status: "Off-Box Federation",
+      statusClass: "safe",
+      images: ["AOLC NATS Supercluster HUB", "Cloudflare R2 (S3-Compatible)"],
+      net: "Hub accepts outbound Leaf Node TLS :7422; R2 accepts S3 sync via HTTPS and serves public fallback bundles with zero egress fees.",
+      storage: ["s3://aolc-synczines/<repo>/<tag>/", "HUB_GLOBAL_DIR Index"],
+      role: "Decouples global discovery (replaceable NATS Hubs) from immutable off-box asset durability (Cloudflare R2).",
+      sec: "Hubs remain stateless and replaceable: disconnecting or abandoning a captured Hub never breaks local Forgejo builds, Caddy learner access, or R2 mirrors."
+    }
+  };
+
+  const state = {
+    step: 1,
+    selected: "traefik",
+    offline: false,
+    queuedCount: 0,
+    tagCounter: 2,
+    sfx: true,
+    playTimer: null
+  };
+
+  let audioCtx = null;
+  function playTone(freq, dur, type) {
+    if (!state.sfx) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type || "sine";
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.038, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + dur);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + dur);
+    } catch (_) {}
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    document.getElementById("themeIcon").innerHTML = theme === "dark" ? "&#9728;" : "&#9790;";
+    document.getElementById("themeLabel").textContent = theme === "dark" ? "Light" : "Dark";
+    try { localStorage.setItem("aolc_atelier_theme", theme); } catch (_) {}
+  }
+
+  function render() {
+    const s = STEPS[state.step];
+
+    // Stepper Pills
+    document.querySelectorAll(".step-pill").forEach((el) => {
+      const idx = Number(el.dataset.step);
+      el.classList.toggle("active", idx === state.step);
+      el.setAttribute("aria-selected", String(idx === state.step));
+    });
+
+    // Offline Toggle UI
+    const offBtn = document.getElementById("offlineToggle");
+    offBtn.classList.toggle("offline", state.offline);
+    offBtn.setAttribute("aria-pressed", String(state.offline));
+    document.getElementById("offlineLabel").textContent = state.offline
+      ? "Hub Disconnected — Reconnect Upstream TLS :7422"
+      : "Simulate Hub Disconnect (Offline JetStream Resilience)";
+    document.getElementById("resilienceStrip").classList.toggle("visible", state.offline);
+
+    // Queue Chip
+    const qChip = document.getElementById("queueChip");
+    qChip.textContent = state.offline
+      ? `JetStream Buffered: ${state.queuedCount} manifest${state.queuedCount === 1 ? "" : "s"}`
+      : "JetStream Pending: 0 (Synced)";
+    qChip.className = "chip " + (state.offline ? "warn" : "safe");
+    document.getElementById("bufferMetric").textContent =
+      `Local Buffer Active (${state.queuedCount} Queued)`;
+
+    // Step Banner
+    const banner = document.getElementById("stepBanner");
+    const isStep5Offline = state.step === 5 && state.offline;
+    banner.classList.toggle("buffered", isStep5Offline);
+    banner.innerHTML = isStep5Offline
+      ? `<div><strong>${s.title} (OFFLINE BUFFER MODE):</strong> Kestra publishes signed manifest to local <code>nats-leaf</code>. Because outbound TLS :7422 is disconnected, JetStream persists it safely on disk (<code>nats-jetstream</code>) for automatic replay upon reconnecting or switching to a peer Hub.</div><span class="chip warn">Step 5 / 5 · Buffered</span>`
+      : `<div><strong>${s.title}:</strong> ${s.desc}</div><span class="chip safe">Step ${state.step} / 5</span>`;
+
+    // Active Edges
+    document.querySelectorAll(".pipe-edge").forEach((g) => {
+      const steps = g.dataset.steps.split(",").map(Number);
+      g.classList.toggle("active", steps.includes(state.step));
+    });
+
+    // Hub-Cut visual overrides
+    const edgeNatsHub = document.getElementById("edgeNatsHub");
+    edgeNatsHub.classList.toggle("cut", state.offline);
+    if (state.offline) edgeNatsHub.classList.add("active");
+    document.getElementById("labelNatsHub").textContent = state.offline
+      ? "DISCONNECTED / REROUTING"
+      : "5b · Outbound TLS :7422";
+
+    const nodeHub = document.getElementById("nodeHub");
+    const nodeNats = document.getElementById("nodeNats");
+    const bufferRing = document.getElementById("bufferRing");
+
+    nodeHub.classList.toggle("hub-cut", state.offline);
+    document.getElementById("barHub").setAttribute("fill", state.offline ? "var(--danger)" : "var(--ext)");
+    document.getElementById("hubTitle").textContent = state.offline
+      ? "6A. FEDERATED HUB (DISCONNECTED)"
+      : "6A. AOLC FEDERATED HUB (Supercluster)";
+    document.getElementById("hubBadge").textContent = state.offline
+      ? "LINK DOWN: Zero Impact on Local Forge or Learner Access"
+      : "STATUS: Connected · Receiving Signed Catalog Manifests";
+
+    nodeNats.classList.toggle("nats-buffering", state.offline);
+    bufferRing.classList.toggle("pulsing", state.offline);
+    document.getElementById("natsSub").textContent = state.offline
+      ? `Local JetStream Buffering (${state.queuedCount} queued)`
+      : "JetStream Queue · Zero Public Ingress";
+    document.getElementById("natsBadge").textContent = state.offline
+      ? "BUFFERING: Auto-Replay on Reconnect"
+      : "STATUS: Bridged via TLS :7422";
+
+    // Active & Selected Nodes
+    document.querySelectorAll(".svc-node").forEach((n) => {
+      const id = n.dataset.node;
+      n.classList.toggle("selected", id === state.selected);
+      const isActive = s.activeNodes.includes(id) && !(id === "external" && state.step === 5 && state.offline);
+      n.classList.toggle("step-active", isActive);
+    });
+
+    // Terminal Telemetry
+    document.getElementById("termTitle").textContent = `PIPELINE TRACE · STEP ${state.step} / 5${state.offline ? " (HUB OFFLINE)" : ""}`;
+    document.getElementById("termProto").textContent = `PROTOCOL: ${isStep5Offline ? "Local JetStream Persistence (TLS :7422 Down)" : s.proto}`;
+    document.getElementById("termCmd").textContent = s.cmd;
+    const outEl = document.getElementById("termOut");
+    if (isStep5Offline) {
+      outEl.className = "term-line term-warn";
+      outEl.textContent = `[BUFFERED] Outbound TLS :7422 unreachable. Signed manifest v1.${state.tagCounter}.0 persisted in local nats-jetstream (${state.queuedCount} pending). Local Caddy mirror & R2 unaffected.`;
+    } else {
+      outEl.className = "term-line term-ok";
+      outEl.textContent = s.out;
+    }
+
+    // Inspector Drawer
+    const n = NODES[state.selected];
+    document.getElementById("inspZone").textContent = n.zone;
+    document.getElementById("inspZone").style.color = n.zoneColor;
+    document.getElementById("inspTitle").textContent = n.title;
+
+    const chip = document.getElementById("inspStatus");
+    if (state.selected === "nats" && state.offline) {
+      chip.textContent = "JetStream Buffering";
+      chip.className = "chip warn";
+    } else if (state.selected === "external" && state.offline) {
+      chip.textContent = "Hub Down / R2 Up";
+      chip.className = "chip danger";
+    } else {
+      chip.textContent = n.status;
+      chip.className = "chip " + n.statusClass;
+    }
+
+    document.getElementById("inspImage").innerHTML = n.images.map((i) => `<span class="tag">${i}</span>`).join("");
+    document.getElementById("inspNet").textContent = n.net;
+    document.getElementById("inspStorage").innerHTML = n.storage.map((st) => `<span class="tag">${st}</span>`).join("");
+    document.getElementById("inspRole").textContent = n.role;
+    document.getElementById("inspSec").textContent = n.sec;
+  }
+
+  function stopPlay() {
+    if (state.playTimer) {
+      clearInterval(state.playTimer);
+      state.playTimer = null;
+      document.getElementById("playBtn").innerHTML = "&#9654; Trace Flow";
+      document.getElementById("playBtn").classList.remove("active");
+    }
+  }
+
+  // Event Bindings
+  document.querySelectorAll(".step-pill").forEach((el) => {
+    el.addEventListener("click", () => {
+      stopPlay();
+      state.step = Number(el.dataset.step);
+      playTone(360 + state.step * 55, 0.06, "triangle");
+      render();
+    });
+  });
+
+  document.getElementById("prevStepBtn").addEventListener("click", () => {
+    stopPlay();
+    state.step = state.step === 1 ? 5 : state.step - 1;
+    playTone(360 + state.step * 55, 0.06, "triangle");
+    render();
+  });
+
+  document.getElementById("nextStepBtn").addEventListener("click", () => {
+    stopPlay();
+    state.step = state.step === 5 ? 1 : state.step + 1;
+    playTone(360 + state.step * 55, 0.06, "triangle");
+    render();
+  });
+
+  document.getElementById("playBtn").addEventListener("click", () => {
+    if (state.playTimer) { stopPlay(); return; }
+    state.step = 1;
+    render();
+    document.getElementById("playBtn").innerHTML = "&#9632; Stop Trace";
+    document.getElementById("playBtn").classList.add("active");
+    state.playTimer = setInterval(() => {
+      state.step = state.step === 5 ? 1 : state.step + 1;
+      playTone(360 + state.step * 55, 0.05, "sine");
+      render();
+    }, 2200);
+  });
+
+  document.getElementById("offlineToggle").addEventListener("click", () => {
+    const wasOffline = state.offline;
+    state.offline = !state.offline;
+    if (state.offline) {
+      if (state.queuedCount === 0) state.queuedCount = 1;
+      state.step = 5;
+      state.selected = "nats";
+      playTone(230, 0.13, "sawtooth");
+    } else {
+      const flushed = state.queuedCount;
+      state.queuedCount = 0;
+      playTone(540, 0.08, "triangle");
+      setTimeout(() => playTone(720, 0.1, "sine"), 90);
+      render();
+      if (wasOffline && flushed > 0) {
+        const outEl = document.getElementById("termOut");
+        outEl.className = "term-line term-ok";
+        outEl.textContent = `[REPLAYED] Outbound TLS :7422 restored! JetStream automatically flushed ${flushed} queued manifest${flushed === 1 ? "" : "s"} to AOLC Supercluster Hubs with zero loss.`;
+      }
+      return;
+    }
+    render();
+  });
+
+  document.getElementById("emitBtn").addEventListener("click", () => {
+    state.tagCounter += 1;
+    state.step = 5;
+    if (state.offline) {
+      state.queuedCount += 1;
+      state.selected = "nats";
+      playTone(420, 0.07, "triangle");
+      render();
+    } else {
+      playTone(620, 0.07, "sine");
+      render();
+      document.getElementById("termOut").textContent =
+        `[OK] Published release tag v1.${state.tagCounter}.0 -> Caddy :ro updated, R2 mirrored, and NATS Supercluster indexed immediately.`;
+    }
+  });
+
+  document.querySelectorAll(".svc-node").forEach((n) => {
+    const pick = () => {
+      state.selected = n.dataset.node;
+      playTone(560, 0.05, "sine");
+      render();
+    };
+    n.addEventListener("click", pick);
+    n.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+    });
+  });
+
+  document.getElementById("fontSlider").addEventListener("input", (e) => {
+    document.documentElement.style.setProperty("--scale", e.target.value);
+  });
+
+  document.getElementById("sfxBtn").addEventListener("click", () => {
+    state.sfx = !state.sfx;
+    document.getElementById("sfxBtn").setAttribute("aria-pressed", String(state.sfx));
+    document.getElementById("sfxIcon").innerHTML = state.sfx ? "&#128266;" : "&#128263;";
+    document.getElementById("sfxLabel").textContent = state.sfx ? "SFX On" : "Muted";
+    if (state.sfx) playTone(600, 0.05, "sine");
+  });
+
+  document.getElementById("themeBtn").addEventListener("click", () => {
+    const cur = document.documentElement.getAttribute("data-theme");
+    applyTheme(cur === "dark" ? "light" : "dark");
+    playTone(500, 0.05, "sine");
+  });
+
+  window.addEventListener("keydown", (e) => {
+    if (e.target.tagName === "INPUT") return;
+    if (e.key === "ArrowRight") { stopPlay(); state.step = state.step === 5 ? 1 : state.step + 1; render(); }
+    else if (e.key === "ArrowLeft") { stopPlay(); state.step = state.step === 1 ? 5 : state.step - 1; render(); }
+    else if (e.key === " ") { e.preventDefault(); document.getElementById("playBtn").click(); }
+    else if (e.key.toLowerCase() === "d") { document.getElementById("offlineToggle").click(); }
+    else if (e.key.toLowerCase() === "t") { document.getElementById("themeBtn").click(); }
+  });
+
+  // Obsidian iframe & theme auto-init
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("embed") === "1") document.body.classList.add("embed-mode");
+  const urlTheme = params.get("theme");
+  let saved = null;
+  try { saved = localStorage.getItem("aolc_atelier_theme"); } catch (_) {}
+  const sysDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  applyTheme(urlTheme === "dark" || urlTheme === "light" ? urlTheme : (saved || (sysDark ? "dark" : "light")));
+
+  render();
+})();
+</script>
+</body>
+</html>
